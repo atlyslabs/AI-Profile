@@ -1,0 +1,1029 @@
+Sources/AIProfile/Components/ProfileV3InteractiveGlobe.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-313
+Sources/AIProfile/Presentation/ProfileV3HubStage.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-203
+Sources/AIProfile/Components/ProfileV3CircleIconButton.swift
+  s_5cbfcb66d234e5::t_59aa364e710a87 14-16
+  s_5cbfcb66d234e5::t_0d63db64026f5a 11-13
+  s_5cbfcb66d234e5::t_93d54e454af663 17-19
+  s_5cbfcb66d234e5::t_388ba4cb843bb6 1-10,20-72
+Sources/AIProfile/Host/ProfileV3NavigationHost.swift
+  s_5cbfcb66d234e5::t_f2563876c0d67d 1-15
+Sources/AIProfile/ProfileV3HubSurface.swift
+  s_5cbfcb66d234e5::t_158fba13b62689 25
+  s_5cbfcb66d234e5::t_985ac77384dafa 16
+  s_5cbfcb66d234e5::t_e39136dfaf650e 2,5
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1,3-4,6-15,17-24,26-32
+Sources/AIProfile/Views/ProfileV3HubView.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-426
+Sources/AIProfile/Host/ProfileV3Environment.swift
+  s_5cbfcb66d234e5::t_071a93abcd9a03 51,55
+  s_5cbfcb66d234e5::t_7f89227837a3fc 38
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-18,27-34,40-48,53,57-59,61-62
+  s_5cbfcb66d234e5::t_1ef6077ca925f9 56
+  s_5cbfcb66d234e5::t_5b0f447809ff84 19-22,35-36,49-50,54
+  s_5cbfcb66d234e5::t_858d29a87764be 37
+  s_5cbfcb66d234e5::t_c0a2a57e660fa2 39
+  s_5cbfcb66d234e5::t_5d14f66dbc1cbf 60
+  s_5cbfcb66d234e5::t_29717aff611a4f 25-26
+  s_5cbfcb66d234e5::t_bc6dce979ae8ef 23-24
+  s_5cbfcb66d234e5::t_9dc63ea6b7d1e8 52
+Sources/AIProfile/Host/ProfileV3AccountHost.swift
+  s_5cbfcb66d234e5::t_6344cbc34d6c79 1-63
+Sources/AIProfile/Domain/ProfileV3KYCCapture.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-132
+Sources/AIProfile/Presentation/ProfileV3KYCCaptureViewModel.swift
+  s_5cbfcb66d234e5::t_0d312dcbf98cfb 135,142,174,275,301,470,475
+  s_5cbfcb66d234e5::t_ca81bac87f910d 133,271,467
+  s_5cbfcb66d234e5::t_32564694b4b56e 36
+  s_5cbfcb66d234e5::t_b4a026c0a6330e 1
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 2-35,37-132,134,136-141,143-173,175-270,272-274,276-300,302-449,451-466,468-469,471-474,476-550
+  s_5cbfcb66d234e5::t_20ec01819796a0 450
+Sources/AIProfile/Host/ProfileV3SessionProviding.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-10
+Sources/AIProfile/Views/ProfileV3CountryPickerView.swift
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-115
+Sources/AIProfile/Support/ProfileV3Theme+Globe.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-73
+Sources/AIProfile/Host/ProfileV3IdentityCaptureHost.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-99
+Sources/AIProfile/Host/ProfileV3GlobeRendering.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-109
+Sources/AIProfile/Domain/ProfileV3CountrySearch.swift
+  s_5cbfcb66d234e5::t_8830a3134289f6 4-31,36
+  s_5cbfcb66d234e5::t_86c5f5b4ccd002 1-3
+  s_5cbfcb66d234e5::t_598a84d7f9f34b 32-35
+  s_5cbfcb66d234e5::t_027b1f5d55d4b5 37
+Sources/AIProfile/Data/ProfileV3LiveRepository.swift
+  s_5cbfcb66d234e5::t_b4fef9976e62a3 36
+  s_5cbfcb66d234e5::t_08fee877366d0b 34
+  s_5cbfcb66d234e5::t_73839d048b461c 7,10-15,19
+  s_5cbfcb66d234e5::t_7c8090e379c59f 151
+  s_5e9dcbbe33dc0f::t_ef2785a49319a4 477
+  s_5e9dcbbe33dc0f::t_3a804bfd2fc4ff 1-6,8-9,16-18,20-33,35,37-150,152-476,478-489
+Sources/AIProfile/Components/LoginCountryPickerSheet.swift
+  s_5cbfcb66d234e5::t_611742d139e89b 1-96
+CLAUDE.md
+  s_5cbfcb66d234e5::t_93c6db8a80aedc 150
+  s_5cbfcb66d234e5::t_080cb48e574580 143
+  s_5cbfcb66d234e5::t_83c2395768a8ef 140-141
+  s_5cbfcb66d234e5::t_422b2ce8c91916 123
+  s_5cbfcb66d234e5::t_1a1a411d602ac3 218
+  s_5cbfcb66d234e5::t_7ce19404b90051 119-120
+  s_5cbfcb66d234e5::t_317d4a4b484885 105-106
+  s_5cbfcb66d234e5::t_ff9cd67c579799 173
+  s_5cbfcb66d234e5::t_b8ce0e29683795 136-139
+  s_5cbfcb66d234e5::t_499e930780a468 144
+  s_5cbfcb66d234e5::t_116b97950f492d 154-161
+  s_5cbfcb66d234e5::t_2784360926900e 177
+  s_5cbfcb66d234e5::t_926a12212466ee 146
+  s_5cbfcb66d234e5::t_2728c06a746721 187
+  s_5cbfcb66d234e5::t_9477b8e88a90f5 142
+  s_c482717a7a4db6::t_fa10f294a16a0b 3-27,45-75,135,152,163,166,168-172,174-176,178-186,189-200,202-208,210-215,217,219-243
+  s_5cbfcb66d234e5::t_e1352a01893e2e 216
+  s_5cbfcb66d234e5::t_d56f9c3c071383 121
+  s_5cbfcb66d234e5::t_d93c6899d29343 145
+  s_5cbfcb66d234e5::t_7a58f6468c3df9 122
+  s_5cbfcb66d234e5::t_6dd3b3cbfaee20 147-148
+  s_5cbfcb66d234e5::t_61a6481c63f2b8 188
+  s_5cbfcb66d234e5::t_8a95cf3bb8cd75 209
+  s_5cbfcb66d234e5::t_312b9fd1bbfd29 165,167
+  s_5cbfcb66d234e5::t_5e326b1ec567d7 29
+  s_5cbfcb66d234e5::t_e1b82ae69f81c3 201
+  s_5cbfcb66d234e5::t_725d456b10e51e 1-2,28,30-44,76-104,107-118,124-134,149,151,153,162,164,244-253
+AppIntegration/ProfileV3Host/VDCProfileV3Session.swift
+  s_5e9dcbbe33dc0f::t_f427b7b452b5f1 1-12
+AppIntegration/ProfileV3Host/VDCProfileV3IdentityCaptureHost.swift
+  s_5e9dcbbe33dc0f::t_f427b7b452b5f1 1-125
+.gitignore
+  s_c482717a7a4db6::t_43ae1543847a6f 9-10
+  s_c482717a7a4db6::t_cd3516c84bb2f4 6-8
+  s_5cbfcb66d234e5::t_83b164eb30c626 1-5
+Sources/AIProfile/Support/HapticFeedbackGenerator.swift
+  s_5cbfcb66d234e5::t_f215dd5fb5864e 1-35
+Sources/AIProfile/Host/ProfileV3KYCHost.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-165
+AppIntegration/ProfileV3Host/VDCProfileV3Analytics.swift
+  s_5cbfcb66d234e5::t_2cf6ee3e3fdde9 1-13
+Sources/AIProfile/Presentation/ProfileV3RestartCover.swift
+  s_5cbfcb66d234e5::t_d60fc6df4d0305 30
+  s_5cbfcb66d234e5::t_855826cffa8ec7 33
+  s_5cbfcb66d234e5::t_993c51fac3fdde 46-50
+  s_5cbfcb66d234e5::t_6a7353728e6e19 27-29
+  s_5cbfcb66d234e5::t_f9f5c8eea372d5 31-32
+  s_5cbfcb66d234e5::t_531291477fc25a 34-36,43-45
+  s_5cbfcb66d234e5::t_06dde8636b5261 51-53
+  s_5cbfcb66d234e5::t_7f8d3668008f0c 1-26,37-42,54-62
+Sources/AIProfile/Components/ProfileV3CitizenshipLockOverlay.swift
+  s_5cbfcb66d234e5::t_0c4ae84491be4b 78
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-77,79-137
+Sources/AIProfile/Data/ProfileV3SettingsDependencies+Live.swift
+  s_5cbfcb66d234e5::t_0375757b358976 103-104
+  s_5cbfcb66d234e5::t_08fee877366d0b 137
+  s_5cbfcb66d234e5::t_3ca260d220e56f 6-99,105,107-134,138,154-155,168,182,190
+  s_5cbfcb66d234e5::t_1f29f35c4732e1 3-5
+  s_5cbfcb66d234e5::t_8b26d93d3dafda 100-102
+  s_5cbfcb66d234e5::t_4385e987989b72 106
+  s_5cbfcb66d234e5::t_6e309054e158eb 135-136
+  s_5cbfcb66d234e5::t_05a0db2cc6e864 139-141,151-153
+  s_5cbfcb66d234e5::t_0808c5510250f8 156-158,165-167
+  s_5cbfcb66d234e5::t_0edaa6c64afbe4 169-171,179-181
+  s_5cbfcb66d234e5::t_abacb39c2c7039 183-185,187-189
+  s_5cbfcb66d234e5::t_92fd57214298e2 191
+  s_5cbfcb66d234e5::t_ec84d878ca143c 1-2,142-150,159-164,172-178,186
+Sources/AIProfile/Components/ProfileV3PassNumber.swift
+  s_5cbfcb66d234e5::t_68ec32bed8ac72 19
+  s_5cbfcb66d234e5::t_dfb28b0604d514 16-18
+  s_5cbfcb66d234e5::t_e8a07e4ae2916c 20-22
+  s_5cbfcb66d234e5::t_3dbdc8e0f01405 1-15,23-58
+Sources/AIProfile/ProfileV3EntryPoint.swift
+  s_5cbfcb66d234e5::t_2502051f0598db 36-38
+  s_5cbfcb66d234e5::t_8dcb7b83fff22d 35
+  s_5cbfcb66d234e5::t_6813a191264930 29,53,69
+  s_5cbfcb66d234e5::t_c50e7dec83936f 113-114,120-121
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-28,30-34,39-52,54-56,58-61,63-68,70-112,115-119,122-158
+  s_5cbfcb66d234e5::t_b1421803e01626 57,62
+Sources/AIProfile/Views/ProfileV3HubChrome.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-266
+Sources/AIProfile/Domain/ProfileV3TravellerScreens.swift
+  s_5cbfcb66d234e5::t_0c87ad77c642aa 140
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-139,141-168
+Sources/AIProfile/ProfileV3AgentFlowHostingController.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-13,16,23-71
+  s_5cbfcb66d234e5::t_9cd0bc28c1f263 14-15,17-22
+Sources/AIProfile/Presentation/ProfileV3PhoneEntry.swift
+  s_5cbfcb66d234e5::t_428bd2953f1afe 28
+  s_5cbfcb66d234e5::t_08afdec0cb22ec 22
+  s_5cbfcb66d234e5::t_7a9a9594b2a935 19-21
+  s_5cbfcb66d234e5::t_fa481f42fb4f83 23-27
+  s_5cbfcb66d234e5::t_0915e209a5d0a3 29-31
+  s_5cbfcb66d234e5::t_537b5cdc039022 1-18,32-81
+Sources/AIProfile/Support/ProfileV3Font+Atlys.swift
+  s_5cbfcb66d234e5::t_ec3240bfef414f 1-31
+Sources/AIProfile/Views/ProfileV3AddTravellerView.swift
+  s_5cbfcb66d234e5::t_19cccda34c8103 165
+  s_5cbfcb66d234e5::t_1075b1d585f2cd 181
+  s_5cbfcb66d234e5::t_a931c3f4f52470 157
+  s_5cbfcb66d234e5::t_7a9624ea19fe84 154-156
+  s_5cbfcb66d234e5::t_0715de67ab1551 158-160,162-164
+  s_5cbfcb66d234e5::t_014d8c3e8b76b0 166-168,178-180
+  s_5cbfcb66d234e5::t_97444112eff382 182-184
+  s_5cbfcb66d234e5::t_c5a2c58376f658 1-153,161,169-177,185-281
+Sources/AIProfile/Domain/ProfileV3Traveller.swift
+  s_5cbfcb66d234e5::t_08fee877366d0b 117,123
+  s_5cbfcb66d234e5::t_61e9daad07f68d 120
+  s_5cbfcb66d234e5::t_68954d21adaaeb 17,24,30,35,39,44,69,83-84,91,94-105,109,113,121,126
+  s_5cbfcb66d234e5::t_e14700f09e6b7d 14-16
+  s_5cbfcb66d234e5::t_79aa3492c94677 18-23
+  s_5cbfcb66d234e5::t_2759d46410f70f 25-29
+  s_5cbfcb66d234e5::t_1486ce881c3450 31-34
+  s_5cbfcb66d234e5::t_43784bd290d7a5 36-38
+  s_5cbfcb66d234e5::t_d310ae316f0ad4 40-43
+  s_5cbfcb66d234e5::t_76f43203940fc3 45-47,66-68
+  s_5cbfcb66d234e5::t_6348a141153b43 70-72,80-82
+  s_5cbfcb66d234e5::t_9f5e32c30e791a 85-90
+  s_5cbfcb66d234e5::t_a6fae8f03a63c4 92-93
+  s_5cbfcb66d234e5::t_873edd3728c58d 106-108
+  s_5cbfcb66d234e5::t_f9026940eaf633 110-112
+  s_5cbfcb66d234e5::t_b8ab2ce3f0bdde 114-116
+  s_5cbfcb66d234e5::t_7f41b9c3727e9d 118-119
+  s_5cbfcb66d234e5::t_76774fdb4ea152 122
+  s_5cbfcb66d234e5::t_757619af0811fd 124-125
+  s_5cbfcb66d234e5::t_143b90eb0a0151 127
+  s_5cbfcb66d234e5::t_7aff3611790f24 1-13,48-65,73-79
+Sources/AIProfile/Support/ProfileV3CurrencyCodes.swift
+  s_5cbfcb66d234e5::t_79ead7d6d9c922 4-48
+  s_5cbfcb66d234e5::t_4def0cfac00e32 1-3
+  s_5cbfcb66d234e5::t_bb9f186acaa9b6 49-50
+Sources/AIProfile/Components/ProfileV3HeroGlobe.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-132
+Sources/AIProfile/Presentation/ProfileV3KYCCaptureViewModel+HostScreens.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-94
+Sources/AIProfile/Host/ProfileV3FieldValidating.swift
+  s_5cbfcb66d234e5::t_4ff6860628b606 1-40
+Sources/AIProfile/Components/ProfileV3HeroSupport.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-56
+Sources/AIProfile/Support/PhoneCodeResolver.swift
+  s_5cbfcb66d234e5::t_64554ae77d0a57 1-62
+Sources/AIProfile/Presentation/ProfileV3AgentFormViewModel.swift
+  s_5cbfcb66d234e5::t_8fef4d1b77bb31 272
+  s_5cbfcb66d234e5::t_ab2f341a638ed0 33
+  s_5cbfcb66d234e5::t_1214926df2bbc1 48-57
+  s_5cbfcb66d234e5::t_181ba3e30fcf2e 30-32
+  s_5cbfcb66d234e5::t_b28a34717ad31f 34-36,45-47
+  s_5cbfcb66d234e5::t_f9d5c34c42f0d5 58-60,269-271
+  s_5cbfcb66d234e5::t_b8302a4f67f48b 273-275
+  s_5cbfcb66d234e5::t_d4c005e6771a3e 1-29,37-44,61-268,276-510
+Sources/AIProfile/Presentation/ProfileV3SettingsDependencies.swift
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-19
+AppIntegration/ProfileV3Host/VDCProfileV3NavigationHost.swift
+  s_5cbfcb66d234e5::t_3f056721d71f03 1-14
+Sources/AIProfile/Data/ProfileV3Fixtures.swift
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-476,478-483,485-490,492-634
+  s_5cbfcb66d234e5::t_1e527faced2389 477,484,491
+Sources/AIProfile/Components/SettingsSearchField.swift
+  s_5cbfcb66d234e5::t_1e8f19b8e1da08 1-32
+Sources/AIProfile/Presentation/ProfileV3SettingsSheetPresenter.swift
+  s_5cbfcb66d234e5::t_8a1402d6cc7d95 18
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-7,9-10,13-17,21-28,30-31,36-44,47-50,56-78,80-120,123-177,179-185,188-193,195-200,202-226,228-243,245-246,249-251,259-306
+  s_5cbfcb66d234e5::t_83ed2829fcaa57 201
+  s_5cbfcb66d234e5::t_f7ac4f0d871178 227
+  s_5cbfcb66d234e5::t_c95bbcf83433bb 33-35
+  s_5cbfcb66d234e5::t_19a7624e30420c 46
+  s_5cbfcb66d234e5::t_6543f5be97aa2a 12
+  s_5cbfcb66d234e5::t_741881bc6535ed 51-55
+  s_5cbfcb66d234e5::t_878e7bc2adcad3 178
+  s_5cbfcb66d234e5::t_71c4f5dfecead0 194
+  s_5cbfcb66d234e5::t_96c1e2612f00de 29,32
+  s_5cbfcb66d234e5::t_51d4447420f427 8,11
+  s_5cbfcb66d234e5::t_f4856c73d514a3 79
+  s_5cbfcb66d234e5::t_c568ec4511034a 45
+  s_5cbfcb66d234e5::t_55eeca5add0276 186-187
+  s_5e9dcbbe33dc0f::t_8a08842e6667ef 19-20,121-122,244,247-248,252-258
+Sources/AIProfile/Networking/ProfileV3NetworkClient.swift
+  s_5e9dcbbe33dc0f::t_ef2785a49319a4 10,34-42
+  s_5e9dcbbe33dc0f::t_3a804bfd2fc4ff 1-9,11-33,43-89
+AppIntegration/ProfileV3Host/VDCProfileV3KYCHost.swift
+  s_5e9dcbbe33dc0f::t_f427b7b452b5f1 1-205
+Sources/AIProfile/Presentation/ProfileV3TravellersSettingsModel.swift
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-324
+Sources/AIProfile/Components/ProfileV3CountryList.swift
+  s_5cbfcb66d234e5::t_c441dd076bb079 42-43
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-41,44-66
+Sources/AIProfile/Presentation/ProfileV3AddPastTripViewModel.swift
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-117,119-159
+  s_5cbfcb66d234e5::t_0052586cbe3db2 118
+Sources/AIProfile/Views/ProfileV3KYCCaptureView.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-79
+Sources/AIProfile/Domain/ProfileV3Passport.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-110
+Sources/AIProfile/ProfileV3HubHostingController.swift
+  s_5cbfcb66d234e5::t_90f46e027e1758 96-97
+  s_5cbfcb66d234e5::t_4e7b294301e068 7,18
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-6,8-17,19-65,70-95,98-294
+  s_5cbfcb66d234e5::t_14f109a8bf45a6 66
+  s_5cbfcb66d234e5::t_638da2b93b49a3 67-69
+Sources/AIProfile/Views/ProfileV3WorldPassDetailView.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-237
+Sources/AIProfile/Host/ProfileV3AnalyticsReporting.swift
+  s_5cbfcb66d234e5::t_8e138386a6d531 1-9
+AppIntegration/ProfileV3Host/VDCProfileV3Countries.swift
+  s_5cbfcb66d234e5::t_58a647bd6e936c 1-10
+Sources/AIProfile/Components/ProfileV3WorldPassCard.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-100
+Sources/AIProfile/Host/ProfileV3FlowOutcome.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-5
+Sources/AIProfile/Presentation/ProfileV3ProfileFieldsModel.swift
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-64,66-77,79-156
+  s_5cbfcb66d234e5::t_2eea1bd52bc1e4 78
+  s_5cbfcb66d234e5::t_d2deb246e2697f 65
+Sources/AIProfile/Views/ProfileV3SettingsView.swift
+  s_5cbfcb66d234e5::t_7d61766c4943ea 194
+  s_5cbfcb66d234e5::t_ed8bd5ffac65e7 191-193
+  s_5cbfcb66d234e5::t_0e5f4dad084859 195-197
+  s_5cbfcb66d234e5::t_f8d1713326d0e5 1-190,198-400
+Sources/AIProfile/ProfileV3PassportScanLauncher.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-127
+AppIntegration/ProfileV3Host/VDCProfileV3GlobeRenderer.swift
+  s_5e9dcbbe33dc0f::t_f427b7b452b5f1 1-60
+Sources/AIProfile/Support/ProfileV3Theme+Palette.swift
+  s_5cbfcb66d234e5::t_8158bcf50c8569 12
+  s_5cbfcb66d234e5::t_0b9dee55e3fa7d 9-11
+  s_5cbfcb66d234e5::t_c2a0053201c6ba 13-15
+  s_5cbfcb66d234e5::t_04dd191a301534 1-8,16-149
+Sources/AIProfile/Components/ProfileV3FloatingControlBackground.swift
+  s_5cbfcb66d234e5::t_56b6229546f847 1-36
+Sources/AIProfile/Components/ProfileV3WorldPassCarousel.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-356
+Sources/AIProfile/Support/ProfileV3Theme.swift
+  s_5cbfcb66d234e5::t_3548255faf9fa6 219
+  s_5cbfcb66d234e5::t_7fe8d13be4b58c 216-218
+  s_5cbfcb66d234e5::t_c7959107b4be2b 220-222
+  s_5cbfcb66d234e5::t_61b8cf3dbbbe60 1-215,223-277
+AppIntegration/ProfileV3Host/VDCProfileV3FieldValidator.swift
+  s_5cbfcb66d234e5::t_63bac236c256d6 1-13
+Sources/AIProfile/Domain/ProfileV3ProfileField.swift
+  s_5cbfcb66d234e5::t_caa704bd5a14bf 10,12-17,31
+  s_5cbfcb66d234e5::t_564cbbd5940850 7-9
+  s_5cbfcb66d234e5::t_ba1cbd73de2ee0 11
+  s_5cbfcb66d234e5::t_adbc6835fc9c72 18-20,28-30
+  s_5cbfcb66d234e5::t_8c7d8a5cd7f1f7 1-6,21-27
+Sources/AIProfile/Support/ProfileV3Color+Hex.swift
+  s_5cbfcb66d234e5::t_acc94fe453f128 1-36
+Sources/AIProfile/Presentation/LoginCountryOption.swift
+  s_5cbfcb66d234e5::t_b3716ca1645505 1-25
+Sources/AIProfile/Domain/ProfileV3Country.swift
+  s_5cbfcb66d234e5::t_10c1159dee0e17 1-107
+Sources/AIProfile/Data/Mappers/ProfileV3AgentMapper.swift
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-559
+Sources/AIProfile/Domain/ProfileV3PastTrip.swift
+  s_5cbfcb66d234e5::t_27e553909e8966 15
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-14,16-71
+AppIntegration/ProfileV3Host/VDCProfileV3AccountHost.swift
+  s_5cbfcb66d234e5::t_c488a9c803bd19 1-86
+Sources/AIProfile/Presentation/ProfileV3AgentFlowViewModel.swift
+  s_5cbfcb66d234e5::t_219e2fcfec8bdf 63
+  s_5cbfcb66d234e5::t_32aeb2d99767de 26-38
+  s_5cbfcb66d234e5::t_34a254a1fed3fb 23-25
+  s_5cbfcb66d234e5::t_82055f5fa446b0 39-41,60-62
+  s_5cbfcb66d234e5::t_133be2fe36a83c 64-66
+  s_5cbfcb66d234e5::t_0f3b0572ca6294 1-22,42-59,67-86
+AppIntegration/ProfileV3Host/VDCProfileV3Composition.swift
+  s_5cbfcb66d234e5::t_88699f5aeec993 14
+  s_5e9dcbbe33dc0f::t_f427b7b452b5f1 1-11,18-20
+  s_5cbfcb66d234e5::t_82a449b4d75cf1 15,17
+  s_5cbfcb66d234e5::t_16bea0e325ae03 16
+  s_5cbfcb66d234e5::t_f0b515982fca41 12-13
+Sources/AIProfile/Support/ProfileV3Analytics.swift
+  s_5cbfcb66d234e5::t_d84a91c66e9f47 20,26,31,36,43,48,53,63,69,128,181,198,206,224,232,236,240,249,253,257,266,275,279,283,287,291,295,299,303,310,314,318,322,326,330,334,341,345,349,353,357,361,365,369,377,381,390,394,398,402,406,410,414,418,422,426,430,434,438,442,446,450,458,466,473,485,489,493,519,523,525-539,549,560,567,577,581,594
+  s_5cbfcb66d234e5::t_2887c1db73e87d 17-19
+  s_5cbfcb66d234e5::t_06361a31cc4de3 21-25
+  s_5cbfcb66d234e5::t_350cc96536fd44 27-30
+  s_5cbfcb66d234e5::t_6d527f755633af 32-35
+  s_5cbfcb66d234e5::t_8d71348ab9d44a 37-42
+  s_5cbfcb66d234e5::t_eb7dfaf4e17400 44-47
+  s_5cbfcb66d234e5::t_0f1bd7229fe903 49-52
+  s_5cbfcb66d234e5::t_29029ed4131882 54-56,60-62
+  s_5cbfcb66d234e5::t_b63a38c0101009 64-68
+  s_5cbfcb66d234e5::t_eb70f72071be5b 70-72,125-127
+  s_5cbfcb66d234e5::t_cbc7a756b96bbc 129-131,178-180
+  s_5cbfcb66d234e5::t_38ac071eee9063 182-184,195-197
+  s_5cbfcb66d234e5::t_7529c29cf5621f 199-201,203-205
+  s_5cbfcb66d234e5::t_f9517d6ee2c5ac 207-209,221-223
+  s_5cbfcb66d234e5::t_93c0faae4b97db 225-227,229-231
+  s_5cbfcb66d234e5::t_d8222dfb110aac 233-235
+  s_5cbfcb66d234e5::t_19e8be67c9aea8 237-239
+  s_5cbfcb66d234e5::t_b3c76211a5062f 241-243,246-248
+  s_5cbfcb66d234e5::t_65961624c0fc2f 250-252
+  s_5cbfcb66d234e5::t_df07305c86d5b4 254-256
+  s_5cbfcb66d234e5::t_223827f61dc844 258-260,263-265
+  s_5cbfcb66d234e5::t_74fb5998b5f3fd 267-269,272-274
+  s_5cbfcb66d234e5::t_0476ef4046c851 276-278
+  s_5cbfcb66d234e5::t_93a3b9baec3f07 280-282
+  s_5cbfcb66d234e5::t_da0257f14b051c 284-286
+  s_5cbfcb66d234e5::t_60da6a69e20f97 288-290
+  s_5cbfcb66d234e5::t_4d110001d32487 292-294
+  s_5cbfcb66d234e5::t_2195e0092fb210 296-298
+  s_5cbfcb66d234e5::t_9f3fd878b52d99 300-302
+  s_5cbfcb66d234e5::t_65ad34fa83ca7e 304-309
+  s_5cbfcb66d234e5::t_447eb307b443ce 311-313
+  s_5cbfcb66d234e5::t_3f20dc982d56d8 315-317
+  s_5cbfcb66d234e5::t_7fcc2a76daf098 319-321
+  s_5cbfcb66d234e5::t_f6d1cc995327c8 323-325
+  s_5cbfcb66d234e5::t_d3f489025b2e27 327-329
+  s_5cbfcb66d234e5::t_05ebfeb3722df9 331-333
+  s_5cbfcb66d234e5::t_b4514cc8618466 335-340
+  s_5cbfcb66d234e5::t_9634def3a2c65f 342-344
+  s_5cbfcb66d234e5::t_57ec7a9a37dbef 346-348
+  s_5cbfcb66d234e5::t_ba14e02538d66d 350-352
+  s_5cbfcb66d234e5::t_870924dbff36dd 354-356
+  s_5cbfcb66d234e5::t_b1f763423fdd51 358-360
+  s_5cbfcb66d234e5::t_1dbb9c6cf8bb76 362-364
+  s_5cbfcb66d234e5::t_a893a6388ab801 366-368
+  s_5cbfcb66d234e5::t_22e12e2e53dc98 370-372,374-376
+  s_5cbfcb66d234e5::t_97e1dfbd593f09 378-380
+  s_5cbfcb66d234e5::t_8fbfbcf252750a 382-384,387-389
+  s_5cbfcb66d234e5::t_104ecb9d43fa67 391-393
+  s_5cbfcb66d234e5::t_465641e8f936f7 395-397
+  s_5cbfcb66d234e5::t_25a3d09f9845c4 399-401
+  s_5cbfcb66d234e5::t_4d53faa6d86f57 403-405
+  s_5cbfcb66d234e5::t_b25eae4e002807 407-409
+  s_5cbfcb66d234e5::t_1cd56491a44025 411-413
+  s_5cbfcb66d234e5::t_8ef774a42d77e6 415-417
+  s_5cbfcb66d234e5::t_db187442556ff0 419-421
+  s_5cbfcb66d234e5::t_7bf36f7ad8d0b0 423-425
+  s_5cbfcb66d234e5::t_33868dc55897eb 427-429
+  s_5cbfcb66d234e5::t_7844637b8de6f7 431-433
+  s_5cbfcb66d234e5::t_d13392f46c06dc 435-437
+  s_5cbfcb66d234e5::t_5121462ac47047 439-441
+  s_5cbfcb66d234e5::t_bb072599936f3d 443-445
+  s_5cbfcb66d234e5::t_2d64ec7791e120 447-449
+  s_5cbfcb66d234e5::t_5266aa4cbfbb37 451-453,455-457
+  s_5cbfcb66d234e5::t_efbd547b7bbdd1 459-461,463-465
+  s_5cbfcb66d234e5::t_b5bc14b60a7259 467-472
+  s_5cbfcb66d234e5::t_01dacec79fb47c 474-476,482-484
+  s_5cbfcb66d234e5::t_35b0f1b06bcea7 486-488
+  s_5cbfcb66d234e5::t_46f9249db74c97 490-492
+  s_5cbfcb66d234e5::t_b80c4ef203040f 494-496,516-518
+  s_5cbfcb66d234e5::t_00418e59d0abeb 520-522
+  s_5cbfcb66d234e5::t_32e1131e3f99ea 524
+  s_5cbfcb66d234e5::t_a25ca18545c9e4 540-542,546-548
+  s_5cbfcb66d234e5::t_4d0814f3ce1886 550-552,557-559
+  s_5cbfcb66d234e5::t_86ce112e8e79bf 561-566
+  s_5cbfcb66d234e5::t_a8e90693a8336b 568-570,574-576
+  s_5cbfcb66d234e5::t_bafdfb08006b58 578-580
+  s_5cbfcb66d234e5::t_3eb208660e02c3 582-584,591-593
+  s_5cbfcb66d234e5::t_3872900f150d92 595
+  s_5cbfcb66d234e5::t_ea166917a4eaca 1-16,57-59,73-124,132-177,185-194,202,210-220,228,244-245,261-262,270-271,373,385-386,454,462,477-481,497-515,543-545,553-556,571-573,585-590
+Sources/AIProfile/Components/ProfileV3CardGlobe.swift
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-90
+Sources/AIProfile/Support/ProfileV3Collection+NonEmpty.swift
+  s_5cbfcb66d234e5::t_07873b1e1a9a45 7-11
+  s_5cbfcb66d234e5::t_9fb310bb006a23 4-6
+  s_5cbfcb66d234e5::t_5680ca1a282d3c 12
+  s_5cbfcb66d234e5::t_5e8038ed073c1d 1-3
+Sources/AIProfile/Presentation/ProfileV3ContactInfoViewModel.swift
+  s_5cbfcb66d234e5::t_2660ce67036e20 31
+  s_5cbfcb66d234e5::t_e5144b84f1f5f3 28-30
+  s_5cbfcb66d234e5::t_07f89464b38335 32-34
+  s_5cbfcb66d234e5::t_15eaa08a621d2e 1-27,35-93
+Sources/AIProfile/Data/Mappers/ProfileV3PassportMapper.swift
+  s_5cbfcb66d234e5::t_78f472ba0901ec 105
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-104,106-152
+Sources/AIProfile/Host/ProfileV3PlaceholderHosts.swift
+  s_5cbfcb66d234e5::t_52c86b95c48906 103-116
+  s_5cbfcb66d234e5::t_c0ed6d4ac6a2f9 98,100-102,118-122
+  s_5cbfcb66d234e5::t_4e67324d059dc0 99,117
+  s_5e9dcbbe33dc0f::t_ef10ef93ac142e 1-97,123
+AppIntegration/ProfileV3Host/VDCProfileV3BaseProvider.swift
+  s_5e9dcbbe33dc0f::t_f427b7b452b5f1 1-6,8,13-23,25-38
+  s_5e9dcbbe33dc0f::t_d24fa0288a4422 7,9-12,24
+Sources/AIProfile/Domain/ProfileV3BoardScreens.swift
+  s_5cbfcb66d234e5::t_08fee877366d0b 1-93
+Package.resolved
+  s_5e9dcbbe33dc0f::t_843abe83e8bc2d 1-411
+Package.swift
+  s_5e9dcbbe33dc0f::t_0b52b6fd6669ef 1-53
+Sources/AIProfile/Components/ProfileV3AINoteLine.swift
+  s_5e9dcbbe33dc0f::t_fb13bff06b3d91 1-70
+Sources/AIProfile/Components/ProfileV3ActivatePill.swift
+  s_5e9dcbbe33dc0f::t_871d0a65f43167 1-41
+Sources/AIProfile/Components/ProfileV3AddPastTripsPill.swift
+  s_5e9dcbbe33dc0f::t_8f47ec1ebca499 1-78
+Sources/AIProfile/Components/ProfileV3AgentGrid.swift
+  s_5e9dcbbe33dc0f::t_012ba20e1981f0 1-66
+Sources/AIProfile/Components/ProfileV3AgentGridCard.swift
+  s_5e9dcbbe33dc0f::t_54f4c4afaaab4c 1-107
+Sources/AIProfile/Components/ProfileV3AgentSaveBar.swift
+  s_5e9dcbbe33dc0f::t_00088f65242e45 1-59
+Sources/AIProfile/Components/ProfileV3AgentSheetHeader.swift
+  s_5e9dcbbe33dc0f::t_48206bb01af683 1-95
+Sources/AIProfile/Components/ProfileV3AtlysOrb.swift
+  s_5e9dcbbe33dc0f::t_39277e737ddd17 1-101
+Sources/AIProfile/Components/ProfileV3AvatarOrb.swift
+  s_5e9dcbbe33dc0f::t_5ee7d36276eb9c 1-76
+Sources/AIProfile/Components/ProfileV3BackFaceWash.swift
+  s_5e9dcbbe33dc0f::t_89cf07920187fc 1-103
+Sources/AIProfile/Components/ProfileV3BackTagHeader.swift
+  s_5e9dcbbe33dc0f::t_612dd27c30720a 1-34
+Sources/AIProfile/Components/ProfileV3BaggagePicker.swift
+  s_5e9dcbbe33dc0f::t_3a7c82cec4fb4b 1-248
+Sources/AIProfile/Components/ProfileV3BenefitCard.swift
+  s_5e9dcbbe33dc0f::t_06a884f2967af1 1-137
+Sources/AIProfile/Components/ProfileV3BenefitCardStack.swift
+  s_5e9dcbbe33dc0f::t_238309fd21edfc 1-153
+Sources/AIProfile/Components/ProfileV3BenefitFooter.swift
+  s_5e9dcbbe33dc0f::t_10c389037b398c 1-29
+Sources/AIProfile/Components/ProfileV3BenefitMeter.swift
+  s_5e9dcbbe33dc0f::t_7d91a6ecaf6508 1-51
+Sources/AIProfile/Components/ProfileV3CTABar.swift
+  s_5e9dcbbe33dc0f::t_554c61e827548d 1-14
+Sources/AIProfile/Components/ProfileV3CapsuleChrome.swift
+  s_5e9dcbbe33dc0f::t_11f89fe79ec3b7 1-96
+Sources/AIProfile/Components/ProfileV3CarCarousel.swift
+  s_5e9dcbbe33dc0f::t_77b229e3cd4b8e 1-94
+Sources/AIProfile/Components/ProfileV3CentredCarousel.swift
+  s_5e9dcbbe33dc0f::t_4c0462607c2bd0 1-55
+Sources/AIProfile/Components/ProfileV3Chip.swift
+  s_5e9dcbbe33dc0f::t_fef1a58caaa06c 1-55
+Sources/AIProfile/Components/ProfileV3CloseBar.swift
+  s_5e9dcbbe33dc0f::t_c4431e0ce569bf 1-25
+Sources/AIProfile/Components/ProfileV3CollapseEffect.swift
+  s_5e9dcbbe33dc0f::t_a548b5efe22d56 1-39
+Sources/AIProfile/Components/ProfileV3CollapsedTab.swift
+  s_5e9dcbbe33dc0f::t_d058783d2ae788 1-83
+Sources/AIProfile/Components/ProfileV3ConnectorDeckCard.swift
+  s_5e9dcbbe33dc0f::t_8331e497e3630b 1-383
+Sources/AIProfile/Components/ProfileV3ConnectorGlyphs.swift
+  s_5e9dcbbe33dc0f::t_35a43e87c7cbe4 1-101
+Sources/AIProfile/Components/ProfileV3ContinueButton.swift
+  s_5e9dcbbe33dc0f::t_b2d2779c53e611 1-69
+Sources/AIProfile/Components/ProfileV3CountryRow.swift
+  s_5e9dcbbe33dc0f::t_a319a6e676b3dd 1-63
+Sources/AIProfile/Components/ProfileV3DashedDivider.swift
+  s_5e9dcbbe33dc0f::t_df46e560eaa46d 1-18
+Sources/AIProfile/Components/ProfileV3DateInput.swift
+  s_5e9dcbbe33dc0f::t_0f803d74471dc6 1-71
+Sources/AIProfile/Components/ProfileV3DetailChrome.swift
+  s_5e9dcbbe33dc0f::t_fbf1c8ee3e1d8b 1-31
+Sources/AIProfile/Components/ProfileV3DialCodeButton.swift
+  s_5e9dcbbe33dc0f::t_43f5969f36a834 1-46
+Sources/AIProfile/Components/ProfileV3DurationWheel.swift
+  s_5e9dcbbe33dc0f::t_163fce1f413e00 1-82
+Sources/AIProfile/Components/ProfileV3EmptyState.swift
+  s_5e9dcbbe33dc0f::t_61c9fe36a26153 1-40
+Sources/AIProfile/Components/ProfileV3EntryReveal.swift
+  s_5e9dcbbe33dc0f::t_a3c7acf47463f9 1-50
+Sources/AIProfile/Components/ProfileV3ExpandableCard.swift
+  s_5e9dcbbe33dc0f::t_33d26479f06e5c 1-137
+Sources/AIProfile/Components/ProfileV3FeedbackOnAppear.swift
+  s_5e9dcbbe33dc0f::t_dc685c047ccef2 1-19
+Sources/AIProfile/Components/ProfileV3FilterChip.swift
+  s_5e9dcbbe33dc0f::t_7cf89af058e962 1-41
+Sources/AIProfile/Components/ProfileV3FlipAffordance.swift
+  s_5e9dcbbe33dc0f::t_6e399a6d3f9271 1-128
+Sources/AIProfile/Components/ProfileV3FlipModifier.swift
+  s_5e9dcbbe33dc0f::t_44c7d01d802659 1-40
+Sources/AIProfile/Components/ProfileV3FlowLayout.swift
+  s_5e9dcbbe33dc0f::t_346c5f11a9a767 1-62
+Sources/AIProfile/Components/ProfileV3FormControls.swift
+  s_5e9dcbbe33dc0f::t_de31d57bf30e57 1-76
+Sources/AIProfile/Components/ProfileV3FormSectionView.swift
+  s_5e9dcbbe33dc0f::t_b4e65f0ce2012f 1-183
+Sources/AIProfile/Components/ProfileV3GlassOrb.swift
+  s_5e9dcbbe33dc0f::t_31f68f934b634e 1-73
+Sources/AIProfile/Components/ProfileV3GlobeOrbits.swift
+  s_5e9dcbbe33dc0f::t_7a8660b7b8ca3a 1-77
+Sources/AIProfile/Components/ProfileV3GradientButton.swift
+  s_5e9dcbbe33dc0f::t_563f215de76e22 1-79
+Sources/AIProfile/Components/ProfileV3GradientStatusText.swift
+  s_5e9dcbbe33dc0f::t_167ef4bd8683d1 1-24
+Sources/AIProfile/Components/ProfileV3HoldToExploreHint.swift
+  s_5e9dcbbe33dc0f::t_87df1551e17c85 1-82
+Sources/AIProfile/Components/ProfileV3HouseholdCard.swift
+  s_5e9dcbbe33dc0f::t_587d1d418c8bfb 1-106
+Sources/AIProfile/Components/ProfileV3HoverModifier.swift
+  s_5e9dcbbe33dc0f::t_9d2e98ba2e3d96 1-76
+Sources/AIProfile/Components/ProfileV3HowUsedPill.swift
+  s_5e9dcbbe33dc0f::t_f7155e447a4480 1-44
+Sources/AIProfile/Components/ProfileV3InformationAccessHero.swift
+  s_5e9dcbbe33dc0f::t_555bb6a8fbc68a 1-151
+Sources/AIProfile/Components/ProfileV3KYCGlow.swift
+  s_5e9dcbbe33dc0f::t_8d56bf8cea5e53 1-110
+Sources/AIProfile/Components/ProfileV3KYCProgressCard.swift
+  s_5e9dcbbe33dc0f::t_9b8c94db22f2ab 1-113
+Sources/AIProfile/Components/ProfileV3KYCRedirectOverlay.swift
+  s_5e9dcbbe33dc0f::t_eed4be5f4be460 1-54
+Sources/AIProfile/Components/ProfileV3KeyboardAvoidance.swift
+  s_5e9dcbbe33dc0f::t_f0dc5df4355610 1-188
+Sources/AIProfile/Components/ProfileV3LabelledField.swift
+  s_5e9dcbbe33dc0f::t_5d6fa445e616de 1-65
+Sources/AIProfile/Components/ProfileV3LoadStateView.swift
+  s_5e9dcbbe33dc0f::t_d0cd034e74384e 1-45
+Sources/AIProfile/Components/ProfileV3MedicalCardView.swift
+  s_5e9dcbbe33dc0f::t_8e6bf61bd0442e 1-127
+Sources/AIProfile/Components/ProfileV3Models+Presentation.swift
+  s_5e9dcbbe33dc0f::t_f8106cd569efc9 1-175
+Sources/AIProfile/Components/ProfileV3NudgeCard.swift
+  s_5e9dcbbe33dc0f::t_0641b32cdf0a24 1-43
+Sources/AIProfile/Components/ProfileV3OfferDetailScaffold.swift
+  s_5e9dcbbe33dc0f::t_d58b8590b2d93e 1-94
+Sources/AIProfile/Components/ProfileV3OfferListScaffold.swift
+  s_5e9dcbbe33dc0f::t_fb94485562e5c1 1-56
+Sources/AIProfile/Components/ProfileV3OptionCard.swift
+  s_5e9dcbbe33dc0f::t_dd22dc565a7525 1-60
+Sources/AIProfile/Components/ProfileV3OptionCardGrid.swift
+  s_5e9dcbbe33dc0f::t_01304a78b37d89 1-40
+Sources/AIProfile/Components/ProfileV3OptionChipGroup.swift
+  s_5e9dcbbe33dc0f::t_53aade2c6fda3c 1-38
+Sources/AIProfile/Components/ProfileV3OptionPickerRow.swift
+  s_5e9dcbbe33dc0f::t_682c5b0e709437 1-59
+Sources/AIProfile/Components/ProfileV3PassportCard.swift
+  s_5e9dcbbe33dc0f::t_c5cfd04cd2b484 1-229
+Sources/AIProfile/Components/ProfileV3PastTripCard.swift
+  s_5e9dcbbe33dc0f::t_390cdabf38b4fa 1-219
+Sources/AIProfile/Components/ProfileV3PhoneInput.swift
+  s_5e9dcbbe33dc0f::t_68ccfc67b94d2d 1-69
+Sources/AIProfile/Components/ProfileV3PillButton.swift
+  s_5e9dcbbe33dc0f::t_397a1e553dac3e 1-60
+Sources/AIProfile/Components/ProfileV3Podium.swift
+  s_5e9dcbbe33dc0f::t_3e79faf2f9648d 1-27
+Sources/AIProfile/Components/ProfileV3PreferenceSlider.swift
+  s_5e9dcbbe33dc0f::t_2779da7a817b63 1-158
+Sources/AIProfile/Components/ProfileV3PressableStyle.swift
+  s_5e9dcbbe33dc0f::t_815904438eed97 1-54
+Sources/AIProfile/Components/ProfileV3ProgrammeCard.swift
+  s_5e9dcbbe33dc0f::t_202baaf5cad9e5 1-100
+Sources/AIProfile/Components/ProfileV3ProgrammePickerCard.swift
+  s_5e9dcbbe33dc0f::t_45baedaed055e7 1-52
+Sources/AIProfile/Components/ProfileV3ProgrammeTile.swift
+  s_5e9dcbbe33dc0f::t_1e118bb87ade80 1-359
+Sources/AIProfile/Components/ProfileV3ProgressRing.swift
+  s_5e9dcbbe33dc0f::t_df6815569551e5 1-48
+Sources/AIProfile/Components/ProfileV3RadioMark.swift
+  s_5e9dcbbe33dc0f::t_b87c41c5f56aec 1-26
+Sources/AIProfile/Components/ProfileV3RetryPanel.swift
+  s_5e9dcbbe33dc0f::t_5bd0a9dbf32516 1-31
+Sources/AIProfile/Components/ProfileV3SaveBarFade.swift
+  s_5e9dcbbe33dc0f::t_4af50ea412f9ea 1-15
+Sources/AIProfile/Components/ProfileV3SaveButton.swift
+  s_5e9dcbbe33dc0f::t_d8dcbf6d362b54 1-83
+Sources/AIProfile/Components/ProfileV3SectionHeader.swift
+  s_5e9dcbbe33dc0f::t_3ffa5e0b8bba29 1-60
+Sources/AIProfile/Components/ProfileV3SectionSourcesRow.swift
+  s_5e9dcbbe33dc0f::t_790da2bcda588b 1-29
+Sources/AIProfile/Components/ProfileV3SettingsRow.swift
+  s_5e9dcbbe33dc0f::t_479990ce3290b7 1-89
+Sources/AIProfile/Components/ProfileV3SheetChrome.swift
+  s_5e9dcbbe33dc0f::t_e00753015ee3aa 1-78
+Sources/AIProfile/Components/ProfileV3SheetSizing.swift
+  s_5e9dcbbe33dc0f::t_e2b771afbc7a82 1-53
+Sources/AIProfile/Components/ProfileV3SkeletonCard.swift
+  s_5e9dcbbe33dc0f::t_781968bba9657f 1-25
+Sources/AIProfile/Components/ProfileV3SliderRuler.swift
+  s_5e9dcbbe33dc0f::t_17a5e653994055 1-44
+Sources/AIProfile/Components/ProfileV3SourceIconStack.swift
+  s_5e9dcbbe33dc0f::t_ff594d52184e96 1-38
+Sources/AIProfile/Components/ProfileV3SourceStepRow.swift
+  s_5e9dcbbe33dc0f::t_f7c3ed0f4ddf06 1-49
+Sources/AIProfile/Components/ProfileV3SourcesPill.swift
+  s_5e9dcbbe33dc0f::t_1557214143575b 1-56
+Sources/AIProfile/Components/ProfileV3Spinner.swift
+  s_5e9dcbbe33dc0f::t_a98f1f131fd0dd 1-34
+Sources/AIProfile/Components/ProfileV3StatusDot.swift
+  s_5e9dcbbe33dc0f::t_fc8b13bcc1b4cc 1-46
+Sources/AIProfile/Components/ProfileV3StatusPanel.swift
+  s_5e9dcbbe33dc0f::t_a2cdd70472bb52 1-46
+Sources/AIProfile/Components/ProfileV3StepIndicator.swift
+  s_5e9dcbbe33dc0f::t_600b527926afb2 1-46
+Sources/AIProfile/Components/ProfileV3SurfaceCard.swift
+  s_5e9dcbbe33dc0f::t_014af632d71aec 1-50
+Sources/AIProfile/Components/ProfileV3TagLabel.swift
+  s_5e9dcbbe33dc0f::t_377e17a117f427 1-53
+Sources/AIProfile/Components/ProfileV3Toast.swift
+  s_5e9dcbbe33dc0f::t_2d3d049f2e7460 1-62
+Sources/AIProfile/Components/ProfileV3TravellerCard.swift
+  s_5e9dcbbe33dc0f::t_a9a4fa875dd383 1-90
+Sources/AIProfile/Components/ProfileV3TravellerCardLip.swift
+  s_5e9dcbbe33dc0f::t_fc7a9f64e284b7 1-22
+Sources/AIProfile/Components/ProfileV3TwoToneTitle.swift
+  s_5e9dcbbe33dc0f::t_94ff2d1c6c3193 1-29
+Sources/AIProfile/Components/ProfileV3UnderlinedField.swift
+  s_5e9dcbbe33dc0f::t_f515ec027152d0 1-52
+Sources/AIProfile/Components/ProfileV3UsageCard.swift
+  s_5e9dcbbe33dc0f::t_53ae9ca4bc2281 1-175
+Sources/AIProfile/Components/ProfileV3WorldPassBackFace.swift
+  s_5e9dcbbe33dc0f::t_14d8123cafd5b0 1-223
+Sources/AIProfile/Data/DTOs/ProfileV3AgentDTO.swift
+  s_5e9dcbbe33dc0f::t_8c266c2033094a 1-456
+Sources/AIProfile/Data/DTOs/ProfileV3BenefitsDTO.swift
+  s_5e9dcbbe33dc0f::t_4cc1e8cceddc99 1-48
+Sources/AIProfile/Data/DTOs/ProfileV3BoardDTO.swift
+  s_5e9dcbbe33dc0f::t_5ef9f5600b459b 1-303
+Sources/AIProfile/Data/DTOs/ProfileV3CaptureDTO.swift
+  s_5e9dcbbe33dc0f::t_60325171da35e4 1-128
+Sources/AIProfile/Data/DTOs/ProfileV3ConnectorsDTO.swift
+  s_5e9dcbbe33dc0f::t_a49f1ff43d3f57 1-130
+Sources/AIProfile/Data/DTOs/ProfileV3CouponsDTO.swift
+  s_5e9dcbbe33dc0f::t_f0c2cfdad610a9 1-113
+Sources/AIProfile/Data/DTOs/ProfileV3EditFieldDTO.swift
+  s_5e9dcbbe33dc0f::t_f9f538e997cff8 1-68
+Sources/AIProfile/Data/DTOs/ProfileV3GlobeDTO.swift
+  s_5e9dcbbe33dc0f::t_d51e49abda1f86 1-30
+Sources/AIProfile/Data/DTOs/ProfileV3LoyaltyDTO.swift
+  s_5e9dcbbe33dc0f::t_7e11d1da7ae8db 1-199
+Sources/AIProfile/Data/DTOs/ProfileV3PassportDTO.swift
+  s_5e9dcbbe33dc0f::t_a981e15876fcfd 1-150
+Sources/AIProfile/Data/DTOs/ProfileV3ProfileFieldDTO.swift
+  s_5e9dcbbe33dc0f::t_fb52e82ec9908a 1-57
+Sources/AIProfile/Data/DTOs/ProfileV3SettingsDTO.swift
+  s_5e9dcbbe33dc0f::t_6e7885a8f3e11d 1-123
+Sources/AIProfile/Data/DTOs/ProfileV3SharedDTO.swift
+  s_5e9dcbbe33dc0f::t_68e9c560bd6957 1-208
+Sources/AIProfile/Data/DTOs/ProfileV3TermsDTO.swift
+  s_5e9dcbbe33dc0f::t_8da35467d12533 1-43
+Sources/AIProfile/Data/DTOs/ProfileV3TravellersDTO.swift
+  s_5e9dcbbe33dc0f::t_9fc26b075ec207 1-218
+Sources/AIProfile/Data/Mappers/ProfileV3AgentDateCodec.swift
+  s_5e9dcbbe33dc0f::t_88a0bcab93de2e 1-65
+Sources/AIProfile/Data/Mappers/ProfileV3AgentSubmission.swift
+  s_5e9dcbbe33dc0f::t_13fb4c0ccf27db 1-165
+Sources/AIProfile/Data/Mappers/ProfileV3BenefitsMapper.swift
+  s_5e9dcbbe33dc0f::t_d51db65adb09dc 1-58
+Sources/AIProfile/Data/Mappers/ProfileV3BoardMapper.swift
+  s_5e9dcbbe33dc0f::t_940228b734bc81 1-244
+Sources/AIProfile/Data/Mappers/ProfileV3CaptureMapper.swift
+  s_5e9dcbbe33dc0f::t_3c99958a06893a 1-156
+Sources/AIProfile/Data/Mappers/ProfileV3ConnectorsMapper.swift
+  s_5e9dcbbe33dc0f::t_ff029d336b3006 1-99
+Sources/AIProfile/Data/Mappers/ProfileV3CouponsMapper.swift
+  s_5e9dcbbe33dc0f::t_59ca7d944c4abf 1-46
+Sources/AIProfile/Data/Mappers/ProfileV3DTOReading.swift
+  s_5e9dcbbe33dc0f::t_267ca1b29d9bcc 1-30
+Sources/AIProfile/Data/Mappers/ProfileV3EditFieldMapper.swift
+  s_5e9dcbbe33dc0f::t_e4ae02a60c0e35 1-38
+Sources/AIProfile/Data/Mappers/ProfileV3GlobeMapper.swift
+  s_5e9dcbbe33dc0f::t_332619b49d53c2 1-18
+Sources/AIProfile/Data/Mappers/ProfileV3LoyaltyMapper.swift
+  s_5e9dcbbe33dc0f::t_9edc77f131f5e5 1-186
+Sources/AIProfile/Data/Mappers/ProfileV3SettingsMapper.swift
+  s_5e9dcbbe33dc0f::t_7c524eced209f1 1-62
+Sources/AIProfile/Data/Mappers/ProfileV3TermsMapper.swift
+  s_5e9dcbbe33dc0f::t_d364e8ba51f929 1-66
+Sources/AIProfile/Data/Mappers/ProfileV3TravellersMapper.swift
+  s_5e9dcbbe33dc0f::t_3386c44714d4f0 1-82
+Sources/AIProfile/Data/ProfileV3APIErrorMapper.swift
+  s_5e9dcbbe33dc0f::t_0db3fcba94689b 1-95
+Sources/AIProfile/Data/ProfileV3AgentFixtures.swift
+  s_5e9dcbbe33dc0f::t_51a8b09d647d8a 1-656
+Sources/AIProfile/Data/ProfileV3BenefitCatalogue.swift
+  s_5e9dcbbe33dc0f::t_bebce041069367 1-120
+Sources/AIProfile/Data/ProfileV3BoardStore.swift
+  s_5e9dcbbe33dc0f::t_152faf51b2f87f 1-140
+Sources/AIProfile/Data/ProfileV3FailingRepository.swift
+  s_5e9dcbbe33dc0f::t_8fb28986e4a73e 1-245
+Sources/AIProfile/Data/ProfileV3HubHints.swift
+  s_5e9dcbbe33dc0f::t_ca2ea8c8502971 1-42
+Sources/AIProfile/Data/ProfileV3MockRepository.swift
+  s_5e9dcbbe33dc0f::t_6aa6df16f93977 1-458
+Sources/AIProfile/Data/ProfileV3PassportFixtures.swift
+  s_5e9dcbbe33dc0f::t_c24722fe454901 1-94
+Sources/AIProfile/Data/ProfileV3PastTripsFixtures.swift
+  s_5e9dcbbe33dc0f::t_7059d2a0383de7 1-12
+Sources/AIProfile/Data/ProfileV3PastTripsStore.swift
+  s_5e9dcbbe33dc0f::t_bf806d3c5a0b13 1-39
+Sources/AIProfile/Data/ProfileV3PermissionDefaults.swift
+  s_5e9dcbbe33dc0f::t_6365b306ecc205 1-36
+Sources/AIProfile/Data/ProfileV3ProgrammeCatalogue.swift
+  s_5e9dcbbe33dc0f::t_527a912822df12 1-76
+Sources/AIProfile/Data/ProfileV3ProgrammeFixtures.swift
+  s_5e9dcbbe33dc0f::t_a998e310d31f8a 1-118
+Sources/AIProfile/Data/ProfileV3Repository.swift
+  s_5e9dcbbe33dc0f::t_842a7d68383914 1-121
+Sources/AIProfile/Data/ProfileV3TermsContent.swift
+  s_5e9dcbbe33dc0f::t_2cefdc7f7a8a80 1-102
+Sources/AIProfile/Domain/ProfileV3AgentForm.swift
+  s_5e9dcbbe33dc0f::t_c1ab3fafe457c1 1-311
+Sources/AIProfile/Domain/ProfileV3Board.swift
+  s_5e9dcbbe33dc0f::t_00325109173f67 1-25
+Sources/AIProfile/Domain/ProfileV3ConnectorDeckEntry.swift
+  s_5e9dcbbe33dc0f::t_2c132941102af6 1-10
+Sources/AIProfile/Domain/ProfileV3Coupon.swift
+  s_5e9dcbbe33dc0f::t_f13d16839740aa 1-58
+Sources/AIProfile/Domain/ProfileV3Directive.swift
+  s_5e9dcbbe33dc0f::t_1387f50bed39d6 1-153
+Sources/AIProfile/Domain/ProfileV3Error.swift
+  s_5e9dcbbe33dc0f::t_d03ab8906172bc 1-37
+Sources/AIProfile/Domain/ProfileV3Models.swift
+  s_5e9dcbbe33dc0f::t_a9649ea1a88712 1-366
+Sources/AIProfile/Domain/ProfileV3Permissions.swift
+  s_5e9dcbbe33dc0f::t_d0107acc2a4fc3 1-30
+Sources/AIProfile/Domain/ProfileV3SettingsMenu.swift
+  s_5e9dcbbe33dc0f::t_f3b5f4e2acf31e 1-39
+Sources/AIProfile/Domain/ProfileV3Terms.swift
+  s_5e9dcbbe33dc0f::t_4272325d639788 1-18
+Sources/AIProfile/Generated/ProfileV3L10n+Generated.swift
+  s_5e9dcbbe33dc0f::t_8b96fd9ddd7ead 1-774
+Sources/AIProfile/Networking/ProfileV3API.swift
+  s_5e9dcbbe33dc0f::t_3c79024721cc5a 1-195
+Sources/AIProfile/Networking/ProfileV3DiskCache.swift
+  s_5e9dcbbe33dc0f::t_a4bcfd491a74c4 1-33
+Sources/AIProfile/Networking/ProfileV3ErrorEnvelope.swift
+  s_5e9dcbbe33dc0f::t_6818922515b5e1 1-37
+Sources/AIProfile/Networking/ProfileV3Multipart.swift
+  s_5e9dcbbe33dc0f::t_e8c17de37a0fd6 1-45
+Sources/AIProfile/Presentation/ProfileV3AccountSettingsModel.swift
+  s_5e9dcbbe33dc0f::t_ab008ca0f6b9eb 1-82
+Sources/AIProfile/Presentation/ProfileV3AddProgrammeSheetPresenter.swift
+  s_5e9dcbbe33dc0f::t_d37895456c107b 1-109
+Sources/AIProfile/Presentation/ProfileV3AddProgrammeViewModel.swift
+  s_5e9dcbbe33dc0f::t_d604e7cd7bdd71 1-398
+Sources/AIProfile/Presentation/ProfileV3AirportPickupViewModel.swift
+  s_5e9dcbbe33dc0f::t_18fa47b7ac7e5f 1-130
+Sources/AIProfile/Presentation/ProfileV3ConnectorsSettingsModel.swift
+  s_5e9dcbbe33dc0f::t_dbb61cc74dfb7f 1-227
+Sources/AIProfile/Presentation/ProfileV3HeroPresenter.swift
+  s_5e9dcbbe33dc0f::t_aa6c4dda41ef3c 1-39
+Sources/AIProfile/Presentation/ProfileV3HubCover.swift
+  s_5e9dcbbe33dc0f::t_ad75830340daf3 1-65
+Sources/AIProfile/Presentation/ProfileV3HubViewModel.swift
+  s_5e9dcbbe33dc0f::t_13836f0e7d3b09 1-814
+Sources/AIProfile/Presentation/ProfileV3PassportHowUsedViewModel.swift
+  s_5e9dcbbe33dc0f::t_df8eeb0eb4993c 1-31
+Sources/AIProfile/Presentation/ProfileV3PassportReasonViewModel.swift
+  s_5e9dcbbe33dc0f::t_f5675ea3285f0a 1-64
+Sources/AIProfile/Presentation/ProfileV3PastTripsSheetPresenter.swift
+  s_5e9dcbbe33dc0f::t_ad698942333551 1-82
+Sources/AIProfile/Presentation/ProfileV3PastTripsViewModel.swift
+  s_5e9dcbbe33dc0f::t_025827b96fb349 1-203
+Sources/AIProfile/Presentation/ProfileV3PermissionsSettingsModel.swift
+  s_5e9dcbbe33dc0f::t_f1f26927ca39de 1-72
+Sources/AIProfile/Presentation/ProfileV3PhasedLoad.swift
+  s_5e9dcbbe33dc0f::t_b75b3b4e4abd81 1-50
+Sources/AIProfile/Presentation/ProfileV3PreferenceSourcesViewModel.swift
+  s_5e9dcbbe33dc0f::t_2346cc83822205 1-43
+Sources/AIProfile/Presentation/ProfileV3ProgrammeSelectionMemory.swift
+  s_5e9dcbbe33dc0f::t_f6ccb39fc55a09 1-14
+Sources/AIProfile/Presentation/ProfileV3ProgrammeSourcesViewModel.swift
+  s_5e9dcbbe33dc0f::t_cec1bece31014c 1-43
+Sources/AIProfile/Presentation/ProfileV3ProgrammesViewModel.swift
+  s_5e9dcbbe33dc0f::t_7058a022042738 1-352
+Sources/AIProfile/Presentation/ProfileV3PushTransition.swift
+  s_5e9dcbbe33dc0f::t_cc7e4692809e39 1-76
+Sources/AIProfile/Presentation/ProfileV3SettingsViewModel.swift
+  s_5e9dcbbe33dc0f::t_df9370517c0d7e 1-186
+Sources/AIProfile/Presentation/ProfileV3SheetWindow.swift
+  s_5e9dcbbe33dc0f::t_d543fa32e18691 1-48
+Sources/AIProfile/Presentation/ProfileV3TermsViewModel.swift
+  s_5e9dcbbe33dc0f::t_90bd2845e1bd64 1-32
+Sources/AIProfile/ProfileV3AddProgrammeHostingController.swift
+  s_5e9dcbbe33dc0f::t_69234c367942f8 1-52
+Sources/AIProfile/ProfileV3ProgrammesHostingController.swift
+  s_5e9dcbbe33dc0f::t_04329d8151b943 1-153
+Sources/AIProfile/ProfileV3SubFlowHostingController.swift
+  s_5e9dcbbe33dc0f::t_7d126934f2c35d 1-27
+Sources/AIProfile/Resources/ProfileV3.xcassets/Contents.json
+  s_5e9dcbbe33dc0f::t_16cac1a86a6773 1-6
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_atlys_mark.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_16e06399da3e1f 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_atlys_mark.imageset/profile_v3_atlys_mark.svg
+  s_5e9dcbbe33dc0f::t_4e1c50bef3cf55 1-13
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_atlys_wordmark.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_dab3bd00c4f8e4 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_atlys_wordmark.imageset/profile_v3_atlys_wordmark.svg
+  s_5e9dcbbe33dc0f::t_701ba10142524d 1-9
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_autostop.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_b3daa381cec3b5 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_autostop.imageset/profile_v3_autostop.svg
+  s_5e9dcbbe33dc0f::t_2b470a9b351110 1-10
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_bolt.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_2bf76c04199f47 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_bolt.imageset/profile_v3_bolt.svg
+  s_5e9dcbbe33dc0f::t_c112d01cd1458f 1-3
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_disconnect_link.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_83f86f86dd7323 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_disconnect_link.imageset/profile_v3_disconnect_link.svg
+  s_5e9dcbbe33dc0f::t_9ba368832cb029 1-24
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_flip_360.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_0f89e0a6f4d44f 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_flip_360.imageset/profile_v3_flip_360.svg
+  s_5e9dcbbe33dc0f::t_9b836a750e665c 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_flip_360_back.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_c89c9653882526 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_flip_360_back.imageset/profile_v3_flip_360_back.svg
+  s_5e9dcbbe33dc0f::t_36e6aa171c400e 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_mobile_check.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_2fb44df4fd98d4 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_mobile_check.imageset/profile_v3_mobile_check.svg
+  s_5e9dcbbe33dc0f::t_138d9a6ceee934 1-3
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_passport.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_3a7407a1cd7efa 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_passport.imageset/profile_v3_passport.svg
+  s_5e9dcbbe33dc0f::t_d8032ca8e02d50 1-3
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_sparkle.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_48a3535e3ad688 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_sparkle.imageset/profile_v3_sparkle.svg
+  s_5e9dcbbe33dc0f::t_c174f1152f2a08 1-5
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_status_complete.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_66c03ace540344 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_status_complete.imageset/profile_v3_status_complete.svg
+  s_5e9dcbbe33dc0f::t_c7f31227e79148 1-4
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_swipe_vertical.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_07da487208ab51 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_swipe_vertical.imageset/profile_v3_swipe_vertical.svg
+  s_5e9dcbbe33dc0f::t_cca68adc40881c 1-3
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_worldpass_plus.imageset/Contents.json
+  s_5e9dcbbe33dc0f::t_e4b5e91bfc6465 1-16
+Sources/AIProfile/Resources/ProfileV3.xcassets/profile_v3_worldpass_plus.imageset/profile_v3_worldpass_plus.svg
+  s_5e9dcbbe33dc0f::t_7472162043238d 1-3
+Sources/AIProfile/Resources/ProfileV3Localizable.xcstrings
+  s_5e9dcbbe33dc0f::t_9fa3b362799261 1-4002
+Sources/AIProfile/Support/ProfileV3Assets.swift
+  s_5e9dcbbe33dc0f::t_cdfdd061a7dff1 1-115
+Sources/AIProfile/Support/ProfileV3Backoff.swift
+  s_5e9dcbbe33dc0f::t_fb5c375be83479 1-69
+Sources/AIProfile/Support/ProfileV3ConnectorHaptics.swift
+  s_5e9dcbbe33dc0f::t_7645dcfa6e1434 1-281
+Sources/AIProfile/Support/ProfileV3DittoRuntimeStrings.swift
+  s_5e9dcbbe33dc0f::t_391b89a0058a6a 1-10
+Sources/AIProfile/Support/ProfileV3FeatureFlags.swift
+  s_5e9dcbbe33dc0f::t_63e70ca98e04bf 1-13
+Sources/AIProfile/Support/ProfileV3GlobeLocations.swift
+  s_5e9dcbbe33dc0f::t_89a92d76685377 1-81
+Sources/AIProfile/Support/ProfileV3Icon.swift
+  s_5e9dcbbe33dc0f::t_d8156baf3ea30f 1-10
+Sources/AIProfile/Support/ProfileV3RemoteImage.swift
+  s_5e9dcbbe33dc0f::t_f8bf84613042a4 1-99
+Sources/AIProfile/Support/ProfileV3ScrollOffset.swift
+  s_5e9dcbbe33dc0f::t_ec66ace397292b 1-73
+Sources/AIProfile/Support/ProfileV3SettingsStrings.swift
+  s_5e9dcbbe33dc0f::t_2424cab470bd18 1-123
+Sources/AIProfile/Support/ProfileV3Strings.swift
+  s_5e9dcbbe33dc0f::t_ba348449f8b025 1-248
+Sources/AIProfile/Support/ProfileV3Theme+AgentSizes.swift
+  s_5e9dcbbe33dc0f::t_96b0f87c1d726e 1-137
+Sources/AIProfile/Support/ProfileV3Theme+Gradients.swift
+  s_5e9dcbbe33dc0f::t_174341587cf5f4 1-351
+Sources/AIProfile/Support/ProfileV3Theme+HubSizes.swift
+  s_5e9dcbbe33dc0f::t_e8e0b1447bad5c 1-162
+Sources/AIProfile/Support/ProfileV3Theme+Motion.swift
+  s_5e9dcbbe33dc0f::t_c648cded3495bb 1-131
+Sources/AIProfile/Support/ProfileV3Theme+PastTripsSizes.swift
+  s_5e9dcbbe33dc0f::t_0ba44ea998942a 1-214
+Sources/AIProfile/Support/ProfileV3Theme+ProgrammeSizes.swift
+  s_5e9dcbbe33dc0f::t_ea0dd26d699afc 1-83
+Sources/AIProfile/Support/ProfileV3Theme+Settings.swift
+  s_5e9dcbbe33dc0f::t_6012fc67bb394b 1-299
+Sources/AIProfile/Support/ProfileV3Theme+SettingsPage.swift
+  s_5e9dcbbe33dc0f::t_44b92def899f2b 1-141
+Sources/AIProfile/Support/ProfileV3Theme+SourcesSizes.swift
+  s_5e9dcbbe33dc0f::t_e0c942ca4aaf59 1-56
+Sources/AIProfile/Support/ProfileV3Theme+TravellerSizes.swift
+  s_5e9dcbbe33dc0f::t_f0c9561353b0bc 1-15
+Sources/AIProfile/Support/ProfileV3WriteQueue.swift
+  s_5e9dcbbe33dc0f::t_d9d0d78a38a6d2 1-27
+Sources/AIProfile/Views/ProfileV3AddPastTripSheet.swift
+  s_5e9dcbbe33dc0f::t_746dd1343e1db7 1-231
+Sources/AIProfile/Views/ProfileV3AddProgrammeView.swift
+  s_5e9dcbbe33dc0f::t_b7bcd62c6e9dde 1-474
+Sources/AIProfile/Views/ProfileV3AgentFlowView.swift
+  s_5e9dcbbe33dc0f::t_ae559034a2a646 1-90
+Sources/AIProfile/Views/ProfileV3AgentFormView.swift
+  s_5e9dcbbe33dc0f::t_e7c65e0bee1bf3 1-239
+Sources/AIProfile/Views/ProfileV3AirportPickupView.swift
+  s_5e9dcbbe33dc0f::t_9d480146c2544c 1-268
+Sources/AIProfile/Views/ProfileV3AppAccessView.swift
+  s_5e9dcbbe33dc0f::t_80930e497bdf9c 1-45
+Sources/AIProfile/Views/ProfileV3BenefitDetailView.swift
+  s_5e9dcbbe33dc0f::t_6f0a3afc281989 1-54
+Sources/AIProfile/Views/ProfileV3BenefitsListView.swift
+  s_5e9dcbbe33dc0f::t_d5f64d0e395e02 1-123
+Sources/AIProfile/Views/ProfileV3ConfirmationView.swift
+  s_5e9dcbbe33dc0f::t_7e93a5e9e7ea81 1-148
+Sources/AIProfile/Views/ProfileV3ConnectorDeckView.swift
+  s_5e9dcbbe33dc0f::t_8f7a6f3a562cdc 1-154
+Sources/AIProfile/Views/ProfileV3ContactInfoView.swift
+  s_5e9dcbbe33dc0f::t_6f28d06682e4d3 1-164
+Sources/AIProfile/Views/ProfileV3CouponDetailView.swift
+  s_5e9dcbbe33dc0f::t_6661546ba790c6 1-48
+Sources/AIProfile/Views/ProfileV3CouponsListView.swift
+  s_5e9dcbbe33dc0f::t_0d179f07e0913c 1-73
+Sources/AIProfile/Views/ProfileV3DeleteReasonView.swift
+  s_5e9dcbbe33dc0f::t_03eb9f60f736a0 1-128
+Sources/AIProfile/Views/ProfileV3DeleteTravellerConfirmView.swift
+  s_5e9dcbbe33dc0f::t_408be0b902315c 1-87
+Sources/AIProfile/Views/ProfileV3DisconnectEmailView.swift
+  s_5e9dcbbe33dc0f::t_bbecd812700d7e 1-295
+Sources/AIProfile/Views/ProfileV3EditTravellerFormView.swift
+  s_5e9dcbbe33dc0f::t_f5dde828f2edfb 1-212
+Sources/AIProfile/Views/ProfileV3EditTravellersView.swift
+  s_5e9dcbbe33dc0f::t_ebf4ba641fa0cf 1-184
+Sources/AIProfile/Views/ProfileV3HeroOverlay.swift
+  s_5e9dcbbe33dc0f::t_c690bfcf85cb03 1-195
+Sources/AIProfile/Views/ProfileV3InformationAccessView.swift
+  s_5e9dcbbe33dc0f::t_c6fb8babda8169 1-256
+Sources/AIProfile/Views/ProfileV3KYCRedirectView.swift
+  s_5e9dcbbe33dc0f::t_6147a78db433df 1-83
+Sources/AIProfile/Views/ProfileV3OptionPickerView.swift
+  s_5e9dcbbe33dc0f::t_2c39bb736a3c5b 1-87
+Sources/AIProfile/Views/ProfileV3PassportHowUsedView.swift
+  s_5e9dcbbe33dc0f::t_c82ce370eca15a 1-177
+Sources/AIProfile/Views/ProfileV3PassportReasonView.swift
+  s_5e9dcbbe33dc0f::t_6336ee77335cb1 1-150
+Sources/AIProfile/Views/ProfileV3PastTripsView.swift
+  s_5e9dcbbe33dc0f::t_b96f0c3ead28d7 1-263
+Sources/AIProfile/Views/ProfileV3PermissionsView.swift
+  s_5e9dcbbe33dc0f::t_bb012ac4b4de57 1-132
+Sources/AIProfile/Views/ProfileV3PreviousPassportsView.swift
+  s_5e9dcbbe33dc0f::t_41161f92d81d67 1-114
+Sources/AIProfile/Views/ProfileV3ProgrammeInsightView.swift
+  s_5e9dcbbe33dc0f::t_a5a01f5d2b6fa9 1-119
+Sources/AIProfile/Views/ProfileV3ProgrammeSourcesView.swift
+  s_5e9dcbbe33dc0f::t_9264940357d2b2 1-74
+Sources/AIProfile/Views/ProfileV3ProgrammesView.swift
+  s_5e9dcbbe33dc0f::t_d072d2762f44c7 1-528
+Sources/AIProfile/Views/ProfileV3SectionSourcesView.swift
+  s_5e9dcbbe33dc0f::t_5d376266bb314d 1-168
+Sources/AIProfile/Views/ProfileV3SettingsDestinationView.swift
+  s_5e9dcbbe33dc0f::t_0f0d9cee1a30da 1-258
+Sources/AIProfile/Views/ProfileV3SettingsSheetView.swift
+  s_5e9dcbbe33dc0f::t_9d491a6c786616 1-74
+Sources/AIProfile/Views/ProfileV3TermsView.swift
+  s_5e9dcbbe33dc0f::t_dd8be73b60221e 1-133
+Tests/AIProfileTests/AIProfileTests.swift
+  s_5e9dcbbe33dc0f::t_c81ed5c1266464 1-8
+Sources/AIProfile/Presentation/ProfileV3SettingsRouting.swift
+  s_5cbfcb66d234e5::t_dbce6ce72e6659 1-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a8d78af89bdac4c67560fbbf031285b9a126d20a",
+  "prompts": {},
+  "sessions": {
+    "s_5cbfcb66d234e5": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e6443cee-c7aa-4a5d-8ca7-861ccd09fa08",
+        "model": "grok-4.7"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_5e9dcbbe33dc0f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "562aacfd-6df3-4c4d-972e-1fb38abede25",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "unknown"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
