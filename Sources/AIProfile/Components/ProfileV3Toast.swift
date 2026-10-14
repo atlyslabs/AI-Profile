@@ -1,0 +1,62 @@
+import ATUIKit
+import SwiftUI
+
+struct ProfileV3Toast: View {
+    let message: String
+
+    var body: some View {
+        HStack(spacing: ProfileV3Theme.Space.s12) {
+            Text(message)
+                .typoGraphy(.B2InterSemibold12)
+                .foregroundStyle(ProfileV3Theme.toastTextGradient)
+                .multilineTextAlignment(.leading)
+            Spacer(minLength: 0)
+            badge
+        }
+        .padding(.horizontal, ProfileV3Theme.Space.s30)
+        .frame(height: ProfileV3Theme.Control.large)
+        .frame(maxWidth: .infinity)
+        .background(toastBackground)
+        .clipShape(Capsule())
+        .shadow(
+            color: ProfileV3Theme.Palette.shadow,
+            radius: ProfileV3Theme.Shadow.cardRadius,
+            y: ProfileV3Theme.Shadow.cardY
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(message)
+    }
+
+    private var toastBackground: some View {
+        ZStack {
+            Color(at: .pureWhite)
+            RadialGradient(
+                colors: [ProfileV3Theme.Palette.toastEnd.opacity(ProfileV3Theme.Opacity.toastWash), .clear],
+                center: .trailing,
+                startRadius: 0,
+                endRadius: ProfileV3Theme.Sizes.toastGlowRadius
+            )
+        }
+        .allowsHitTesting(false)
+    }
+
+    private var badge: some View {
+        ZStack {
+            Circle()
+                .fill(ProfileV3Theme.Palette.toastEnd)
+            ATIcon.SwiftUIImage.check
+                .profileV3Icon(ProfileV3Theme.Icon.sm)
+                .foregroundStyle(Color(at: .pureWhite))
+        }
+        .frame(width: ProfileV3Theme.Icon.lg, height: ProfileV3Theme.Icon.lg)
+        .accessibilityHidden(true)
+    }
+}
+
+#if DEBUG
+#Preview("Toast") {
+    ProfileV3Toast(message: ProfileV3Strings.travellerDeleted("abhishek s."))
+        .padding(ProfileV3Theme.Sizes.screenHorizontalMargin)
+        .background(Color(at: .pureWhite))
+}
+#endif

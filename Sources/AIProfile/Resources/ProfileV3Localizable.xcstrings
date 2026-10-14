@@ -1,0 +1,4002 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "mo-aiprofile-account-button-confirm-delete": {
+      "comment": "Button to confirm proceeding with account deletion.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proceed to delete"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-button-delete": {
+      "comment": "Button to initiate account deletion flow.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete account"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-button-reconnect": {
+      "comment": "Concise button for re-establishing a connection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconnect"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-button-reconnect-gmail": {
+      "comment": "Button to trigger the Gmail re-authentication flow.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconnect Gmail"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-button-stay-signed-in": {
+      "comment": "Action to cancel logout and remain in account.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stay signed in"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-confirmation-delete": {
+      "comment": "Confirmation dialog title for account deletion.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to delete your Atlys account?"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-confirmation-logout": {
+      "comment": "Confirmation message for logout action.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to logout"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-contact-helper-text": {
+      "comment": "Helper text explaining why contact info is requested.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We need your phone number to provide urgent status updates on your visa application."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-deletion-details": {
+      "comment": "Explanation of consequences for account deletion.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deleting your account will delete all of its data. You will have to re-enter your documents to apply for a visa again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-deletion-reason-description": {
+      "comment": "Subtitle requesting feedback on account deletion.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We would like to know so we can improve things in our mission to making travel seamless"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-deletion-reason-title": {
+      "comment": "Title for the deletion reason feedback form.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tell us why you want to delete your Atlys account"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-error-contact-save-failed": {
+      "comment": "Error when saving contact info fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We couldn't sync your contact info. Please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-error-delete-request-failed": {
+      "comment": "Error when the account deletion request fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We couldn't submit your request. Please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-error-email-taken": {
+      "comment": "Error message when email address is already in use.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already linked to another Atlys account"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-error-gmail-sync-timeout": {
+      "comment": "ErrorMessage displayed when email sync fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Syncing your emails is taking longer than expected. Please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-error-invalid-email": {
+      "comment": "Validation error for malformed email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a valid email address"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-error-invalid-phone": {
+      "comment": "Validation error for malformed phone number.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a valid phone number"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-error-traveller-add-failed": {
+      "comment": "Error when adding a household traveller fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't add that traveller. Please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-error-traveller-delete-failed": {
+      "comment": "Error when removing a household traveller fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't delete that traveller. Please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-header-past-trips": {
+      "comment": "Header title for past trips list.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your past trips"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-header-permissions": {
+      "comment": "Header title for permissions section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permissions"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-header-settings": {
+      "comment": "Header title for settings section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-input-country-code": {
+      "comment": "Phone country code selection label.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Country code, +%1$@, %2$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-input-email-label": {
+      "comment": "Label for email input field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email address*"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-input-email-placeholder": {
+      "comment": "Placeholder for email input field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "name@example.com"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-input-phone-label": {
+      "comment": "Label for phone number input field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Number"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-input-phone-placeholder": {
+      "comment": "Placeholder for phone number input field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phone number"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-input-reason": {
+      "comment": "Placeholder text for the deletion reason input field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your reason here"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-measurement-height-cm": {
+      "comment": "Height measurement label in centimeters.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%1$@cm)"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-measurement-height-feet": {
+      "comment": "Height measurement label in feet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ ft."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-measurement-height-feet-inches": {
+      "comment": "Height shown in feet and inches.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ ft. %2$@ in"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-reconnect-instruction": {
+      "comment": "Help text explaining why reconnection is necessary.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconnect Gmail to keep your profile up to date."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-button-add-traveller": {
+      "comment": "Button to add a new traveller profile.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ Add traveller"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-button-airport-pickup": {
+      "comment": "Action label for configuring airport transfer preferences.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select your airport pickup"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-button-edit-traveller": {
+      "comment": "Action button to edit a single traveller's details.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Traveller"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-button-edit-travellers": {
+      "comment": "Action button to edit a list of travellers.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit travellers"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-button-logout": {
+      "comment": "Button to sign out of the account.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logout"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-button-remove-traveller": {
+      "comment": "Action button to remove a traveller from the household.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove traveller from household"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-button-select-car": {
+      "comment": "Button to trigger car selection interface.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select my car"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-input-first-name": {
+      "comment": "Label for the first name input field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FIRST NAME*"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-input-last-name": {
+      "comment": "Label for the last name input field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LAST NAME*"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-label-account-subtitle": {
+      "comment": "Subtitle describing the content of the accounts center profile.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Residence, Citizenship, Currency & Contact Info"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-label-accounts-center": {
+      "comment": "Label for the accounts center screen in user settings.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accounts center"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-label-build-household": {
+      "comment": "Title for the household management section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Build your household"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-label-citizenship": {
+      "comment": "Label for the citizenship field in user profile.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Citizenship"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-label-citizenship-from-passport": {
+      "comment": "Two-line note shown when citizenship is locked to the passport.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Citizenship is set\nfrom your passport"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-label-country-of-residence": {
+      "comment": "Label for the country of residence field in user profile.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Country of residence"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-label-default-name": {
+      "comment": "Fallback display name for a traveller.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Traveller"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-label-delete-confirmation": {
+      "comment": "Confirmation prompt before deleting a traveller.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to delete traveller profile"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-label-household-subtitle": {
+      "comment": "Descriptive subtitle for household management perks.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add family members to extend WorldPass perks and automate their travel"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-label-terms-of-service": {
+      "comment": "Link label for legal terms of service.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terms of Service"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-loading-preferences": {
+      "comment": "Loading state specifically for user preference retrieval.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Getting your preferences ready"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-loading-profile": {
+      "comment": "Loading state for profile dashboard.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading your profile"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-note-eligible-regions": {
+      "comment": "Informational note regarding service availability.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Available only in eligible regions"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-placeholder-first-name": {
+      "comment": "Placeholder text for the first name field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter first name"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-placeholder-last-name": {
+      "comment": "Placeholder text for the last name field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter last name"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-status-ride-staged": {
+      "comment": "Confirmation message for staged ride status.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your ride is staged"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-status-staging-pickup": {
+      "comment": "Status message indicating an ongoing process for airport pickup.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staging your airport pickup"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-text-car-membership": {
+      "comment": "Description explaining car availability within membership.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Included with membership. Switch models anytime"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-settings-text-pickup-benefits": {
+      "comment": "Descriptive text for the airport transfer service benefits.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bypass standard taxi queues with an on-demand exotic transfer waiting at arrival"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-status-deletion-pending": {
+      "comment": "Status label indicating pending account deletion.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account Deletion in Request"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-status-kyc-complete": {
+      "comment": "Label indicating successful KYC status completion.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KYC complete"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-status-kyc-expired": {
+      "comment": "Status label for expired KYC documents.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KYC expired"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-status-kyc-incomplete": {
+      "comment": "Label indicating incomplete KYC verification status.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KYC incomplete"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-status-needs-attention": {
+      "comment": "Label indicating a document or section requires user review.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Needs attention"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-status-redirecting-to-kyc": {
+      "comment": "Status message while navigating to KYC completion.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redirecting you to KYC completion..."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-success-added-traveller": {
+      "comment": "Confirmation message for added user profiles.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Traveller profile: %1$@ was added"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-success-contact-updated": {
+      "comment": "Confirmation after updating contact information.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contact information updated"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-success-deleted-traveller": {
+      "comment": "Confirmation message for deleted user profiles.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Traveller profile: %1$@ was deleted"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-account-success-deletion-submitted": {
+      "comment": "Success message after requesting account deletion.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account deletion request submitted. Our team will email you."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-connector-title": {
+      "comment": "Title for agent connection deck showing integration name.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atlys x %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-default-label": {
+      "comment": "Default label for an AI agent.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agent"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-error-kyc-required": {
+      "comment": "Error message requiring KYC verification for agent activation.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A quick verification is needed before this agent can be activated."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-error-unavailable": {
+      "comment": "Error message for unavailable agent.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This agent is taking a break. Try again in a bit."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-impact-warning": {
+      "comment": "Explanation of the impact on agent access after disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your agents will lose access to everything this connection provides. You can reconnect a supported service at any time."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-settings-always-ask": {
+      "comment": "Configuration option for AI agent to always ask for permission.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Always ask"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-settings-ask-for-actions": {
+      "comment": "Configuration option for AI agent action behavior.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask for some actions"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-settings-before-action-description": {
+      "comment": "Description for the always-ask configuration setting.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Before any action"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-settings-connector-defaults": {
+      "comment": "Settings category for default connector configurations.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connector defaults"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-settings-permission-description": {
+      "comment": "Explanation of access permission levels for AI agents.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can give read only or read and write access"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-settings-web-access-defaults": {
+      "comment": "Settings category for default web access configurations.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Web access defaults"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-suffix": {
+      "comment": "Refers to an AI agent suffix or label.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "agent"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-tag-label": {
+      "comment": "Tag label used to identify agent-based entries.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-button-connect-emails": {
+      "comment": "Button to trigger the flow for adding additional email accounts.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect other emails"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-button-dont-disconnect": {
+      "comment": "Cancel action on the disconnect confirmation.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Don't disconnect"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-app-vault": {
+      "comment": "Description for the app connector vault feature.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A secure vault for your apps"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-data-vault": {
+      "comment": "Description for the source connector vault feature.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A secure vault for your sources"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-gmail-connector": {
+      "comment": "Introductory blurb for the Gmail connector functionality.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your travel details, bookings and updates are already there. Connecting email helps the agent understand and act on them without asking you to find or share everything manually."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-itr-connector": {
+      "comment": "Introductory blurb for the ITR connector functionality.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your filings confirm income and travel history, so the agent can prefill applications without asking you to dig up documents."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-error-disconnect-failed": {
+      "comment": "Error when disconnecting a connector fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't disconnect. Please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-hint-disconnect-connector": {
+      "comment": "Instructional text on how to remove a connector.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag icon to disconnect"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-app-access": {
+      "comment": "Label for app integration management settings.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App access"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-build-understanding": {
+      "comment": "Leading text for the agent capabilities description.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Our agents build an understanding of"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-email-connector": {
+      "comment": "Label for the email connector option.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-gmail": {
+      "comment": "Label for the Gmail connector.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gmail"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-information-access": {
+      "comment": "Label for settings regarding data sources and permissions.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Information access"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-itr": {
+      "comment": "Label for the ITR (Income Tax Return) connector.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ITR"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-preference-slider": {
+      "comment": "Label for an agent preference slider setting.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preference"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-regain-access": {
+      "comment": "Call to action text related to agent access.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regain access to agents and benefits."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-travel-preferences": {
+      "comment": "Emphasis text for what the agent learns.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "your travel preferences"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-privacy-text-security": {
+      "comment": "Privacy reassurance text for agent data integration.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data stays secure while your agent learns"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-security-note-access": {
+      "comment": "Text explaining security and usage of data for connectors.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Access is securely managed and your data is used only to help the agent work for you."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-status-app-vault-pending": {
+      "comment": "Placeholder or status message for pending app integrations.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A secure vault for your apps is on its way."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-status-connected": {
+      "comment": "Status label indicating a connector is active.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-subtitle-travel-security": {
+      "comment": "Privacy reassurance subtitle for travel data.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your travel data stays secure while your agent learns from the sources you trust."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-connectors": {
+      "comment": "Heading for the connector integration management screen.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connectors"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-toast-preferences-updated": {
+      "comment": "Confirmation message after updating agent preferences.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agent preferences updated"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-warning-disconnect-impact": {
+      "comment": "Warning text describing the impact of disconnecting an agent.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnecting means your agents lose access to the travel history, preferences, documents and rewards that help make every trip more personal."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-action-scan": {
+      "comment": "Action to trigger passport scanning.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-button-add-traveller": {
+      "comment": "Action button to add a traveller to a profile or document.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add traveller"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-button-update-passport": {
+      "comment": "Action button to save/update passport details.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update passport"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-button-upload": {
+      "comment": "Generic upload action button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-button-upload-new-passport": {
+      "comment": "Action button to initiate uploading a new passport.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload new passport"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-button-upload-passport": {
+      "comment": "Action button to initiate passport upload.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload passport"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-button-view-previous": {
+      "comment": "Action button to view a list of previous passports.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VIEW PREVIOUS"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-country-name-india": {
+      "comment": "Display name for the country (India).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REPUBLIC OF INDIA"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-country-name-india-native": {
+      "comment": "Country name in Devanagari on the passport card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "भारत गणराज्य"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-empty-state-no-previous-passports": {
+      "comment": "Title shown when no previous passports are available.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No previous passports yet"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-empty-state-no-previous-passports-description": {
+      "comment": "Description shown when no previous passports are available.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Once you replace a passport, the older one shows up here"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-error-kyc-expired": {
+      "comment": "Displays expiration status for identity or travel documents.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KYC expired on %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-error-passport-unreadable": {
+      "comment": "Error when the scanned passport page cannot be read.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We couldn't read this page. Try again in better light."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-error-passport-update-failed": {
+      "comment": "Error when updating the passport fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't update your passport. Try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-error-passport-upload-failed": {
+      "comment": "Error when a passport page upload fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't upload that page — please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-header-new-passport": {
+      "comment": "Header for a new passport entry form.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NEW PASSPORT"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-header-passport-details": {
+      "comment": "Section header for passport details.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PASSPORT DETAILS"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-header-passport-reason": {
+      "comment": "Title for the section asking for the reason for a new passport.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What happened to your old passport"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-header-previous-passports": {
+      "comment": "Title for the previous passports section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PREVIOUS PASSPORTS"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-input-label-expiry-date": {
+      "comment": "Label for the passport expiry date input field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EXPIRY DATE"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-input-label-issue-date": {
+      "comment": "Label for the passport issue date input field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISSUE DATE"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-input-label-passport-number": {
+      "comment": "Label for the passport number input field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PASSPORT NUMBER"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-label-active": {
+      "comment": "Status label for an active passport.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ACTIVE"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-label-active-until": {
+      "comment": "Indicates the validity period of a travel document or status.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active till %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-label-expired": {
+      "comment": "Status label for an expired passport.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EXPIRED"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-label-expired-on": {
+      "comment": "Indicates a document or status has reached its expiration date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expired on %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-label-pass-number": {
+      "comment": "Label used for displaying a specific travel pass identifier.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pass number %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-prompt-passport-reason": {
+      "comment": "Instruction prompt for specifying the reason for a new passport.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please specify reason for a new passport"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-reason-damaged": {
+      "comment": "Reason option for passport replacement (damaged).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Damaged"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-reason-lost-passport": {
+      "comment": "Reason option for passport replacement (lost).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lost my passport"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-reason-pages-full": {
+      "comment": "Reason option for passport replacement (pages full).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pages got over"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-reason-validity-expired": {
+      "comment": "Reason option for passport replacement (expired).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Validity expired"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-text-how-used-emphasis": {
+      "comment": "Part of a sentence explaining data usage policy (emphasis).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "used"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-text-how-used-lead": {
+      "comment": "Part of a sentence explaining data usage policy.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How this is"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-text-upload-blurb-start": {
+      "comment": "Marketing or instructional blurb explaining the benefits of uploading a passport.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your details are ready whenever you need a visa. No forms, no re-entering information, no repeating yourself."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-accessibility-hint-collapse": {
+      "comment": "Instructional accessibility hint for collapsing content.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to collapse"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-accessibility-hint-expand": {
+      "comment": "Instructional accessibility hint for expanding content.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to expand"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-accessibility-nudge": {
+      "comment": "Accessibility label combining a nudge message and its action.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@. %2$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-accessibility-value-collapsed": {
+      "comment": "Accessibility value of a collapsed expandable card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collapsed"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-accessibility-value-expanded": {
+      "comment": "Accessibility value of an expanded expandable card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expanded"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-badge-coming-soon": {
+      "comment": "Common badge or label for upcoming features.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coming soon"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-activate": {
+      "comment": "Generic activation button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activate"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-add": {
+      "comment": "Action button to add a new connection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+add"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-add-1": {
+      "comment": "Generic add item button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ Add"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-add-item": {
+      "comment": "Action button to add an item to a list.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add one %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-add-option": {
+      "comment": "Generic add item button pattern.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+Add %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-back": {
+      "comment": "Navigation back button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-close": {
+      "comment": "Navigation close button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-confirm": {
+      "comment": "Generic confirm button for edits.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm edit"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-connect": {
+      "comment": "Action button to establish a connection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-continue": {
+      "comment": "Primary action button label.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-delete": {
+      "comment": "Generic delete button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-done": {
+      "comment": "Generic confirm button for completing an action.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-edit": {
+      "comment": "Generic edit button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-got-it": {
+      "comment": "Generic acknowledgment button for UI modals.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Got it"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-hold-to-explore": {
+      "comment": "A call-to-action button instruction for the user.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold to explore"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-know-more": {
+      "comment": "Button to learn more details about a feature or offer.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Know more"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-remove-item": {
+      "comment": "Action button to remove an item from a list.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove one %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-retry": {
+      "comment": "Retry action button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-save": {
+      "comment": "Generic save button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-search": {
+      "comment": "Generic search button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-try-again": {
+      "comment": "Generic try again action button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-button-view-insight": {
+      "comment": "Action button to view insights.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View insight"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-choice-no": {
+      "comment": "Standard negation choice.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-choice-yes": {
+      "comment": "Standard confirmation choice.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yes"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-counter-plus": {
+      "comment": "Counter badge indicating additional items.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-data-distance-km": {
+      "comment": "Formatted distance label in kilometers.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ km"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-empty-state-category": {
+      "comment": "Generic message for empty category view.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing in this category yet"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-empty-state-country-search": {
+      "comment": "Empty state for country search.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No countries match that search"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-error-action-unavailable": {
+      "comment": "Shown when a tapped action is not available yet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That isn't available yet."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-error-load-failed": {
+      "comment": "Error when a screen fails to load.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load this screen. Check your connection and try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-error-message-general": {
+      "comment": "Generic error description text.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something went wrong. Please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-error-refresh-failed": {
+      "comment": "Error when refreshing the profile fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't refresh your profile. Try again in a moment."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-error-save-failed": {
+      "comment": "Error when saving changes fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't save your changes. Try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-error-subtitle-internet-issue": {
+      "comment": "Specific error explanation regarding connectivity.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seems like there was an issue with your internet"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-error-title-something-went-wrong": {
+      "comment": "Generic error title.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "oops something went wrong"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-format-bulleted": {
+      "comment": "Bullet prefix for list lines.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "•  %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-input-placeholder-search-for-country": {
+      "comment": "Placeholder for searching for a country in a list.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search for country"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-input-placeholder-type-here": {
+      "comment": "Placeholder text for text inputs.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type here"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-label-count-with-label": {
+      "comment": "Count followed by a unit label, e.g. 3 Sources.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-label-enter-details": {
+      "comment": "Section header for user input.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter details"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-label-found": {
+      "comment": "Label used in search results indicating items found.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Found"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-label-kyc-status-line": {
+      "comment": "KYC status label followed by its detail.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-label-kyc-step-fraction": {
+      "comment": "KYC progress fraction, e.g. 2/3.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@/%2$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-label-section-complete": {
+      "comment": "Label indicating a completed section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-label-section-pending": {
+      "comment": "Label indicating a pending section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pending"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-label-sources-count": {
+      "comment": "Indicates the quantity of data sources available.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ Sources"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-label-terms-conditions": {
+      "comment": "Label for legal text or informational links.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terms & Conditions"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-label-unit-value": {
+      "comment": "Value followed by its unit, e.g. 20 kg.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-loading-text": {
+      "comment": "General loading state label.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-masked-number": {
+      "comment": "Masked number display.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "XXX%1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-metadata-updated-dynamic": {
+      "comment": "Dynamic timestamp label for status updates.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "updated %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-metadata-updated-on": {
+      "comment": "Metadata label for update timestamps.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "updated on %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-past-trip-options": {
+      "comment": "Header for past trip options by country.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ trip options"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-search-empty-subtitle": {
+      "comment": "Instructional text displayed when search results are empty.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please try searching for another option or check for any spelling errors"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-search-empty-title": {
+      "comment": "Title of the empty search results state.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looks like we couldn't find what you are looking for"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-service-locked-status": {
+      "comment": "Status update for vehicle or service reservation.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ locked for your airport pickup"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-status-kyc-updating": {
+      "comment": "Status while KYC state is being refreshed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updating…"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-text-complete-holder-kyc-first": {
+      "comment": "Shown on a household member pass until the account holder completes KYC.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete %1$@'s KYC first..."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-trip-date-label": {
+      "comment": "Display label for a specific trip occurrence.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@ %3$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-ui-button-contact-concierge": {
+      "comment": "Button to trigger contact with concierge support.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contact concierge"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-ui-button-select": {
+      "comment": "Placeholder text for selection inputs.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-ui-label-almost-there": {
+      "comment": "Encouraging status text for completion steps.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Almost there!"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-ui-label-steps-done": {
+      "comment": "Descriptor for progress in a multi-step flow.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "steps done"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-ui-step-indicator": {
+      "comment": "Wizard progress step indicator.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Step %1$@ of %2$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-add-airlines": {
+      "comment": "Action button to add airlines to loyalty programs.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+Add preferred airlines"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-add-program": {
+      "comment": "Button to add a new loyalty program.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add program"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-connect-more-programs": {
+      "comment": "Call to action to connect additional loyalty programs.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect more programs"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-copy-membership-number": {
+      "comment": "Action button to copy membership information to the clipboard.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy membership number"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-done-editing": {
+      "comment": "Button to exit edit mode.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done editing"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-edit-programs": {
+      "comment": "Action button to edit connected programs.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit programs"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-flip-card": {
+      "comment": "Action button for flipping a loyalty card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flip card"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-redeem": {
+      "comment": "Action to redeem rewards or points.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redeem"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-remove-program": {
+      "comment": "Action button to remove a program from the list.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-view-benefits": {
+      "comment": "Action button to expand view of loyalty benefits.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View all benefits"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-view-benefits-1": {
+      "comment": "Action button to view all benefits available for a loyalty tier.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View all %1$@ benefits"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-view-sources": {
+      "comment": "Button label to view sources.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View sources"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-category-label-all": {
+      "comment": "Category filter label for all programs.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-category-label-credit-cards": {
+      "comment": "Category filter label for credit cards.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Credit cards"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-category-label-hotels": {
+      "comment": "Category filter label for hotels.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hotels"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-category-label-travel-passes": {
+      "comment": "Category filter label for travel passes.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Travel passes"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-coupon-used-amount": {
+      "comment": "Usage display for rewards or coupons.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ used"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-empty-state-no-programs-connected": {
+      "comment": "Title for no connected programs state.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No programs connected yet"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-empty-state-no-programs-connected-body": {
+      "comment": "Body text for no connected programs state.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a program to track points, tiers and expiry in one place."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-empty-state-no-programs-found": {
+      "comment": "Title for empty program results.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No programs found"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-error-add-program-failed": {
+      "comment": "Error when adding a loyalty program fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't add this program. Try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-error-benefit-kyc-required": {
+      "comment": "Error message requiring KYC verification for benefit activation.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A quick verification is needed before this benefit can be activated."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-error-insight-failed": {
+      "comment": "Error when a program insight fails to load.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load this insight. Try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-error-kyc-required": {
+      "comment": "Message indicating KYC is required to add a program.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A quick verification is needed before you can add a program."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-error-no-matches": {
+      "comment": "Message displayed when search yields no results.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No programs match that search"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-error-pass-switch-failed": {
+      "comment": "Error when switching to another traveller's World Pass fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load this World Pass. Showing the previous traveller."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-error-redeem-failed": {
+      "comment": "Error when redeeming a benefit fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't redeem this benefit. Try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-error-remove-program-failed": {
+      "comment": "Error when removing a loyalty program fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't remove this program. Try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-error-reorder-failed": {
+      "comment": "Error when saving the new program order fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't save the new order. Try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-found-programs-line-one": {
+      "comment": "Scanning progress line, singular.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Found %1$@ program..."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-found-programs-line-other": {
+      "comment": "Scanning progress line, plural.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Found %1$@ programs..."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-found-programs-one": {
+      "comment": "Found programs count, singular.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ program"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-found-programs-other": {
+      "comment": "Found programs count, plural.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ programs"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-hint-card-interaction": {
+      "comment": "Instructional hint for interacting with a card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to flip. Use Explore World Pass to open the globe."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-input-label-membership-number": {
+      "comment": "Form field label for membership number.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Membership number*"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-instruction-flip-card": {
+      "comment": "Instruction for interacting with a card component.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to flip the card"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-instruction-reorder-cards": {
+      "comment": "Instructional text for reordering items.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold and drag cards to rearrange"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-label-benefits-tagline": {
+      "comment": "Tagline explaining the benefits of the platform.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every visa, flight and hotel on one pass"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-label-connect-programs-emphasis": {
+      "comment": "Emphasized description of program types that can be connected.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "airline and hotel programs, credit card rewards and travel passes"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-label-connect-programs-lead": {
+      "comment": "Leading text for the connect programs feature.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect your"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-label-estimated-value": {
+      "comment": "Label for estimated monetary value of points.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Est. value"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-label-pick-program": {
+      "comment": "Header label to select a loyalty program.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick a loyalty program"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-label-points": {
+      "comment": "Label for points tracking in loyalty programs.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "points"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-label-points-miles": {
+      "comment": "Label representing points or miles.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Points/miles"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-label-programs-connected": {
+      "comment": "Status label for connected loyalty programs.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "programs connected"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-label-sources": {
+      "comment": "Label referring to data sources.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sources"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-program-summary": {
+      "comment": "Summary of scanned content from connected programs.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read %1$@ statements, inboxes and checked upcoming trips..."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-programs-label-coupons": {
+      "comment": "Label for the coupons section in the app.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coupons"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-programs-label-redeemed": {
+      "comment": "Status label indicating a coupon has been used.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redeemed"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-programs-label-title": {
+      "comment": "Header title for the loyalty programs section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loyalty Programs"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-programs-label-worldpass-name": {
+      "comment": "Brand name for the loyalty program.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "atlys worldpass"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-scanning-status-emphasis": {
+      "comment": "Second part of a scanning status message.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "travel benefits together."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-scanning-status-going-through-emails": {
+      "comment": "Loading state during email scanning.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Going through emails..."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-scanning-status-lead": {
+      "comment": "First part of a scanning status message.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bringing all your"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-status-redeemed-just-now": {
+      "comment": "Timestamp indicating a recent redemption.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redeemed just now"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-text-benefit-terms-header": {
+      "comment": "Terms and conditions header for World Pass members.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Available to active World Pass members. Eligibility, exclusions and booking conditions may apply."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-text-cashback-offer-lead": {
+      "comment": "Descriptive text for flight cashback offers within loyalty benefits.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enjoy 5%% off on eligible flight bookings. The offer may apply only to selected airlines, routes, travel dates or fare types and is subject to availability. Additional terms, exclusions and booking conditions may apply."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-title-connected-programs": {
+      "comment": "Header title for connected programs list.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected programs"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-title-explore-world-pass": {
+      "comment": "Label for exploring World Pass features.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explore World Pass"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-toast-membership-number-copied": {
+      "comment": "Confirmation message after copying membership number.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Membership number copied"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-accessibility-visited-countries": {
+      "comment": "Accessibility label for the visited countries stat.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visited countries, %1$@. Add past trips"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-button-add-country": {
+      "comment": "Button to add a country to the profile list.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add country"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-button-add-past-trip": {
+      "comment": "Button for adding a single past travel trip.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add past trip"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-button-add-past-trips": {
+      "comment": "Button for adding past travel trips in the user profile.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add past trips"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-button-complete-kyc": {
+      "comment": "Button to trigger the KYC completion process.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete KYC"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-button-dont-delete": {
+      "comment": "Cancel action on the delete past trip / delete account confirmations.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Don't delete"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-button-save-changes": {
+      "comment": "Button to save user changes.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "save changes"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-confirmation-delete-destination": {
+      "comment": "Confirmation message for deleting a past trip.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to delete your past destination?"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-empty-state-no-trips": {
+      "comment": "Empty state title when no past trips exist.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No past trips yet"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-empty-state-no-trips-body": {
+      "comment": "Body text of the empty past trips state.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add the countries you've visited to build your travel map."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-error-past-trip-delete-failed": {
+      "comment": "Error when deleting a past trip fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't delete this trip. Please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-error-past-trip-duplicate": {
+      "comment": "Error when the same past trip is added twice.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You've already added this trip"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-error-past-trip-save-failed": {
+      "comment": "Error when saving a past trip fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't save this trip. Please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-input-label-month": {
+      "comment": "Label for a month selection field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Month"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-input-label-select-duration": {
+      "comment": "Label for selecting the duration of a trip.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select duration"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-input-label-year": {
+      "comment": "Label for a year selection field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Year"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-option-rather-not-say": {
+      "comment": "Option for declining to provide information.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rather not say"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-stat-label-airlines": {
+      "comment": "Label for airlines statistic in the profile.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Airlines"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-stat-label-airports": {
+      "comment": "Label for airports statistic in the profile.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Airports"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-stat-label-countries": {
+      "comment": "Label for countries statistic in the profile.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Countries"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-stat-label-distance": {
+      "comment": "Label for distance statistic in the profile.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distance"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-stat-label-flights": {
+      "comment": "Label for flights statistic in the profile.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flights"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-body-disconnect-progress": {
+      "comment": "Informational body text shown during the account disconnection process.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removing synced data and access from your agents, this may take a while…"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-button-disconnect-email": {
+      "comment": "Action button for disconnecting an email account.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnect email"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-button-stop-disconnecting": {
+      "comment": "Button text to cancel a pending account disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop disconnecting"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-checkbox-disconnect-consent": {
+      "comment": "Checkbox label for consenting to terms before disconnecting an account.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I have read and agree to the terms"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-dialog-title-disconnect": {
+      "comment": "Confirmation dialog title for email disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to disconnect your email?"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-disconnection-disclaimer": {
+      "comment": "Disclaimer about loss of personalization functionality.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Once disconnected, agents may no longer be able to use this information to personalise recommendations, identify relevant benefits, prepare trips, complete workflows or provide context-aware assistance. Previously synced information may also need to be reconnected or provided again before certain features can be restored."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-disconnection-terms-intro": {
+      "comment": "Lead-in text for disconnection terms.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "By proceeding with disconnection, the selected account connection will be revoked and the associated data will no longer be available to your agents for future use."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-feature-loss-item": {
+      "comment": "List item describing a loss of service feature.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No automated slot booking"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-feature-loss-item-1": {
+      "comment": "List item describing a loss of service feature.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No visa applications"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-feature-loss-item-2": {
+      "comment": "List item describing a loss of service feature.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No personalised offers"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-header-terms": {
+      "comment": "Header for terms and conditions information.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terms and Conditions"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-impact-list-item": {
+      "comment": "Data type affected by disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flight and travel history"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-impact-list-item-1": {
+      "comment": "Data type affected by disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hotel stays and booking preferences"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-impact-list-item-2": {
+      "comment": "Data type affected by disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loyalty programs, points and rewards"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-impact-list-item-3": {
+      "comment": "Data type affected by disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Credit card benefits and travel-related offers"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-impact-list-item-4": {
+      "comment": "Data type affected by disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Travel documents, passes and credentials"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-impact-list-item-5": {
+      "comment": "Data type affected by disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Itineraries, bookings and trip information"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-impact-list-item-6": {
+      "comment": "Data type affected by disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved food preferences and dietary requirements"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-impact-list-item-7": {
+      "comment": "Data type affected by disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personal preferences and agent-learned travel context"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-impact-list-item-8": {
+      "comment": "Data type affected by disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medical information and documents previously shared for travel-related assistance"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-impact-list-item-9": {
+      "comment": "Data type affected by disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Airport, immigration and other travel logistics information"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-label-contact-info": {
+      "comment": "Label for the user profile contact information section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contact info"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-label-currency": {
+      "comment": "Label for the user currency preference setting.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Currency"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-label-dial-code": {
+      "comment": "Display format for phone country codes in user settings.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-label-preferences-count": {
+      "comment": "Shows the count of configured user preferences.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@/%2$@ %3$@ preferences"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-label-required-field": {
+      "comment": "Used to denote a required field in a form.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@*"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-legal-disclaimer-part-1": {
+      "comment": "Legal and operational note on disconnection.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnection revokes future access to the connected source. Processing, retention and deletion of previously received data will continue in accordance with the applicable privacy policy, consent settings and legal or operational requirements."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-list-header": {
+      "comment": "Header for list of affected data types.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This may include, where applicable:"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-reconnection-notice": {
+      "comment": "Reconnection notice disclaimer.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You may reconnect supported services at any time. Reconnecting does not guarantee that previously available data, preferences or agent context will be automatically restored."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-settings-title-disconnect-progress": {
+      "comment": "Title while an email connector is being disconnected.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnecting your account…"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-travel-docs-input-label-blood-group": {
+      "comment": "Input label for blood group field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blood group"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-travel-docs-input-label-dob": {
+      "comment": "Input label for date of birth field.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "D.O.B"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-travel-docs-input-label-emergency-contact": {
+      "comment": "Input label for emergency contact information.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emergency contact"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-travel-docs-input-label-organ-donor": {
+      "comment": "Input label for organ donor status.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organ donor"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-travel-docs-label-medical-card-locked": {
+      "comment": "Configuration toggle label for medical card visibility.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open medical card when phone is locked"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-travel-documents-error-duplicate-passport": {
+      "comment": "Validation error shown when a passport is already registered to another traveller.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This passport number is already added to another traveller."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-travel-error-invalid-indian-passport": {
+      "comment": "Specific error message for invalid Indian passport format.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a valid Indian passport number, like A1234567"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-travel-error-invalid-passport": {
+      "comment": "Error message when passport input is invalid.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a valid passport number"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

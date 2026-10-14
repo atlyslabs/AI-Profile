@@ -1,0 +1,400 @@
+import ATUIKit
+import SwiftUI
+
+struct ProfileV3SettingsView: View {
+    @ObservedObject var viewModel: ProfileV3SettingsViewModel
+    @State private var headerPin = ProfileV3HeaderPin()
+
+    private typealias Layout = ProfileV3Theme.Sizes.SettingsPage
+
+    var body: some View {
+        NavigationStack(path: $viewModel.pagePath) {
+            root
+                .toolbar(.hidden, for: .navigationBar)
+                .navigationDestination(for: ProfileV3SettingsDestination.self) { destination in
+                    destinationView(destination)
+                        .navigationBarBackButtonHidden(true)
+                        .toolbar(.hidden, for: .navigationBar)
+                }
+        }
+        .overlay {
+            ProfileV3CitizenshipLockLayer(fields: viewModel.fields)
+                .ignoresSafeArea(edges: .bottom)
+        }
+    }
+
+    private var root: some View {
+        ZStack(alignment: .top) {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    ProfileV3SettingsAvatar(initial: viewModel.monogram)
+                        .padding(.top, Layout.headerTop + ProfileV3Theme.Sizes.circleButton + Layout.avatarTop)
+                    if let menu = viewModel.menu, viewModel.menuPhase == .loaded {
+                        panel(menu)
+                            .padding(.top, Layout.cardsTop)
+                    } else {
+                        ProfileV3LoadStateView(phase: viewModel.menuPhase, retry: viewModel.loadMenu)
+                            .frame(height: Layout.loadStateHeight)
+                    }
+                }
+                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                .padding(.bottom, Layout.bottom)
+                .profileV3ScrollOffsetAnchor(headerOffset)
+            }
+            .profileV3ScrollOffset(headerOffset)
+            ProfileV3SettingsPageHeader(title: viewModel.title, pin: headerPin, onBack: viewModel.tapBack)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Color(at: .pureWhite))
+        .background(alignment: .top) {
+            if viewModel.menu != nil {
+                premeasure
+            }
+        }
+        .onAppear { viewModel.loadMenu() }
+    }
+
+    private var headerOffset: Binding<CGFloat> {
+        Binding(get: { headerPin.offset }, set: { headerPin.offset = $0 })
+    }
+
+    private func panel(_ menu: ProfileV3SettingsMenu) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: Layout.cardSpacing) {
+                ProfileV3SettingsAccountsCard(
+                    menu: menu,
+                    fields: viewModel.fields,
+                    isExpanded: $viewModel.isAccountExpanded,
+                    onSelect: viewModel.tap
+                )
+                if let concierge = menu.concierge {
+                    ProfileV3SettingsConciergeCard(concierge: concierge) { viewModel.tapConcierge(concierge) }
+                }
+                ProfileV3SettingsConnectorsCard(
+                    onInformationAccess: viewModel.tapInformationAccess,
+                    onAppAccess: viewModel.tapAppAccess
+                )
+            }
+            ProfileV3SettingsRowList(menu: menu, account: viewModel.account, onSelect: viewModel.tap)
+                .padding(.top, Layout.rowsTop)
+        }
+    }
+
+    private var premeasure: some View {
+        ZStack(alignment: .top) {
+            ForEach(ProfileV3SettingsDestination.premeasured, id: \.self) { destination in
+                ProfileV3SettingsDestinationView(destination: destination, viewModel: viewModel)
+                    .frame(maxWidth: .infinity)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                        guard height > 0 else { return }
+                        viewModel.sheetHeights[destination] = height
+                    }
+            }
+        }
+        .opacity(0)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    @ViewBuilder
+    private func destinationView(_ destination: ProfileV3SettingsDestination) -> some View {
+        switch destination {
+        case .connectors:
+            ProfileV3InformationAccessView(model: viewModel.connectors, onBack: viewModel.pop)
+        case .appAccess:
+            ProfileV3AppAccessView(onBack: viewModel.pop)
+        default:
+            EmptyView()
+        }
+    }
+}
+
+private struct ProfileV3SettingsPageHeader: View {
+    let title: String
+    let pin: ProfileV3HeaderPin
+    let onBack: () -> Void
+
+    private typealias Layout = ProfileV3Theme.Sizes.SettingsPage
+
+    var body: some View {
+        let progress = pin.progress
+        ProfileV3BackTagHeader(title: title, top: Layout.headerTop, onBack: onBack)
+            .padding(.bottom, Layout.headerBarBottom)
+            .background(alignment: .bottom) {
+                ProfileV3Theme.whiteToClearFade
+                    .frame(height: Layout.headerFade)
+                    .offset(y: Layout.headerFade)
+                    .opacity(progress)
+                    .allowsHitTesting(false)
+            }
+            .background {
+                Color(at: .pureWhite)
+                    .opacity(progress)
+                    .allowsHitTesting(progress > 0)
+                    .ignoresSafeArea(edges: .top)
+            }
+    }
+}
+
+private struct ProfileV3SettingsAvatar: View {
+    let initial: String?
+
+    private typealias Layout = ProfileV3Theme.Sizes.SettingsPage
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(ProfileV3Theme.Palette.settingsAvatar)
+            ProfileV3RemoteImage(url: ProfileV3SettingsArt.avatarGlobe.url, contentMode: .fit, placeholder: .clear)
+            if let initial {
+                Text(initial)
+                    .typoGraphy(.D2InterRegular40)
+                    .foregroundStyle(Color(at: .pureWhite))
+                    .offset(y: Layout.avatarLetterOffsetY)
+            }
+        }
+        .frame(width: Layout.avatar, height: Layout.avatar)
+        .clipShape(Circle())
+        .accessibilityHidden(true)
+    }
+}
+
+private struct ProfileV3SettingsAccountsCard: View {
+    let menu: ProfileV3SettingsMenu
+    @ObservedObject var fields: ProfileV3ProfileFieldsModel
+    @Binding var isExpanded: Bool
+    let onSelect: (ProfileV3SettingsRowItem) -> Void
+
+    var body: some View {
+        ProfileV3ExpandableCard(
+            icon: ATIcon.SwiftUIImage.person,
+            title: menu.accountsLabel,
+            subtitle: menu.accountsSubtitle,
+            badgeURL: menu.accountsBadgeURL,
+            isExpanded: $isExpanded
+        ) {
+            ForEach(menu.accountRows) { row in
+                ProfileV3SettingsRow(
+                    icon: row.icon,
+                    title: row.label,
+                    iconSize: ProfileV3Theme.Icon.md,
+                    flag: flag(for: row),
+                    lockNote: lockNote(for: row)
+                ) {
+                    onSelect(row)
+                }
+            }
+        }
+    }
+
+    private func flag(for row: ProfileV3SettingsRowItem) -> ATCountry? {
+        guard row.key == ProfileV3ProfileField.citizenship.rawValue,
+              let country = fields.passportCitizenship ?? fields.citizenship else { return nil }
+        return ATCountry(isoCode: country.code)
+    }
+
+    private func lockNote(for row: ProfileV3SettingsRowItem) -> String? {
+        guard row.key == ProfileV3ProfileField.citizenship.rawValue, fields.isCitizenshipLocked else { return nil }
+        return ProfileV3Strings.citizenshipFromPassport
+    }
+}
+
+private struct ProfileV3SettingsConnectorsCard: View {
+    let onInformationAccess: () -> Void
+    let onAppAccess: () -> Void
+
+    private typealias Layout = ProfileV3Theme.Sizes.SettingsPage
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ProfileV3SettingsCardHeader(
+                icon: ATIcon.SwiftUIImage.plugConnect,
+                iconSize: ProfileV3Theme.Icon.lg,
+                title: ProfileV3Strings.connectors,
+                subtitle: ProfileV3Strings.connectorsSubtitle
+            )
+            VStack(spacing: Layout.accessCardSpacing) {
+                ProfileV3SettingsAccessCard(
+                    title: ProfileV3Strings.informationAccess,
+                    blurb: ProfileV3Strings.informationAccessBlurb,
+                    art: ProfileV3ConnectorArt.informationAccess.url,
+                    artSize: Layout.informationArtSize,
+                    artTrailing: Layout.informationArtTrailing,
+                    action: onInformationAccess
+                )
+                ProfileV3SettingsAccessCard(
+                    title: ProfileV3Strings.appAccess,
+                    blurb: ProfileV3Strings.appAccessBlurb,
+                    art: ProfileV3ConnectorArt.appAccess.url,
+                    artSize: Layout.appArtSize,
+                    artTrailing: Layout.appArtTrailing,
+                    action: onAppAccess
+                )
+            }
+            .padding(.horizontal, Layout.accessCardInset)
+            .padding(.bottom, Layout.accessCardInset)
+        }
+        .profileV3SettingsCard()
+    }
+}
+
+private struct ProfileV3SettingsAccessCard: View {
+    let title: String
+    let blurb: String
+    let art: URL?
+    let artSize: CGSize
+    let artTrailing: CGFloat
+    let action: () -> Void
+
+    private typealias Layout = ProfileV3Theme.Sizes.SettingsPage
+
+    private var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: Layout.accessCardRadius, style: .continuous)
+    }
+
+    var body: some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: Layout.accessCardSubtitleTop) {
+                Text(title)
+                    .typoGraphy(.B1InterMedium14)
+                    .foregroundStyle(Color(at: .pureBlack))
+                Text(blurb)
+                    .typoGraphy(.B2InterMedium12)
+                    .foregroundStyle(Color(at: .neutralGrey400))
+                    .frame(width: Layout.accessCardTextWidth, alignment: .leading)
+            }
+            .multilineTextAlignment(.leading)
+            .padding(.leading, Layout.accessCardTextLeading)
+            .padding(.top, Layout.accessCardTitleTop)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .frame(height: Layout.accessCardHeight, alignment: .top)
+            .overlay(alignment: .topTrailing) {
+                ProfileV3RemoteImage(url: art, contentMode: .fit, placeholder: .clear)
+                    .frame(width: artSize.width, height: artSize.height)
+                    .padding(.top, Layout.accessArtTop)
+                    .padding(.trailing, artTrailing)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
+            .background(
+                shape
+                    .fill(Color(at: .pureWhite))
+                    .shadow(
+                        color: ProfileV3Theme.Palette.shadow,
+                        radius: Layout.accessCardShadowRadius,
+                        y: Layout.accessCardShadowY
+                    )
+            )
+            .contentShape(shape)
+        }
+        .buttonStyle(.profileV3Pressable)
+        .accessibilityLabel(title)
+        .accessibilityHint(blurb)
+    }
+}
+
+private struct ProfileV3SettingsRowList: View {
+    let menu: ProfileV3SettingsMenu
+    @ObservedObject var account: ProfileV3AccountSettingsModel
+    let onSelect: (ProfileV3SettingsRowItem) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: ProfileV3Theme.Sizes.SettingsPage.rowSpacing) {
+            ForEach(menu.listRows) { row in
+                ProfileV3SettingsRow(icon: row.icon, title: row.label) { onSelect(row) }
+            }
+            if !menu.dangerRows.isEmpty {
+                ProfileV3DashedDivider()
+                ForEach(menu.dangerRows) { row in
+                    dangerRow(row)
+                }
+            }
+        }
+    }
+
+    private func dangerRow(_ row: ProfileV3SettingsRowItem) -> some View {
+        let isLocked = account.isAccountDeletionRequested && row.route == .deleteAccount
+        return ProfileV3SettingsRow(
+            icon: row.icon,
+            title: isLocked ? ProfileV3Strings.accountDeletionInRequest : row.label,
+            iconSize: ProfileV3Theme.Sizes.SettingsPage.dangerIcon,
+            tint: isLocked ? ProfileV3Theme.Palette.disabledText : ProfileV3Theme.Palette.destructive,
+            showsChevron: !isLocked
+        ) {
+            onSelect(row)
+        }
+        .disabled(isLocked)
+    }
+}
+
+private struct ProfileV3SettingsConciergeCard: View {
+    let concierge: ProfileV3Concierge
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: ProfileV3Theme.Space.s12) {
+                ProfileV3ConnectorGlyph.reserveGlyph.image
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: ProfileV3Theme.Icon.lg, height: ProfileV3Theme.Icon.lg)
+                Text(concierge.label)
+                    .typoGraphy(.B1InterMedium14)
+                    .foregroundStyle(Color(at: .pureBlack))
+                Spacer(minLength: 0)
+                ProfileV3Vector.whatsApp.image
+                    .resizable()
+                    .renderingMode(.original)
+                    .scaledToFit()
+                    .frame(width: ProfileV3Theme.Icon.lg, height: ProfileV3Theme.Icon.lg)
+                ATIcon.SwiftUIImage.navigateNext
+                    .profileV3Icon(ProfileV3Theme.Icon.lg)
+                    .foregroundStyle(Color(at: .neutralGrey400))
+            }
+            .padding(.horizontal, ProfileV3Theme.Sizes.cardContentPadding)
+            .frame(height: ProfileV3Theme.Sizes.Accounts.conciergeHeight)
+            .frame(maxWidth: .infinity)
+            .profileV3SettingsCard(cornerRadius: ProfileV3Theme.Radius.xl)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.profileV3Pressable)
+        .accessibilityLabel(concierge.label)
+    }
+}
+
+private struct ProfileV3CitizenshipLockLayer: View {
+    @ObservedObject var fields: ProfileV3ProfileFieldsModel
+
+    var body: some View {
+        if let country = fields.passportCitizenship {
+            ProfileV3CitizenshipLockOverlay(country: country, trigger: fields.citizenshipLockTrigger)
+        }
+    }
+}
+
+#if DEBUG
+#Preview("Settings") {
+    ProfileV3SettingsView(viewModel: .preview())
+}
+
+#Preview("Settings · loading") {
+    ProfileV3SettingsView(viewModel: .preview(repository: ProfileV3MockRepository(delay: .seconds(60))))
+}
+
+#Preview("Settings · failed") {
+    ProfileV3SettingsView(viewModel: .preview(repository: ProfileV3FailingRepository()))
+}
+
+#Preview("Settings · citizenship locked") {
+    ProfileV3SettingsView(viewModel: .preview(deps: .preview(passportCitizenship: .india)))
+}
+
+#Preview("Settings · deletion requested") {
+    ProfileV3SettingsView(viewModel: .preview(deps: .preview(isAccountDeletionRequested: true)))
+}
+
+#Preview("Settings · information access") {
+    ProfileV3SettingsView(viewModel: .preview(pagePath: [.connectors]))
+}
+#endif

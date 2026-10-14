@@ -1,0 +1,123 @@
+import Foundation
+
+extension ProfileV3Strings {
+    static var contactInfo: String { ProfileV3L10n.moAiprofileSettingsLabelContactInfo }
+    static var currency: String { ProfileV3L10n.moAiprofileSettingsLabelCurrency }
+    static var connectors: String { ProfileV3L10n.moAiprofileAgentsTitleConnectors }
+    static var connectorsSubtitle: String { ProfileV3L10n.moAiprofileAgentsPrivacyTextSecurity }
+    static var informationAccess: String { ProfileV3L10n.moAiprofileAgentsLabelInformationAccess }
+    static var informationAccessBlurb: String { ProfileV3L10n.moAiprofileAgentsDescriptionDataVault }
+    static var informationAccessSubtitle: String { ProfileV3L10n.moAiprofileAgentsSubtitleTravelSecurity }
+    static var appAccess: String { ProfileV3L10n.moAiprofileAgentsLabelAppAccess }
+    static var appAccessBlurb: String { ProfileV3L10n.moAiprofileAgentsDescriptionAppVault }
+    static var appAccessComingSoon: String { ProfileV3L10n.moAiprofileAgentsStatusAppVaultPending }
+    static var comingSoon: String { ProfileV3L10n.moAiprofileGeneralBadgeComingSoon }
+    static var emailConnector: String { ProfileV3L10n.moAiprofileAgentsLabelEmailConnector }
+    static var addEmail: String { ProfileV3L10n.moAiprofileGeneralButtonAdd }
+    static var connectConnector: String { ProfileV3L10n.moAiprofileGeneralButtonConnect }
+    static var passportInvalid: String { ProfileV3L10n.moAiprofileTravelErrorInvalidPassport }
+    static var indianPassportInvalid: String { ProfileV3L10n.moAiprofileTravelErrorInvalidIndianPassport }
+    static var connectorDeckHint: String { ProfileV3L10n.moAiprofileAgentsHintDisconnectConnector }
+    static var connectorDeckWarning: String { ProfileV3L10n.moAiprofileAgentsWarningDisconnectImpact }
+    static func connectorDeckTitle(_ name: String) -> String { ProfileV3L10n.moAiprofileAgentConnectorTitle(name) }
+    static var gmailConnector: String { ProfileV3L10n.moAiprofileAgentsLabelGmail }
+    static var itrConnector: String { ProfileV3L10n.moAiprofileAgentsLabelItr }
+    static var connectorsAccessNote: String { ProfileV3L10n.moAiprofileAgentsSecurityNoteAccess }
+    static var connectorConnected: String { ProfileV3L10n.moAiprofileAgentsStatusConnected }
+    static var connectOtherEmails: String { ProfileV3L10n.moAiprofileAgentsButtonConnectEmails }
+    static var connectorDeckGmailBlurb: String { ProfileV3L10n.moAiprofileAgentsDescriptionGmailConnector }
+    static var connectorDeckITRBlurb: String { ProfileV3L10n.moAiprofileAgentsDescriptionItrConnector }
+    static var disconnectEmail: String { ProfileV3L10n.moAiprofileSettingsButtonDisconnectEmail }
+    static var dontDisconnect: String { ProfileV3L10n.moAiprofileAgentsButtonDontDisconnect }
+    static var disconnectConfirmTitle: String { ProfileV3L10n.moAiprofileSettingsDialogTitleDisconnect }
+    static var disconnectConfirmBody: String { ProfileV3L10n.moAiprofileAgentImpactWarning }
+    static var disconnectTermsIntro: String { ProfileV3L10n.moAiprofileSettingsDisconnectionTermsIntro }
+    static var disconnectTermsListLead: String { ProfileV3L10n.moAiprofileSettingsListHeader }
+    static var disconnectConsent: String { ProfileV3L10n.moAiprofileSettingsCheckboxDisconnectConsent }
+    static var disconnectProgressTitle: String { ProfileV3L10n.moAiprofileSettingsTitleDisconnectProgress }
+    static var disconnectProgressBody: String { ProfileV3L10n.moAiprofileSettingsBodyDisconnectProgress }
+    static var stopDisconnecting: String { ProfileV3L10n.moAiprofileSettingsButtonStopDisconnecting }
+    static var termsTitle: String { ProfileV3L10n.moAiprofileSettingsHeaderTerms }
+    static var uploadPassport: String { ProfileV3L10n.moAiprofileDocumentsButtonUploadPassport }
+    static var uploadPassportBlurb: String { ProfileV3L10n.moAiprofileDocumentsTextUploadBlurbStart }
+    static var upload: String { ProfileV3L10n.moAiprofileDocumentsButtonUpload }
+    static var uploadNewPassport: String { ProfileV3L10n.moAiprofileDocumentsButtonUploadNewPassport }
+    static var passportDetails: String { ProfileV3L10n.moAiprofileDocumentsHeaderPassportDetails }
+    static var viewPrevious: String { ProfileV3L10n.moAiprofileDocumentsButtonViewPrevious }
+    static var previousPassports: String { ProfileV3L10n.moAiprofileDocumentsHeaderPreviousPassports }
+    static var noPreviousPassportsTitle: String { ProfileV3L10n.moAiprofileDocumentsEmptyStateNoPreviousPassports }
+    static var noPreviousPassportsSubtitle: String { ProfileV3L10n.moAiprofileDocumentsEmptyStateNoPreviousPassportsDescription }
+    static var newPassport: String { ProfileV3L10n.moAiprofileDocumentsHeaderNewPassport }
+    static var passportNumber: String { ProfileV3L10n.moAiprofileDocumentsInputLabelPassportNumber }
+    static var passportIssueDate: String { ProfileV3L10n.moAiprofileDocumentsInputLabelIssueDate }
+    static var passportExpiryDate: String { ProfileV3L10n.moAiprofileDocumentsInputLabelExpiryDate }
+    static var passportActive: String { ProfileV3L10n.moAiprofileDocumentsLabelActive }
+    static var passportExpired: String { ProfileV3L10n.moAiprofileDocumentsLabelExpired }
+    static var passportCountryIndia: String { ProfileV3L10n.moAiprofileDocumentsCountryNameIndia }
+    static var passportCountryIndiaNative: String { ProfileV3L10n.moAiprofileDocumentsCountryNameIndiaNative }
+    static var passportReasonTitle: String { ProfileV3L10n.moAiprofileDocumentsHeaderPassportReason }
+    static var passportReasonPrompt: String { ProfileV3L10n.moAiprofileDocumentsPromptPassportReason }
+    static var passportReasonLost: String { ProfileV3L10n.moAiprofileDocumentsReasonLostPassport }
+    static var passportReasonPagesOver: String { ProfileV3L10n.moAiprofileDocumentsReasonPagesFull }
+    static var passportReasonValidityExpired: String { ProfileV3L10n.moAiprofileDocumentsReasonValidityExpired }
+    static var passportReasonDamaged: String { ProfileV3L10n.moAiprofileDocumentsReasonDamaged }
+    static var updatePassport: String { ProfileV3L10n.moAiprofileDocumentsButtonUpdatePassport }
+    static var passportUpdateFailed: String { ProfileV3L10n.moAiprofileDocumentsErrorPassportUpdateFailed }
+    static var passportUnreadable: String { ProfileV3L10n.moAiprofileDocumentsErrorPassportUnreadable }
+    static var howThisIsUsedLead: String { ProfileV3L10n.moAiprofileDocumentsTextHowUsedLead + " " }
+    static var howThisIsUsedEmphasis: String { ProfileV3L10n.moAiprofileDocumentsTextHowUsedEmphasis }
+    static var scanPassport: String { ProfileV3L10n.moAiprofileDocumentsActionScan }
+    static var connectorNeedsAttention: String { ProfileV3L10n.moAiprofileAccountStatusNeedsAttention }
+    static var deleteAccount: String { ProfileV3L10n.moAiprofileAccountButtonDelete }
+    static var confirmEdit: String { ProfileV3L10n.moAiprofileGeneralButtonConfirm }
+    static var logoutConfirmTitle: String { ProfileV3L10n.moAiprofileAccountConfirmationLogout }
+    static var staySignedIn: String { ProfileV3L10n.moAiprofileAccountButtonStaySignedIn }
+    static var deleteConfirmTitle: String { ProfileV3L10n.moAiprofileAccountConfirmationDelete }
+    static var deleteConfirmBody: String { ProfileV3L10n.moAiprofileAccountDeletionDetails }
+    static var proceedToDelete: String { ProfileV3L10n.moAiprofileAccountButtonConfirmDelete }
+    static var dontDelete: String { ProfileV3L10n.moAiprofileProfileButtonDontDelete }
+    static var deleteReasonTitle: String { ProfileV3L10n.moAiprofileAccountDeletionReasonTitle }
+    static var deleteReasonSubtitle: String { ProfileV3L10n.moAiprofileAccountDeletionReasonDescription }
+    static var deleteReasonPlaceholder: String { ProfileV3L10n.moAiprofileAccountInputReason }
+    static var deleteRequestFailed: String { ProfileV3L10n.moAiprofileAccountErrorDeleteRequestFailed }
+    static var deleteRequestSubmitted: String { ProfileV3L10n.moAiprofileAccountSuccessDeletionSubmitted }
+    static var accountDeletionInRequest: String { ProfileV3L10n.moAiprofileAccountStatusDeletionPending }
+    static var contactHelper: String { ProfileV3L10n.moAiprofileAccountContactHelperText }
+    static var emailLabel: String { ProfileV3L10n.moAiprofileAccountInputEmailLabel }
+    static var emailPlaceholder: String { ProfileV3L10n.moAiprofileAccountInputEmailPlaceholder }
+    static var numberLabel: String { ProfileV3L10n.moAiprofileAccountInputPhoneLabel }
+    static var numberPlaceholder: String { ProfileV3L10n.moAiprofileAccountInputPhonePlaceholder }
+    static var emailInvalid: String { ProfileV3L10n.moAiprofileAccountErrorInvalidEmail }
+    static var phoneInvalid: String { ProfileV3L10n.moAiprofileAccountErrorInvalidPhone }
+    static var emailTaken: String { ProfileV3L10n.moAiprofileAccountErrorEmailTaken }
+    static var contactSaved: String { ProfileV3L10n.moAiprofileAccountSuccessContactUpdated }
+    static var contactSaveFailed: String { ProfileV3L10n.moAiprofileAccountErrorContactSaveFailed }
+    static var disconnectLosses: [String] {
+        [
+            ProfileV3L10n.moAiprofileSettingsFeatureLossItem,
+            ProfileV3L10n.moAiprofileSettingsFeatureLossItem1,
+            ProfileV3L10n.moAiprofileSettingsFeatureLossItem2,
+        ]
+    }
+    static var disconnectTermsItems: [String] {
+        [
+            ProfileV3L10n.moAiprofileSettingsImpactListItem,
+            ProfileV3L10n.moAiprofileSettingsImpactListItem1,
+            ProfileV3L10n.moAiprofileSettingsImpactListItem2,
+            ProfileV3L10n.moAiprofileSettingsImpactListItem3,
+            ProfileV3L10n.moAiprofileSettingsImpactListItem4,
+            ProfileV3L10n.moAiprofileSettingsImpactListItem5,
+            ProfileV3L10n.moAiprofileSettingsImpactListItem6,
+            ProfileV3L10n.moAiprofileSettingsImpactListItem7,
+            ProfileV3L10n.moAiprofileSettingsImpactListItem8,
+            ProfileV3L10n.moAiprofileSettingsImpactListItem9,
+        ]
+    }
+    static var disconnectTermsClosing: [String] {
+        [
+            ProfileV3L10n.moAiprofileSettingsDisconnectionDisclaimer,
+            ProfileV3L10n.moAiprofileSettingsLegalDisclaimerPart1,
+            ProfileV3L10n.moAiprofileSettingsReconnectionNotice,
+        ]
+    }
+}
