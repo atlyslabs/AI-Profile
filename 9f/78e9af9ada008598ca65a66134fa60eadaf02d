@@ -1,0 +1,77 @@
+AppIntegration/ProfileV3Host/VDCProfileV3GlobeRenderer.swift
+  s_c482717a7a4db6::t_25577a61adc252 1
+README.md
+  s_c482717a7a4db6::t_b9cb9a111af91a 2,8-9,12-13,102,104,109,112,154-160
+  s_c482717a7a4db6::t_e236946847fd45 1,3-7,10-11,14-101,103,105-108,110-111,113-153,161-162
+AppIntegration/ProfileV3Host/VDCProfileV3Countries.swift
+  s_c482717a7a4db6::t_25577a61adc252 1
+AppIntegration/ProfileV3Host/VDCProfileV3Composition.swift
+  s_c482717a7a4db6::t_25577a61adc252 1
+Tests/ATAIProfileTests/ProfileV3TravellerRelationshipTests.swift
+  s_c482717a7a4db6::t_25577a61adc252 1-107
+AppIntegration/ProfileV3Host/VDCProfileV3FieldValidator.swift
+  s_c482717a7a4db6::t_25577a61adc252 1
+AppIntegration/ProfileV3Host/VDCProfileV3Session.swift
+  s_c482717a7a4db6::t_25577a61adc252 1
+AppIntegration/ProfileV3Host/VDCProfileV3AccountHost.swift
+  s_c482717a7a4db6::t_25577a61adc252 1
+AppIntegration/ProfileV3Host/VDCProfileV3KYCHost.swift
+  s_c482717a7a4db6::t_25577a61adc252 1
+Package.swift
+  s_c482717a7a4db6::t_5b043b9310e090 6,12-13
+  s_c482717a7a4db6::t_afe3271f6e4a76 45-46
+  s_c482717a7a4db6::t_b6366b70481463 27
+AppIntegration/ProfileV3Host/VDCProfileV3AppHost.swift
+  s_c482717a7a4db6::t_25577a61adc252 1
+CLAUDE.md
+  s_c482717a7a4db6::t_1ceb0978e556bc 34-36
+  s_c482717a7a4db6::t_8eec6aafb7ab68 22-23
+  s_c482717a7a4db6::t_476c1e4a7df852 30
+  s_c482717a7a4db6::t_1ca88b2ff9d21f 172
+  s_c482717a7a4db6::t_c925e7cd232a50 171
+  s_c482717a7a4db6::t_5d88a547030fb4 199
+  s_c482717a7a4db6::t_d19a2650dfa5c7 246
+  s_c482717a7a4db6::t_88368e2911739d 195
+  s_c482717a7a4db6::t_cfdc0703be7e4a 173
+  s_c482717a7a4db6::t_4775a2536b30c6 64
+  s_c482717a7a4db6::t_3513bf8e364b2c 182
+  s_c482717a7a4db6::t_57b671863ec31c 180
+  s_c482717a7a4db6::t_b78dd39bb073fd 178
+  s_c482717a7a4db6::t_03ac84d4254489 197
+  s_c482717a7a4db6::t_fd4b443982d8fa 78
+  s_c482717a7a4db6::t_39683dc242a8e6 183-186
+  s_c482717a7a4db6::t_77a64baaa19e2c 221
+  s_c482717a7a4db6::t_f2ca08cf654298 187
+  s_c482717a7a4db6::t_17c2e296ea99ae 213
+  s_c482717a7a4db6::t_595bb1e3207dcb 249
+  s_c482717a7a4db6::t_6f963585a25ef2 1,3
+  s_c482717a7a4db6::t_114b7618a1c244 56
+  s_c482717a7a4db6::t_5e92732454a192 101
+  s_c482717a7a4db6::t_35b4ea733608e1 193
+  s_c482717a7a4db6::t_10f30d656d3519 216
+  s_c482717a7a4db6::t_ac4b9baf5eba10 194
+AppIntegration/ProfileV3Host/VDCProfileV3IdentityCaptureHost.swift
+  s_c482717a7a4db6::t_25577a61adc252 1
+AppIntegration/ProfileV3Host/VDCProfileV3Analytics.swift
+  s_c482717a7a4db6::t_25577a61adc252 1
+AppIntegration/ProfileV3Host/VDCProfileV3CouponsHost.swift
+  s_c482717a7a4db6::t_25577a61adc252 1
+Tests/ATAIProfileTests/ATAIProfileTests.swift
+  s_c482717a7a4db6::t_25577a61adc252 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9f78e9af9ada008598ca65a66134fa60eadaf02d",
+  "prompts": {},
+  "sessions": {
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
