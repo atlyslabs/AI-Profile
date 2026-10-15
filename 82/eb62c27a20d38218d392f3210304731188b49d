@@ -1,0 +1,155 @@
+Sources/AIProfile/Data/ProfileV3MockRepository.swift
+  s_274a1716a161dd::t_6cbc25ba7ab556 156-162
+Sources/AIProfile/Data/ProfileV3Fixtures.swift
+  s_274a1716a161dd::t_b8143acca5db8a 378-380,386,389-401
+  s_274a1716a161dd::t_7dac9e5a62989b 402
+Sources/AIProfile/Views/ProfileV3TravellerRelationshipView.swift
+  s_ef7a34327ab9f6::t_35bcb9b2071cf3 32
+  s_274a1716a161dd::t_487e6d619bd8f2 3-23,25-30,33-34,37-52,54-57,59,62-69,73-77,80-90,93-105
+Sources/AIProfile/Support/ProfileV3Theme+Settings.swift
+  s_ef7a34327ab9f6::t_264727aa2a9b7b 266-278,289-308
+  s_ef7a34327ab9f6::t_91132fa4e83ea4 309
+Sources/AIProfile/Presentation/ProfileV3SettingsSheetPresenter.swift
+  s_108bebbb5e715c::t_73b0dd08334d09 180,186,192,199
+Sources/AIProfile/Data/ProfileV3Repository.swift
+  s_274a1716a161dd::t_5c33fea35dfd5b 77
+Tests/AIProfileTests/ProfileV3TravellerRelationshipTests.swift
+  s_274a1716a161dd::t_b9f0af48a9fe41 1-107
+AppIntegration/ProfileV3Host/VDCProfileV3AppHost.swift
+  s_108bebbb5e715c::t_3d85730fd67284 14-15
+CLAUDE.md
+  s_c482717a7a4db6::t_58e3fa126b3c0a 148
+  s_ef7a34327ab9f6::t_15b07ca0e8dc77 176-179
+  s_274a1716a161dd::t_0cb3f82430ac0b 188-189
+  s_274a1716a161dd::t_93b89b8c207d57 198
+  s_5cbfcb66d234e5::t_d02b71e7a77292 211
+  s_ef7a34327ab9f6::t_8e6d2c95ddc3c2 186
+  s_274a1716a161dd::t_e4fbe085e73298 25
+  s_274a1716a161dd::t_8254b2a87099cd 210
+  s_c482717a7a4db6::t_bb4d4146fe13ac 129
+  s_c482717a7a4db6::t_ed072600d92525 155-156
+  s_c482717a7a4db6::t_23e3b33c2dd798 111
+  s_c482717a7a4db6::t_dd209c8dd84cae 110
+  s_274a1716a161dd::t_37300f2fd06616 30
+  s_274a1716a161dd::t_b13431974c8b02 62-63
+  s_5cbfcb66d234e5::t_065cc46f429e84 170
+  s_5cbfcb66d234e5::t_18dc0bce38fad0 22
+  s_c482717a7a4db6::t_b5ec6076d74732 182
+  s_274a1716a161dd::t_e2eebc7c9b4da0 190
+  s_274a1716a161dd::t_5289232663d148 204
+  s_c482717a7a4db6::t_f1379f8a09827b 131
+  s_c482717a7a4db6::t_72b8204b4aa1ef 159
+  s_274a1716a161dd::t_f1459d2429ba78 34
+  s_c482717a7a4db6::t_7712fffc77ab56 206
+  s_c482717a7a4db6::t_8df8b13f76ff6b 21
+  s_274a1716a161dd::t_d51c7dffee4d49 171-175
+  s_c482717a7a4db6::t_f978b1ad2bd515 180
+  s_274a1716a161dd::t_e7e75d65a4c852 202
+  s_5cbfcb66d234e5::t_9772f717bdbee0 212
+  s_c482717a7a4db6::t_e448944e1b1f7b 181,187
+Sources/AIProfile/Host/ProfileV3AppHost.swift
+  s_108bebbb5e715c::t_59d1210d98e368 7
+Sources/AIProfile/Data/DTOs/ProfileV3TravellersDTO.swift
+  s_274a1716a161dd::t_18279cddc8a16c 14,18,31
+Sources/AIProfile/Domain/ProfileV3BoardScreens.swift
+  s_274a1716a161dd::t_b0677021d14247 8-16,26-27,32-34
+  s_274a1716a161dd::t_747f4cee59c1a3 35
+Sources/AIProfile/Data/ProfileV3FailingRepository.swift
+  s_274a1716a161dd::t_c3a6dfc21337b3 49-52
+Sources/AIProfile/Views/ProfileV3SettingsDestinationView.swift
+  s_274a1716a161dd::t_acffec2511558b 188-189,193,196-208
+  s_274a1716a161dd::t_012c8a3d42b01c 25-26
+  s_274a1716a161dd::t_ef35adeda499d7 209
+Sources/AIProfile/Data/Mappers/ProfileV3EditFieldMapper.swift
+  s_274a1716a161dd::t_f778fab0773399 3,14-16,26,31-37
+  s_274a1716a161dd::t_eaddb58ac53214 38-39
+Sources/AIProfile/Data/DTOs/ProfileV3EditFieldDTO.swift
+  s_274a1716a161dd::t_56024ee8c9777f 45-59,70,74,84
+Sources/AIProfile/Views/ProfileV3EditTravellersView.swift
+  s_274a1716a161dd::t_84ba0c600940f6 60-64
+Sources/AIProfile/Views/ProfileV3EditTravellerFormView.swift
+  s_274a1716a161dd::t_cb28f49f6c5a21 125-147
+  s_274a1716a161dd::t_a5b4ba6c3fa415 218-219
+  s_274a1716a161dd::t_d61c5886f5e069 10-11,15
+  s_274a1716a161dd::t_6886c343cc6400 108-110
+Sources/AIProfile/Views/ProfileV3AddTravellerView.swift
+  s_ef7a34327ab9f6::t_2e8a7c40fb6618 38
+Sources/AIProfile/Networking/ProfileV3API.swift
+  s_274a1716a161dd::t_e6fde8868fd44a 24
+  s_274a1716a161dd::t_c7b88c01658bd7 142-143
+  s_274a1716a161dd::t_50cf6ef7a50fdf 88
+Sources/AIProfile/Presentation/ProfileV3SettingsRouting.swift
+  s_274a1716a161dd::t_5ef805b92e359a 16,32-33
+Sources/AIProfile/Presentation/ProfileV3TravellersSettingsModel.swift
+  s_274a1716a161dd::t_ee444c271231e7 54-66
+  s_274a1716a161dd::t_967ed7fc01fadc 128-158,160,164,167,172,174,177,180,186-192
+  s_274a1716a161dd::t_6a82aea7d61ef1 36-37
+  s_274a1716a161dd::t_27b9e4b26228a1 159,173
+  s_274a1716a161dd::t_3c543ed1a65819 20-23
+  s_274a1716a161dd::t_d23832e0753fd4 342
+  s_274a1716a161dd::t_afe0b72273d888 193
+Sources/AIProfile/Support/ProfileV3Theme+Palette.swift
+  s_ef7a34327ab9f6::t_ef87d9fd97c341 53-57
+Sources/AIProfile/Components/ProfileV3ConnectorDeckCard.swift
+  s_ef7a34327ab9f6::t_79c3c267cdb7e3 341,344
+  s_ef7a34327ab9f6::t_353c67ddabb738 241
+  s_ef7a34327ab9f6::t_992cd8b9463d5d 251
+  s_ef7a34327ab9f6::t_5a54134cd610e1 313-314,319,322,325
+Sources/AIProfile/Data/ProfileV3LiveRepository.swift
+  s_274a1716a161dd::t_3e369a9fd34a1e 64,73-78
+  s_274a1716a161dd::t_4c8ad440c27b87 79-81
+  s_274a1716a161dd::t_ee77c6304c24af 82-83
+Sources/AIProfile/Domain/ProfileV3TravellerScreens.swift
+  s_274a1716a161dd::t_0a6a97b442cfb2 11,19-26
+Sources/AIProfile/Data/Mappers/ProfileV3TravellersMapper.swift
+  s_274a1716a161dd::t_5c882d7cb4f552 11,17,25-27,33-39
+  s_274a1716a161dd::t_31e53b8609ee24 40-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "82eb62c27a20d38218d392f3210304731188b49d",
+  "prompts": {},
+  "sessions": {
+    "s_108bebbb5e715c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "0863aba6-22d6-452b-a14d-34a0045e30e8",
+        "model": "grok-4.7"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_274a1716a161dd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4bb37f6f-3080-44f4-81c1-f12712a02583",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_5cbfcb66d234e5": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e6443cee-c7aa-4a5d-8ca7-861ccd09fa08",
+        "model": "grok-4.7"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_ef7a34327ab9f6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "10879d4a-2506-45e6-936e-5f5e896cfe89",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
