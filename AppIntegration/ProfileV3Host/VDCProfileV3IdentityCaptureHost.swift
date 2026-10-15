@@ -18,7 +18,6 @@ final class VDCProfileV3IdentityCaptureHost: ProfileV3IdentityCaptureHost {
         let flow = IDCFactory.makeViewController(
             configuration: IDCConfiguration(request),
             verifier: VDCProfileV3CaptureVerifier(request.verify),
-            scanEngines: VDCCaptureScanEngines(),
             callbacks: IDCCallbacks(onComplete: { _, _ in finish(.completed) }, onExit: { finish(.cancelled) })
         )
         navigation.setViewControllers([flow], animated: false)
@@ -46,7 +45,6 @@ private struct VDCProfileV3IdentityCaptureView: View {
         _viewModel = StateObject(wrappedValue: IDCFlowViewModel(
             configuration: IDCConfiguration(request),
             verifier: VDCProfileV3CaptureVerifier(request.verify),
-            scanEngines: VDCCaptureScanEngines(),
             callbacks: IDCCallbacks(onComplete: { _, _ in completion(.completed) }, onExit: { completion(.cancelled) })
         ))
     }
