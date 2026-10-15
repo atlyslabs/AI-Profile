@@ -5,6 +5,15 @@ struct ProfileV3EditField: Equatable {
         case countryPicker = "country_picker"
         case currencyPicker = "currency_picker"
         case contactForm = "contact_form"
+        case singleSelect = "single_select"
+    }
+
+    struct Option: Identifiable, Equatable {
+        let value: String
+        let title: String
+        var isSelected = false
+
+        var id: String { value }
     }
 
     let field: String
@@ -14,9 +23,15 @@ struct ProfileV3EditField: Equatable {
     var submitLabel: String?
     var currentCode: String?
     var currentContact: ProfileV3ContactDetails?
+    var options: [Option] = []
+    var submitProfileID: String?
 
     var currentCountry: ProfileV3Country? {
         currentCode.flatMap { ProfileV3Country(code: $0) }
+    }
+
+    var selectedValue: String? {
+        options.first(where: \.isSelected)?.value ?? options.first { $0.value == currentCode }?.value
     }
 }
 

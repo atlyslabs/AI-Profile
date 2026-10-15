@@ -17,7 +17,10 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
     @Published var newTraveller = ProfileV3AddTravellerSubmission()
     @Published private(set) var rejectedPassport: String?
     @Published private(set) var toast: String?
-    @Published private(set) var savingRelationshipID: String?
+    @Published private(set) var relationshipField: ProfileV3EditField?
+    @Published private(set) var relationshipPhase: ProfileV3LoadPhase = .loading
+    @Published private(set) var relationshipSelection: String?
+    @Published private(set) var isSavingRelationship = false
 
     weak var navigator: ProfileV3SettingsNavigating?
     weak var router: (any ProfileV3TravellersRouting & ProfileV3SettingsFeedbackRouting)?
@@ -30,6 +33,8 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
     private var addScreenTask: Task<Void, Never>?
     private var mutationTask: Task<Void, Never>?
     private var relationshipTask: Task<Void, Never>?
+    private var relationshipLoadTask: Task<Void, Never>?
+    private var relationshipTitles: [String: String] = [:]
     private var editingStoredMobile = ""
     private var editingStoredPassport = ""
     private var toastTask: Task<Void, Never>?
@@ -46,7 +51,19 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
 
     var rows: [ProfileV3TravellerRow] { screen?.travellers ?? [] }
 
-    var relationshipPicker: ProfileV3RelationshipPicker? { screen?.relationshipPicker }
+    var editingRelationshipEntry: ProfileV3RelationshipEntry? {
+        rows.first { $0.id == editingTraveller.id }?.relationshipEntry
+    }
+
+    var editingRelationshipTitle: String? {
+        guard let value = rows.first(where: { $0.id == editingTraveller.id })?.relationship else { return nil }
+        return relationshipTitles[value] ?? ProfileV3RelationshipEntry.title(for: value)
+    }
+
+    var canSaveRelationship: Bool {
+        guard let relationshipSelection, !isSavingRelationship else { return false }
+        return relationshipSelection != relationshipField?.selectedValue
+    }
 
     var worldPassLabel: String { screen?.worldPassLabel ?? ProfileV3Strings.worldPass }
 
@@ -108,30 +125,69 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
         rows.first { $0.id == id }?.isDeletable ?? false
     }
 
-    func selectRelationship(_ value: String, for row: ProfileV3TravellerRow) {
-        guard !row.isMain, row.relationship != value, savingRelationshipID == nil else { return }
-        let previous = row.relationship
-        screen?.setRelationship(value, for: row.id)
-        savingRelationshipID = row.id
+    func tapRelationship() {
+        guard let entry = editingRelationshipEntry, !isSavingRelationship else { return }
+        relationshipField = nil
+        relationshipSelection = nil
+        navigator?.push(.travellerRelationship(entry.profileID))
+        loadRelationship()
+    }
+
+    func loadRelationship() {
+        guard let profileID = editingRelationshipEntry?.profileID else { return }
+        let repository = repository
+        ProfileV3PhasedLoad.start(
+            on: self,
+            task: \.relationshipLoadTask,
+            phase: \.relationshipPhase,
+            content: \.relationshipField,
+            fetch: { try await repository.loadTravellerRelationship(profileID: profileID) },
+            apply: { $0.applyRelationshipField($1) }
+        )
+    }
+
+    func selectRelationship(_ value: String) {
+        guard !isSavingRelationship else { return }
+        relationshipSelection = value
+    }
+
+    func confirmRelationship() {
+        guard canSaveRelationship, let value = relationshipSelection, let entry = editingRelationshipEntry else {
+            return
+        }
+        let profileID = relationshipField?.submitProfileID ?? entry.profileID
+        let rowID = editingTraveller.id
+        isSavingRelationship = true
         let repository = repository
         relationshipTask = Task { [weak self] in
             do {
-                try await repository.saveTravellerRelationship(value, profileID: row.id)
+                try await repository.saveTravellerRelationship(value, profileID: profileID)
                 let refreshed = try? await repository.loadEditTravellers()
                 guard let self else { return }
-                savingRelationshipID = nil
+                isSavingRelationship = false
                 if let refreshed {
                     loadTask?.cancel()
                     screen = refreshed
                     phase = .loaded
+                } else {
+                    screen?.setRelationship(value, for: rowID)
+                    load()
                 }
                 router?.travellersDidChange()
+                navigator?.pop()
             } catch {
                 guard let self else { return }
-                savingRelationshipID = nil
-                screen?.setRelationship(previous, for: row.id)
+                isSavingRelationship = false
                 router?.showFlash(ProfileV3Strings.saveFailed, isSuccess: false)
             }
+        }
+    }
+
+    private func applyRelationshipField(_ field: ProfileV3EditField) {
+        relationshipField = field
+        relationshipSelection = field.selectedValue
+        for option in field.options {
+            relationshipTitles[option.value] = option.title
         }
     }
 
@@ -283,6 +339,7 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
         loadTask?.cancel()
         confirmTask?.cancel()
         addScreenTask?.cancel()
+        relationshipLoadTask?.cancel()
     }
 
     private func showToast(_ message: String) {

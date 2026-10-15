@@ -13,6 +13,7 @@ enum ProfileV3SettingsDestination: Hashable {
     case deleteReason
     case editTravellers
     case editTraveller(String)
+    case travellerRelationship(String)
     case deleteTravellerConfirm(String)
     case addTraveller
     case addTravellerCitizenship
@@ -28,7 +29,8 @@ enum ProfileV3SettingsDestination: Hashable {
     var isFullHeight: Bool {
         switch self {
         case .residence, .citizenship, .currency, .contactInfo, .connectors, .appAccess,
-             .controlPanel, .deleteReason, .editTraveller, .addTraveller, .addTravellerCitizenship:
+             .controlPanel, .deleteReason, .editTraveller, .travellerRelationship, .addTraveller,
+             .addTravellerCitizenship:
             return true
         case .logout, .deleteAccount, .editTravellers, .deleteTravellerConfirm, .permissions:
             return false

@@ -8,7 +8,6 @@ final class ProfileV3SettingsSheetPresenter {
     private unowned let navCon: UINavigationController
     private let repository: any ProfileV3SettingsRepository
     private let kyc: any ProfileV3KYCHost
-    private let navigation: any ProfileV3NavigationHost
     private let account: any ProfileV3AccountHost
     private let coupons: any ProfileV3CouponsHost
     private let app: any ProfileV3AppHost
@@ -31,7 +30,6 @@ final class ProfileV3SettingsSheetPresenter {
         navCon: UINavigationController,
         repository: any ProfileV3SettingsRepository,
         kyc: any ProfileV3KYCHost,
-        navigation: any ProfileV3NavigationHost,
         account: any ProfileV3AccountHost,
         coupons: any ProfileV3CouponsHost,
         app: any ProfileV3AppHost,
@@ -46,7 +44,6 @@ final class ProfileV3SettingsSheetPresenter {
         self.navCon = navCon
         self.repository = repository
         self.kyc = kyc
-        self.navigation = navigation
         self.account = account
         self.coupons = coupons
         self.app = app
@@ -180,31 +177,26 @@ extension ProfileV3SettingsSheetPresenter: ProfileV3SettingsSheetRouting {
     }
 
     func restartAfterSaving(_ pendingWrites: Task<Void, Never>?) {
-        let navCon = navCon
-        let navigation = navigation
+        let app = app
         Task {
-            await ProfileV3RestartCover.show(app: app)
             await ProfileV3WriteQueue.wait(
                 for: pendingWrites,
                 timeout: .seconds(ProfileV3Theme.Motion.settingsWriteTimeoutSeconds)
             )
-            afterDismiss = {
-                navigation.restartApp()
-                ProfileV3RestartCover.hide(afterRestartOf: navCon, navigation: navigation)
-            }
+            afterDismiss = { app.restartApp() }
             closeAll(animated: false)
         }
     }
 
     func dismissSettingsThenRestart(after pendingWrites: Task<Void, Never>?) {
-        let navigation = navigation
+        let app = app
         afterDismiss = {
             Task { @MainActor in
                 await ProfileV3WriteQueue.wait(
                     for: pendingWrites,
                     timeout: .seconds(ProfileV3Theme.Motion.settingsWriteTimeoutSeconds)
                 )
-                navigation.restartApp()
+                app.restartApp()
             }
         }
         dismissSettings()

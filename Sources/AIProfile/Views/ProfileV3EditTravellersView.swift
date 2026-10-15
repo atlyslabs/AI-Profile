@@ -5,15 +5,12 @@ struct ProfileV3EditTravellersView: View {
     let travellers: [ProfileV3TravellerRow]
     var worldPassLabel = ProfileV3Strings.worldPass
     var worldPassIconURL: URL?
-    var relationshipPicker: ProfileV3RelationshipPicker?
-    var savingRelationshipID: String?
     var phase: ProfileV3LoadPhase = .loaded
     var toast: String?
     let onBack: () -> Void
     let onClose: () -> Void
     var onRetry: () -> Void = {}
     let onSelect: (ProfileV3TravellerRow) -> Void
-    var onSelectRelationship: (String, ProfileV3TravellerRow) -> Void = { _, _ in }
     let onAdd: () -> Void
 
     @State private var listHeight: CGFloat = 0
@@ -60,21 +57,11 @@ struct ProfileV3EditTravellersView: View {
     private var list: some View {
         VStack(spacing: ProfileV3Theme.Sizes.Traveller.cardSpacing) {
             ForEach(travellers) { traveller in
-                VStack(alignment: .leading, spacing: ProfileV3Theme.Sizes.Traveller.relationshipTop) {
-                    ProfileV3TravellerCard(
-                        traveller: traveller,
-                        worldPassLabel: worldPassLabel,
-                        worldPassIconURL: worldPassIconURL
-                    ) { onSelect(traveller) }
-                    if let relationshipPicker, !traveller.isMain {
-                        ProfileV3RelationshipChips(
-                            picker: relationshipPicker,
-                            selection: traveller.relationship,
-                            isSaving: savingRelationshipID == traveller.id,
-                            onSelect: { onSelectRelationship($0, traveller) }
-                        )
-                    }
-                }
+                ProfileV3TravellerCard(
+                    traveller: traveller,
+                    worldPassLabel: worldPassLabel,
+                    worldPassIconURL: worldPassIconURL
+                ) { onSelect(traveller) }
             }
             if let toast {
                 ProfileV3Toast(message: toast)
@@ -95,43 +82,10 @@ struct ProfileV3EditTravellersView: View {
     }
 }
 
-private struct ProfileV3RelationshipChips: View {
-    let picker: ProfileV3RelationshipPicker
-    let selection: String?
-    let isSaving: Bool
-    let onSelect: (String) -> Void
-
-    private typealias Layout = ProfileV3Theme.Sizes.Traveller
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: Layout.relationshipTitleGap) {
-            if let title = picker.title.nonEmpty {
-                ProfileV3TagLabel(text: title)
-            }
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: Layout.relationshipChipSpacing) {
-                    ForEach(picker.options) { option in
-                        ProfileV3Chip(title: option.title, isSelected: option.value == selection) {
-                            onSelect(option.value)
-                        }
-                    }
-                }
-            }
-            .contentMargins(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin, for: .scrollContent)
-            .scrollClipDisabled()
-            .padding(.horizontal, -ProfileV3Theme.Sizes.screenHorizontalMargin)
-        }
-        .disabled(isSaving)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel(picker.title)
-    }
-}
-
 #if DEBUG
 #Preview("Edit travellers") {
     ProfileV3EditTravellersView(
         travellers: ProfileV3Fixtures.editTravellers.travellers,
-        relationshipPicker: ProfileV3Fixtures.editTravellers.relationshipPicker,
         onBack: {},
         onClose: {},
         onSelect: { _ in },

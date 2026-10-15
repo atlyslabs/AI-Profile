@@ -263,7 +263,19 @@ extension ProfileV3Theme {
     )
 
     static let connectorDeckPodiumRim = LinearGradient(
-        colors: [Color(hex: "666666"), Color(at: .pureBlack)],
+        colors: [Palette.connectorWellGrey, Color(at: .pureBlack)],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
+    static let connectorDeckWellMouth = LinearGradient(
+        colors: [Color(at: .pureBlack), Palette.connectorWellGrey],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
+    static let connectorDeckPodiumMouth = LinearGradient(
+        colors: [Palette.connectorMouthLight, Palette.connectorMouthDark],
         startPoint: .top,
         endPoint: .bottom
     )
@@ -272,6 +284,27 @@ extension ProfileV3Theme {
         colors: [Color(hex: "737373").opacity(0.4), Color(hex: "D9D9D9").opacity(0)],
         startPoint: .top,
         endPoint: .bottom
+    )
+
+    static let connectorDeckWellBody = LinearGradient(
+        stops: [
+            .init(color: Color(hex: "737373").opacity(0.4), location: 0),
+            .init(color: Color(hex: "D9D9D9").opacity(0), location: 0.25),
+            .init(color: Color(hex: "D9D9D9").opacity(0), location: 0.75),
+            .init(color: Color(hex: "737373").opacity(0.4), location: 1)
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
+    static let connectorDeckPodiumSheen = LinearGradient(
+        stops: [
+            .init(color: Palette.connectorSheen.opacity(0), location: 0),
+            .init(color: Palette.connectorSheen.opacity(0.2), location: 0.343),
+            .init(color: Palette.connectorWellGrey.opacity(0), location: 1)
+        ],
+        startPoint: .leading,
+        endPoint: .trailing
     )
 
     static let connectorDeckBodyText = LinearGradient(

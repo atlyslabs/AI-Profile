@@ -8,8 +8,5 @@ extension ProfileV3Theme.Sizes {
         static let cardLipWidth: CGFloat = 216
         static let cardLipHeight: CGFloat = 7
         static let formNameTop: CGFloat = 44
-        static let relationshipTop: CGFloat = 12
-        static let relationshipTitleGap: CGFloat = 10
-        static let relationshipChipSpacing: CGFloat = 8
     }
 }

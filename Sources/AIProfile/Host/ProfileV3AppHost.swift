@@ -4,7 +4,7 @@ import SwiftUI
 public protocol ProfileV3AppHost: AnyObject, Sendable {
     func showStatusMessage(_ text: String, isSuccess: Bool)
     func logOut()
-    func restartSplash(onFinish: @escaping @MainActor () -> Void) -> AnyView
+    func restartApp()
     var floatingBarClearance: CGFloat { get }
 }
 

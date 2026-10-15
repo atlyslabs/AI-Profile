@@ -8,6 +8,7 @@ struct ProfileV3TravellerRow: Identifiable, Equatable {
     var mobileNumber: String?
     var citizenshipCode: String?
     var relationship: String?
+    var relationshipEntry: ProfileV3RelationshipEntry?
     let isMain: Bool
     var badgeImageURL: URL?
     var isDeletable = false
@@ -15,9 +16,14 @@ struct ProfileV3TravellerRow: Identifiable, Equatable {
     var citizenship: ProfileV3Country? { citizenshipCode.flatMap { ProfileV3Country(code: $0) } }
 }
 
-struct ProfileV3RelationshipPicker: Equatable {
-    let title: String
-    let options: [ProfileV3AddTravellerOption]
+struct ProfileV3RelationshipEntry: Equatable {
+    let label: String
+    let profileID: String
+
+    static func title(for value: String) -> String {
+        let spaced = value.replacingOccurrences(of: "_", with: " ").replacingOccurrences(of: "-", with: " ")
+        return spaced.prefix(1).uppercased() + spaced.dropFirst()
+    }
 }
 
 struct ProfileV3EditTravellersScreen: Equatable {
@@ -26,7 +32,6 @@ struct ProfileV3EditTravellersScreen: Equatable {
     let addLabel: String
     var worldPassLabel = ProfileV3Strings.worldPass
     var worldPassIconURL: URL?
-    var relationshipPicker: ProfileV3RelationshipPicker?
 
     mutating func setRelationship(_ value: String?, for profileID: String) {
         guard let index = travellers.firstIndex(where: { $0.id == profileID }) else { return }

@@ -35,7 +35,7 @@ struct ProfileV3AddTravellerView: View {
                     .frame(height: ProfileV3Theme.Sizes.settingsLoadStateHeight)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .top)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())
         .safeAreaInset(edge: .bottom) { confirmBar }
         .onChange(of: isPhoneFocused) { _, focused in track(ProfileV3AddTravellerField.mobileNumberKey, focused) }

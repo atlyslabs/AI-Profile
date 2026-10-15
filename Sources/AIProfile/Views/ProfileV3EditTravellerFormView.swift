@@ -7,9 +7,12 @@ struct ProfileV3EditTravellerFormView: View {
     var isPhoneValid = true
     var passportError: String?
     var canRemove = true
+    var relationshipLabel: String?
+    var relationshipValue: String?
     let onBack: () -> Void
     let onClose: () -> Void
     let onRemove: () -> Void
+    var onRelationshipTap: () -> Void = {}
     let onConfirm: () -> Void
 
     private enum Field: Hashable {
@@ -102,6 +105,9 @@ struct ProfileV3EditTravellerFormView: View {
                 )
                 .id(Field.lastName)
             }
+            if let relationshipLabel {
+                relationshipField(relationshipLabel)
+            }
             phoneField
                 .id(Field.phone)
             ProfileV3LabelledField(
@@ -113,6 +119,29 @@ struct ProfileV3EditTravellerFormView: View {
                 onFocusChange: { track(.passport, isFocused: $0) }
             )
             .id(Field.passport)
+        }
+    }
+
+    private func relationshipField(_ label: String) -> some View {
+        VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s12) {
+            ProfileV3FieldLabel(text: label)
+            Button(action: onRelationshipTap) {
+                HStack(spacing: ProfileV3Theme.Space.s12) {
+                    Text(relationshipValue ?? ProfileV3Strings.selectPlaceholder)
+                        .typoGraphy(.B1InterMedium14)
+                        .foregroundStyle(relationshipValue == nil ? Color(at: .neutralGrey200) : Color(at: .pureBlack))
+                    Spacer(minLength: 0)
+                    ATIcon.SwiftUIImage.expandMore
+                        .profileV3Icon(ProfileV3Theme.Icon.md)
+                        .foregroundStyle(Color(at: .neutralGrey400))
+                }
+                .padding(.bottom, ProfileV3Theme.Space.s8)
+                .atFormFieldBottomLine(isError: false, isFocused: false, style: .dashed, tintsOnFocus: false)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.profileV3Pressable)
+            .accessibilityLabel(label)
+            .accessibilityValue(relationshipValue ?? "")
         }
     }
 
@@ -186,6 +215,8 @@ private struct ProfileV3EditTravellerFormPreview: View {
             traveller: $traveller,
             isSaving: isSaving,
             canRemove: canRemove,
+            relationshipLabel: traveller.isMain ? nil : "Relationship",
+            relationshipValue: traveller.isMain ? nil : "Sibling",
             onBack: {},
             onClose: {},
             onRemove: {},

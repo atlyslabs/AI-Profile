@@ -42,6 +42,21 @@ struct ProfileV3EditFieldSubmitDTO: Decodable, Equatable {
     let label: String?
     let action: String?
     let field: String?
+    let profileID: String?
+
+    enum CodingKeys: String, CodingKey {
+        case label
+        case action
+        case field
+        case profileID = "profile_id"
+    }
+}
+
+struct ProfileV3EditFieldOptionDTO: Decodable, Equatable {
+    let value: String?
+    let title: String?
+    let label: String?
+    let selected: Bool?
 }
 
 struct ProfileV3EditFieldScreenDTO: Decodable, Equatable {
@@ -52,9 +67,11 @@ struct ProfileV3EditFieldScreenDTO: Decodable, Equatable {
     let subtitle: String?
     private let rawCurrent: ProfileV3LossyDTO<ProfileV3EditFieldCurrentDTO>?
     private let rawSubmit: ProfileV3LossyDTO<ProfileV3EditFieldSubmitDTO>?
+    private let rawOptions: [ProfileV3LossyDTO<ProfileV3EditFieldOptionDTO>]?
 
     var current: ProfileV3EditFieldCurrentDTO? { rawCurrent?.value }
     var submit: ProfileV3EditFieldSubmitDTO? { rawSubmit?.value }
+    var options: [ProfileV3EditFieldOptionDTO] { rawOptions?.compactMap(\.value) ?? [] }
 
     enum CodingKeys: String, CodingKey {
         case type
@@ -64,5 +81,6 @@ struct ProfileV3EditFieldScreenDTO: Decodable, Equatable {
         case subtitle
         case rawCurrent = "current"
         case rawSubmit = "submit"
+        case rawOptions = "options"
     }
 }

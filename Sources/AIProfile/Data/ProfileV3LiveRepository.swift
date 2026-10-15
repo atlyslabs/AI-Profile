@@ -61,10 +61,21 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
 
     func loadEditField(_ field: ProfileV3ProfileField) async throws -> ProfileV3EditField {
         let dto: ProfileV3EditFieldScreenDTO = try await request(
-            ProfileV3API.editField(field.rawValue),
+            ProfileV3API.editField(field.rawValue, profileID: nil),
             action: "edit_field"
         )
         guard let mapped = ProfileV3EditFieldMapper.field(dto) else {
+            throw ProfileV3Error.server(code: "unknown_field", message: nil)
+        }
+        return mapped
+    }
+
+    func loadTravellerRelationship(profileID: String) async throws -> ProfileV3EditField {
+        let dto: ProfileV3EditFieldScreenDTO = try await request(
+            ProfileV3API.editField(ProfileV3AddTravellerField.relationshipKey, profileID: profileID),
+            action: "edit_field"
+        )
+        guard let mapped = ProfileV3EditFieldMapper.field(dto), !mapped.options.isEmpty else {
             throw ProfileV3Error.server(code: "unknown_field", message: nil)
         }
         return mapped

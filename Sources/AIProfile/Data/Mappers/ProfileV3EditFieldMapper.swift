@@ -1,6 +1,6 @@
 import Foundation
 
-enum ProfileV3EditFieldMapper {
+enum ProfileV3EditFieldMapper: ProfileV3DTOReading {
     static func field(_ dto: ProfileV3EditFieldScreenDTO) -> ProfileV3EditField? {
         let field = (dto.field ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         guard !field.isEmpty else { return nil }
@@ -11,7 +11,9 @@ enum ProfileV3EditFieldMapper {
             subtitle: dto.subtitle,
             submitLabel: dto.submit?.label,
             currentCode: dto.current?.code,
-            currentContact: contact(dto.current?.contact)
+            currentContact: contact(dto.current?.contact),
+            options: dto.options.compactMap(option),
+            submitProfileID: text(dto.submit?.profileID)
         )
     }
 
@@ -21,8 +23,18 @@ enum ProfileV3EditFieldMapper {
         switch field.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
         case "contact": return .contactForm
         case "currency": return .currencyPicker
+        case ProfileV3AddTravellerField.relationshipKey: return .singleSelect
         default: return .countryPicker
         }
+    }
+
+    private static func option(_ dto: ProfileV3EditFieldOptionDTO) -> ProfileV3EditField.Option? {
+        guard let value = text(dto.value) else { return nil }
+        return ProfileV3EditField.Option(
+            value: value,
+            title: text(dto.title) ?? text(dto.label) ?? ProfileV3RelationshipEntry.title(for: value),
+            isSelected: dto.selected ?? false
+        )
     }
 
     private static func contact(_ dto: ProfileV3EditFieldContactDTO?) -> ProfileV3ContactDetails? {

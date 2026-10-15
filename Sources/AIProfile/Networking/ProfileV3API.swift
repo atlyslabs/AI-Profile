@@ -21,7 +21,7 @@ enum ProfileV3API {
     case coupons
     case coupon(id: String)
     case settings
-    case editField(String)
+    case editField(String, profileID: String?)
     case connectors
     case connectorControlPanel
     case disconnectConfirm(connector: ProfileV3ConnectorKey)
@@ -85,7 +85,7 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.boardBasePath + "/coupons/\(id)"
         case .settings:
             return Self.boardBasePath + "/settings"
-        case .editField(let field):
+        case .editField(let field, _):
             return Self.boardBasePath + "/settings/edit/\(field)"
         case .connectors:
             return Self.boardBasePath + "/settings/connectors"
@@ -139,7 +139,8 @@ extension ProfileV3API: ATCoreTargetType {
              .loyaltyInsight(_, let profileID),
              .loyaltySources(_, let profileID),
              .benefits(let profileID),
-             .preferenceSources(_, _, let profileID):
+             .preferenceSources(_, _, let profileID),
+             .editField(_, let profileID):
             return Self.query(("profile_id", profileID))
         case .loyaltyCatalogue(let query, let kind):
             return Self.query(("q", query?.nonEmpty), ("kind", kind?.nonEmpty))

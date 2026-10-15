@@ -46,6 +46,10 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
+    func loadTravellerRelationship(profileID _: String) async throws -> ProfileV3EditField {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
     func saveTravellerRelationship(_: String, profileID _: String) async throws {
         throw ProfileV3RepositoryError.unavailable
     }

@@ -153,6 +153,13 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         return screen
     }
 
+    func loadTravellerRelationship(profileID: String) async throws -> ProfileV3EditField {
+        try await Task.sleep(for: delay)
+        let current = session.relationships[profileID]
+            ?? ProfileV3Fixtures.editTravellers.travellers.first { $0.id == profileID }?.relationship
+        return ProfileV3Fixtures.relationshipField(profileID: profileID, selected: current)
+    }
+
     func saveTravellerRelationship(_ value: String, profileID: String) async throws {
         try await Task.sleep(for: delay)
         session.relationships[profileID] = value

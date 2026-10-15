@@ -11,8 +11,8 @@ final class VDCProfileV3AppHost: ProfileV3AppHost {
         LoginCoordinator.logOutUser()
     }
 
-    func restartSplash(onFinish: @escaping @MainActor () -> Void) -> AnyView {
-        AnyView(AICSplash(replays: true, onFinish: onFinish))
+    func restartApp() {
+        NotificationCenter.default.post(name: AVNavigationViewController.RestartApp, object: nil)
     }
 
     var floatingBarClearance: CGFloat {

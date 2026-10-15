@@ -11,9 +11,11 @@ struct ProfileV3TravellerRowDTO: Decodable, Equatable {
     let isMain: Bool?
     private let rawBadge: ProfileV3LossyDTO<ProfileV3TravellerBadgeDTO>?
     private let rawNext: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
+    private let rawEditRelationship: ProfileV3LossyDTO<ProfileV3NavCTADTO>?
 
     var badge: ProfileV3TravellerBadgeDTO? { rawBadge?.value }
     var next: ProfileV3DirectiveDTO? { rawNext?.value }
+    var editRelationship: ProfileV3NavCTADTO? { rawEditRelationship?.value }
 
     enum CodingKeys: String, CodingKey {
         case profileID = "profile_id"
@@ -26,6 +28,7 @@ struct ProfileV3TravellerRowDTO: Decodable, Equatable {
         case isMain = "is_main"
         case rawBadge = "badge"
         case rawNext = "next"
+        case rawEditRelationship = "edit_relationship"
     }
 }
 
@@ -41,18 +44,6 @@ struct ProfileV3TravellerBadgeDTO: Decodable, Equatable {
     }
 }
 
-struct ProfileV3RelationshipPickerDTO: Decodable, Equatable {
-    let title: String?
-    private let rawOptions: [ProfileV3LossyDTO<ProfileV3AddTravellerOptionDTO>]?
-
-    var options: [ProfileV3AddTravellerOptionDTO] { rawOptions?.compactMap(\.value) ?? [] }
-
-    enum CodingKeys: String, CodingKey {
-        case title
-        case rawOptions = "options"
-    }
-}
-
 struct ProfileV3EditTravellersScreenDTO: Decodable, Equatable {
     let type: String?
     let title: String?
@@ -60,11 +51,9 @@ struct ProfileV3EditTravellersScreenDTO: Decodable, Equatable {
     let worldpassIcon: String?
     private let rawTravellers: [ProfileV3LossyDTO<ProfileV3TravellerRowDTO>]?
     private let rawAdd: ProfileV3LossyDTO<ProfileV3NavCTADTO>?
-    private let rawRelationshipPicker: ProfileV3LossyDTO<ProfileV3RelationshipPickerDTO>?
 
     var travellers: [ProfileV3TravellerRowDTO] { rawTravellers?.compactMap(\.value) ?? [] }
     var add: ProfileV3NavCTADTO? { rawAdd?.value }
-    var relationshipPicker: ProfileV3RelationshipPickerDTO? { rawRelationshipPicker?.value }
 
     enum CodingKeys: String, CodingKey {
         case type
@@ -73,7 +62,6 @@ struct ProfileV3EditTravellersScreenDTO: Decodable, Equatable {
         case worldpassIcon = "worldpass_icon"
         case rawTravellers = "travellers"
         case rawAdd = "add"
-        case rawRelationshipPicker = "relationship_picker"
     }
 }
 

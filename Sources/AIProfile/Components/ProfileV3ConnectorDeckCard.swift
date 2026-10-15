@@ -238,7 +238,7 @@ struct ProfileV3ConnectorDeckCard: View {
     private var well: some View {
         ZStack(alignment: .top) {
             wellBody
-            rim.offset(y: nearRimTop)
+            rim(mouth: ProfileV3Theme.connectorDeckPodiumRim).offset(y: nearRimTop)
             ProfileV3ConnectorGlowShape()
                 .fill(ProfileV3Theme.connectorDeckGlow)
                 .frame(width: Deck.glowWidth, height: beamRestHeight)
@@ -248,7 +248,7 @@ struct ProfileV3ConnectorDeckCard: View {
                 .animation(ProfileV3Theme.Motion.connectorDeckDim, value: isDimmed)
                 .offset(y: wellMouth)
             floatBadge
-            rim.offset(y: farRimTop)
+            rim(mouth: ProfileV3Theme.connectorDeckWellMouth).offset(y: farRimTop)
             secondPodium
                 .offset(y: secondRimTop)
                 .animation(ProfileV3Theme.Motion.connectorDeckSubmerge, value: stage)
@@ -310,18 +310,19 @@ struct ProfileV3ConnectorDeckCard: View {
 
     private var wellBody: some View {
         Rectangle()
-            .fill(ProfileV3Theme.connectorDeckPodiumBody)
+            .fill(ProfileV3Theme.connectorDeckWellBody)
+            .overlay(ProfileV3Theme.connectorDeckPodiumSheen)
             .frame(width: Deck.podiumWidth, height: Deck.wellHeight)
             .offset(y: nearRimTop + Deck.podiumRim / 2)
     }
 
-    private var rim: some View {
+    private func rim(mouth: LinearGradient) -> some View {
         ZStack(alignment: .top) {
             Ellipse()
-                .fill(ProfileV3Theme.Palette.podiumShadowStart)
+                .fill(ProfileV3Theme.Palette.connectorRim)
                 .frame(width: Deck.podiumWidth, height: Deck.podiumRim)
             Ellipse()
-                .fill(ProfileV3Theme.connectorDeckPodiumRim)
+                .fill(mouth)
                 .frame(width: Deck.podiumInnerWidth, height: Deck.podiumInnerRim)
                 .padding(.top, Deck.podiumInnerTop)
         }
@@ -337,9 +338,10 @@ struct ProfileV3ConnectorDeckCard: View {
         ZStack(alignment: .top) {
             Rectangle()
                 .fill(ProfileV3Theme.connectorDeckPodiumBody)
+                .overlay(ProfileV3Theme.connectorDeckPodiumSheen)
                 .frame(width: Deck.podiumWidth, height: Deck.podiumBodyHeight)
                 .offset(y: Deck.podiumRim / 2)
-            rim
+            rim(mouth: ProfileV3Theme.connectorDeckPodiumMouth)
         }
         .frame(width: Deck.podiumWidth, alignment: .top)
     }

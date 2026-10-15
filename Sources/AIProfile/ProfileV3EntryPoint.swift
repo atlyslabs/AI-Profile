@@ -31,7 +31,6 @@ public enum ProfileV3EntryPoint {
             navCon: navCon,
             repository: environment.makeRepository(),
             kyc: environment.kyc,
-            navigation: environment.navigation,
             account: environment.account,
             coupons: environment.coupons,
             app: environment.app,

@@ -22,7 +22,8 @@ struct ProfileV3SettingsDestinationView: View {
             )
         case .connectors, .appAccess:
             EmptyView()
-        case .editTravellers, .editTraveller, .deleteTravellerConfirm, .addTraveller, .addTravellerCitizenship:
+        case .editTravellers, .editTraveller, .travellerRelationship, .deleteTravellerConfirm, .addTraveller,
+             .addTravellerCitizenship:
             ProfileV3SettingsTravellersScreen(
                 destination: destination,
                 model: viewModel.travellers,
@@ -169,15 +170,12 @@ private struct ProfileV3SettingsTravellersScreen: View {
                 travellers: model.rows,
                 worldPassLabel: model.worldPassLabel,
                 worldPassIconURL: model.worldPassIconURL,
-                relationshipPicker: model.relationshipPicker,
-                savingRelationshipID: model.savingRelationshipID,
                 phase: model.phase,
                 toast: model.toast,
                 onBack: onBack,
                 onClose: onClose,
                 onRetry: model.load,
                 onSelect: model.select,
-                onSelectRelationship: model.selectRelationship,
                 onAdd: model.tapAdd
             )
         case .editTraveller:
@@ -187,10 +185,27 @@ private struct ProfileV3SettingsTravellersScreen: View {
                 isPhoneValid: model.isEditedPhoneValid,
                 passportError: model.editedPassportError,
                 canRemove: model.canDelete(id: model.editingTraveller.id),
+                relationshipLabel: model.editingRelationshipEntry?.label,
+                relationshipValue: model.editingRelationshipTitle,
                 onBack: onBack,
                 onClose: onClose,
                 onRemove: model.tapRemove,
+                onRelationshipTap: model.tapRelationship,
                 onConfirm: model.confirmEdit
+            )
+        case .travellerRelationship:
+            ProfileV3TravellerRelationshipView(
+                field: model.relationshipField,
+                fallbackTitle: model.editingRelationshipEntry?.label ?? "",
+                selection: model.relationshipSelection,
+                phase: model.relationshipPhase,
+                isSaving: model.isSavingRelationship,
+                canSave: model.canSaveRelationship,
+                onBack: onBack,
+                onClose: onClose,
+                onRetry: model.loadRelationship,
+                onSelect: model.selectRelationship,
+                onConfirm: model.confirmRelationship
             )
         case .deleteTravellerConfirm:
             ProfileV3DeleteTravellerConfirmView(

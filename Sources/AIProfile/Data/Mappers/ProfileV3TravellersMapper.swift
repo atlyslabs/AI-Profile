@@ -8,19 +8,13 @@ enum ProfileV3TravellersMapper: ProfileV3DTOReading {
             travellers: dto.travellers.compactMap(row),
             addLabel: text(dto.add?.label) ?? ProfileV3Strings.addTraveller,
             worldPassLabel: text(dto.worldpassLabel) ?? ProfileV3Strings.worldPass,
-            worldPassIconURL: remoteURL(dto.worldpassIcon),
-            relationshipPicker: dto.relationshipPicker.flatMap(relationshipPicker)
+            worldPassIconURL: remoteURL(dto.worldpassIcon)
         )
-    }
-
-    private static func relationshipPicker(_ dto: ProfileV3RelationshipPickerDTO) -> ProfileV3RelationshipPicker? {
-        let options = dto.options.compactMap(option)
-        guard !options.isEmpty else { return nil }
-        return ProfileV3RelationshipPicker(title: text(dto.title) ?? "", options: options)
     }
 
     private static func row(_ dto: ProfileV3TravellerRowDTO) -> ProfileV3TravellerRow? {
         guard let id = text(dto.profileID) else { return nil }
+        let isMain = dto.isMain ?? false
         return ProfileV3TravellerRow(
             id: id,
             name: text(dto.name) ?? "",
@@ -28,10 +22,21 @@ enum ProfileV3TravellersMapper: ProfileV3DTOReading {
             passportNumber: text(dto.passportNumber),
             mobileNumber: text(dto.mobileNumber),
             citizenshipCode: text(dto.citizenshipCountryCode)?.uppercased(),
-            relationship: dto.isMain == true ? nil : text(dto.relationship),
-            isMain: dto.isMain ?? false,
+            relationship: isMain ? nil : text(dto.relationship),
+            relationshipEntry: isMain ? nil : relationshipEntry(dto.editRelationship, rowID: id),
+            isMain: isMain,
             badgeImageURL: remoteURL(dto.badge?.imageURL),
             isDeletable: dto.next != nil
+        )
+    }
+
+    private static func relationshipEntry(_ cta: ProfileV3NavCTADTO?, rowID: String) -> ProfileV3RelationshipEntry? {
+        guard let cta, cta.next.go == "edit_field" else { return nil }
+        let field = text(cta.next.field) ?? ProfileV3AddTravellerField.relationshipKey
+        guard field == ProfileV3AddTravellerField.relationshipKey else { return nil }
+        return ProfileV3RelationshipEntry(
+            label: text(cta.label) ?? ProfileV3RelationshipEntry.title(for: field),
+            profileID: text(cta.next.profileID) ?? rowID
         )
     }
 

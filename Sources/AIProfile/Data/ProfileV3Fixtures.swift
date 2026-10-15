@@ -375,14 +375,30 @@ enum ProfileV3Fixtures {
                 name: traveller.displayName,
                 passNumber: traveller.passNumber,
                 relationship: traveller.isMain ? nil : "sibling",
+                relationshipEntry: traveller.isMain
+                    ? nil
+                    : ProfileV3RelationshipEntry(label: "Relationship", profileID: traveller.id),
                 isMain: traveller.isMain,
                 isDeletable: !traveller.isMain
             )
         },
         addLabel: ProfileV3Strings.addTraveller,
-        worldPassIconURL: URL(string: "https://media.atlys.com/b2c/ai-native/icons/worldpass_default.png"),
-        relationshipPicker: ProfileV3RelationshipPicker(title: "Relationship", options: relationshipOptions)
+        worldPassIconURL: URL(string: "https://media.atlys.com/b2c/ai-native/icons/worldpass_default.png")
     )
+
+    static func relationshipField(profileID: String, selected: String?) -> ProfileV3EditField {
+        ProfileV3EditField(
+            field: ProfileV3AddTravellerField.relationshipKey,
+            title: "Relationship",
+            input: .singleSelect,
+            submitLabel: ProfileV3Strings.confirmEdit,
+            currentCode: selected,
+            options: relationshipOptions.map {
+                ProfileV3EditField.Option(value: $0.value, title: $0.title, isSelected: $0.value == selected)
+            },
+            submitProfileID: profileID
+        )
+    }
 
     static func deleteTravellerConfirm(_ profileID: String) -> ProfileV3DeleteTravellerConfirm {
         ProfileV3DeleteTravellerConfirm(

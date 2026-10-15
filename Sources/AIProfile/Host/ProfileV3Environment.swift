@@ -10,7 +10,6 @@ public final class ProfileV3Environment {
     public let identityCapture: any ProfileV3IdentityCaptureHost
     public let globe: any ProfileV3GlobeRendering
     public let analytics: any ProfileV3AnalyticsReporting
-    public let navigation: any ProfileV3NavigationHost
     public let validation: any ProfileV3FieldValidating
     public let account: any ProfileV3AccountHost
     public let coupons: any ProfileV3CouponsHost
@@ -24,7 +23,6 @@ public final class ProfileV3Environment {
         identityCapture: any ProfileV3IdentityCaptureHost,
         globe: any ProfileV3GlobeRendering,
         analytics: any ProfileV3AnalyticsReporting,
-        navigation: any ProfileV3NavigationHost,
         validation: any ProfileV3FieldValidating,
         account: any ProfileV3AccountHost,
         coupons: any ProfileV3CouponsHost,
@@ -40,7 +38,6 @@ public final class ProfileV3Environment {
         self.identityCapture = identityCapture
         self.globe = globe
         self.analytics = analytics
-        self.navigation = navigation
         self.validation = validation
         self.account = account
         self.coupons = coupons

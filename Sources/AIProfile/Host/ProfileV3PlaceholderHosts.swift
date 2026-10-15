@@ -111,10 +111,4 @@ final class ProfileV3PlaceholderFieldValidator: ProfileV3FieldValidating, @unche
     }
 }
 
-@MainActor
-final class ProfileV3PlaceholderNavigationHost: ProfileV3NavigationHost {
-    func restartApp() {}
-
-    func isRestarting(_ navigationController: UINavigationController) -> Bool { false }
-}
 #endif

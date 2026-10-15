@@ -10,7 +10,6 @@ enum VDCProfileV3Composition {
             identityCapture: VDCProfileV3IdentityCaptureHost(),
             globe: VDCProfileV3GlobeRenderer(),
             analytics: VDCProfileV3Analytics(),
-            navigation: VDCProfileV3NavigationHost(),
             validation: VDCProfileV3FieldValidator(),
             account: VDCProfileV3AccountHost(),
             coupons: VDCProfileV3CouponsHost(),
