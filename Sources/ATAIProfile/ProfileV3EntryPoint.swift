@@ -4,17 +4,9 @@ import UIKit
 @MainActor
 public enum ProfileV3EntryPoint {
     private static var addTravellerPresenter: ProfileV3SettingsSheetPresenter?
-    private static var configuredEnvironment: ProfileV3Environment?
-
-    public static func configure(_ environment: ProfileV3Environment) {
-        configuredEnvironment = environment
-    }
 
     static var environment: ProfileV3Environment {
-        guard let configuredEnvironment else {
-            preconditionFailure("ProfileV3EntryPoint.configure(_:) must run before ProfileV3 is used")
-        }
-        return configuredEnvironment
+        ProfileV3Runtime.environment
     }
 
     static func makeRepository() -> any ProfileV3Repository {
@@ -65,15 +57,8 @@ public enum ProfileV3EntryPoint {
         }
     }
 
-    public static func makeHubSurface(
-        navCon: UINavigationController,
-        onClose: @escaping () -> Void
-    ) -> AnyView {
-        AnyView(ProfileV3HubSurface(
-            navCon: navCon,
-            repository: environment.makeRepository(),
-            onClose: onClose
-        ))
+    public static func makeHubSurface(onClose: @escaping () -> Void) -> AnyView {
+        AnyView(ProfileV3HubSurface(onClose: onClose))
     }
 
     static func makeKYCRedirect(

@@ -27,10 +27,11 @@ protocol — see "Deliberately out of scope" below.
   feature itself, ported from the app's `Modules/ProfileV3`: board, traveller, agent and settings
   models, DTOs and mappers, repositories, view models and presenters, the hub, settings and agent
   screens, and the cards, globes and controls they are built from.
-- `Sources/ATAIProfile/Host` — the host bridge: every protocol the host implements, the value types
-  that cross it, and `ProfileV3Environment`, which carries them in. DEBUG-only placeholders stand in
-  for the KYC host, analytics and field validation, and a dotted placeholder draws the globe, so
-  SwiftUI previews run without `configure`.
+- `Sources/ATAIProfile/Host` — the host bridge: `ProfileV3Runtime` and `ProfileV3HostActions`, the
+  protocols the host implements, and the value types that cross them. `ProfileV3Environment` is built
+  inside the package. ATUIKit's country list is the default when a host passes none. DEBUG-only
+  placeholders stand in for the KYC host, analytics and field checks, so SwiftUI previews run
+  without registration.
 - `Sources/ATAIProfile/Networking` — the API on ATCore: a Moya target for the gmail-connector board
   and KYC endpoints, the Slack alert and the pensieve profile edit, the network client, and the
   board's disk cache (ATCore's persistent cache, seven-day expiry).
@@ -38,53 +39,54 @@ protocol — see "Deliberately out of scope" below.
   helpers; the asset catalog and the `ProfileV3Localizable` string catalog; the SwiftGen string
   accessors, which read through a `DittoRuntimeStrings` loader for the Ditto project `ai-profile`.
 - `AppIntegration/ProfileV3Host` — the VDC app's own implementation of every host (`VDCProfileV3*`)
-  and `VDCProfileV3Composition.configure()`. It is not compiled by the package; the app keeps its
-  copy in `VDCApp/Modules/ProfileV3Host`.
+  and `VDCProfileV3Composition.configure()`, which registers on `ProfileV3Runtime`. It is not compiled
+  by the package; the app keeps its copy in `VDCApp/Modules/ProfileV3Host`.
 
 ## Bootstrapping a host
 
-1. Implement the host protocols (see "What the host must still provide") and pass them to
-   `ProfileV3EntryPoint.configure(_:)` once at launch, on the main actor, before any other entry
-   point. Until then every entry point stops with a `preconditionFailure`.
+1. Conform the host's configuration object to `ProfileV3ConfigurationProviding` (base URL, token,
+   residency, `sendEvent`, the current user id, and whether the session is a guest) and register it
+   with the host actions once at launch, on the main actor, before any other entry point. Until both
+   are registered every entry point stops with a `preconditionFailure`.
 
    ```swift
    import ATAIProfile
 
-   ProfileV3EntryPoint.configure(ProfileV3Environment(
-       baseProvider: MyBaseProvider(),
-       session: MySession(),
+   ProfileV3Runtime.registerConfigurationProvider { MyConfiguration.shared }
+   ProfileV3Runtime.registerHostActions(ProfileV3HostActions(
+       account: MyAccountHost(),
+       app: MyAppHost(),
        kyc: MyKYCHost(),
        identityCapture: MyCaptureHost(),
-       globe: MyGlobeRenderer(),
-       analytics: MyAnalytics(),
-       validation: MyFieldValidator(),
-       account: MyAccountHost(),
        coupons: MyCouponsHost(),
-       app: MyAppHost(),
+       analytics: MyAnalytics(),
+       globe: MyGlobeRenderer(),
+       validation: MyFieldValidator(),
        countries: myCountries
    ))
    ```
 
+   `countries` is optional. Left unset, the package uses ATUIKit's country list. Profile events are
+   delivered to the host's `ProfileV3AnalyticsReporting`; the package does not send them itself.
    `appVersion` (sent as `x-app-version`, defaulting to the bundle's short version) and extra Moya
-   `plugins` are optional.
+   `plugins` are optional arguments of `registerConfigurationProvider`.
 
-2. Show the profile. The package pushes, pops and presents on the navigation controller passed in,
-   and the hub draws its own chrome, so push it with the navigation bar hidden, as the VDC app does:
+2. Show the profile. Pushed onto a navigation controller the host already has, with the bar hidden,
+   as the VDC app does:
 
    ```swift
    let hub = ProfileV3EntryPoint.makeHub(navCon: navigationController, entrySource: .accountSettings)
    navigationController.pushViewController(hub, animated: true)
    ```
 
-   `makeHubSurface(navCon:onClose:)` returns the same hub as an `AnyView` for a SwiftUI host — the
-   VDC app embeds it as the chat funnel's profile tab. `presentAddTraveller(navCon:)` opens the
-   add-traveller sheet straight from a deep link, and `prefetchBoard()` warms the board cache before
-   the hub opens. `ProfileV3EntrySource` (`.chat`, `.accountSettings`, `.deepLink`) is sent with the
-   hub's analytics.
+   `makeHubSurface(onClose:)` returns the same hub as an `AnyView` and owns its navigation controller,
+   for a SwiftUI host that has nowhere to push. `presentAddTraveller(navCon:)` opens the add-traveller
+   sheet straight from a deep link, and `prefetchBoard()` warms the board cache before the hub opens.
+   `ProfileV3EntrySource` (`.chat`, `.accountSettings`, `.deepLink`) is sent with the hub's analytics.
 
    `makeHub` and `prefetchBoard` are `nonisolated`, so a Swift 5 caller reaches them without
-   `await`. `makeHub` still has to run on the main thread and traps anywhere else. `configure`,
-   `makeHubSurface` and `presentAddTraveller` are main-actor.
+   `await`. `makeHub` still has to run on the main thread and traps anywhere else. Both `register`
+   calls, `makeHubSurface` and `presentAddTraveller` are main-actor.
 
 ## Auth-token flow
 
@@ -100,17 +102,16 @@ dependency; the host only supplies the current token.
 
 | Parameter | Type | What it covers |
 |---|---|---|
-| `baseProvider` | `ATCoreBaseProvider` | Base URL, user token and residency code for ATCore networking |
-| `session` | `ProfileV3SessionProviding` | Current user id, and whether the session is a guest |
+| configuration provider | `ProfileV3ConfigurationProviding` | Base URL, user token, residency, the current user id, and whether the session is a guest |
+| `account` | `ProfileV3AccountHost` | A snapshot of the signed-in user, saving residence, citizenship and contact, the duplicate-contact check, and a notice when a traveller changes |
+| `app` | `ProfileV3AppHost` | Status messages, logout, app restart, and the bottom clearance of a floating tab bar |
 | `kyc` | `ProfileV3KYCHost` | KYC onboarding, minimal capture, the Gmail, ITR, passport and selfie step screens, Gmail authorization, KYC events |
 | `identityCapture` | `ProfileV3IdentityCaptureHost` | Passport and photo capture with a `verify` closure, full screen or embedded |
-| `globe` | `ProfileV3GlobeRendering` | Preparing and drawing the globe's land |
-| `analytics` | `ProfileV3AnalyticsReporting` | Every Profile V3 event |
-| `validation` | `ProfileV3FieldValidating` | Email and passport-number checks |
-| `account` | `ProfileV3AccountHost` | A snapshot of the signed-in user, saving residence, citizenship and contact, the duplicate-contact check, and a notice when a traveller changes |
 | `coupons` | `ProfileV3CouponsHost` | Presenting the host's coupons screen |
-| `app` | `ProfileV3AppHost` | Status messages, logout, app restart, and the bottom clearance of a floating tab bar |
-| `countries` | `[ProfileV3Country]` | The country list for pickers, currency and lookups: ISO code plus English name |
+| `analytics` | `ProfileV3AnalyticsReporting` | Every Profile V3 event. The host sends it |
+| `globe` | `ProfileV3GlobeRendering` | Preparing and drawing the globe's land |
+| `validation` | `ProfileV3FieldValidating` | Email and passport-number checks |
+| `countries` | `[ProfileV3Country]?` | The country list for pickers, currency and lookups. Unset uses ATUIKit's directory |
 
 - Two images in the host's asset catalog, `WhatsApp` and `reserve_logo_clear`. Every other image
   ships in the package bundle, and remote art loads with Nuke from
@@ -118,12 +119,13 @@ dependency; the host only supplies the current token.
 - The Inter, Denton and Dotline fonts, registered by the host. Inter and Denton go through
   ATUIKit's `Font.inter` and `Font.denton`, which also carry their own copies. Without Dotline the
   world-pass number falls back to the system font.
-- A navigation controller already on screen, with its bar hidden while the hub shows.
+- A navigation controller already on screen when using `makeHub`, with its bar hidden while the hub
+  shows. `makeHubSurface` creates that controller itself.
 
 ## Also public
 
-- `ProfileV3NetworkClient`, exposed as `ProfileV3Environment.client` — the client the package
-  builds from `baseProvider`, `appVersion` and `plugins`.
+- `ProfileV3NetworkClient` — the client the package builds from the configuration provider,
+  `appVersion` and `plugins`.
 - The value types that cross the host protocols: `ProfileV3KYC`, `ProfileV3IdentityCapture`,
   `ProfileV3Globe`, `ProfileV3AccountSnapshot`, `ProfileV3StoredTraveller`, `ProfileV3Country`,
   `ProfileV3FlowOutcome` and `ProfileV3PassportSide`, plus the KYC capture screen data
@@ -139,18 +141,20 @@ dependency; the host only supplies the current token.
   instead.
 - **The globe's land.** The host draws land through `ProfileV3GlobeRendering`. The package owns the
   pose, the projection, the ocean, shading and markers, and the hand-off between the card, hero and
-  detail globes.
-- **User data and the country catalogue.** The host maps its user model into
-  `ProfileV3AccountSnapshot` and its countries into `[ProfileV3Country]`. The package keeps the
-  phone parsing, the contact-update outcome and the two profile writes to pensieve.
+  detail globes. A dotted renderer exists only so SwiftUI previews have something to draw.
+- **User data.** The host maps its user model into `ProfileV3AccountSnapshot` and, when its catalogue
+  differs, its countries into `[ProfileV3Country]`. The package keeps the phone parsing, the
+  contact-update outcome and the two profile writes to pensieve, and falls back to ATUIKit's country
+  directory.
 - **The coupons screen.** `ProfileV3CouponsHost` presents the host's own screen. The package's
   `ProfileV3CouponsListView` is the hub's coupon list, a different screen.
 - **Logout, restart, status messages and the floating tab bar.** `ProfileV3AppHost` owns them. A
   restart is a request to the host; the package draws no splash of its own. For status messages the
   package plays the haptic and the host shows the text.
-- **Navigation chrome.** The package works on any `UINavigationController` and never changes its
-  bar or swipe-back gesture; it only hides the bars of its own SwiftUI navigation stacks. Custom
-  bars, swipe-back policy and restart screens stay with the host.
+- **Navigation chrome.** `makeHub` works on any `UINavigationController` and never changes its bar
+  or swipe-back gesture; it only hides the bars of its own SwiftUI navigation stacks.
+  `makeHubSurface` creates a bar-hidden controller for a SwiftUI host. Custom bars, swipe-back
+  policy and restart screens stay with the host.
 
 ## Building and testing
 

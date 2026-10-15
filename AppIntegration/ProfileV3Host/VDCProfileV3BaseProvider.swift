@@ -1,8 +1,8 @@
-import ATCore
+import ATAIProfile
 import Foundation
 import UIKit
 
-final class VDCProfileV3BaseProvider: ATCoreBaseProvider, @unchecked Sendable {
+final class VDCProfileV3BaseProvider: ProfileV3ConfigurationProviding, @unchecked Sendable {
     private let tokenProvider: FirebaseAuthTokenProvider?
 
     @MainActor
@@ -24,6 +24,14 @@ final class VDCProfileV3BaseProvider: ATCoreBaseProvider, @unchecked Sendable {
 
     var userResidencyCode: String {
         HomeIdentityProvider.residenceCode
+    }
+
+    var currentUserID: String? {
+        UserData.currentUser?.userUid
+    }
+
+    @MainActor var isGuestSession: Bool {
+        GuestSession.firebaseResolver()
     }
 
     func sendEvent(event: String, isScreenView: Bool?, screenName: String?, params: [String: Any]) {
