@@ -1,4 +1,4 @@
-import AIProfile
+import ATAIProfile
 
 enum VDCProfileV3Countries {
     static var catalogue: [ProfileV3Country] {

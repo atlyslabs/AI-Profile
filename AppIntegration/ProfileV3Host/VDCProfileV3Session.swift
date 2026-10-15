@@ -1,4 +1,4 @@
-import AIProfile
+import ATAIProfile
 
 struct VDCProfileV3Session: ProfileV3SessionProviding {
     var currentUserID: String? {

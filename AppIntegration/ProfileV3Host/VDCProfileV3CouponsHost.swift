@@ -1,4 +1,4 @@
-import AIProfile
+import ATAIProfile
 import SwiftUI
 import UIKit
 

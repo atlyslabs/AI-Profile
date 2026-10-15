@@ -1,4 +1,4 @@
-import AIProfile
+import ATAIProfile
 import SwiftUI
 
 struct VDCProfileV3GlobeRenderer: ProfileV3GlobeRendering {

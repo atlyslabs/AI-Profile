@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import AIProfile
+@testable import ATAIProfile
 
 @MainActor
 @Suite("Traveller relationship editor")

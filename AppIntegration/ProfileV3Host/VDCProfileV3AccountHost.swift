@@ -1,4 +1,4 @@
-import AIProfile
+import ATAIProfile
 
 @MainActor
 final class VDCProfileV3AccountHost: ProfileV3AccountHost {

@@ -1,4 +1,4 @@
-import AIProfile
+import ATAIProfile
 import Foundation
 
 final class VDCProfileV3FieldValidator: ProfileV3FieldValidating, @unchecked Sendable {

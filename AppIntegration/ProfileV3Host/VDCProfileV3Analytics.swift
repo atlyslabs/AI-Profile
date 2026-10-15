@@ -1,4 +1,4 @@
-import AIProfile
+import ATAIProfile
 import Foundation
 
 final class VDCProfileV3Analytics: ProfileV3AnalyticsReporting, @unchecked Sendable {

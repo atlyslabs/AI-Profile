@@ -1,4 +1,4 @@
-import AIProfile
+import ATAIProfile
 
 @MainActor
 enum VDCProfileV3Composition {

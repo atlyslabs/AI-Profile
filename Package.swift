@@ -3,14 +3,14 @@
 import PackageDescription
 
 let package = Package(
-    name: "AIProfile",
+    name: "ATAIProfile",
     platforms: [
         .iOS(.v17),
     ],
     products: [
         .library(
-            name: "AIProfile",
-            targets: ["AIProfile"]
+            name: "ATAIProfile",
+            targets: ["ATAIProfile"]
         ),
     ],
     dependencies: [
@@ -24,7 +24,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "AIProfile",
+            name: "ATAIProfile",
             dependencies: [
                 .product(name: "ATCore", package: "ATCore"),
                 .product(name: "Moya", package: "Moya"),
@@ -42,8 +42,8 @@ let package = Package(
             ],
         ),
         .testTarget(
-            name: "AIProfileTests",
-            dependencies: ["AIProfile"],
+            name: "ATAIProfileTests",
+            dependencies: ["ATAIProfile"],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],
