@@ -1,0 +1,31 @@
+CLAUDE.md
+  s_274a1716a161dd::t_5ad38458c76193 191
+  s_274a1716a161dd::t_57413b685a7967 228
+  s_c482717a7a4db6::t_1095df7dfbc84a 185
+  s_c482717a7a4db6::t_eb3341cd09bb19 212-213
+  s_274a1716a161dd::t_8e2036ce2751fa 195
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ae155c616b49b237df464b70f4cfff889c2b9821",
+  "prompts": {},
+  "sessions": {
+    "s_274a1716a161dd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4bb37f6f-3080-44f4-81c1-f12712a02583",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
