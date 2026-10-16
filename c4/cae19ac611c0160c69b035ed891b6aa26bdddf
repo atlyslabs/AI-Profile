@@ -1,0 +1,92 @@
+Sources/ATAIProfile/Components/ProfileV3ProgrammeTile.swift
+  s_6239e1c53e988d::t_8fb66549f4918d 112-113
+  s_6239e1c53e988d::t_490565aa013841 140-158,162-164
+  s_6239e1c53e988d::t_70b618899c9939 139,161,182
+  s_6239e1c53e988d::t_df04f05e4b4fb7 194-195,200-209,211-212
+  s_6239e1c53e988d::t_de05a8a577550e 196-199,210
+  s_6239e1c53e988d::t_6d1f7354ce4a96 159
+Sources/ATAIProfile/Views/ProfileV3SettingsView.swift
+  s_6239e1c53e988d::t_54103cf605320a 193-194
+CLAUDE.md
+  s_6239e1c53e988d::t_f4b89f11b49618 34
+  s_6239e1c53e988d::t_9b1b9f5a74a709 136
+  s_6239e1c53e988d::t_3b60dbce8f3d27 227
+  s_6239e1c53e988d::t_c555044ed75858 228
+  s_6239e1c53e988d::t_49c7def1070b70 199-200,203,205-206
+  s_6239e1c53e988d::t_76ee8ee61f4a3f 207-212
+  s_6239e1c53e988d::t_7a1f3dbf2a9372 64
+  s_c482717a7a4db6::t_43bab968864af4 195
+  s_6239e1c53e988d::t_d228fd9b86b7d6 201-202
+  s_6239e1c53e988d::t_7c6c15271c71de 204
+  s_6239e1c53e988d::t_27791216e60d49 213
+Tests/ATAIProfileTests/ProfileV3LoyaltyRowTests.swift
+  s_6239e1c53e988d::t_49ec1d33320453 1-67
+Sources/ATAIProfile/Components/ProfileV3TravellerCard.swift
+  s_6239e1c53e988d::t_ffb862ff5d05cb 16,28-29,32
+Sources/ATAIProfile/Data/Mappers/ProfileV3TravellersMapper.swift
+  s_6239e1c53e988d::t_bc8337816dfa50 9
+Sources/ATAIProfile/Presentation/ProfileV3ProfileFieldsModel.swift
+  s_6239e1c53e988d::t_5366b92f45fea5 64-72
+  s_6239e1c53e988d::t_8b3552d0eacc5a 91
+  s_6239e1c53e988d::t_e7665240c66a9b 9
+  s_6239e1c53e988d::t_cc29c91ac4d19f 24
+  s_6239e1c53e988d::t_60f56bf8f60b15 131
+Sources/ATAIProfile/Domain/ProfileV3Models.swift
+  s_6239e1c53e988d::t_471ebf07f53641 40-41
+Sources/ATAIProfile/Data/DTOs/ProfileV3SharedDTO.swift
+  s_6239e1c53e988d::t_dbc93bc9e61d08 99-100,116-117
+  s_6239e1c53e988d::t_f700c7cfa68986 138-139
+Sources/ATAIProfile/Support/ProfileV3Theme+Palette.swift
+  s_6239e1c53e988d::t_6ef816cf6bfa08 38
+  s_6239e1c53e988d::t_aab2f0b0b87e41 92
+  s_6239e1c53e988d::t_122bde36df0445 123-124
+Sources/ATAIProfile/Views/ProfileV3EditTravellerFormView.swift
+  s_6239e1c53e988d::t_0cee933fcd80d6 39-42,44
+Sources/ATAIProfile/Data/Mappers/ProfileV3LoyaltyMapper.swift
+  s_6239e1c53e988d::t_c5213d4437bb26 104-106
+Sources/ATAIProfile/Data/ProfileV3Fixtures.swift
+  s_6239e1c53e988d::t_3aa9496452506a 385
+Sources/ATAIProfile/Support/ProfileV3Theme+Gradients.swift
+  s_6239e1c53e988d::t_d830eb69c5ca44 197
+  s_6239e1c53e988d::t_ca325b91c336b3 227
+  s_6239e1c53e988d::t_1862d1591da905 159-164
+  s_6239e1c53e988d::t_6f38e6e5176a02 215
+Sources/ATAIProfile/Support/ProfileV3Theme+TravellerSizes.swift
+  s_6239e1c53e988d::t_a916bcf77b723b 8
+Sources/ATAIProfile/Components/ProfileV3TravellerCardLip.swift
+  s_6239e1c53e988d::t_6c4f6c94b83418 6-7,16-36
+  s_6239e1c53e988d::t_9cd2ad3b5308b5 37-39
+Sources/ATAIProfile/Presentation/ProfileV3SettingsViewModel.swift
+  s_6239e1c53e988d::t_baf7b9d336fdf3 80-84
+Sources/ATAIProfile/Support/ProfileV3Theme+ProgrammeSizes.swift
+  s_6239e1c53e988d::t_8b07b47b0b9dca 62
+Sources/ATAIProfile/Data/ProfileV3ProgrammeFixtures.swift
+  s_6239e1c53e988d::t_6abd1f0e1a0ad5 27-28
+  s_6239e1c53e988d::t_899d346924ccd5 15-17
+Sources/ATAIProfile/Views/ProfileV3EditTravellersView.swift
+  s_6239e1c53e988d::t_5ae3c33c54924d 58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c4cae19ac611c0160c69b035ed891b6aa26bdddf",
+  "prompts": {},
+  "sessions": {
+    "s_6239e1c53e988d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "73ff9596-441c-41dd-91e2-daee7b22e8a4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
