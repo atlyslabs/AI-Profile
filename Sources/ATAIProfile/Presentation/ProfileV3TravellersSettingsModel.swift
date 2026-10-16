@@ -65,10 +65,6 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
         return relationshipSelection != relationshipField?.selectedValue
     }
 
-    var worldPassLabel: String { screen?.worldPassLabel ?? ProfileV3Strings.worldPass }
-
-    var worldPassIconURL: URL? { screen?.worldPassIconURL }
-
     var isEditedPhoneValid: Bool {
         editingTraveller.mobileNumber == editingStoredMobile || editingTraveller.isPhoneValid
     }

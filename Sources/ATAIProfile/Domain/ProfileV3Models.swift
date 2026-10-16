@@ -37,6 +37,8 @@ struct ProfileV3LoyaltyProgramme: Identifiable, Equatable {
     var insight: ProfileV3ProgrammeInsight? = nil
     var insightDirective: ProfileV3Directive? = nil
     var pointsLine: String? = nil
+    var tier: String? = nil
+    var updatedLine: String? = nil
 }
 
 struct ProfileV3ProgrammeInsight: Equatable {

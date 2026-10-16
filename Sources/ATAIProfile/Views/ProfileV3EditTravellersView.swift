@@ -3,8 +3,6 @@ import SwiftUI
 
 struct ProfileV3EditTravellersView: View {
     let travellers: [ProfileV3TravellerRow]
-    var worldPassLabel = ProfileV3Strings.worldPass
-    var worldPassIconURL: URL?
     var phase: ProfileV3LoadPhase = .loaded
     var toast: String?
     let onBack: () -> Void
@@ -57,11 +55,7 @@ struct ProfileV3EditTravellersView: View {
     private var list: some View {
         VStack(spacing: ProfileV3Theme.Sizes.Traveller.cardSpacing) {
             ForEach(travellers) { traveller in
-                ProfileV3TravellerCard(
-                    traveller: traveller,
-                    worldPassLabel: worldPassLabel,
-                    worldPassIconURL: worldPassIconURL
-                ) { onSelect(traveller) }
+                ProfileV3TravellerCard(traveller: traveller) { onSelect(traveller) }
             }
             if let toast {
                 ProfileV3Toast(message: toast)

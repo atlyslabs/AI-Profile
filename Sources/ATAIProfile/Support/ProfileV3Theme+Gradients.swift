@@ -156,6 +156,12 @@ extension ProfileV3Theme {
         endPoint: UnitPoint(x: 0.179, y: 0.94)
     )
 
+    static let travellerCardLipGradient = LinearGradient(
+        colors: [Palette.travellerCardLipTop, Palette.travellerCardLipBottom],
+        startPoint: UnitPoint(x: 0.5, y: -0.429),
+        endPoint: .bottom
+    )
+
     static let programmeTextGradient = LinearGradient(
         colors: [Color(at: .pureWhite), Color(at: .pureWhite).opacity(0.6)],
         startPoint: .leading,
@@ -188,6 +194,7 @@ extension ProfileV3Theme {
         let number: LinearGradient
         let pill: LinearGradient
         let pillBorder: Color
+        let divider: Color
         let shadow: Color
 
         static func resolve(_ overlay: ProfileV3TextOverlay) -> CardShade {
@@ -205,6 +212,7 @@ extension ProfileV3Theme {
             number: programmeTextGradient,
             pill: programmeTilePillGradient,
             pillBorder: Palette.programmeTilePillBorder,
+            divider: Palette.programmeTileDivider,
             shadow: Palette.artTextShadow
         )
 
@@ -216,6 +224,7 @@ extension ProfileV3Theme {
             number: programmeTextGradientDark,
             pill: programmeTilePillGradientDark,
             pillBorder: Palette.cardDarkPillBorder,
+            divider: Palette.cardDarkDivider,
             shadow: Palette.artTextShadowOnLight
         )
     }

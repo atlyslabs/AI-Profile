@@ -109,10 +109,8 @@ struct ProfileV3ProgrammeTile: View {
             }
             numberRow
                 .padding(.top, ProfileV3Theme.Space.s16)
-            if let expiry = programme.expiryLabel {
-                Text(expiry)
-                    .typoGraphy(.T1InterMedium11)
-                    .foregroundStyle(shade.faint)
+            if programme.expiryLabel != nil || programme.updatedLine != nil {
+                statusRow
                     .padding(.top, ProfileV3Theme.Space.s10)
             }
             if let insight = insightText, showsInsight {
@@ -138,8 +136,32 @@ struct ProfileV3ProgrammeTile: View {
 
     private var shade: ProfileV3Theme.CardShade { .resolve(programme.textOverlay) }
 
+    private var hasNumber: Bool { !programme.maskedNumber.isEmpty || programme.membershipNumber != nil }
+
+    private var statusRow: some View {
+        HStack(alignment: .firstTextBaseline, spacing: ProfileV3Theme.Space.s12) {
+            if let expiry = programme.expiryLabel {
+                Text(expiry)
+                    .typoGraphy(.T1InterMedium11)
+                    .foregroundStyle(shade.faint)
+                    .fixedSize()
+            }
+            Spacer(minLength: 0)
+            if let updated = programme.updatedLine {
+                Text(updated)
+                    .typoGraphy(.T1InterMedium11)
+                    .foregroundStyle(shade.secondary)
+                    .multilineTextAlignment(.trailing)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
     private var numberRow: some View {
-        HStack(spacing: ProfileV3Theme.Sizes.ProgrammeTile.copyGap) {
+        HStack(spacing: 0) {
+            if let tier = programme.tier {
+                tierLabel(tier)
+            }
             Text(programme.maskedNumber)
                 .typoGraphy(.T1InterBold11)
                 .textCase(.uppercase)
@@ -157,6 +179,7 @@ struct ProfileV3ProgrammeTile: View {
                 .accessibilityLabel(
                     isCopied ? ProfileV3Strings.membershipNumberCopied : ProfileV3Strings.copyMembershipNumber
                 )
+                .padding(.leading, ProfileV3Theme.Sizes.ProgrammeTile.copyGap)
             }
         }
         .sensoryFeedback(.success, trigger: copies)
@@ -166,6 +189,25 @@ struct ProfileV3ProgrammeTile: View {
             guard !Task.isCancelled else { return }
             withAnimation(ProfileV3Theme.Motion.selection) { isCopied = false }
         }
+    }
+
+    private func tierLabel(_ tier: String) -> some View {
+        HStack(spacing: ProfileV3Theme.Space.s10) {
+            Text(tier)
+                .typoGraphy(.T1InterBold11)
+                .foregroundStyle(shade.primary)
+                .lineLimit(1)
+            if hasNumber {
+                Rectangle()
+                    .fill(shade.divider)
+                    .frame(
+                        width: ProfileV3Theme.Stroke.hairline,
+                        height: ProfileV3Theme.Sizes.ProgrammeTile.tierDividerHeight
+                    )
+                    .accessibilityHidden(true)
+            }
+        }
+        .padding(.trailing, hasNumber ? ProfileV3Theme.Sizes.ProgrammeTile.copyGap : 0)
     }
 
     private func copy(_ number: String) {

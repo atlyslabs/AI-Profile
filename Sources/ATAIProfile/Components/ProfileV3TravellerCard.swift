@@ -3,8 +3,6 @@ import SwiftUI
 
 struct ProfileV3TravellerCard: View {
     let traveller: ProfileV3TravellerRow
-    var worldPassLabel = ProfileV3Strings.worldPass
-    var worldPassIconURL: URL?
     let action: () -> Void
 
     var body: some View {
@@ -15,7 +13,7 @@ struct ProfileV3TravellerCard: View {
                     style: .continuous
                 )
                 .fill(ProfileV3Theme.Palette.travellerCard)
-                VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s20) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: ProfileV3Theme.Space.s8) {
                         Text(traveller.name)
                             .typoGraphy(.H7InterMedium16)
@@ -27,13 +25,11 @@ struct ProfileV3TravellerCard: View {
                                 .accessibilityHidden(true)
                         }
                     }
-                    VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s6) {
-                        worldPassCaption
-                        ProfileV3PassNumber(number: traveller.passNumber)
-                    }
+                    Spacer(minLength: 0)
+                    ProfileV3PassNumber(number: traveller.passNumber)
                 }
                 .padding(.leading, ProfileV3Theme.Space.s30)
-                .padding(.top, ProfileV3Theme.Space.s22)
+                .padding(.vertical, ProfileV3Theme.Space.s22)
                 ATIcon.SwiftUIImage.chevronRight
                     .profileV3Icon(ProfileV3Theme.Icon.lg)
                     .foregroundStyle(Color(at: .pureWhite))
@@ -56,25 +52,6 @@ struct ProfileV3TravellerCard: View {
         .buttonStyle(.profileV3Pressable)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(traveller.name)
-    }
-
-    @ViewBuilder
-    private var worldPassCaption: some View {
-        if let label = worldPassLabel.nonEmpty {
-            HStack(spacing: ProfileV3Theme.Space.s4) {
-                if let worldPassIconURL {
-                    ProfileV3RemoteImage(url: worldPassIconURL, contentMode: .fit, placeholder: .clear)
-                        .frame(width: ProfileV3Theme.Icon.sm, height: ProfileV3Theme.Icon.sm)
-                }
-                Text(label)
-                    .typoGraphy(.T1InterMedium11)
-                    .textCase(.uppercase)
-                    .lineLimit(1)
-            }
-            .foregroundStyle(Color(at: .pureWhite))
-            .opacity(ProfileV3Theme.Opacity.worldPassSubtitle)
-            .accessibilityHidden(true)
-        }
     }
 }
 

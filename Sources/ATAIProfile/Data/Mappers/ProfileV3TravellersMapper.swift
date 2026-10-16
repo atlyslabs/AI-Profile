@@ -6,9 +6,7 @@ enum ProfileV3TravellersMapper: ProfileV3DTOReading {
         ProfileV3EditTravellersScreen(
             title: text(dto.title) ?? ProfileV3Strings.editTravellers,
             travellers: dto.travellers.compactMap(row),
-            addLabel: text(dto.add?.label) ?? ProfileV3Strings.addTraveller,
-            worldPassLabel: text(dto.worldpassLabel) ?? ProfileV3Strings.worldPass,
-            worldPassIconURL: remoteURL(dto.worldpassIcon)
+            addLabel: text(dto.add?.label) ?? ProfileV3Strings.addTraveller
         )
     }
 

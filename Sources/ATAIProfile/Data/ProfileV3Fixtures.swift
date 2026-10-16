@@ -382,8 +382,7 @@ enum ProfileV3Fixtures {
                 isDeletable: !traveller.isMain
             )
         },
-        addLabel: ProfileV3Strings.addTraveller,
-        worldPassIconURL: URL(string: "https://media.atlys.com/b2c/ai-native/icons/worldpass_default.png")
+        addLabel: ProfileV3Strings.addTraveller
     )
 
     static func relationshipField(profileID: String, selected: String?) -> ProfileV3EditField {

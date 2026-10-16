@@ -6,6 +6,7 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
     @Published private(set) var residence: ProfileV3Country?
     @Published private(set) var citizenship: ProfileV3Country?
     @Published private(set) var passportCitizenship: ProfileV3Country?
+    @Published private(set) var citizenshipIconCode: String?
     @Published private(set) var citizenshipLockTrigger = 0
     @Published private(set) var currencyCountry: ProfileV3Country?
     @Published private(set) var contactDetails: ProfileV3ContactDetails
@@ -20,6 +21,7 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
     private let profileID: String?
     private let writes = ProfileV3WriteQueue()
     private var editFieldTask: Task<Void, Never>?
+    private var citizenshipIconTask: Task<Void, Never>?
     private var requestedField: ProfileV3ProfileField?
 
     init(deps: ProfileV3SettingsDependencies, repository: any ProfileV3SettingsRepository, profileID: String?) {
@@ -59,6 +61,15 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
         loadEditField(requestedField)
     }
 
+    func preloadCitizenshipIcon() {
+        citizenshipIconTask?.cancel()
+        let repository = repository
+        citizenshipIconTask = Task { [weak self] in
+            guard let field = try? await repository.loadEditField(.citizenship), !Task.isCancelled else { return }
+            self?.citizenshipIconCode = field.currentCode?.uppercased().nonEmpty
+        }
+    }
+
     func selectResidence(_ country: ProfileV3Country) {
         guard deps.saveResidence(country) else { return }
         residence = country
@@ -77,6 +88,7 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
         }
         guard deps.saveCitizenship(country) else { return }
         citizenship = country
+        citizenshipIconCode = country.code
         let pending = write(.citizenship, .code(country.code))
         router?.restartAfterSaving(pending)
     }
@@ -116,6 +128,7 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
 
     func cancelReads() {
         editFieldTask?.cancel()
+        citizenshipIconTask?.cancel()
     }
 
     private func loadEditField(_ field: ProfileV3ProfileField) {

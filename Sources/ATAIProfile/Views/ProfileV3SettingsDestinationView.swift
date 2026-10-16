@@ -168,8 +168,6 @@ private struct ProfileV3SettingsTravellersScreen: View {
         case .editTravellers:
             ProfileV3EditTravellersView(
                 travellers: model.rows,
-                worldPassLabel: model.worldPassLabel,
-                worldPassIconURL: model.worldPassIconURL,
                 phase: model.phase,
                 toast: model.toast,
                 onBack: onBack,

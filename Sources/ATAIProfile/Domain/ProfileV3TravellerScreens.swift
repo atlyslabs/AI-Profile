@@ -30,8 +30,6 @@ struct ProfileV3EditTravellersScreen: Equatable {
     let title: String
     var travellers: [ProfileV3TravellerRow]
     let addLabel: String
-    var worldPassLabel = ProfileV3Strings.worldPass
-    var worldPassIconURL: URL?
 
     mutating func setRelationship(_ value: String?, for profileID: String) {
         guard let index = travellers.firstIndex(where: { $0.id == profileID }) else { return }

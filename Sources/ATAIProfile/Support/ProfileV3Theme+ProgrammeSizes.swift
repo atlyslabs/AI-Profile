@@ -59,6 +59,7 @@ extension ProfileV3Theme.Sizes {
         static let backGlowRadius: CGFloat = 242
         static let copyGap: CGFloat = 9
         static let copyHitInset = ProfileV3Theme.Space.s12
+        static let tierDividerHeight: CGFloat = 15
     }
 
     enum Programmes {

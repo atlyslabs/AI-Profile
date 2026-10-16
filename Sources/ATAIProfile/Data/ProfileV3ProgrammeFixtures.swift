@@ -12,7 +12,9 @@ enum ProfileV3ProgrammeFixtures {
             logoURL: nil,
             membershipNumber: "882031457",
             holderName: "alex r.",
-            expiryLabel: "No expiry"
+            expiryLabel: "No expiry",
+            tier: "SILVER",
+            updatedLine: "Updated last email dated 24 Jun, 2:30 pm"
         ),
         ProfileV3LoyaltyProgramme(
             id: "aeroplan",
@@ -22,7 +24,8 @@ enum ProfileV3ProgrammeFixtures {
             logoURL: nil,
             membershipNumber: "551209836",
             holderName: "alex r.",
-            expiryLabel: "Expiring in 74 days"
+            expiryLabel: "Expiring in 74 days",
+            updatedLine: "Updated 24 Jun, 2:30 pm"
         ),
         ProfileV3LoyaltyProgramme(
             id: "skywards",

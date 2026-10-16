@@ -36,15 +36,12 @@ struct ProfileV3EditTravellerFormView: View {
             )
             ProfileV3FocusScroll(focused: focusedField, fillsViewport: true) {
                 VStack(spacing: 0) {
-                    VStack(spacing: ProfileV3Theme.Space.s8) {
-                        Text(traveller.shortName)
-                            .typoGraphy(.H6InterMedium18)
-                            .foregroundStyle(Color(at: .pureBlack))
-                        ProfileV3PassNumber(number: traveller.passNumber, surface: .light)
-                    }
-                    .padding(.top, ProfileV3Theme.Sizes.Traveller.formNameTop)
+                    Text(traveller.shortName)
+                        .typoGraphy(.H6InterMedium18)
+                        .foregroundStyle(Color(at: .pureBlack))
+                        .padding(.top, ProfileV3Theme.Sizes.Traveller.formNameTop)
                     ProfileV3TravellerCardLip()
-                        .padding(.top, ProfileV3Theme.Space.s20)
+                        .padding(.top, ProfileV3Theme.Space.s24)
                     fields
                         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                         .padding(.top, ProfileV3Theme.Space.s48)

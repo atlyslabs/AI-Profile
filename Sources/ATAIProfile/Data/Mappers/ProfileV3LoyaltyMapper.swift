@@ -101,7 +101,9 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
             textOverlay: row.textOverlay?.lowercased() == "dark" ? .dark : .light,
             membershipNumber: text(row.membershipNumber),
             expiryLabel: text(row.expiry),
-            pointsLine: text(row.pointsLine)
+            pointsLine: text(row.pointsLine),
+            tier: text(row.tier),
+            updatedLine: text(row.updatedLine)
         )
     }
 

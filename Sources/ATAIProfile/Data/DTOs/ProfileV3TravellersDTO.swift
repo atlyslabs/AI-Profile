@@ -47,8 +47,6 @@ struct ProfileV3TravellerBadgeDTO: Decodable, Equatable {
 struct ProfileV3EditTravellersScreenDTO: Decodable, Equatable {
     let type: String?
     let title: String?
-    let worldpassLabel: String?
-    let worldpassIcon: String?
     private let rawTravellers: [ProfileV3LossyDTO<ProfileV3TravellerRowDTO>]?
     private let rawAdd: ProfileV3LossyDTO<ProfileV3NavCTADTO>?
 
@@ -58,8 +56,6 @@ struct ProfileV3EditTravellersScreenDTO: Decodable, Equatable {
     enum CodingKeys: String, CodingKey {
         case type
         case title
-        case worldpassLabel = "worldpass_label"
-        case worldpassIcon = "worldpass_icon"
         case rawTravellers = "travellers"
         case rawAdd = "add"
     }

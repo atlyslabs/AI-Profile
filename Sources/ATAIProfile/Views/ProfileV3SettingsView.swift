@@ -190,8 +190,8 @@ private struct ProfileV3SettingsAccountsCard: View {
 
     private func flag(for row: ProfileV3SettingsRowItem) -> ATCountry? {
         guard row.key == ProfileV3ProfileField.citizenship.rawValue,
-              let country = fields.passportCitizenship ?? fields.citizenship else { return nil }
-        return ATCountry(isoCode: country.code)
+              let code = fields.citizenshipIconCode else { return nil }
+        return ATCountry(isoCode: code)
     }
 
     private func lockNote(for row: ProfileV3SettingsRowItem) -> String? {

@@ -96,6 +96,8 @@ struct ProfileV3ProgrammeRowDTO: Decodable, Equatable {
     let pointsLine: String?
     let membershipNumber: String?
     let lastUpdatedAt: String?
+    let tier: String?
+    let updatedLine: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -111,6 +113,8 @@ struct ProfileV3ProgrammeRowDTO: Decodable, Equatable {
         case pointsLine = "points_line"
         case membershipNumber = "membership_number"
         case lastUpdatedAt = "last_updated_at"
+        case tier
+        case updatedLine = "updated_line"
     }
 
     init(from decoder: Decoder) throws {
@@ -131,6 +135,8 @@ struct ProfileV3ProgrammeRowDTO: Decodable, Equatable {
         pointsLine = container.lenientString(forKey: .pointsLine)
         membershipNumber = container.lenientString(forKey: .membershipNumber)
         lastUpdatedAt = container.lenientString(forKey: .lastUpdatedAt)
+        tier = container.lenientString(forKey: .tier)
+        updatedLine = container.lenientString(forKey: .updatedLine)
     }
 }
 
