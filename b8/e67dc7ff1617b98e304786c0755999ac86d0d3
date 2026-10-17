@@ -1,0 +1,115 @@
+Sources/ATAIProfile/Views/ProfileV3EditTravellersView.swift
+  s_6239e1c53e988d::t_c85c0d68f90768 36,39,41
+  s_6239e1c53e988d::t_379ddadd5f53aa 55-58
+  s_6239e1c53e988d::t_407f16c8b56334 77
+  s_6239e1c53e988d::t_a4fe187193c1cd 15
+  s_6239e1c53e988d::t_98d6328483d163 27
+  s_6239e1c53e988d::t_142688684a6c38 88-98
+CLAUDE.md
+  s_c482717a7a4db6::t_41e02c2c85290d 34
+  s_c482717a7a4db6::t_16d3c54d2cd6e8 218-220
+  s_c482717a7a4db6::t_c8803ab0412dec 262
+  s_c482717a7a4db6::t_4074dd48724741 231
+  s_c482717a7a4db6::t_38da3238d06dd4 222
+  s_6239e1c53e988d::t_5d0542edcc3ce7 215
+  s_c482717a7a4db6::t_d8b7086aee4104 225
+  s_c482717a7a4db6::t_06adb9b94bd782 216-217,221,223-224,226-227,230,232
+  s_c482717a7a4db6::t_c4bb109675e67f 136
+  s_c482717a7a4db6::t_422f92505245b8 195
+  s_c482717a7a4db6::t_1ad2c4dd2f9824 248
+  s_c482717a7a4db6::t_c1ce693f7f8a13 64
+  s_6239e1c53e988d::t_fdd1f794df564a 214
+  s_c482717a7a4db6::t_3316d1a86b9ce7 233-239
+  s_c482717a7a4db6::t_eadac16a2cc84e 228-229
+  s_c482717a7a4db6::t_f0ebd6c742093e 240-247
+  s_c482717a7a4db6::t_e1a414c51e97f3 264
+Sources/ATAIProfile/Components/ProfileV3AgentGrid.swift
+  s_c482717a7a4db6::t_2934df803a8d81 35
+  s_c482717a7a4db6::t_59efdd10969a18 47
+Sources/ATAIProfile/Components/ProfileV3FormSectionView.swift
+  s_c482717a7a4db6::t_f5a3bba845bcd8 112
+  s_c482717a7a4db6::t_1ad337e6d0acdc 113
+Sources/ATAIProfile/Components/ProfileV3KYCGlow.swift
+  s_c482717a7a4db6::t_1996fab0c505c8 11-21,26-28
+  s_c482717a7a4db6::t_8c3bb11b6a7eaf 55
+Sources/ATAIProfile/ProfileV3EntryPoint.swift
+  s_c482717a7a4db6::t_bec9c4079d0fac 102-103,110-111
+Sources/ATAIProfile/ProfileV3HubHostingController.swift
+  s_c482717a7a4db6::t_57df3b53dfbbb1 102-103
+Sources/ATAIProfile/Views/ProfileV3HubView.swift
+  s_c482717a7a4db6::t_b82a0764824ca9 241
+Sources/ATAIProfile/Data/Mappers/ProfileV3AgentMapper.swift
+  s_c482717a7a4db6::t_d7761238842e3c 299
+Sources/ATAIProfile/Domain/ProfileV3Models.swift
+  s_c482717a7a4db6::t_6f36741e6229f6 42-43
+  s_c482717a7a4db6::t_d8dea10c5de098 249
+Tests/ATAIProfileTests/ProfileV3AgentBoxTests.swift
+  s_c482717a7a4db6::t_fc6c7fd62bec21 64-93
+  s_c482717a7a4db6::t_e32df601ede960 1-30,32-34,48-63,94-159
+  s_c482717a7a4db6::t_da42f6a7a6e1d2 31,35-47
+Sources/ATAIProfile/Components/ProfileV3AgentGridCard.swift
+  s_c482717a7a4db6::t_a2f613f88fd386 103-104,106-108
+  s_c482717a7a4db6::t_284195d6f16c1b 7,10
+  s_c482717a7a4db6::t_419e87d8424269 11
+  s_c482717a7a4db6::t_98475b55120c67 105
+Sources/ATAIProfile/Data/Mappers/ProfileV3BoardMapper.swift
+  s_c482717a7a4db6::t_436c44e1f72d55 10,17
+  s_c482717a7a4db6::t_0e81c8706de9ef 68
+  s_c482717a7a4db6::t_fa84b2bbaf074c 83-90
+  s_c482717a7a4db6::t_994750fbe42236 51-52
+Sources/ATAIProfile/Support/ProfileV3Theme+TravellerSizes.swift
+  s_6239e1c53e988d::t_397aeb7183df1a 11-12
+Sources/ATAIProfile/Presentation/ProfileV3AgentFormViewModel.swift
+  s_c482717a7a4db6::t_30433ff2a7b3a5 51,61
+  s_c482717a7a4db6::t_0a3af212ddb7ec 402
+  s_c482717a7a4db6::t_d404679c44f2dd 34
+Sources/ATAIProfile/Presentation/ProfileV3AgentFlowViewModel.swift
+  s_c482717a7a4db6::t_309e847c6092a1 27,34-35,41
+  s_c482717a7a4db6::t_6888fded7fd074 68
+Sources/ATAIProfile/Components/ProfileV3ProgrammeCard.swift
+  s_c482717a7a4db6::t_2a6b54382725ac 48
+Tests/ATAIProfileTests/ProfileV3LoyaltyRowTests.swift
+  s_c482717a7a4db6::t_11f85cf0ee0c0a 38-48
+Sources/ATAIProfile/Support/ProfileV3Theme.swift
+  s_c482717a7a4db6::t_af31c28e3286fe 153
+Sources/ATAIProfile/Components/ProfileV3UnderlinedField.swift
+  s_c482717a7a4db6::t_cc31560291b759 11,18-27,41-60,72,75-80
+Sources/ATAIProfile/ProfileV3AgentFlowHostingController.swift
+  s_c482717a7a4db6::t_25f78336acd3a1 15-16,22-23
+Sources/ATAIProfile/Domain/ProfileV3AgentForm.swift
+  s_c482717a7a4db6::t_d1ef1bb82c3ebf 262
+Sources/ATAIProfile/Presentation/ProfileV3HubViewModel.swift
+  s_c482717a7a4db6::t_7c9fd7934a2768 478
+Sources/ATAIProfile/Views/ProfileV3PermissionsView.swift
+  s_6239e1c53e988d::t_72dbfb6cd87f77 106
+Sources/ATAIProfile/Components/ProfileV3ProgrammeTile.swift
+  s_c482717a7a4db6::t_b10bcd3bf71ded 165
+  s_c482717a7a4db6::t_894682e2ea860f 275
+  s_c482717a7a4db6::t_6141b900b7a0ad 139
+Tests/ATAIProfileTests/ProfileV3UnderlinedFieldTests.swift
+  s_c482717a7a4db6::t_a7ba954701097f 1-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b8e67dc7ff1617b98e304786c0755999ac86d0d3",
+  "prompts": {},
+  "sessions": {
+    "s_6239e1c53e988d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "73ff9596-441c-41dd-91e2-daee7b22e8a4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
