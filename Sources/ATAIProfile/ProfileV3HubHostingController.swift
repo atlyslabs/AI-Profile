@@ -99,7 +99,8 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
                     profileID: profileID,
                     repository: repository,
                     identityCapture: environment.identityCapture,
-                    residenceCode: { [account = environment.account] in account.snapshot().residenceCode }
+                    residenceCode: { [account = environment.account] in account.snapshot().residenceCode },
+                    onSaved: { [weak viewModel] in viewModel?.requestRefresh() }
                 ),
                 animated: true
             )

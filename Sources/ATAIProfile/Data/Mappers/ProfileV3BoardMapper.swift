@@ -7,13 +7,14 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
         let switcher = dto.header?.travellerSwitcher ?? []
         let profiles = dto.profiles
         let passes = profiles.map { pass($0, switcher: switcher) }
+        let gmailConnected = isGmailConnected(profiles)
         let boards = profiles.indices.map { index in
             ProfileV3ProfileBoard(
                 profileID: profiles[index].profileID,
                 isMain: isMain(profiles[index], switcher: switcher),
                 name: passes[index].holderName,
                 pass: passes[index],
-                home: home(profiles[index], pass: passes[index], passes: passes)
+                home: home(profiles[index], pass: passes[index], passes: passes, isGmailConnected: gmailConnected)
             )
         }
         return ProfileV3Board(profiles: boards, settings: dto.header?.settings?.next?.directive)
@@ -47,7 +48,8 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
     private static func home(
         _ dto: ProfileV3ProfileBoardDTO,
         pass: ProfileV3WorldPass,
-        passes: [ProfileV3WorldPass]
+        passes: [ProfileV3WorldPass],
+        isGmailConnected: Bool?
     ) -> ProfileV3Home {
         let sections = dto.sections
         let benefits = sections.compactMap(\.asBenefits).first
@@ -63,6 +65,7 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
             giftCards: [],
             viewAllBenefitsLabel: viewAllBenefitsLabel(benefits),
             agents: grid?.tiles.compactMap(agent) ?? [],
+            isGmailConnected: isGmailConnected,
             agentsUpdatedAt: agentsUpdatedAt(grid?.updatedAt),
             agentsHeading: text(grid?.heading),
             agentsHeadingEmphasis: text(grid?.headingEmphasis),
@@ -75,6 +78,14 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
             needsKYCReconnect: banner?.isReconnect == true,
             kycLine: pass.kycLine
         )
+    }
+
+    private static func isGmailConnected(_ profiles: [ProfileV3ProfileBoardDTO]) -> Bool? {
+        let gmail = ProfileV3CaptureStepKey.gmailConnect
+        guard let kyc = profiles.lazy.compactMap(\.profileKYC).first(where: { $0.required?.contains(gmail) == true })
+        else { return nil }
+        if let missing = kyc.missing { return !missing.contains(gmail) }
+        return kyc.complete == true ? true : nil
     }
 
     private static func kycProgress(_ dto: ProfileV3ProfileBoardDTO) -> ProfileV3KYCProgress? {

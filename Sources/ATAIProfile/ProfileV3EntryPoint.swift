@@ -99,14 +99,16 @@ public enum ProfileV3EntryPoint {
         profileID: String?,
         repository: any ProfileV3AgentRepository,
         identityCapture: any ProfileV3IdentityCaptureHost,
-        residenceCode: @escaping @MainActor () -> String? = { nil }
+        residenceCode: @escaping @MainActor () -> String? = { nil },
+        onSaved: @escaping () -> Void = {}
     ) -> UIViewController {
         ProfileV3AgentFlowHostingController(
             agent: agent,
             profileID: profileID,
             repository: repository,
             identityCapture: identityCapture,
-            residenceCode: residenceCode
+            residenceCode: residenceCode,
+            onSaved: onSaved
         )
     }
 

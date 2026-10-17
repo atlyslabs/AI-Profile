@@ -31,6 +31,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     private let profileID: String?
     private let repository: any ProfileV3AgentRepository
     private let residenceCode: @MainActor () -> String?
+    private let onSaved: () -> Void
     private let onFinish: () -> Void
     private let presentPassportScan: ((ProfileV3PassportScanRequest) -> Void)?
     private var saveTask: Task<Void, Never>?
@@ -47,6 +48,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         repository: any ProfileV3AgentRepository,
         residenceCode: @escaping @MainActor () -> String? = { nil },
         presentPassportScan: ((ProfileV3PassportScanRequest) -> Void)? = nil,
+        onSaved: @escaping () -> Void = {},
         onFinish: @escaping () -> Void
     ) {
         self.form = form
@@ -56,6 +58,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         self.repository = repository
         self.residenceCode = residenceCode
         self.presentPassportScan = presentPassportScan
+        self.onSaved = onSaved
         self.onFinish = onFinish
         prefetchRidePicker()
     }
@@ -396,6 +399,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
             do {
                 try await repository.saveAgentForm(snapshot, profileID: profileID)
                 ProfileV3Analytics.agentFormSaved(agentKey: agentKey, changedSections: changedSections)
+                onSaved()
                 guard !Task.isCancelled else { return }
                 self.saveState = .saved
                 try await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds))

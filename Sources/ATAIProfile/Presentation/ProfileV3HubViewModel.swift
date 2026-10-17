@@ -475,8 +475,7 @@ final class ProfileV3HubViewModel: ObservableObject {
             requiresKYC: requiresKYC
         )
         ProfileV3Analytics.cta(agent.next, origin: .agentCard)
-        if requiresKYC, isGateUnresolvable { return }
-        router?.openAgent(agent, requiresKYC: requiresKYC, profileID: selectedPassID)
+        router?.openAgent(agent, requiresKYC: false, profileID: selectedPassID)
     }
 
     func useInsight() {

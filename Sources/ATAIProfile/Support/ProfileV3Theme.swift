@@ -150,6 +150,7 @@ enum ProfileV3Theme {
         static let sliderRulerHeight: CGFloat = 43
         static let sliderMinorTickHeight: CGFloat = 21.5
         static let underlinedFieldWidth: CGFloat = 160
+        static let underlinedFieldCaretAllowance: CGFloat = 4
         static let emptyStateTop: CGFloat = 120
         static let emptyStateTextWidth: CGFloat = 260
         static let stepBarWidth: CGFloat = 17

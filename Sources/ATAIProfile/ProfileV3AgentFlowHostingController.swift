@@ -12,13 +12,15 @@ final class ProfileV3AgentFlowHostingController: UIHostingController<ProfileV3Ag
         profileID: String?,
         repository: any ProfileV3AgentRepository,
         identityCapture: any ProfileV3IdentityCaptureHost,
-        residenceCode: @escaping @MainActor () -> String? = { nil }
+        residenceCode: @escaping @MainActor () -> String? = { nil },
+        onSaved: @escaping () -> Void = {}
     ) {
         let viewModel = ProfileV3AgentFlowViewModel(
             agent: agent,
             profileID: profileID,
             repository: repository,
-            residenceCode: residenceCode
+            residenceCode: residenceCode,
+            onSaved: onSaved
         )
         self.viewModel = viewModel
         self.repository = repository

@@ -8,5 +8,7 @@ extension ProfileV3Theme.Sizes {
         static let cardLipWidth: CGFloat = 208
         static let cardLipHeight: CGFloat = 7
         static let formNameTop: CGFloat = 44
+        static let listHeaderGap: CGFloat = 12
+        static let listTop: CGFloat = 38
     }
 }

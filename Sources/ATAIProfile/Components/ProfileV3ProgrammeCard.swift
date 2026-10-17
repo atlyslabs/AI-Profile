@@ -45,7 +45,7 @@ struct ProfileV3ProgrammeCard: View {
             VStack(alignment: .leading, spacing: Layout.numberGap) {
                 logo
                     .frame(height: Layout.logoHeight, alignment: .leading)
-                Text(programme.maskedNumber)
+                Text(programme.displayNumber)
                     .typoGraphy(.T1InterBold11)
                     .textCase(.uppercase)
                     .foregroundStyle(shade.number)

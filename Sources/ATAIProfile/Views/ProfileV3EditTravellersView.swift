@@ -12,6 +12,7 @@ struct ProfileV3EditTravellersView: View {
     let onAdd: () -> Void
 
     @State private var listHeight: CGFloat = 0
+    @State private var headerPin = ProfileV3HeaderPin()
 
     private static let listID = "travellers"
 
@@ -23,6 +24,7 @@ struct ProfileV3EditTravellersView: View {
                 onBack: onBack,
                 onClose: onClose
             )
+            .padding(.bottom, ProfileV3Theme.Sizes.Traveller.listHeaderGap)
             if phase == .loaded {
                 ScrollViewReader { proxy in
                     ScrollView(showsIndicators: false) {
@@ -31,9 +33,12 @@ struct ProfileV3EditTravellersView: View {
                             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: {
                                 listHeight = $0
                             }
+                            .profileV3ScrollOffsetAnchor(headerOffset)
                     }
                     .scrollBounceBehavior(.basedOnSize)
+                    .profileV3ScrollOffset(headerOffset)
                     .frame(maxHeight: listHeight > 0 ? listHeight : nil)
+                    .overlay(alignment: .top) { ProfileV3EditTravellersHeaderFade(pin: headerPin) }
                     .onChange(of: listHeight) { revealToast(proxy) }
                     .onChange(of: toast) { revealToast(proxy) }
                 }
@@ -45,6 +50,10 @@ struct ProfileV3EditTravellersView: View {
         .frame(maxWidth: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())
         .safeAreaInset(edge: .bottom) { addBar }
+    }
+
+    private var headerOffset: Binding<CGFloat> {
+        Binding(get: { headerPin.offset }, set: { headerPin.offset = $0 })
     }
 
     private func revealToast(_ proxy: ScrollViewProxy) {
@@ -65,7 +74,7 @@ struct ProfileV3EditTravellersView: View {
             }
         }
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-        .padding(.top, ProfileV3Theme.Space.s50)
+        .padding(.top, ProfileV3Theme.Sizes.Traveller.listTop)
         .padding(.bottom, ProfileV3Theme.Sizes.settingsSheetBottom)
         .animation(ProfileV3Theme.Motion.expand, value: toast)
     }
@@ -73,6 +82,17 @@ struct ProfileV3EditTravellersView: View {
     private var addBar: some View {
         ProfileV3ContinueButton(title: ProfileV3Strings.addTravellerPill, action: onAdd)
             .profileV3CTABar()
+    }
+}
+
+private struct ProfileV3EditTravellersHeaderFade: View {
+    let pin: ProfileV3HeaderPin
+
+    var body: some View {
+        ProfileV3Theme.whiteToClearFade
+            .frame(height: ProfileV3Theme.Sizes.SettingsPage.headerFade)
+            .opacity(pin.progress)
+            .allowsHitTesting(false)
     }
 }
 

@@ -259,6 +259,7 @@ struct ProfileV3TextFieldValue: Equatable {
     var value: String
     let placeholder: String
     var keyboard: Keyboard = .text
+    var isDate = false
 }
 
 struct ProfileV3DateField: Equatable {

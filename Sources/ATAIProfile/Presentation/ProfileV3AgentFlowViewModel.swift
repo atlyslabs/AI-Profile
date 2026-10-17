@@ -24,18 +24,21 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
     private let profileID: String?
     private let repository: any ProfileV3AgentRepository
     private let residenceCode: @MainActor () -> String?
+    private let onSaved: () -> Void
     private var retryTask: Task<Void, Never>?
 
     init(
         agent: ProfileV3Agent,
         profileID: String? = nil,
         repository: any ProfileV3AgentRepository,
-        residenceCode: @escaping @MainActor () -> String? = { nil }
+        residenceCode: @escaping @MainActor () -> String? = { nil },
+        onSaved: @escaping () -> Void = {}
     ) {
         self.agent = agent
         self.profileID = profileID
         self.repository = repository
         self.residenceCode = residenceCode
+        self.onSaved = onSaved
     }
 
     var avatarURL: URL? { agent.avatarURL ?? ProfileV3PlaceholderArt.agent(id: agent.id)?.url }
@@ -62,6 +65,7 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
                         repository: repository,
                         residenceCode: residenceCode,
                         presentPassportScan: { [weak self] in self?.router?.presentPassportScan($0) },
+                        onSaved: onSaved,
                         onFinish: finish
                     )
                 )

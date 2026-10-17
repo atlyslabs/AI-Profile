@@ -136,7 +136,7 @@ struct ProfileV3ProgrammeTile: View {
 
     private var shade: ProfileV3Theme.CardShade { .resolve(programme.textOverlay) }
 
-    private var hasNumber: Bool { !programme.maskedNumber.isEmpty || programme.membershipNumber != nil }
+    private var hasNumber: Bool { !programme.displayNumber.isEmpty }
 
     private var statusRow: some View {
         HStack(alignment: .firstTextBaseline, spacing: ProfileV3Theme.Space.s12) {
@@ -162,7 +162,7 @@ struct ProfileV3ProgrammeTile: View {
             if let tier = programme.tier {
                 tierLabel(tier)
             }
-            Text(programme.maskedNumber)
+            Text(programme.displayNumber)
                 .typoGraphy(.T1InterBold11)
                 .textCase(.uppercase)
                 .foregroundStyle(shade.number)
@@ -272,7 +272,7 @@ struct ProfileV3ProgrammeTile: View {
                 Text(programme.holderName ?? programme.name)
                     .typoGraphy(.H5InterSemibold20)
                     .foregroundStyle(Color(at: .pureWhite))
-                Text(programme.maskedNumber)
+                Text(programme.displayNumber)
                     .typoGraphy(.T1InterBold11)
                     .textCase(.uppercase)
                     .foregroundStyle(ProfileV3Theme.Palette.programmeTileBackNumber)

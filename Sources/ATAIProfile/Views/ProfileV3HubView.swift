@@ -238,6 +238,7 @@ struct ProfileV3HubView: View {
             ProfileV3AgentGrid(
                 agents: home.agents,
                 isKYCComplete: home.kycStatus.isComplete,
+                isGmailConnected: home.isGmailConnected,
                 onImpression: viewModel.trackAgentCard,
                 onActivate: viewModel.tapAgent
             )

@@ -296,7 +296,7 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             return .date(ProfileV3DateField(value: nil, placeholder: placeholder))
         }
         guard let parsed = ProfileV3AgentDateCodec.parse(raw) else {
-            return .text(ProfileV3TextFieldValue(value: raw, placeholder: placeholder))
+            return .text(ProfileV3TextFieldValue(value: raw, placeholder: placeholder, isDate: true))
         }
         residuals.dateFormats[field.key] = parsed.format
         return .date(ProfileV3DateField(value: parsed.date, placeholder: placeholder))

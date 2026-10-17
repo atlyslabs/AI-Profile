@@ -4,11 +4,11 @@ import SwiftUI
 struct ProfileV3AgentGridCard: View {
     let agent: ProfileV3Agent
     var isKYCComplete = true
+    var isGmailConnected: Bool?
     let onActivate: () -> Void
 
-    private var needsActivation: Bool { agent.activate != nil }
-    private var showsActivate: Bool { !isKYCComplete || needsActivation }
-    private var showsGlow: Bool { showsActivate && !agent.hasData }
+    private var showsActivate: Bool { agent.showsActivatePill(isGmailConnected: isGmailConnected) }
+    private var showsGlow: Bool { !agent.hasData && (!isKYCComplete || agent.activate != nil) }
 
     private var orbState: ProfileV3AvatarOrb.State {
         guard agent.hasData else { return .invite }
@@ -97,6 +97,12 @@ struct ProfileV3AgentGridCard: View {
             startRadius: 0,
             endRadius: ProfileV3Theme.Sizes.Agent.glowEndRadius
         )
+    }
+}
+
+extension ProfileV3Agent {
+    func showsActivatePill(isGmailConnected: Bool?) -> Bool {
+        hasData && (isGmailConnected.map { !$0 } ?? (activate != nil))
     }
 }
 

@@ -109,7 +109,8 @@ struct ProfileV3FormSectionView: View {
                 placeholder: field.placeholder,
                 accessibilityLabel: section.title,
                 text: Binding(get: { field.value }, set: onTextChange),
-                keyboard: field.keyboard == .phone ? .phonePad : .default
+                keyboard: field.keyboard == .phone ? .phonePad : .default,
+                growsWithContent: !field.isDate
             )
         case .date(let field):
             ProfileV3DateInput(

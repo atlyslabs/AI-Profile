@@ -8,10 +8,24 @@ struct ProfileV3KYCGlow: View {
     let trigger: Int
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var hasRisen: Bool
+
+    init(title: String, subtitle: String?, tone: ProfileV3KYCGlowTone, trigger: Int) {
+        self.title = title
+        self.subtitle = subtitle
+        self.tone = tone
+        self.trigger = trigger
+        _hasRisen = State(initialValue: trigger > 0)
+    }
+
+    private var holdsGlow: Bool { tone == .negative && hasRisen }
 
     var body: some View {
         PhaseAnimator(ProfileV3KYCGlowPhase.sequence, trigger: trigger) { phase in
             overlay(phase)
+                .onChange(of: phase) { _, phase in
+                    if phase == .risen { hasRisen = true }
+                }
         } animation: { phase in
             phase.animation
         }
@@ -38,7 +52,7 @@ struct ProfileV3KYCGlow: View {
             .frame(width: radius * 2, height: radius * 2)
             .scaleEffect(isCentred ? 1 : ProfileV3Theme.Sizes.kycGlowStartScale)
             .offset(y: isCentred ? restingY : ProfileV3Theme.Sizes.worldPassHeight / 2)
-            .opacity(phase.glowOpacity)
+            .opacity(phase == .idle && holdsGlow ? 1 : phase.glowOpacity)
     }
 
     private var caption: some View {

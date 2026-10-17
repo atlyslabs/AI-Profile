@@ -35,6 +35,17 @@ struct ProfileV3LoyaltyRowTests {
         #expect(programme.updatedLine == "Updated last email dated 24 Jun")
     }
 
+    @Test func rowsShowTheFullMembershipNumber() throws {
+        let dto = try JSONDecoder().decode(ProfileV3ProgrammesPageScreenDTO.self, from: Data(#"""
+        {"programs":[
+          {"id":"maharaja","name":"Maharaja Club","membership_number":"7391546551","last4":"6551"},
+          {"id":"ihg","name":"IHG","last4":"1234"}
+        ]}
+        """#.utf8))
+        let programmes = ProfileV3LoyaltyMapper.overview(dto, profileID: "p1").programmes
+        #expect(programmes.map(\.displayNumber) == ["7391546551", ProfileV3Strings.maskedNumber("1234")])
+    }
+
     @Test func flightMultiSelectKeepsALegacySingleValueAndSavesAList() throws {
         let dto = try JSONDecoder().decode(ProfileV3AgentScreenDTO.self, from: Data(#"""
         {"agent_type":"flight","fields":[

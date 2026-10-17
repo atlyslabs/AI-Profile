@@ -76,14 +76,6 @@ private struct ProfileV3PermissionTag: View {
     var body: some View {
         ProfileV3TagLabel(text: text)
             .frame(height: ProfileV3Theme.Sizes.Permissions.tagHeight)
-            .padding(ProfileV3Theme.Stroke.hairline)
-            .background(Capsule().fill(ProfileV3Theme.Palette.background))
-            .overlay(
-                Capsule().strokeBorder(
-                    ProfileV3Theme.Palette.settingsCardBorder,
-                    lineWidth: ProfileV3Theme.Stroke.hairline
-                )
-            )
             .opacity(ProfileV3Theme.Opacity.sectionTag)
             .accessibilityAddTraits(.isHeader)
     }
@@ -111,7 +103,7 @@ private struct ProfileV3PermissionOptionRow: View {
                     }
                 }
                 .multilineTextAlignment(.leading)
-                Spacer(minLength: 0)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 ProfileV3RadioMark(isSelected: isSelected)
             }
             .contentShape(Rectangle())

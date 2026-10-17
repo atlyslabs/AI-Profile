@@ -39,6 +39,8 @@ struct ProfileV3LoyaltyProgramme: Identifiable, Equatable {
     var pointsLine: String? = nil
     var tier: String? = nil
     var updatedLine: String? = nil
+
+    var displayNumber: String { membershipNumber ?? maskedNumber }
 }
 
 struct ProfileV3ProgrammeInsight: Equatable {
@@ -244,6 +246,7 @@ struct ProfileV3Home: Equatable {
     var giftCards: [ProfileV3Benefit]
     let viewAllBenefitsLabel: String
     let agents: [ProfileV3Agent]
+    var isGmailConnected: Bool?
     let agentsUpdatedAt: String
     var agentsHeading: String?
     var agentsHeadingEmphasis: String?
