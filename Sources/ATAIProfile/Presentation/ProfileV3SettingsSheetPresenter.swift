@@ -36,6 +36,7 @@ final class ProfileV3SettingsSheetPresenter {
         session: any ProfileV3SessionProviding,
         client: ProfileV3NetworkClient,
         profileID: String?,
+        photoPlaces: ProfileV3PhotoPlacesSync? = nil,
         onConnectConnector: ((String) -> Void)?,
         onTravellersChanged: (() -> Void)?,
         onOpenProgrammes: (() -> Void)?,
@@ -54,7 +55,8 @@ final class ProfileV3SettingsSheetPresenter {
         viewModel = ProfileV3SettingsViewModel(
             deps: .live(account: account, session: session, client: client),
             repository: repository,
-            profileID: profileID
+            profileID: profileID,
+            photoPlaces: photoPlaces
         )
         viewModel.router = self
     }

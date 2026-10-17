@@ -121,6 +121,10 @@ dependency; the host only supplies the current token.
   world-pass number falls back to the system font.
 - A navigation controller already on screen when using `makeHub`, with its bar hidden while the hub
   shows. `makeHubSurface` creates that controller itself.
+- `NSPhotoLibraryUsageDescription` in the host's Info.plist, for the Photos connector on Information
+  access. The package reads only each photo's location and date, never image data, turns them into
+  ISO country codes on the device with the bundled Natural Earth shapes (public domain,
+  `ProfileV3CountryShapes.geojson`), and sends per-country totals through `/board/submit`.
 
 ## Also public
 

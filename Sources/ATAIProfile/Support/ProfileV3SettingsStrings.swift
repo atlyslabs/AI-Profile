@@ -22,6 +22,8 @@ extension ProfileV3Strings {
     static func connectorDeckTitle(_ name: String) -> String { ProfileV3L10n.moAiprofileAgentConnectorTitle(name) }
     static var gmailConnector: String { ProfileV3L10n.moAiprofileAgentsLabelGmail }
     static var itrConnector: String { ProfileV3L10n.moAiprofileAgentsLabelItr }
+    static var photosConnector: String { ProfileV3L10n.moAiprofileAgentsLabelPhotos }
+    static var photosAccessDenied: String { ProfileV3L10n.moAiprofileAgentsErrorPhotosAccess }
     static var connectorsAccessNote: String { ProfileV3L10n.moAiprofileAgentsSecurityNoteAccess }
     static var connectorConnected: String { ProfileV3L10n.moAiprofileAgentsStatusConnected }
     static var connectOtherEmails: String { ProfileV3L10n.moAiprofileAgentsButtonConnectEmails }

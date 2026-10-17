@@ -78,6 +78,10 @@ struct ProfileV3Connector: Identifiable, Equatable {
     let icon: ProfileV3ConnectorIcon
     let status: Status
     var accountEmail: String?
+
+    func withStatus(_ status: Status) -> ProfileV3Connector {
+        ProfileV3Connector(id: id, name: name, icon: icon, status: status, accountEmail: accountEmail)
+    }
 }
 
 struct ProfileV3ProgrammeOverview: Equatable {

@@ -80,7 +80,7 @@ struct ProfileV3HubView: View {
             ProfileV3HubPassOverlay(
                 stage: stage,
                 target: worldPassTarget,
-                pastTripCodes: viewModel.pastTripCodes,
+                extraVisitedCodes: viewModel.extraVisitedCodes,
                 isGlobeAnimating: viewModel.pastTrips == nil,
                 onAddTraveller: viewModel.tapAddTraveller,
                 onPastTrips: viewModel.openPastTrips

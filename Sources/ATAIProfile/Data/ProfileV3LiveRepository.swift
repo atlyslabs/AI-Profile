@@ -94,6 +94,10 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         try await submit(try JSONEncoder().encode(request), action: "disconnect_connector")
     }
 
+    func syncPhotoPlaces(_ upload: ProfileV3PhotoPlacesUpload) async throws {
+        try await submit(try ProfileV3SyncPhotoPlacesRequest.body(for: upload), action: "sync_photo_places")
+    }
+
     func loadTerms(locale: String?) async throws -> ProfileV3Terms? {
         let dto: ProfileV3TermsScreenDTO = try await request(
             ProfileV3API.terms(locale: locale),

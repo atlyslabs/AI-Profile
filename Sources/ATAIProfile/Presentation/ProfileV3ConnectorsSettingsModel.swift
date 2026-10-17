@@ -18,15 +18,18 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     weak var router: (any ProfileV3ConnectorsRouting & ProfileV3SettingsFeedbackRouting)?
 
     private let repository: any ProfileV3SettingsRepository
+    private let photoPlaces: ProfileV3PhotoPlacesSync?
     private var loadTask: Task<Void, Never>?
     private var controlPanelTask: Task<Void, Never>?
     private var confirmTask: Task<Void, Never>?
     private var disconnectTask: Task<Void, Never>?
     private var syncTask: Task<Void, Never>?
+    private var photosTask: Task<Void, Never>?
     private var disconnectedKeys: Set<ProfileV3ConnectorKey> = []
 
-    init(repository: any ProfileV3SettingsRepository) {
+    init(repository: any ProfileV3SettingsRepository, photoPlaces: ProfileV3PhotoPlacesSync? = nil) {
         self.repository = repository
+        self.photoPlaces = photoPlaces
     }
 
     var connectedConnectors: [ProfileV3Connector] {
@@ -118,8 +121,27 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     func tapConnectEmails() { router?.presentConnectorOnboarding() }
 
     func tapConnect(_ connector: ProfileV3Connector) {
+        if connector.id == ProfileV3ConnectorKey.photos.rawValue {
+            connectPhotos()
+            return
+        }
         guard let step = connector.captureStep else { return }
         router?.startConnectorCapture(step)
+    }
+
+    private func connectPhotos() {
+        guard let photoPlaces, photosTask == nil else { return }
+        photosTask = Task { [weak self] in
+            let result = await photoPlaces.connect()
+            guard let self else { return }
+            photosTask = nil
+            switch result {
+            case .connected:
+                if let screen { apply(screen) }
+            case .denied:
+                router?.showFlash(ProfileV3Strings.photosAccessDenied, isSuccess: false)
+            }
+        }
     }
 
     func confirmDisconnect() {
@@ -160,6 +182,8 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
         controlPanelTask?.cancel()
         confirmTask?.cancel()
         syncTask?.cancel()
+        photosTask?.cancel()
+        photosTask = nil
     }
 
     private func finishDisconnect(_ connector: ProfileV3ConnectorKey, result: Result<Void, Error>) {
@@ -167,6 +191,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
         switch result {
         case .success:
             ProfileV3Analytics.connectorDisconnected(connectorKey: connector.rawValue)
+            if connector == .photos { photoPlaces?.disconnect() }
             disconnectedKeys.insert(connector)
             connectors = reconciled(connectors)
             disconnectCompletions += 1
@@ -188,13 +213,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
             guard let key = ProfileV3ConnectorKey(rawValue: connector.id), disconnectedKeys.contains(key) else {
                 return connector
             }
-            return ProfileV3Connector(
-                id: connector.id,
-                name: connector.name,
-                icon: connector.icon,
-                status: .needsAttention,
-                accountEmail: connector.accountEmail
-            )
+            return connector.withStatus(.needsAttention)
         }
     }
 
@@ -204,7 +223,23 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
             .compactMap { ProfileV3ConnectorKey(rawValue: $0.id) }
         disconnectedKeys.formIntersection(reportedConnected)
         self.screen = screen
-        connectors = reconciled(screen.connectors)
+        connectors = reconciled(withPhotoPlaces(screen.connectors))
+    }
+
+    private func withPhotoPlaces(_ connectors: [ProfileV3Connector]) -> [ProfileV3Connector] {
+        guard let photoPlaces else { return connectors }
+        let key = ProfileV3ConnectorKey.photos
+        let status: ProfileV3Connector.Status = photoPlaces.isConnected ? .connected : .needsAttention
+        guard connectors.contains(where: { $0.id == key.rawValue }) else {
+            guard ProfileV3FeatureFlags.isPhotoPlacesEnabled else { return connectors }
+            return connectors + [ProfileV3Connector(
+                id: key.rawValue,
+                name: ProfileV3ConnectorsMapper.displayName(for: key),
+                icon: ProfileV3ConnectorsMapper.icon(for: key),
+                status: status
+            )]
+        }
+        return connectors.map { $0.id == key.rawValue ? $0.withStatus(status) : $0 }
     }
 
     private func syncDisconnected() {

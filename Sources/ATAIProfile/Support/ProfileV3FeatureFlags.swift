@@ -10,4 +10,5 @@ enum ProfileV3FeatureFlags {
     static let isAgentSourcesPillEnabled = false
     static let isPastTripsEnabled = false
     static let isProgrammeScanLoaderEnabled = false
+    static let isPhotoPlacesEnabled = false
 }
