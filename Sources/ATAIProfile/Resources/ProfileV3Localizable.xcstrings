@@ -1081,6 +1081,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-error-photos-access": {
+      "comment": "Shown when the user declines photo library access while connecting the Photos connector.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow photo access in Settings so we can find the countries you've been to."
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-hint-disconnect-connector": {
       "comment": "Instructional text on how to remove a connector.",
       "extractionState": "manual",
@@ -1161,6 +1173,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "ITR"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-photos": {
+      "comment": "Label for the Photos connector, which reads only where photos were taken.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Photos"
           }
         }
       }

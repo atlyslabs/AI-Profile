@@ -34,13 +34,14 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
     init(
         deps: ProfileV3SettingsDependencies,
         repository: any ProfileV3SettingsRepository,
-        profileID: String? = nil
+        profileID: String? = nil,
+        photoPlaces: ProfileV3PhotoPlacesSync? = nil
     ) {
         self.repository = repository
         monogram = deps.currentFirstName()?.trimmingCharacters(in: .whitespaces).first.map { String($0).lowercased() }
         let fields = ProfileV3ProfileFieldsModel(deps: deps, repository: repository, profileID: profileID)
         self.fields = fields
-        connectors = ProfileV3ConnectorsSettingsModel(repository: repository)
+        connectors = ProfileV3ConnectorsSettingsModel(repository: repository, photoPlaces: photoPlaces)
         travellers = ProfileV3TravellersSettingsModel(
             deps: deps,
             repository: repository,

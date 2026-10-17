@@ -127,6 +127,10 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         try await Task.sleep(for: delay)
     }
 
+    func syncPhotoPlaces(_: ProfileV3PhotoPlacesUpload) async throws {
+        try await Task.sleep(for: delay)
+    }
+
     func loadConnectorControlPanel() async throws -> ProfileV3ConnectorControlPanel {
         try await Task.sleep(for: delay)
         return ProfileV3Fixtures.connectorControlPanel

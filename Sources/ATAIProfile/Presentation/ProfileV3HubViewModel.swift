@@ -76,6 +76,7 @@ final class ProfileV3HubViewModel: ObservableObject {
     @Published private(set) var showsAllCoupons = false
     @Published private(set) var pastTrips: ProfileV3PastTripsViewModel?
     @Published private(set) var pastTripCodes: [String: [String]] = [:]
+    @Published private(set) var photoCountryCodes: [String] = []
     @Published private(set) var couponsSheet = ProfileV3CouponsSheet.empty
     @Published private(set) var allCouponsPhase: ProfileV3LoadPhase = .loading
     @Published private(set) var isFetchingCoupons = false
@@ -115,7 +116,8 @@ final class ProfileV3HubViewModel: ObservableObject {
     init(
         repository: any ProfileV3HubRepository,
         hints: ProfileV3HubHints = ProfileV3HubHints(),
-        userFirstName: String? = nil
+        userFirstName: String? = nil,
+        photoPlaces: ProfileV3PhotoPlacesSync? = nil
     ) {
         self.repository = repository
         self.hints = hints
@@ -130,6 +132,7 @@ final class ProfileV3HubViewModel: ObservableObject {
             needsRevalidation = true
             refreshStackBenefits()
         }
+        photoPlaces?.$countryCodes.assign(to: &$photoCountryCodes)
     }
 
     var home: ProfileV3Home? {
@@ -580,6 +583,13 @@ final class ProfileV3HubViewModel: ObservableObject {
             guard let trips else { return }
             pastTripCodes[pass.id] = trips.countryCodes
         }
+    }
+
+    var extraVisitedCodes: [String: [String]] {
+        guard !photoCountryCodes.isEmpty, let mainID = mainProfileID else { return pastTripCodes }
+        var codes = pastTripCodes
+        codes[mainID, default: []] += photoCountryCodes
+        return codes
     }
 
     private func pastTripsChanged(_ trips: [ProfileV3PastTrip], for pass: ProfileV3WorldPass) {

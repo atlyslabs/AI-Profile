@@ -27,7 +27,11 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
         self.onBack = onBack
         self.repository = repository
         self.environment = environment
-        let viewModel = ProfileV3HubViewModel(repository: repository, userFirstName: userFirstName)
+        let viewModel = ProfileV3HubViewModel(
+            repository: repository,
+            userFirstName: userFirstName,
+            photoPlaces: environment.photoPlaces
+        )
         self.viewModel = viewModel
         super.init(rootView: ProfileV3HubRoot(
             viewModel: viewModel,
@@ -45,6 +49,7 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
         super.viewDidLoad()
         view.backgroundColor = UIColor(Color(at: .pureWhite))
         ProfileV3Analytics.screen(.hub, entrySource: entrySource)
+        environment.photoPlaces.syncIfConnected()
     }
 }
 
@@ -73,6 +78,7 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
             session: environment.session,
             client: environment.client,
             profileID: profileID,
+            photoPlaces: environment.photoPlaces,
             onConnectConnector: { [weak self] step in self?.startConnectorCapture(step) },
             onTravellersChanged: { [weak viewModel] in viewModel?.requestRefresh() },
             onOpenProgrammes: { [weak viewModel] in viewModel?.tapMainProgrammes() },

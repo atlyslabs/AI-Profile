@@ -73,6 +73,7 @@ protocol ProfileV3SettingsRepository: Sendable {
     func loadConnectorControlPanel() async throws -> ProfileV3ConnectorControlPanel
     func loadDisconnectConfirm(_ connector: ProfileV3ConnectorKey) async throws -> ProfileV3DisconnectConfirm
     func disconnectConnector(_ connector: ProfileV3ConnectorKey) async throws
+    func syncPhotoPlaces(_ upload: ProfileV3PhotoPlacesUpload) async throws
     func loadEditTravellers() async throws -> ProfileV3EditTravellersScreen
     func loadTravellerRelationship(profileID: String) async throws -> ProfileV3EditField
     func saveTravellerRelationship(_ value: String, profileID: String) async throws

@@ -77,10 +77,11 @@ enum ProfileV3ConnectorsMapper: ProfileV3DTOReading {
         return label
     }
 
-    private static func displayName(for key: ProfileV3ConnectorKey) -> String {
+    static func displayName(for key: ProfileV3ConnectorKey) -> String {
         switch key {
         case .gmail: return ProfileV3Strings.gmailConnector
         case .itr: return ProfileV3Strings.itrConnector
+        case .photos: return ProfileV3Strings.photosConnector
         }
     }
 
@@ -88,6 +89,7 @@ enum ProfileV3ConnectorsMapper: ProfileV3DTOReading {
         switch key {
         case .gmail: return .remote(ProfileV3ConnectorArt.gmail.url)
         case .itr: return .contract
+        case .photos: return .remote(nil)
         }
     }
 

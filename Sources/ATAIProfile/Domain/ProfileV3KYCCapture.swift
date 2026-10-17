@@ -42,6 +42,7 @@ extension ProfileV3ConnectorKey {
         switch self {
         case .gmail: return ProfileV3CaptureStepKey.gmailConnect
         case .itr: return ProfileV3CaptureStepKey.itr
+        case .photos: return nil
         }
     }
 }
@@ -50,6 +51,10 @@ extension ProfileV3Connector {
     var captureStep: String? {
         guard status != .connected else { return nil }
         return ProfileV3ConnectorKey(rawValue: id)?.captureStep
+    }
+
+    var canConnect: Bool {
+        status != .connected && (captureStep != nil || id == ProfileV3ConnectorKey.photos.rawValue)
     }
 }
 

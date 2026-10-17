@@ -205,7 +205,7 @@ private struct ProfileV3HubPin: ViewModifier {
 struct ProfileV3HubPassOverlay: View {
     @ObservedObject var stage: ProfileV3HubStage
     let target: CGRect
-    var pastTripCodes: [String: [String]] = [:]
+    var extraVisitedCodes: [String: [String]] = [:]
     var isGlobeAnimating = true
     let onAddTraveller: () -> Void
     var onPastTrips: ((ProfileV3WorldPass, Bool) -> Void)?
@@ -214,7 +214,7 @@ struct ProfileV3HubPassOverlay: View {
 
     var body: some View {
         if let expanded = stage.expandedPass, let hero = stage.passHero {
-            let pass = expanded.mergingVisited(pastTripCodes[expanded.id] ?? [])
+            let pass = expanded.mergingVisited(extraVisitedCodes[expanded.id] ?? [])
             ZStack {
                 Button(action: stage.collapse) {
                     Rectangle()

@@ -94,6 +94,10 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
+    func syncPhotoPlaces(_: ProfileV3PhotoPlacesUpload) async throws {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
     func loadConnectorControlPanel() async throws -> ProfileV3ConnectorControlPanel {
         throw ProfileV3RepositoryError.unavailable
     }
