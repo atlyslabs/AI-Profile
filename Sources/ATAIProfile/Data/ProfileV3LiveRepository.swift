@@ -6,6 +6,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     private let session: any ProfileV3SessionProviding
     private let account: any ProfileV3AccountHost
     private let agentResiduals = ProfileV3AgentResidualStore()
+    private let vault: ProfileV3VaultClient
 
     init(
         client: ProfileV3NetworkClient,
@@ -17,6 +18,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         self.store = boardStore
         self.session = session
         self.account = account
+        vault = ProfileV3VaultClient(client: client, session: session)
     }
 
     func loadBoard() async throws -> ProfileV3Board {
@@ -48,10 +50,23 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return mapped.flow
     }
 
-    func saveAgentForm(_ form: ProfileV3AgentForm, profileID: String?) async throws {
+    func saveAgentForm(
+        _ form: ProfileV3AgentForm,
+        profileID: String?,
+        profileIDs: [String]?
+    ) async throws -> String? {
         let residuals = agentResiduals.residuals(agentID: form.agentID, profileID: profileID)
-        let body = try ProfileV3AgentSubmission.body(for: form, profileID: profileID, residuals: residuals)
-        try await submit(body, action: "save_agent_preferences")
+        let body = try ProfileV3AgentSubmission.body(
+            for: form,
+            profileID: profileID,
+            residuals: residuals,
+            profileIDs: profileIDs
+        )
+        let data = try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: "save_agent_preferences") {
+            try await client.requestData(.submit(body: body))
+        }
+        await store.invalidate()
+        return (try? JSONDecoder().decode(ProfileV3AgentSaveResponseDTO.self, from: data))?.doneLabel
     }
 
     func loadSettings() async throws -> ProfileV3SettingsMenu {
@@ -92,6 +107,66 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     func disconnectConnector(_ connector: ProfileV3ConnectorKey) async throws {
         let request = ProfileV3DisconnectConnectorRequest(connector: connector.rawValue)
         try await submit(try JSONEncoder().encode(request), action: "disconnect_connector")
+    }
+
+    func loadAppAccess() async throws -> ProfileV3AppAccess {
+        try await vault.credentials()
+    }
+
+    func saveAppCredentials(_ credentials: ProfileV3AppCredentials, appID: String) async throws {
+        _ = try await vault.update(id: appID, draft: ProfileV3VaultDraft(
+            username: credentials.username,
+            password: credentials.password
+        ))
+    }
+
+    func addAppPassword(_ credentials: ProfileV3AppCredentials) async throws {
+        _ = try await vault.save(ProfileV3VaultDraft(
+            label: credentials.websiteURL?.host(),
+            url: credentials.websiteURL?.absoluteString,
+            username: credentials.username,
+            password: credentials.password
+        ))
+    }
+
+    func disconnectApp(_ appID: String) async throws {
+        try await vault.delete(id: appID)
+    }
+
+    func loadVaultSites() async throws -> [ProfileV3VaultSite] {
+        try await vault.sites()
+    }
+
+    func saveVault(_ draft: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult {
+        try await vault.save(draft)
+    }
+
+    func updateVault(id: String, draft: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult {
+        try await vault.update(id: id, draft: draft)
+    }
+
+    func vaultCredential(id: String, includeUsername: Bool) async throws -> ProfileV3VaultCredential {
+        try await vault.credential(id: id, includeUsername: includeUsername)
+    }
+
+    func retestVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult {
+        try await vault.retest(id: id)
+    }
+
+    func deleteVaultCredential(id: String) async throws {
+        try await vault.delete(id: id)
+    }
+
+    func pauseVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult {
+        try await vault.pause(id: id)
+    }
+
+    func resumeVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult {
+        try await vault.resume(id: id)
+    }
+
+    func revealVaultPassword(id: String, deviceName: String) async throws -> String {
+        try await vault.revealPassword(id: id, deviceName: deviceName)
     }
 
     func loadTerms(locale: String?) async throws -> ProfileV3Terms? {
@@ -232,6 +307,32 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return ProfileV3AgentMapper.ridePicker(dto)
     }
 
+    func loadRideRegions() async throws -> ProfileV3RideRegions {
+        let dto: ProfileV3RideRegionsScreenDTO = try await request(ProfileV3API.rideRegions, action: "ride_regions")
+        return ProfileV3AgentMapper.rideRegions(dto)
+    }
+
+    func loadTravelPersona(profileID: String?) async throws -> ProfileV3TravelPersona {
+        let dto: ProfileV3PersonaScreenDTO = try await request(
+            ProfileV3API.travelPersona(profileID: profileID),
+            action: "travel_persona"
+        )
+        return ProfileV3PersonaMapper.persona(dto)
+    }
+
+    func loadPersonaTrait(_ trait: String, profileID: String?, page: Int) async throws -> ProfileV3PersonaTrait {
+        let dto: ProfileV3PersonaTraitScreenDTO = try await request(
+            ProfileV3API.personaTrait(trait: trait, profileID: profileID, page: page),
+            action: "persona_trait"
+        )
+        return ProfileV3PersonaMapper.trait(dto, trait: trait)
+    }
+
+    func submitPersonaAction(_ action: ProfileV3BoardAction, score: Int?) async throws {
+        let body = try JSONEncoder().encode(ProfileV3PersonaSubmitRequest(action: action, score: score))
+        try await submit(body, action: action.name ?? "persona_action")
+    }
+
     func loadPassportReason() async throws -> ProfileV3PassportReasonScreen {
         let dto: ProfileV3PassportReasonScreenDTO = try await request(
             ProfileV3API.passportReason,
@@ -334,24 +435,32 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         try await submit(try JSONEncoder().encode(request), action: "save_permissions")
     }
 
-    func loadPastTrips(profileID: String) async throws -> [ProfileV3PastTrip] {
-        await ProfileV3PastTripsStore.shared.trips(profileID: profileID)
+    func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen {
+        let dto: ProfileV3PastTripsScreenDTO = try await request(.pastTrips(profileID: profileID), action: "past_trips")
+        return ProfileV3PastTripsMapper.screen(dto)
     }
 
-    func addPastTrip(_ draft: ProfileV3PastTripDraft, profileID: String) async throws -> ProfileV3PastTrip {
-        await ProfileV3PastTripsStore.shared.add(draft, profileID: profileID)
+    func loadAddTrip(profileID: String) async throws -> ProfileV3AddTripScreen {
+        let dto: ProfileV3AddTripScreenDTO = try await request(.addTrip(profileID: profileID), action: "add_trip")
+        return ProfileV3PastTripsMapper.addScreen(dto)
     }
 
-    func updatePastTrip(
-        id: String,
-        with draft: ProfileV3PastTripDraft,
-        profileID: String
-    ) async throws -> ProfileV3PastTrip {
-        try await ProfileV3PastTripsStore.shared.update(id: id, with: draft, profileID: profileID)
+    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, year: Int, month: Int) async throws {
+        let request = ProfileV3BoardSubmitRequest(
+            action: submit,
+            extras: ["country": .string(country), "year": .int(year), "month": .int(month)]
+        )
+        try await self.submit(try JSONEncoder().encode(request), action: submit.name ?? "add_past_trip")
     }
 
-    func deletePastTrip(id: String, profileID: String) async throws {
-        await ProfileV3PastTripsStore.shared.remove(id: id, profileID: profileID)
+    func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws {
+        let request = ProfileV3BoardSubmitRequest(action: submit, extras: ["year": .int(year), "month": .int(month)])
+        try await self.submit(try JSONEncoder().encode(request), action: submit.name ?? "edit_past_trip")
+    }
+
+    func deletePastTrip(_ submit: ProfileV3BoardAction) async throws {
+        let request = ProfileV3BoardSubmitRequest(action: submit)
+        try await self.submit(try JSONEncoder().encode(request), action: submit.name ?? "delete_past_trip")
     }
 
     func acknowledgeLogout() async throws {

@@ -103,7 +103,11 @@ struct ProfileV3SettingsView: View {
         case .connectors:
             ProfileV3InformationAccessView(model: viewModel.connectors, onBack: viewModel.pop)
         case .appAccess:
-            ProfileV3AppAccessView(onBack: viewModel.pop)
+            if ProfileV3FeatureFlags.isAppAccessEnabled {
+                ProfileV3AppAccessView(model: viewModel.appAccess, connectors: viewModel.connectors, onBack: viewModel.pop)
+            } else {
+                ProfileV3AppAccessComingSoonView(onBack: viewModel.pop)
+            }
         default:
             EmptyView()
         }
@@ -396,5 +400,11 @@ private struct ProfileV3CitizenshipLockLayer: View {
 
 #Preview("Settings · information access") {
     ProfileV3SettingsView(viewModel: .preview(pagePath: [.connectors]))
+}
+
+#Preview("Settings · app access") {
+    let viewModel = ProfileV3SettingsViewModel.preview()
+    viewModel.appAccess.open()
+    return ProfileV3SettingsView(viewModel: viewModel)
 }
 #endif

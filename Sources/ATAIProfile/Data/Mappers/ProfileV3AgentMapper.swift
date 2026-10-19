@@ -99,16 +99,42 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             sections.append(section)
         }
         let card = medicalCard(from: dto.card, fields: fields, residuals: &residuals)
+        let agentTag = tag(title: dto.title, agentID: agentID)
         return ProfileV3AgentForm(
             agentID: agentID,
-            agentTag: tag(title: dto.title, agentID: agentID),
+            agentTag: agentTag,
             foundCount: dto.found?.count?.intValue ?? 0,
             totalCount: dto.found?.total?.intValue ?? 0,
             noun: noun(for: agentID),
             summary: dto.insight?.text ?? "",
             sources: sources(from: dto.sources),
             medicalCard: card,
+            household: household(from: dto.save?.household, fallbackEyebrow: agentTag),
             sections: sections
+        )
+    }
+
+    private static func household(
+        from dto: ProfileV3AgentHouseholdDTO?,
+        fallbackEyebrow: String
+    ) -> ProfileV3HouseholdPrompt? {
+        guard let dto, let title = text(dto.title) else { return nil }
+        let travellers = (dto.travelers ?? []).compactMap { traveller -> ProfileV3HouseholdPrompt.Traveller? in
+            guard let id = text(traveller.profileID), let name = text(traveller.name) else { return nil }
+            return ProfileV3HouseholdPrompt.Traveller(
+                id: id,
+                name: name,
+                passNumber: text(traveller.passNumber) ?? "",
+                isSelected: traveller.selected == true
+            )
+        }
+        guard !travellers.isEmpty else { return nil }
+        return ProfileV3HouseholdPrompt(
+            eyebrow: text(dto.eyebrow) ?? fallbackEyebrow,
+            iconURL: remoteURL(dto.icon),
+            title: title,
+            travellers: travellers,
+            confirmLabel: text(dto.confirm?.label) ?? "Confirm"
         )
     }
 
@@ -123,9 +149,21 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             title: field.label ?? "",
             status: field.isFound ? .complete : .pending,
             control: control,
-            note: text(field.assist).map { ProfileV3FormNote(text: $0) },
+            note: note(from: field),
             source: source(from: field, agentType: agentType)
         )
+    }
+
+    private static func note(from field: ProfileV3AgentFieldDTO) -> ProfileV3FormNote? {
+        guard let assist = text(field.assist) else { return nil }
+        var note = ProfileV3FormNote(text: assist)
+        if let link = field.assistLink,
+           let run = text(link.text),
+           assist.contains(run),
+           let directive = link.next?.directive {
+            note.link = ProfileV3FormNote.Link(text: run, directive: directive)
+        }
+        return note
     }
 
     private static func appendBaggageTab(
@@ -143,7 +181,7 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
                     title: field.label ?? "",
                     status: tab.isFound ? .complete : .pending,
                     control: .baggage(ProfileV3BaggageField(tabs: [tab])),
-                    note: text(field.assist).map { ProfileV3FormNote(text: $0) }
+                    note: note(from: field)
                 )
             )
             return
@@ -154,7 +192,7 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             sections[index].status = .complete
         }
         if sections[index].note == nil {
-            sections[index].note = text(field.assist).map { ProfileV3FormNote(text: $0) }
+            sections[index].note = note(from: field)
         }
     }
 
@@ -212,6 +250,24 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             options: dto.options.compactMap(rideOption(from:)),
             footer: text(dto.footer) ?? ProfileV3Strings.carIncluded,
             regions: dto.regions.compactMap { text($0)?.uppercased() }
+        )
+    }
+
+    static func rideRegions(_ dto: ProfileV3RideRegionsScreenDTO) -> ProfileV3RideRegions {
+        ProfileV3RideRegions(
+            title: text(dto.title) ?? "",
+            heading: text(dto.heading) ?? "",
+            dividerLabel: text(dto.dividerLabel) ?? "",
+            regions: dto.regions.enumerated().compactMap { index, region in
+                guard let imageURL = remoteURL(region.imageURL) else { return nil }
+                let aspect = region.imageAspect?.doubleValue.flatMap { $0 > 0 ? CGFloat($0) : nil }
+                return ProfileV3RideRegions.Region(
+                    id: "\(index)-\(text(region.country) ?? "")",
+                    name: text(region.name) ?? "",
+                    imageURL: imageURL,
+                    aspectRatio: aspect ?? ProfileV3Theme.Sizes.RideRegions.fallbackAspect
+                )
+            }
         )
     }
 
@@ -292,14 +348,25 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
         residuals: inout ProfileV3AgentResiduals
     ) -> ProfileV3FormControl {
         let placeholder = placeholder(for: field)
+        let hidesYear = text(field.format) == "dd_mm"
         guard let raw = text(field.value?.stringValue) else {
-            return .date(ProfileV3DateField(value: nil, placeholder: placeholder))
+            return .date(ProfileV3DateField(value: nil, placeholder: placeholder, hidesYear: hidesYear))
         }
         guard let parsed = ProfileV3AgentDateCodec.parse(raw) else {
             return .text(ProfileV3TextFieldValue(value: raw, placeholder: placeholder, isDate: true))
         }
         residuals.dateFormats[field.key] = parsed.format
-        return .date(ProfileV3DateField(value: parsed.date, placeholder: placeholder))
+        let date = hidesYear ? Self.pinnedToAnniversaryYear(parsed.date) : parsed.date
+        return .date(ProfileV3DateField(value: date, placeholder: placeholder, hidesYear: hidesYear))
+    }
+
+    private static func pinnedToAnniversaryYear(_ date: Date) -> Date {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .autoupdatingCurrent
+        var parts = calendar.dateComponents([.month, .day], from: date)
+        parts.year = 2000
+        parts.hour = 12
+        return calendar.date(from: parts) ?? date
     }
 
     private static func showsAsCards(_ field: ProfileV3AgentFieldDTO) -> Bool {
@@ -362,9 +429,14 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             range: bounds.range,
             step: sliderStep(for: field),
             style: bounds.style,
-            format: text(field.unit).map(ProfileV3SliderField.ValueFormat.unit),
+            format: sliderFormat(for: field),
             optOut: optOut
         )
+    }
+
+    private static func sliderFormat(for field: ProfileV3AgentFieldDTO) -> ProfileV3SliderField.ValueFormat? {
+        if text(field.display) == "ft_in" { return .feetAndInches }
+        return text(field.unit).map(ProfileV3SliderField.ValueFormat.unit)
     }
 
     private static func sliderStep(for field: ProfileV3AgentFieldDTO) -> Double {

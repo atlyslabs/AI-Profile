@@ -25,6 +25,8 @@ struct ProfileV3Directive: Equatable {
     var fieldKey: String?
     var reason: String?
     var steps: [String] = []
+    var trait: String?
+    var page: Int?
 }
 
 enum ProfileV3Route: Equatable {
@@ -59,6 +61,11 @@ enum ProfileV3Route: Equatable {
     case passportReason
     case passportHowUsed
     case ridePicker(agentType: String, profileID: String?)
+    case rideRegions
+    case travelPersona(profileID: String?)
+    case personaTrait(trait: String, profileID: String?, page: Int)
+    case pastTrips(profileID: String?)
+    case addTrip(profileID: String?)
     case unsupported(String)
 }
 
@@ -134,6 +141,16 @@ extension ProfileV3Directive {
             return .passportHowUsed
         case "ride_picker":
             return agentType.map { ProfileV3Route.ridePicker(agentType: $0, profileID: profile) } ?? .unsupported(go)
+        case "ride_regions":
+            return .rideRegions
+        case "travel_persona":
+            return .travelPersona(profileID: profile)
+        case "persona_trait":
+            return trait.map { .personaTrait(trait: $0, profileID: profile, page: max(page ?? 1, 1)) } ?? .unsupported(go)
+        case "past_trips":
+            return .pastTrips(profileID: profile)
+        case "add_trip":
+            return .addTrip(profileID: profile)
         default:
             return .unsupported(go)
         }

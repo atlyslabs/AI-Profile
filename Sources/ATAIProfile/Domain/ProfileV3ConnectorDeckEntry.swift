@@ -7,4 +7,5 @@ struct ProfileV3ConnectorDeckEntry: Identifiable, Equatable {
     let blurb: String
     let hint: String
     let icon: ProfileV3ConnectorIcon
+    var isApp = false
 }

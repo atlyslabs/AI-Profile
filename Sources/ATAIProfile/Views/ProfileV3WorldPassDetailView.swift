@@ -3,26 +3,49 @@ import SwiftUI
 
 struct ProfileV3WorldPassDetailView: View {
     let pass: ProfileV3WorldPass
+    var showsChrome = true
     var isGlobeAnimating = true
     var globePose: ProfileV3GlobePose?
     var onGlobeSphere: ((ProfileV3GlobeSphere) -> Void)?
     var onAddTraveller: (() -> Void)?
-    var onPastTrips: ((_ startsAdding: Bool) -> Void)?
+    var onTrips: ((ProfileV3Directive) -> Void)?
 
     var body: some View {
         let flagCodes = pass.uniqueVisitedCountryCodes
         ZStack {
             streak
+                .opacity(showsChrome ? 1 : 0)
             VStack(spacing: 0) {
                 ProfileV3WorldPassHeader()
                     .padding(.top, ProfileV3Theme.Space.s30)
-                ProfileV3InteractiveGlobe(
-                    visitedCountryCodes: flagCodes,
-                    isAnimating: isGlobeAnimating,
-                    pose: globePose,
-                    onSphere: onGlobeSphere
-                )
+                    .opacity(showsChrome ? 1 : 0)
+                Color.clear
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .overlay {
+                        if showsChrome {
+                            ProfileV3InteractiveGlobe(
+                                visitedCountryCodes: flagCodes,
+                                isAnimating: isGlobeAnimating,
+                                pose: globePose,
+                                onSphere: onGlobeSphere
+                            )
+                            .transition(.identity)
+                        }
+                    }
+                    .onGeometryChange(for: CGRect.self) { proxy in
+                        proxy.frame(in: .named(ProfileV3HeroSpace.name))
+                    } action: { frame in
+                        let diameter = min(
+                            frame.width * ProfileV3Theme.Globe.sphereWidthRatio,
+                            frame.height - 2 * ProfileV3Theme.Globe.sphereVerticalInset
+                        )
+                        guard diameter > 0 else { return }
+                        onGlobeSphere?(ProfileV3GlobeSphere(
+                            centre: CGPoint(x: frame.midX, y: frame.midY),
+                            radius: diameter / 2
+                        ))
+                    }
+                    .animation(nil, value: showsChrome)
                 VStack(spacing: ProfileV3Theme.Space.s16) {
                     Text(pass.holderName)
                         .typoGraphy(.H7InterMedium16)
@@ -35,10 +58,12 @@ struct ProfileV3WorldPassDetailView: View {
                     )
                     visitedCountries(flagCodes)
                 }
+                .opacity(showsChrome ? 1 : 0)
                 statsGrid
                     .padding(.top, ProfileV3Theme.Sizes.Detail.statsTop)
                     .padding(.horizontal, ProfileV3Theme.Sizes.Detail.statsHorizontal)
                     .padding(.bottom, ProfileV3Theme.Sizes.Detail.bottom)
+                    .opacity(showsChrome ? 1 : 0)
             }
         }
     }
@@ -54,53 +79,84 @@ struct ProfileV3WorldPassDetailView: View {
 
     @ViewBuilder
     private func visitedCountries(_ codes: [String]) -> some View {
-        if ProfileV3FeatureFlags.isPastTripsEnabled, let onPastTrips {
-            if codes.isEmpty {
-                ProfileV3AddPastTripsPill { onPastTrips(true) }
-            } else {
-                Button { onPastTrips(false) } label: {
-                    flagsPill(codes, showsAddIcon: true)
-                }
-                .buttonStyle(.profileV3Pressable(.selection))
-                .accessibilityLabel(ProfileV3Strings.visitedCountries(codes.count))
+        switch pass.tripsEntry {
+        case .add(let label, let next)?:
+            if let onTrips {
+                ProfileV3AddPastTripsPill(title: label) { onTrips(next) }
             }
-        } else if !codes.isEmpty {
-            flagsPill(codes, showsAddIcon: false)
+        case .pill(let flags, let more, let next, let add)?:
+            tripsPill(flags: flags, more: more, next: next, add: add)
+        case nil:
+            if !codes.isEmpty {
+                flagsPill(codes)
+            }
         }
     }
 
-    private func flagsPill(_ codes: [String], showsAddIcon: Bool) -> some View {
-        let hiddenFlagCount = max(codes.count - ProfileV3Theme.Counts.detailPillMaxFlags, 0)
-        return HStack(spacing: ProfileV3Theme.Space.s14) {
-            HStack(spacing: ProfileV3Theme.Space.s8) {
-                HStack(spacing: ProfileV3Theme.Sizes.Detail.pillFlagOverlap) {
-                    ForEach(codes.prefix(ProfileV3Theme.Counts.detailPillMaxFlags), id: \.self) { code in
-                        flag(for: code)
-                    }
+    private func tripsPill(
+        flags: [String],
+        more: Int,
+        next: ProfileV3Directive?,
+        add: ProfileV3Directive?
+    ) -> some View {
+        pillChrome {
+            HStack(spacing: ProfileV3Theme.Space.s14) {
+                Button { if let next { onTrips?(next) } } label: {
+                    flagRow(Array(flags.prefix(ProfileV3Theme.Counts.detailPillMaxFlags)), more: more)
+                        .contentShape(Rectangle())
                 }
-                if hiddenFlagCount > 0 {
-                    Text(ProfileV3Strings.moreCount(hiddenFlagCount))
-                        .typoGraphy(.H6InterSemibold18)
-                        .foregroundStyle(ProfileV3Theme.Palette.statLabel)
+                .buttonStyle(.profileV3Pressable(.selection))
+                .disabled(next == nil || onTrips == nil)
+                .accessibilityLabel(ProfileV3Strings.visitedCountries(flags.count + more))
+                if let add, let onTrips {
+                    Button { onTrips(add) } label: { addIcon }
+                        .buttonStyle(.profileV3Pressable(.selection))
+                        .accessibilityLabel(ProfileV3Strings.addPastTrip)
                 }
-            }
-            if showsAddIcon {
-                addIcon
-            } else if ProfileV3FeatureFlags.isPassAddTravellerEnabled, let onAddTraveller {
-                Button(action: onAddTraveller) { addIcon }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(ProfileV3Strings.addTraveller)
             }
         }
-        .padding(.leading, ProfileV3Theme.Space.s12)
-        .padding(.trailing, ProfileV3Theme.Space.s12)
-        .frame(height: ProfileV3Theme.Control.tapTarget)
-        .background(Capsule().fill(ProfileV3Theme.detailPillGradient))
-        .shadow(
-            color: ProfileV3Theme.Palette.shadow,
-            radius: ProfileV3Theme.Shadow.cardRadius,
-            y: ProfileV3Theme.Shadow.chipY
-        )
+    }
+
+    private func flagsPill(_ codes: [String]) -> some View {
+        let hiddenFlagCount = max(codes.count - ProfileV3Theme.Counts.detailPillMaxFlags, 0)
+        return pillChrome {
+            HStack(spacing: ProfileV3Theme.Space.s14) {
+                flagRow(Array(codes.prefix(ProfileV3Theme.Counts.detailPillMaxFlags)), more: hiddenFlagCount)
+                if ProfileV3FeatureFlags.isPassAddTravellerEnabled, let onAddTraveller {
+                    Button(action: onAddTraveller) { addIcon }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(ProfileV3Strings.addTraveller)
+                }
+            }
+        }
+    }
+
+    private func flagRow(_ codes: [String], more: Int) -> some View {
+        HStack(spacing: ProfileV3Theme.Space.s8) {
+            HStack(spacing: ProfileV3Theme.Sizes.Detail.pillFlagOverlap) {
+                ForEach(codes, id: \.self) { code in
+                    flag(for: code)
+                }
+            }
+            if more > 0 {
+                Text(ProfileV3Strings.moreCount(more))
+                    .typoGraphy(.H6InterSemibold18)
+                    .foregroundStyle(ProfileV3Theme.Palette.statLabel)
+            }
+        }
+    }
+
+    private func pillChrome<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        content()
+            .padding(.leading, ProfileV3Theme.Space.s12)
+            .padding(.trailing, ProfileV3Theme.Space.s12)
+            .frame(height: ProfileV3Theme.Control.tapTarget)
+            .background(Capsule().fill(ProfileV3Theme.detailPillGradient))
+            .shadow(
+                color: ProfileV3Theme.Palette.shadow,
+                radius: ProfileV3Theme.Shadow.cardRadius,
+                y: ProfileV3Theme.Shadow.chipY
+            )
     }
 
     private var addIcon: some View {
@@ -123,7 +179,7 @@ struct ProfileV3WorldPassDetailView: View {
     }
 
     private var statCells: [ProfileV3StatCell] {
-        guard pass.stats.isEmpty, ProfileV3FeatureFlags.isPastTripsEnabled else {
+        guard pass.stats.isEmpty, pass.tripsEntry != nil else {
             return pass.stats.map { ProfileV3StatCell(id: $0.key.rawValue, label: $0.label, value: $0.displayValue) }
         }
         return ProfileV3StatCell.placeholders

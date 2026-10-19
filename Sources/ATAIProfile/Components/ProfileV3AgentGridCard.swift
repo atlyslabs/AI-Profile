@@ -4,10 +4,9 @@ import SwiftUI
 struct ProfileV3AgentGridCard: View {
     let agent: ProfileV3Agent
     var isKYCComplete = true
-    var isGmailConnected: Bool?
     let onActivate: () -> Void
 
-    private var showsActivate: Bool { agent.showsActivatePill(isGmailConnected: isGmailConnected) }
+    private var showsActivate: Bool { agent.showsActivatePill() }
     private var showsGlow: Bool { !agent.hasData && (!isKYCComplete || agent.activate != nil) }
 
     private var orbState: ProfileV3AvatarOrb.State {
@@ -36,7 +35,7 @@ struct ProfileV3AgentGridCard: View {
                 if showsActivate {
                     Spacer()
                         .frame(height: ProfileV3Theme.Space.s18)
-                    ProfileV3ActivatePill(showsBolt: true)
+                    ProfileV3ActivatePill(showsBolt: false)
                 }
             }
             .multilineTextAlignment(.leading)
@@ -101,8 +100,8 @@ struct ProfileV3AgentGridCard: View {
 }
 
 extension ProfileV3Agent {
-    func showsActivatePill(isGmailConnected: Bool?) -> Bool {
-        hasData && (isGmailConnected.map { !$0 } ?? (activate != nil))
+    func showsActivatePill() -> Bool {
+        activate != nil
     }
 }
 

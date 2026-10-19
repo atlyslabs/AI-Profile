@@ -18,7 +18,11 @@ protocol ProfileV3BoardRepository: Sendable {
 
 protocol ProfileV3AgentRepository: Sendable {
     func loadAgentFlow(agentID: String, profileID: String?) async throws -> ProfileV3AgentFlow
-    func saveAgentForm(_ form: ProfileV3AgentForm, profileID: String?) async throws
+    func saveAgentForm(
+        _ form: ProfileV3AgentForm,
+        profileID: String?,
+        profileIDs: [String]?
+    ) async throws -> String?
     func loadPassportHistory(profileID: String?) async throws -> [ProfileV3Passport]
     func loadPassportScan(profileID: String?) async throws -> ProfileV3PassportScan
     func uploadPassportScan(_ side: ProfileV3PassportSide, data: Data, profileID: String?) async throws
@@ -29,6 +33,7 @@ protocol ProfileV3AgentRepository: Sendable {
     func loadPreferenceSources(_ source: ProfileV3SectionSource, profileID: String?) async throws
         -> ProfileV3PreferenceSources
     func loadRidePicker(agentType: String, profileID: String?) async throws -> ProfileV3RidePicker
+    func loadRideRegions() async throws -> ProfileV3RideRegions
 }
 
 protocol ProfileV3LoyaltyRepository: Sendable {
@@ -61,7 +66,23 @@ protocol ProfileV3KYCCaptureRepository: Sendable {
     func uploadCoTravellerImage(_ image: ProfileV3CaptureImage, data: Data, profileID: String) async throws
 }
 
-protocol ProfileV3SettingsRepository: Sendable {
+protocol ProfileV3AppAccessRepository: Sendable {
+    func loadAppAccess() async throws -> ProfileV3AppAccess
+    func saveAppCredentials(_ credentials: ProfileV3AppCredentials, appID: String) async throws
+    func addAppPassword(_ credentials: ProfileV3AppCredentials) async throws
+    func disconnectApp(_ appID: String) async throws
+    func loadVaultSites() async throws -> [ProfileV3VaultSite]
+    func saveVault(_ draft: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult
+    func updateVault(id: String, draft: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult
+    func vaultCredential(id: String, includeUsername: Bool) async throws -> ProfileV3VaultCredential
+    func retestVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult
+    func deleteVaultCredential(id: String) async throws
+    func pauseVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult
+    func resumeVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult
+    func revealVaultPassword(id: String, deviceName: String) async throws -> String
+}
+
+protocol ProfileV3SettingsRepository: ProfileV3AppAccessRepository {
     func loadSettings() async throws -> ProfileV3SettingsMenu
     func loadEditField(_ field: ProfileV3ProfileField) async throws -> ProfileV3EditField
     func saveProfileField(
@@ -94,14 +115,17 @@ protocol ProfileV3SettingsRepository: Sendable {
 }
 
 protocol ProfileV3PastTripsRepository: Sendable {
-    func loadPastTrips(profileID: String) async throws -> [ProfileV3PastTrip]
-    func addPastTrip(_ draft: ProfileV3PastTripDraft, profileID: String) async throws -> ProfileV3PastTrip
-    func updatePastTrip(
-        id: String,
-        with draft: ProfileV3PastTripDraft,
-        profileID: String
-    ) async throws -> ProfileV3PastTrip
-    func deletePastTrip(id: String, profileID: String) async throws
+    func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen
+    func loadAddTrip(profileID: String) async throws -> ProfileV3AddTripScreen
+    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, year: Int, month: Int) async throws
+    func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws
+    func deletePastTrip(_ submit: ProfileV3BoardAction) async throws
+}
+
+protocol ProfileV3PersonaRepository: Sendable {
+    func loadTravelPersona(profileID: String?) async throws -> ProfileV3TravelPersona
+    func loadPersonaTrait(_ trait: String, profileID: String?, page: Int) async throws -> ProfileV3PersonaTrait
+    func submitPersonaAction(_ action: ProfileV3BoardAction, score: Int?) async throws
 }
 
 typealias ProfileV3HubRepository = ProfileV3BoardRepository & ProfileV3PastTripsRepository
@@ -112,6 +136,7 @@ typealias ProfileV3Repository = ProfileV3BoardRepository
     & ProfileV3KYCCaptureRepository
     & ProfileV3SettingsRepository
     & ProfileV3PastTripsRepository
+    & ProfileV3PersonaRepository
 
 extension ProfileV3BoardRepository {
     func loadLatestBoard() async throws -> ProfileV3Board {

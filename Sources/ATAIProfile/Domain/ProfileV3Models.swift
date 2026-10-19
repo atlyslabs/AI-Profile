@@ -11,7 +11,8 @@ struct ProfileV3TravelStat: Identifiable, Equatable {
 
     let key: Key
     let label: String
-    let value: Int
+    let value: Int?
+    var unit: String? = nil
 
     var id: String { key.rawValue }
 }
@@ -40,7 +41,7 @@ struct ProfileV3LoyaltyProgramme: Identifiable, Equatable {
     var tier: String? = nil
     var updatedLine: String? = nil
 
-    var displayNumber: String { membershipNumber ?? maskedNumber }
+    var displayNumber: String? { membershipNumber ?? maskedNumber.nonEmpty }
 }
 
 struct ProfileV3ProgrammeInsight: Equatable {
@@ -120,6 +121,7 @@ struct ProfileV3WorldPass: Identifiable, Equatable {
     var kycStatus: ProfileV3KYCStatus
     var visitedCountryCodes: [String]
     let stats: [ProfileV3TravelStat]
+    var tripsEntry: ProfileV3TripsEntry?
     var programmes: [ProfileV3LoyaltyProgramme] = []
     var connectedProgrammeCount = 0
     var programmesUpdate: ProfileV3UpdateStamp?
@@ -303,6 +305,8 @@ struct ProfileV3ProgrammeCatalogueItem: Identifiable, Equatable {
     let category: ProfileV3ProgrammeCategory
     var cardImageURL: URL? = nil
     var logoURL: URL? = nil
+    var isArtPlaceholder = false
+    var textOverlay: ProfileV3TextOverlay = .light
 }
 
 enum ProfileV3ProgrammeScanEvent: Equatable {
@@ -312,7 +316,7 @@ enum ProfileV3ProgrammeScanEvent: Equatable {
 
 struct ProfileV3ProgrammeSubmission: Equatable {
     let item: ProfileV3ProgrammeCatalogueItem
-    let membershipNumber: String
+    let membershipNumber: String?
     let points: Int?
 }
 

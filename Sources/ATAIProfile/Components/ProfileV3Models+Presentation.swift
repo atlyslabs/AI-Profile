@@ -70,6 +70,12 @@ extension ProfileV3SliderField {
         switch format {
         case .unit(let unit):
             return (ProfileV3Strings.unitValue(Int(value.rounded()), unit: unit), nil)
+        case .feetAndInches:
+            let total = Int(value.rounded())
+            let inchesPerFoot = Int(ProfileV3Theme.Measure.inchesPerFoot)
+            let feet = total / inchesPerFoot
+            let inches = total % inchesPerFoot
+            return ("\(feet)'\(inches)\"", nil)
         case .centimetres:
             let inchesPerFoot = Int(ProfileV3Theme.Measure.inchesPerFoot)
             let totalInches = Int((value / ProfileV3Theme.Measure.inchesPerCentimetre).rounded())
@@ -98,7 +104,13 @@ extension ProfileV3SliderField {
 
 extension ProfileV3TravelStat {
     var displayValue: String {
-        key == .distance ? ProfileV3Strings.distanceKilometres(value) : value.formatted()
+        guard let value else { return ProfileV3Strings.statPlaceholder }
+        guard key == .distance else { return value.formatted() }
+        let unit = unit?.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let unit, !unit.isEmpty, unit != "km" else {
+            return ProfileV3Strings.distanceKilometres(value)
+        }
+        return "\(value.formatted()) \(unit)"
     }
 }
 

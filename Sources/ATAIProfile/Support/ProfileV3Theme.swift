@@ -234,6 +234,7 @@ enum ProfileV3Theme {
         static let stagedTrack: Double = 0.2
         static let medicalSheen: Double = 0.2
         static let carSide: Double = 0.5
+        static let rideRegionsDivider: Double = 0.5
         static let baggageDetail: Double = 0.6
         static let backSlot: Double = 0.6
         static let stackSecondLayer: Double = 0.3

@@ -101,11 +101,24 @@ enum ProfileV3ConnectorGlyph: String {
     case atlysMark = "profile_v3_atlys_mark"
     case atlysWordmark = "profile_v3_atlys_wordmark"
     case disconnectLink = "profile_v3_disconnect_link"
+    case shieldCheck = "profile_v3_shield_check"
+    case addCircle = "profile_v3_add_circle"
+    case editStroke = "profile_v3_edit_stroke"
     case reserveGlyph = "reserve_logo_clear"
 
     var image: Image {
         Image(rawValue, bundle: self == .reserveGlyph ? .main : .module)
     }
+}
+
+enum ProfileV3PersonaArt: String {
+    case gmail = "profile_v3_persona_gmail"
+    case edited = "profile_v3_persona_edited"
+    case flag = "profile_v3_persona_flag"
+    case scaleMidpoint = "profile_v3_persona_scale_mid"
+    case scaleKnob = "profile_v3_persona_scale_knob"
+
+    var image: Image { Image(rawValue, bundle: .module) }
 }
 
 enum ProfileV3AgentArt: String {

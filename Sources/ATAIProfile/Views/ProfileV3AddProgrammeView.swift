@@ -363,10 +363,6 @@ struct ProfileV3AddProgrammeView: View {
         viewModel.entryForm?.title ?? ProfileV3Strings.enterDetails
     }
 
-    private func label(_ key: String, fallback: String) -> String {
-        viewModel.entryForm?.field(key)?.label ?? fallback
-    }
-
     private var detailsContent: some View {
         VStack(spacing: 0) {
             Text(viewModel.selectedItem?.name ?? "")
@@ -374,23 +370,17 @@ struct ProfileV3AddProgrammeView: View {
                 .foregroundStyle(Color(at: .pureBlack))
                 .multilineTextAlignment(.center)
                 .padding(.top, ProfileV3Theme.Space.s40)
-            VStack(alignment: .leading, spacing: ProfileV3Theme.Sizes.AddProgramme.fieldSpacing) {
-                field(
-                    label: label(
-                        ProfileV3LoyaltyEntryForm.Field.membershipNumberKey,
-                        fallback: ProfileV3Strings.membershipNumber
-                    ),
-                    text: $viewModel.membershipNumber,
-                    keyboard: .asciiCapable
-                )
-                field(
-                    label: label(ProfileV3LoyaltyEntryForm.Field.pointsKey, fallback: ProfileV3Strings.pointsMiles),
-                    text: $viewModel.points,
-                    keyboard: .numberPad
-                )
+            ZStack(alignment: .top) {
+                if viewModel.entryForm != nil {
+                    entryFields
+                        .transition(.opacity)
+                } else if viewModel.entryFormFailed {
+                    entryFormFailed
+                } else {
+                    entryFormLoader
+                }
             }
-            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.AddProgramme.fieldsTop)
+            .animation(ProfileV3Theme.Motion.contentFade, value: viewModel.entryForm)
             ctaBar(error: viewModel.saveError) {
                 ProfileV3ContinueButton(
                     isLoading: viewModel.isSaving,
@@ -399,6 +389,40 @@ struct ProfileV3AddProgrammeView: View {
                 )
             }
         }
+    }
+
+    private var entryFields: some View {
+        VStack(alignment: .leading, spacing: ProfileV3Theme.Sizes.AddProgramme.fieldSpacing) {
+            ForEach(viewModel.entryFields) { entry in
+                if entry.key == ProfileV3LoyaltyEntryForm.Field.pointsKey {
+                    field(label: entry.label, text: $viewModel.points, keyboard: .numberPad)
+                } else {
+                    field(label: entry.label, text: $viewModel.membershipNumber, keyboard: .asciiCapable)
+                }
+            }
+        }
+        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+        .padding(.top, ProfileV3Theme.Sizes.AddProgramme.fieldsTop)
+    }
+
+    private var entryFormLoader: some View {
+        ProfileV3Spinner()
+            .accessibilityLabel(ProfileV3Strings.loading)
+            .frame(maxWidth: .infinity)
+            .padding(.top, ProfileV3Theme.Sizes.AddProgramme.fieldsTop)
+            .transition(.opacity)
+    }
+
+    private var entryFormFailed: some View {
+        ProfileV3StatusPanel(
+            title: ProfileV3Strings.loadFailedTitle,
+            subtitle: ProfileV3Strings.loadFailedSubtitle,
+            actionTitle: ProfileV3Strings.retry,
+            action: viewModel.retryEntryForm
+        )
+        .frame(maxWidth: .infinity)
+        .padding(.top, ProfileV3Theme.Sizes.AddProgramme.fieldsTop)
+        .transition(.opacity)
     }
 
     private func field(label: String, text: Binding<String>, keyboard: UIKeyboardType) -> some View {

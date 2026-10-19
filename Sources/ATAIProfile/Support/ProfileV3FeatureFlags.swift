@@ -8,6 +8,11 @@ enum ProfileV3FeatureFlags {
     static let isConnectOtherEmailsEnabled = false
     static let isITRDisconnectEnabled = false
     static let isAgentSourcesPillEnabled = false
-    static let isPastTripsEnabled = false
     static let isProgrammeScanLoaderEnabled = false
+    static let isPersonaEditingEnabled = false
+    #if DEBUG
+    static let isAppAccessEnabled = true
+    #else
+    static let isAppAccessEnabled = false
+    #endif
 }

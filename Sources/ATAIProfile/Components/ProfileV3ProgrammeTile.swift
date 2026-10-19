@@ -107,8 +107,10 @@ struct ProfileV3ProgrammeTile: View {
                         .foregroundStyle(shade.secondary)
                 }
             }
-            numberRow
-                .padding(.top, ProfileV3Theme.Space.s16)
+            if hasNumber || programme.tier != nil {
+                numberRow
+                    .padding(.top, ProfileV3Theme.Space.s16)
+            }
             if programme.expiryLabel != nil || programme.updatedLine != nil {
                 statusRow
                     .padding(.top, ProfileV3Theme.Space.s10)
@@ -136,7 +138,7 @@ struct ProfileV3ProgrammeTile: View {
 
     private var shade: ProfileV3Theme.CardShade { .resolve(programme.textOverlay) }
 
-    private var hasNumber: Bool { !programme.displayNumber.isEmpty }
+    private var hasNumber: Bool { programme.displayNumber != nil }
 
     private var statusRow: some View {
         HStack(alignment: .firstTextBaseline, spacing: ProfileV3Theme.Space.s12) {
@@ -162,10 +164,12 @@ struct ProfileV3ProgrammeTile: View {
             if let tier = programme.tier {
                 tierLabel(tier)
             }
-            Text(programme.displayNumber)
-                .typoGraphy(.T1InterBold11)
-                .textCase(.uppercase)
-                .foregroundStyle(shade.number)
+            if let number = programme.displayNumber {
+                Text(number)
+                    .typoGraphy(.T1InterBold11)
+                    .textCase(.uppercase)
+                    .foregroundStyle(shade.number)
+            }
             if let number = programme.membershipNumber {
                 Button { copy(number) } label: {
                     (isCopied ? ATIcon.SwiftUIImage.check : ATIcon.SwiftUIImage.contentCopy)
@@ -272,10 +276,12 @@ struct ProfileV3ProgrammeTile: View {
                 Text(programme.holderName ?? programme.name)
                     .typoGraphy(.H5InterSemibold20)
                     .foregroundStyle(Color(at: .pureWhite))
-                Text(programme.displayNumber)
-                    .typoGraphy(.T1InterBold11)
-                    .textCase(.uppercase)
-                    .foregroundStyle(ProfileV3Theme.Palette.programmeTileBackNumber)
+                if let number = programme.displayNumber {
+                    Text(number)
+                        .typoGraphy(.T1InterBold11)
+                        .textCase(.uppercase)
+                        .foregroundStyle(ProfileV3Theme.Palette.programmeTileBackNumber)
+                }
             }
         }
         .frame(height: ProfileV3Theme.Sizes.ProgrammeTile.height)

@@ -99,6 +99,12 @@ enum ProfileV3Fixtures {
             kycStatus: kyc,
             visitedCountryCodes: ["IN", "AE", "US", "GB", "FR", "IT", "TH"],
             stats: travelStats(flights: 45, distance: 294_565, countries: 20, airports: 28, airlines: 28),
+            tripsEntry: .pill(
+                flags: ["MU", "JP", "IN", "AE", "US"],
+                more: 3,
+                next: ProfileV3Directive(go: "past_trips", profileID: "main"),
+                add: ProfileV3Directive(go: "add_trip", profileID: "main")
+            ),
             programmes: ProfileV3ProgrammeFixtures.extraProgrammes + programmes,
             connectedProgrammeCount: 6,
             programmesUpdate: .label("14 mins ago")
@@ -119,8 +125,8 @@ enum ProfileV3Fixtures {
             (.airports, ProfileV3Strings.airports, airports),
             (.airlines, ProfileV3Strings.airlines, airlines)
         ]
-        return entries.compactMap { key, label, value in
-            value.map { ProfileV3TravelStat(key: key, label: label, value: $0) }
+        return entries.map { key, label, value in
+            ProfileV3TravelStat(key: key, label: label, value: value, unit: key == .distance ? "km" : nil)
         }
     }
 
@@ -130,7 +136,11 @@ enum ProfileV3Fixtures {
         memberNumber: "6190002",
         kycStatus: .complete(validTill: "Mar 2027"),
         visitedCountryCodes: ["IN", "SG", "JP"],
-        stats: travelStats(flights: 12, distance: 88_120, countries: 6, airports: 9, airlines: 5)
+        stats: travelStats(flights: 12, distance: 88_120, countries: 6, airports: 9, airlines: 5),
+        tripsEntry: .add(
+            label: ProfileV3Strings.addPastTrips,
+            next: ProfileV3Directive(go: "add_trip", profileID: "co-traveller")
+        )
     )
 
     static let worldPasses = [worldPass, coTravellerPass]

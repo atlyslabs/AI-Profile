@@ -8,10 +8,10 @@ struct ProfileV3ProgrammePickerCard: View {
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             artwork
-            if item.cardImageURL == nil {
+            if item.cardImageURL == nil || item.isArtPlaceholder {
                 Text(item.name)
                     .typoGraphy(.H7InterSemibold16)
-                    .foregroundStyle(Color(at: .pureWhite))
+                    .foregroundStyle(nameColor)
                     .multilineTextAlignment(.leading)
                     .padding(ProfileV3Theme.Sizes.Picker.cardNamePadding)
             }
@@ -23,6 +23,11 @@ struct ProfileV3ProgrammePickerCard: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(item.name)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private var nameColor: Color {
+        guard item.cardImageURL != nil else { return Color(at: .pureWhite) }
+        return ProfileV3Theme.CardShade.resolve(item.textOverlay).primary
     }
 
     @ViewBuilder

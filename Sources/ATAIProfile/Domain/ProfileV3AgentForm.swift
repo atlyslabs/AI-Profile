@@ -4,6 +4,21 @@ enum ProfileV3AgentFlow: Equatable {
     case preferences(ProfileV3AgentForm)
 }
 
+struct ProfileV3HouseholdPrompt: Equatable, Sendable {
+    var eyebrow: String
+    var iconURL: URL?
+    var title: String
+    var travellers: [Traveller]
+    var confirmLabel: String
+
+    struct Traveller: Identifiable, Equatable, Sendable {
+        let id: String
+        var name: String
+        var passNumber: String
+        var isSelected: Bool
+    }
+}
+
 struct ProfileV3AgentForm: Equatable {
     let agentID: String
     let agentTag: String
@@ -13,6 +28,7 @@ struct ProfileV3AgentForm: Equatable {
     let summary: String
     let sources: ProfileV3FormSources
     var medicalCard: ProfileV3MedicalCard?
+    var household: ProfileV3HouseholdPrompt?
     var sections: [ProfileV3FormSection]
 }
 
@@ -65,8 +81,14 @@ struct ProfileV3FormNote: Equatable {
         case sources
     }
 
+    struct Link: Equatable {
+        let text: String
+        let directive: ProfileV3Directive
+    }
+
     let text: String
     var icon: Icon = .agent
+    var link: Link?
 }
 
 enum ProfileV3FormControl: Equatable {
@@ -110,6 +132,20 @@ struct ProfileV3RidePicker: Equatable {
         guard !regions.isEmpty, let region else { return true }
         return regions.contains { $0.caseInsensitiveCompare(region) == .orderedSame }
     }
+}
+
+struct ProfileV3RideRegions: Equatable {
+    struct Region: Identifiable, Equatable {
+        let id: String
+        let name: String
+        let imageURL: URL?
+        let aspectRatio: CGFloat
+    }
+
+    let title: String
+    let heading: String
+    let dividerLabel: String
+    let regions: [Region]
 }
 
 struct ProfileV3BaggageItem: Identifiable, Equatable {
@@ -222,6 +258,7 @@ struct ProfileV3SliderField: Equatable {
     enum ValueFormat: Equatable {
         case unit(String)
         case centimetres
+        case feetAndInches
         case levels([String])
     }
 
@@ -265,6 +302,7 @@ struct ProfileV3TextFieldValue: Equatable {
 struct ProfileV3DateField: Equatable {
     var value: Date?
     let placeholder: String
+    var hidesYear = false
 }
 
 struct ProfileV3MedicalCard: Equatable {

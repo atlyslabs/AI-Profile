@@ -997,6 +997,30 @@
         }
       }
     },
+    "mo-aiprofile-agents-button-add-credentials": {
+      "comment": "Link on an app row that opens the add credentials sheet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ credentials"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-button-add-new-password": {
+      "comment": "Button on the App access page that opens the add new password sheet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ Add new"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-button-connect-emails": {
       "comment": "Button to trigger the flow for adding additional email accounts.",
       "extractionState": "manual",
@@ -1005,6 +1029,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Connect other emails"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-button-disconnect-app": {
+      "comment": "Button that disconnects an app from the connectors panel.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnect app"
           }
         }
       }
@@ -1029,6 +1065,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "A secure vault for your apps"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-credentials-use": {
+      "comment": "Note under the credential fields explaining how Atlys uses them.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atlys only uses them to access the services you authorise, keeping you in control at every step."
           }
         }
       }
@@ -1077,6 +1125,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couldn't disconnect. Please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-hint-connected-apps": {
+      "comment": "Tooltip under the Connected link on the App access page, pointing to where connected apps live.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find your connected apps here"
           }
         }
       }
@@ -1165,6 +1225,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-label-password": {
+      "comment": "Field label for the password.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-label-preference-slider": {
       "comment": "Label for an agent preference slider setting.",
       "extractionState": "manual",
@@ -1197,6 +1269,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "your travel preferences"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-username-email": {
+      "comment": "Field label for the username or email address.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username/Email address"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-website": {
+      "comment": "Field label for the website address.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Website"
           }
         }
       }
@@ -1237,6 +1333,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-status-auto-connected": {
+      "comment": "Status label on an app that Atlys connected automatically.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto connected"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-status-connected": {
       "comment": "Status label indicating a connector is active.",
       "extractionState": "manual",
@@ -1261,6 +1369,30 @@
         }
       }
     },
+    "mo-aiprofile-agents-title-add-credentials": {
+      "comment": "Title of the sheet where the user adds credentials for an app.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add credentials"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-add-new-password": {
+      "comment": "Title of the sheet where the user adds a password for a website.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add new password"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-title-connectors": {
       "comment": "Heading for the connector integration management screen.",
       "extractionState": "manual",
@@ -1269,6 +1401,42 @@
           "stringUnit": {
             "state": "translated",
             "value": "Connectors"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-toast-credentials-updated": {
+      "comment": "Confirmation shown after edited credentials are saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Credentials updated"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-toast-password-added": {
+      "comment": "Confirmation shown after new credentials are saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password added successfully"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-toast-persona-updated": {
+      "comment": "Confirmation on the travel persona save button after changed trait scores are saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Travel persona updated"
           }
         }
       }
@@ -1717,6 +1885,18 @@
         }
       }
     },
+    "mo-aiprofile-general-accessibility-hide-password": {
+      "comment": "Accessibility label for the button that hides the password.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide password"
+          }
+        }
+      }
+    },
     "mo-aiprofile-general-accessibility-hint-collapse": {
       "comment": "Instructional accessibility hint for collapsing content.",
       "extractionState": "manual",
@@ -1749,6 +1929,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@. %2$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-accessibility-open-website": {
+      "comment": "Accessibility label for the button that opens the entered website.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open website"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-accessibility-show-password": {
+      "comment": "Accessibility label for the button that reveals the password.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show password"
           }
         }
       }

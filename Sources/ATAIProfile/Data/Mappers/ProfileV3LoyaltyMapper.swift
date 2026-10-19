@@ -98,7 +98,7 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
             logoURL: remoteURL(row.imageURL) ?? remoteURL(row.art) ?? local?.logoURL,
             artURL: remoteURL(row.art),
             isArtPlaceholder: row.artPlaceholder == true,
-            textOverlay: row.textOverlay?.lowercased() == "dark" ? .dark : .light,
+            textOverlay: textOverlay(row.textOverlay),
             membershipNumber: text(row.membershipNumber),
             expiryLabel: text(row.expiry),
             pointsLine: text(row.pointsLine),
@@ -114,8 +114,14 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
             name: row.name,
             category: category(for: row.kind) ?? local?.category ?? .all,
             cardImageURL: remoteURL(row.art) ?? local?.cardImageURL,
-            logoURL: remoteURL(row.imageURL) ?? local?.logoURL
+            logoURL: remoteURL(row.imageURL) ?? local?.logoURL,
+            isArtPlaceholder: row.artPlaceholder == true,
+            textOverlay: textOverlay(row.textOverlay)
         )
+    }
+
+    private static func textOverlay(_ raw: String?) -> ProfileV3TextOverlay {
+        raw?.lowercased() == "dark" ? .dark : .light
     }
 
     static func addProgrammeRequest(
@@ -123,13 +129,12 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
         profileID: String,
         kind: String? = nil
     ) -> ProfileV3AddLoyaltyProgrammeRequest {
-        let membership = submission.membershipNumber.trimmingCharacters(in: .whitespacesAndNewlines)
-        return ProfileV3AddLoyaltyProgrammeRequest(
+        ProfileV3AddLoyaltyProgrammeRequest(
             programID: submission.item.id,
             profileID: profileID,
             programName: submission.item.name,
             kind: kind ?? self.kind(for: submission.item.category),
-            membershipNumber: membership.isEmpty ? nil : membership,
+            membershipNumber: text(submission.membershipNumber),
             points: submission.points.map(String.init)
         )
     }

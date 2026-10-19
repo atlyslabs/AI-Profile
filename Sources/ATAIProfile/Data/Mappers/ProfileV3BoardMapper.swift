@@ -33,6 +33,7 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
             kycStatus: kycStatus(dto),
             visitedCountryCodes: dto.worldpassCard?.countryCodes ?? [],
             stats: (dto.worldpassCard?.stats ?? []).compactMap(ProfileV3GlobeMapper.stat),
+            tripsEntry: ProfileV3PastTripsMapper.entry(dto.worldpassCard?.globe),
             programmes: programmes,
             connectedProgrammeCount: loyalty?.count?.intValue ?? programmes.count,
             programmesUpdate: programmesUpdate(loyalty),
@@ -186,13 +187,14 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
     }
 
     private static func agent(_ tile: ProfileV3AgentTileDTO) -> ProfileV3Agent? {
-        guard let type = tile.agentType, let id = ProfileV3AgentID(apiValue: type) else { return nil }
+        guard let type = text(tile.agentType) else { return nil }
         let hasData = text(tile.updatedLabel) != nil
+        let known = ProfileV3AgentID(apiValue: type)
         return ProfileV3Agent(
-            id: id.rawValue,
+            id: known?.rawValue ?? type,
             name: text(tile.name) ?? text(tile.title) ?? "",
             summary: tile.blurb ?? "",
-            avatarURL: remoteURL(tile.icon),
+            avatarURL: iconURL(tile.icon),
             isActive: tile.activate == nil && hasData,
             hasData: hasData,
             foundCount: 0,
@@ -200,6 +202,14 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
             next: tile.next?.directive,
             activate: tile.activate?.next.directive
         )
+    }
+
+    static func iconURL(_ token: String?) -> URL? {
+        if let url = remoteURL(token) { return url }
+        switch text(token) {
+        case "orb_personal": return ProfileV3PlaceholderArt.agentPersonal.url
+        default: return nil
+        }
     }
 
     private static func programmesUpdate(_ loyalty: ProfileV3LoyaltyCardDTO?) -> ProfileV3UpdateStamp? {

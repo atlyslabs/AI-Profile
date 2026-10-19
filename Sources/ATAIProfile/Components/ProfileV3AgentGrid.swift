@@ -20,8 +20,8 @@ struct ProfileV3AgentsHeader: View {
     }
 
     private var lead: String {
-        let text = heading ?? ProfileV3Strings.agentsHeadingLead
-        return text.hasSuffix(" ") ? text : text + " "
+        guard let heading = heading?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty else { return "" }
+        return heading.hasSuffix(" ") ? heading : heading + " "
     }
 
     private var emphasis: String {
@@ -32,7 +32,6 @@ struct ProfileV3AgentsHeader: View {
 struct ProfileV3AgentGrid: View {
     let agents: [ProfileV3Agent]
     var isKYCComplete = true
-    var isGmailConnected: Bool?
     var onImpression: ((ProfileV3Agent, Int) -> Void)?
     let onActivate: (ProfileV3Agent) -> Void
 
@@ -44,7 +43,7 @@ struct ProfileV3AgentGrid: View {
     var body: some View {
         LazyVGrid(columns: Self.columns, spacing: ProfileV3Theme.Space.s18) {
             ForEach(Array(agents.enumerated()), id: \.element.id) { index, agent in
-                ProfileV3AgentGridCard(agent: agent, isKYCComplete: isKYCComplete, isGmailConnected: isGmailConnected) {
+                ProfileV3AgentGridCard(agent: agent, isKYCComplete: isKYCComplete) {
                     onActivate(agent)
                 }
                 .profileV3OnImpression { onImpression?(agent, index) }

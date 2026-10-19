@@ -80,10 +80,10 @@ struct ProfileV3HubView: View {
             ProfileV3HubPassOverlay(
                 stage: stage,
                 target: worldPassTarget,
-                pastTripCodes: viewModel.pastTripCodes,
+                latestPasses: viewModel.latestPasses,
                 isGlobeAnimating: viewModel.pastTrips == nil,
                 onAddTraveller: viewModel.tapAddTraveller,
-                onPastTrips: viewModel.openPastTrips
+                onTrips: viewModel.openTrips
             )
             ProfileV3BenefitHeroOverlay(
                 presenter: benefitPresenter,
@@ -238,7 +238,6 @@ struct ProfileV3HubView: View {
             ProfileV3AgentGrid(
                 agents: home.agents,
                 isKYCComplete: home.kycStatus.isComplete,
-                isGmailConnected: home.isGmailConnected,
                 onImpression: viewModel.trackAgentCard,
                 onActivate: viewModel.tapAgent
             )
@@ -306,7 +305,6 @@ struct ProfileV3HubView: View {
         cover.present {
             stage.expand(pass, from: frame, to: worldPassTarget, globe: pose, renderer: globeRenderer)
             viewModel.markHoldHintSeen()
-            viewModel.loadPastTripCodes(for: pass)
         }
     }
 

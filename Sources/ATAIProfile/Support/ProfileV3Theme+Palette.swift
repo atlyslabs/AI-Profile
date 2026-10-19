@@ -14,6 +14,7 @@ extension ProfileV3Theme {
         static let accessChipText = Color(at: .neutralGrey500)
         static let sourceTile = Color(hex: "EFEFEF")
         static let optionTileBorder = Color(hex: "EDEDED")
+        static let rideRegionBorder = Color(hex: "EEEEEE")
         static let tabTrack = Color(hex: "F8F8F8")
         static let stepperButton = Color(hex: "1E1E1E")
         static let stepperWash = Color(red: 1, green: 253 / 255, blue: 253 / 255).opacity(0.7)

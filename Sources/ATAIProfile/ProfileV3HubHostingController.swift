@@ -91,6 +91,10 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
         presentOnTop(ProfileV3EntryPoint.makeTerms(repository: repository))
     }
 
+    func openTravelPersona(profileID: String?) {
+        present(ProfileV3EntryPoint.makeTravelPersona(profileID: profileID, repository: repository), animated: true)
+    }
+
     func openAgent(_ agent: ProfileV3Agent, requiresKYC: Bool, profileID: String?) {
         guard requiresKYC else {
             present(

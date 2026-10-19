@@ -7,6 +7,7 @@ enum ProfileV3Error: LocalizedError, Equatable {
     case server(code: String?, message: String?)
     case conflict(code: String?, message: String?)
     case transient(message: String?)
+    case partialSave(message: String?, failedIDs: [String], savedIDs: [String])
     case passportFrontPending
     case underlying(String)
 
@@ -28,6 +29,8 @@ enum ProfileV3Error: LocalizedError, Equatable {
             return message ?? ProfileV3Strings.somethingWentWrong
         case .transient(let message):
             return message ?? ProfileV3Strings.somethingWentWrong
+        case .partialSave(let message, _, _):
+            return message ?? ProfileV3Strings.saveFailed
         case .passportFrontPending:
             return ProfileV3Strings.passportUploadFailed
         case .underlying(let message):

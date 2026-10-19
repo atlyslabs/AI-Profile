@@ -2,6 +2,7 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3AddPastTripsPill: View {
+    var title = ProfileV3Strings.addPastTrips
     let action: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -11,7 +12,7 @@ struct ProfileV3AddPastTripsPill: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: Sizes.gap) {
-                Text(ProfileV3Strings.addPastTrips)
+                Text(title)
                     .typoGraphy(.T1InterBold11)
                     .textCase(.uppercase)
                 ATIcon.SwiftUIImage.addCircle
@@ -34,7 +35,7 @@ struct ProfileV3AddPastTripsPill: View {
             )
         }
         .buttonStyle(.profileV3Pressable(.selection))
-        .accessibilityLabel(ProfileV3Strings.addPastTrips)
+        .accessibilityLabel(title)
     }
 }
 

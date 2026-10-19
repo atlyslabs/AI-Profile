@@ -33,10 +33,16 @@ struct ProfileV3HubHints {
         nonmutating set { defaults.set(newValue, forKey: Keys.programmeReorderHintSeen) }
     }
 
+    var hasSeenConnectedAppsHint: Bool {
+        get { defaults.bool(forKey: Keys.connectedAppsHintSeen) }
+        nonmutating set { defaults.set(newValue, forKey: Keys.connectedAppsHintSeen) }
+    }
+
     private enum Keys {
         static let holdHintSeen = "profileV3.holdToExploreSeen"
         static let holdHintShows = "profileV3.holdToExploreShows"
         static let flipDemoSeen = "profileV3.flipDemoSeen"
         static let programmeReorderHintSeen = "profileV3.programmeReorderHintSeen"
+        static let connectedAppsHintSeen = "profileV3.connectedAppsHintSeen"
     }
 }

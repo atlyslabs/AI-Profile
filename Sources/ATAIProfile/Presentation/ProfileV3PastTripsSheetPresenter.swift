@@ -34,8 +34,14 @@ final class ProfileV3PastTripsSheetPresenter {
                 ProfileV3AddPastTripSheet(viewModel: editor)
             }
         case .actions:
+            let trip = viewModel.actionsTrip
             presentFloating(onDismiss: onDismiss) {
-                ProfileV3PastTripActionsSheet(onEdit: viewModel.tapEdit, onDelete: viewModel.tapDelete)
+                ProfileV3PastTripActionsSheet(
+                    editTitle: trip?.edit?.label ?? ProfileV3Strings.editTrip,
+                    deleteTitle: trip?.delete?.label ?? ProfileV3Strings.deleteTrip,
+                    onEdit: viewModel.tapEdit,
+                    onDelete: viewModel.tapDelete
+                )
             }
         case .confirmDelete:
             ProfileV3SheetWindow.present(

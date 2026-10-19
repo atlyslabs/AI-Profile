@@ -504,6 +504,7 @@ enum ProfileV3Analytics {
             case .server(let code, _): return code ?? "server"
             case .conflict(let code, _): return code ?? "conflict"
             case .transient: return "transient"
+            case .partialSave: return "preferences_write_failed"
             case .passportFrontPending: return "passport_front_pending"
             case .underlying: return "underlying"
             }

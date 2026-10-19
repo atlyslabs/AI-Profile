@@ -44,12 +44,14 @@ struct ProfileV3AgentSubmissionRequest: Encodable, Equatable {
     let agentType: String
     let profileID: String?
     let values: [String: ProfileV3AgentSubmissionValue]
+    let profileIDs: [String]?
 
     enum CodingKeys: String, CodingKey {
         case action
         case agentType = "agent_type"
         case profileID = "profile_id"
         case values
+        case profileIDs = "profile_ids"
     }
 }
 
@@ -59,22 +61,30 @@ enum ProfileV3AgentSubmission {
     private static func request(
         for form: ProfileV3AgentForm,
         profileID: String?,
-        residuals: ProfileV3AgentResiduals = .empty
+        residuals: ProfileV3AgentResiduals = .empty,
+        profileIDs: [String]? = nil
     ) -> ProfileV3AgentSubmissionRequest {
         ProfileV3AgentSubmissionRequest(
             action: residuals.saveAction ?? action,
             agentType: agentType(for: form.agentID),
             profileID: profileID,
-            values: values(for: form, residuals: residuals)
+            values: values(for: form, residuals: residuals),
+            profileIDs: profileIDs
         )
     }
 
     static func body(
         for form: ProfileV3AgentForm,
         profileID: String?,
-        residuals: ProfileV3AgentResiduals = .empty
+        residuals: ProfileV3AgentResiduals = .empty,
+        profileIDs: [String]? = nil
     ) throws -> Data {
-        try JSONEncoder().encode(request(for: form, profileID: profileID, residuals: residuals))
+        try JSONEncoder().encode(request(
+            for: form,
+            profileID: profileID,
+            residuals: residuals,
+            profileIDs: profileIDs
+        ))
     }
 
     private static func values(

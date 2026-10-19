@@ -73,17 +73,113 @@ struct ProfileV3MockRepository: ProfileV3Repository {
     var delay: Duration = .milliseconds(600)
     private let session: ProfileV3SessionStore
     private let pastTrips: ProfileV3PastTripsStore
+    private let persona: ProfileV3PersonaStore
+    private let appAccess: ProfileV3AppAccessStore
 
     init(
         delay: Duration = .milliseconds(600),
         session: ProfileV3SessionStore = .shared,
         pastTrips: ProfileV3PastTripsStore = ProfileV3PastTripsStore(
             tripsByProfile: ProfileV3PastTripsFixtures.byProfile
-        )
+        ),
+        persona: ProfileV3PersonaStore = ProfileV3PersonaStore(),
+        appAccess: ProfileV3AppAccessStore = ProfileV3AppAccessStore()
     ) {
         self.delay = delay
         self.session = session
         self.pastTrips = pastTrips
+        self.persona = persona
+        self.appAccess = appAccess
+    }
+
+    func loadAppAccess() async throws -> ProfileV3AppAccess {
+        try await Task.sleep(for: delay)
+        return appAccess.snapshot()
+    }
+
+    func saveAppCredentials(_ credentials: ProfileV3AppCredentials, appID: String) async throws {
+        try await Task.sleep(for: delay)
+        try appAccess.connect(appID, credentials: credentials)
+    }
+
+    func addAppPassword(_ credentials: ProfileV3AppCredentials) async throws {
+        try await Task.sleep(for: delay)
+        appAccess.addPassword(credentials)
+    }
+
+    func disconnectApp(_ appID: String) async throws {
+        try await Task.sleep(for: delay)
+        appAccess.disconnect(appID)
+    }
+
+    func loadVaultSites() async throws -> [ProfileV3VaultSite] { [] }
+
+    func saveVault(_ draft: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult {
+        throw ProfileV3Error.notImplemented(action: "save_vault")
+    }
+
+    func updateVault(id: String, draft: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult {
+        throw ProfileV3Error.notImplemented(action: "update_vault")
+    }
+
+    func vaultCredential(id: String, includeUsername: Bool) async throws -> ProfileV3VaultCredential {
+        throw ProfileV3Error.notImplemented(action: "vault_credential")
+    }
+
+    func retestVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult {
+        throw ProfileV3Error.notImplemented(action: "vault_retest")
+    }
+
+    func deleteVaultCredential(id: String) async throws {
+        throw ProfileV3Error.notImplemented(action: "vault_delete")
+    }
+
+    func pauseVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult {
+        throw ProfileV3Error.notImplemented(action: "vault_pause")
+    }
+
+    func resumeVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult {
+        throw ProfileV3Error.notImplemented(action: "vault_resume")
+    }
+
+    func revealVaultPassword(id: String, deviceName: String) async throws -> String {
+        throw ProfileV3Error.notImplemented(action: "vault_reveal")
+    }
+
+    func loadTravelPersona(profileID: String?) async throws -> ProfileV3TravelPersona {
+        try await Task.sleep(for: delay)
+        return ProfileV3PersonaFixtures.persona(persona, profileID: profileID)
+    }
+
+    func loadPersonaTrait(_ trait: String, profileID: String?, page _: Int) async throws -> ProfileV3PersonaTrait {
+        try await Task.sleep(for: delay)
+        guard let screen = ProfileV3PersonaFixtures.trait(trait, store: persona, profileID: profileID) else {
+            throw ProfileV3Error.server(code: "unknown_trait", message: nil)
+        }
+        return screen
+    }
+
+    func submitPersonaAction(_ action: ProfileV3BoardAction, score: Int?) async throws {
+        try await Task.sleep(for: delay)
+        guard let trait = action.fields["trait"]?.stringValue else {
+            throw ProfileV3Error.invalidRequest(message: nil)
+        }
+        let sourceID = action.fields["source_id"]?.stringValue
+        switch action.name {
+        case "set_persona_score":
+            guard let score else { throw ProfileV3Error.invalidRequest(message: nil) }
+            persona.setScore(score, for: trait)
+        case "ignore_persona_source":
+            persona.setIgnored(true, sourceID: sourceID, trait: trait)
+        case "unignore_persona_source":
+            persona.setIgnored(false, sourceID: sourceID, trait: trait)
+        case "ignore_all_persona_sources":
+            persona.setIgnored(true, sourceID: nil, trait: trait)
+        case "unignore_all_persona_sources":
+            persona.setIgnored(false, sourceID: nil, trait: trait)
+        default:
+            throw ProfileV3Error.invalidRequest(message: nil)
+        }
     }
 
     func loadBoard() async throws -> ProfileV3Board {
@@ -108,9 +204,14 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         return flow
     }
 
-    func saveAgentForm(_ form: ProfileV3AgentForm, profileID _: String?) async throws {
+    func saveAgentForm(
+        _ form: ProfileV3AgentForm,
+        profileID _: String?,
+        profileIDs _: [String]?
+    ) async throws -> String? {
         try await Task.sleep(for: delay)
         session.updateFlow(id: form.agentID, .preferences(form))
+        return ProfileV3Strings.agentPreferencesUpdated
     }
 
     func loadEditField(_ field: ProfileV3ProfileField) async throws -> ProfileV3EditField {
@@ -229,6 +330,11 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         return ProfileV3AgentFixtures.ridePicker
     }
 
+    func loadRideRegions() async throws -> ProfileV3RideRegions {
+        try await Task.sleep(for: delay)
+        return ProfileV3AgentFixtures.rideRegions
+    }
+
     func loadPassportHowUsed() async throws -> ProfileV3PassportHowUsed {
         try await Task.sleep(for: delay)
         return ProfileV3PassportFixtures.howUsed
@@ -303,11 +409,11 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         let programme = ProfileV3LoyaltyProgramme(
             id: "\(submission.item.id)-\(UUID().uuidString.prefix(8))",
             name: submission.item.name,
-            maskedNumber: ProfileV3ProgrammeCatalogue.masked(submission.membershipNumber),
+            maskedNumber: ProfileV3ProgrammeCatalogue.masked(submission.membershipNumber ?? ""),
             points: submission.points ?? 0,
             logoURL: submission.item.logoURL,
             artURL: submission.item.cardImageURL,
-            membershipNumber: submission.membershipNumber.nonEmpty
+            membershipNumber: submission.membershipNumber?.nonEmpty
         )
         if let passID = profileID ?? session.home.worldPass?.id {
             session.updateHomes { _, home in home.addingProgramme(programme, toPassID: passID) }
@@ -363,25 +469,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         kind: String?
     ) async throws -> ProfileV3LoyaltyEntryForm {
         try await Task.sleep(for: delay)
-        return ProfileV3LoyaltyEntryForm(
-            programID: programID,
-            programName: programName,
-            kind: kind,
-            title: ProfileV3Strings.enterDetails,
-            submitLabel: nil,
-            fields: [
-                .init(
-                    key: ProfileV3LoyaltyEntryForm.Field.membershipNumberKey,
-                    label: ProfileV3Strings.membershipNumber,
-                    isRequired: true
-                ),
-                .init(
-                    key: ProfileV3LoyaltyEntryForm.Field.pointsKey,
-                    label: ProfileV3Strings.pointsMiles,
-                    isRequired: false
-                )
-            ]
-        )
+        return ProfileV3LoyaltyEntryForm.mock(programID: programID, programName: programName, kind: kind)
     }
 
     func loadProgrammeInsight(programID: String, profileID _: String?) async throws -> ProfileV3ProgrammeInsight {
@@ -415,27 +503,37 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         try await Task.sleep(for: delay)
     }
 
-    func loadPastTrips(profileID: String) async throws -> [ProfileV3PastTrip] {
+    func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen {
         try await Task.sleep(for: delay)
-        return await pastTrips.trips(profileID: profileID)
+        return ProfileV3PastTripsFixtures.screen(await pastTrips.trips(profileID: profileID), profileID: profileID)
     }
 
-    func addPastTrip(_ draft: ProfileV3PastTripDraft, profileID: String) async throws -> ProfileV3PastTrip {
+    func loadAddTrip(profileID: String) async throws -> ProfileV3AddTripScreen {
         try await Task.sleep(for: delay)
-        return await pastTrips.add(draft, profileID: profileID)
+        return ProfileV3PastTripsFixtures.addScreen(profileID: profileID)
     }
 
-    func updatePastTrip(
-        id: String,
-        with draft: ProfileV3PastTripDraft,
-        profileID: String
-    ) async throws -> ProfileV3PastTrip {
+    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, year: Int, month: Int) async throws {
         try await Task.sleep(for: delay)
-        return try await pastTrips.update(id: id, with: draft, profileID: profileID)
+        let profileID = submit.fields["profile_id"]?.stringValue ?? ""
+        await pastTrips.add(ProfileV3PastTripDraft(countryCode: country, year: year, month: month), profileID: profileID)
     }
 
-    func deletePastTrip(id: String, profileID: String) async throws {
+    func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws {
         try await Task.sleep(for: delay)
+        guard let id = submit.fields["trip_id"]?.stringValue,
+              let profileID = submit.fields["profile_id"]?.stringValue else {
+            throw ProfileV3RepositoryError.unavailable
+        }
+        try await pastTrips.reschedule(id: id, year: year, month: month, profileID: profileID)
+    }
+
+    func deletePastTrip(_ submit: ProfileV3BoardAction) async throws {
+        try await Task.sleep(for: delay)
+        guard let id = submit.fields["trip_id"]?.stringValue,
+              let profileID = submit.fields["profile_id"]?.stringValue else {
+            throw ProfileV3RepositoryError.unavailable
+        }
         await pastTrips.remove(id: id, profileID: profileID)
     }
 
@@ -460,6 +558,22 @@ struct ProfileV3MockRepository: ProfileV3Repository {
 
     func reorderProgrammes(_: [String], profileID _: String, action _: String) async throws {
         try await Task.sleep(for: delay)
+    }
+}
+
+extension ProfileV3LoyaltyEntryForm {
+    static func mock(programID: String, programName: String?, kind: String?) -> ProfileV3LoyaltyEntryForm {
+        let points = Field(key: Field.pointsKey, label: ProfileV3Strings.pointsMiles, isRequired: false)
+        let membership = Field(key: Field.membershipNumberKey, label: ProfileV3Strings.membershipNumber, isRequired: true)
+        let isCard = kind == ProfileV3LoyaltyMapper.kind(for: .creditCards)
+        return ProfileV3LoyaltyEntryForm(
+            programID: programID,
+            programName: programName,
+            kind: kind,
+            title: ProfileV3Strings.enterDetails,
+            submitLabel: nil,
+            fields: isCard ? [points] : [membership, points]
+        )
     }
 }
 #endif

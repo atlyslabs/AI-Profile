@@ -64,7 +64,9 @@ private struct ProfileV3ErrorEnvelopePlugin: PluginType {
               let serverError = underlying as? ATCoreServerError else {
             return result
         }
-        let message = ProfileV3ErrorEnvelope.parse(response.data)?.message ?? ""
+        let parsed = ProfileV3ErrorEnvelope.parse(response.data)
+        ProfileV3ServerFailureBox.shared.store(parsed)
+        let message = parsed?.message ?? ""
         let rewritten = ATCoreServerError(message: message, statusCode: serverError.statusCode)
         return .failure(.underlying(rewritten, response))
     }

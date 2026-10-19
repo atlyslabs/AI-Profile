@@ -10,6 +10,7 @@ struct ProfileV3InteractiveGlobe: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.profileV3Globe) private var globe
     @State private var isLandReady = false
+    @State private var hasTakenHandoff = false
     @State private var spin = ProfileV3GlobeSpin.resting
     @State private var dragOrigin: ProfileV3GlobeSpin?
     @State private var direction: Double = 1
@@ -54,14 +55,21 @@ struct ProfileV3InteractiveGlobe: View {
         }
         .onAppear {
             let now = Date()
-            spin = handedOffSpin(at: now) ?? spin.coasting(velocity: cruise, cruise: cruise, at: now)
+            if let handedOff = handedOffSpin(at: now) {
+                spin = handedOff
+                hasTakenHandoff = isRunning
+            } else {
+                spin = spin.coasting(velocity: cruise, cruise: cruise, at: now)
+            }
             scheduleArrivals(from: now)
         }
         .onChange(of: isAnimating) { _, animating in
             let now = Date()
             if animating, let handedOff = handedOffSpin(at: now) {
                 spin = handedOff
+                hasTakenHandoff = true
             } else {
+                hasTakenHandoff = false
                 spin = spin.coasting(velocity: isRunning ? spin.velocity(at: now) : 0, cruise: cruise, at: now)
             }
             scheduleArrivals(from: now)
@@ -108,6 +116,20 @@ struct ProfileV3InteractiveGlobe: View {
             }
     }
 
+    /// Until this globe takes over, follow the flying globe's pose. The spin captured at appear is the
+    /// card's, and painting that once the card has finished is the flash.
+    private func orientation(at date: Date) -> (yaw: Double, pitch: Double) {
+        if hasTakenHandoff {
+            publishPose(at: date)
+            return (spin.yaw(at: date), spin.pitch)
+        }
+        if let pose, let yaw = pose.yaw {
+            let carried = yaw + pose.velocity * max(date.timeIntervalSince(pose.date), 0)
+            return (carried, pose.pitch ?? Globe.restPitch)
+        }
+        return (spin.yaw(at: date), spin.pitch)
+    }
+
     private func handedOffSpin(at date: Date) -> ProfileV3GlobeSpin? {
         guard let pose, let yaw = pose.yaw else { return nil }
         let carried = yaw + pose.velocity * max(date.timeIntervalSince(pose.date), 0)
@@ -148,14 +170,14 @@ struct ProfileV3InteractiveGlobe: View {
     }
 
     private func draw(in context: GraphicsContext, size: CGSize, at date: Date) {
-        publishPose(at: date)
         let sphere = sphere(in: size)
         guard sphere.radius > 0 else { return }
+        let orientation = orientation(at: date)
         let projection = ProfileV3Globe.Projection(
             centre: sphere.centre,
             radius: sphere.radius,
-            yaw: spin.yaw(at: date),
-            pitch: spin.pitch
+            yaw: orientation.yaw,
+            pitch: orientation.pitch
         )
         let disc = Path(ellipseIn: sphere.bounds)
         context.fill(disc, with: .color(ProfileV3Theme.Palette.globeOcean))

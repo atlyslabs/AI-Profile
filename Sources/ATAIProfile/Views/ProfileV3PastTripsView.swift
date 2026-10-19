@@ -131,7 +131,7 @@ struct ProfileV3PastTripsView: View {
             Spacer()
         }
         .overlay {
-            Text(ProfileV3Strings.pastTripsTitle)
+            Text(viewModel.title)
                 .typoGraphy(.H4DentonMedium24)
                 .foregroundStyle(Color(at: .pureWhite))
                 .accessibilityAddTraits(.isHeader)
@@ -222,12 +222,13 @@ struct ProfileV3PastTripDeleteSheet: View {
     @ObservedObject var viewModel: ProfileV3PastTripsViewModel
 
     var body: some View {
+        let copy = viewModel.deleteConfirm
         ProfileV3ConfirmationView(
             icon: ATIcon.SwiftUIImage.delete,
             style: .destructive,
-            title: ProfileV3Strings.deletePastTripTitle,
-            primaryTitle: ProfileV3Strings.proceedToDelete,
-            secondaryTitle: ProfileV3Strings.keepPastTrip,
+            title: copy.title,
+            primaryTitle: copy.confirmLabel,
+            secondaryTitle: copy.cancelLabel,
             isPrimaryLoading: viewModel.isDeleting,
             onBack: viewModel.cancelDelete,
             onPrimary: viewModel.confirmDelete,
@@ -243,7 +244,7 @@ struct ProfileV3PastTripDeleteSheet: View {
             pass: ProfileV3Fixtures.worldPass,
             repository: ProfileV3MockRepository(delay: .milliseconds(200)),
             startsAdding: false,
-            onChange: { _ in },
+            onChange: {},
             onClose: {}
         )
     )
@@ -255,7 +256,7 @@ struct ProfileV3PastTripDeleteSheet: View {
             pass: ProfileV3Fixtures.coTravellerPass,
             repository: ProfileV3MockRepository(delay: .milliseconds(200)),
             startsAdding: true,
-            onChange: { _ in },
+            onChange: {},
             onClose: {}
         )
     )

@@ -17,6 +17,7 @@ struct ProfileV3SettingsDestinationView: View {
         case .controlPanel:
             ProfileV3SettingsControlPanelScreen(
                 model: viewModel.connectors,
+                apps: viewModel.appAccess,
                 title: viewModel.title,
                 onBack: viewModel.pop
             )
@@ -118,27 +119,50 @@ private struct ProfileV3SettingsFieldScreen: View {
 
 private struct ProfileV3SettingsControlPanelScreen: View {
     @ObservedObject var model: ProfileV3ConnectorsSettingsModel
+    @ObservedObject var apps: ProfileV3AppAccessModel
     let title: String
     let onBack: () -> Void
 
+    private var isLoaded: Bool { model.controlPanelPhase == .loaded }
+
+    private var entries: [ProfileV3ConnectorDeckEntry] {
+        apps.deckEntries + (isLoaded ? model.deckEntries : [])
+    }
+
     var body: some View {
-        if model.controlPanelPhase == .loaded {
-            ProfileV3ConnectorDeckView(
-                entries: model.deckEntries,
-                confirm: model.disconnectConfirm,
-                onBack: onBack,
-                onEngage: { model.loadDisconnectConfirm($0.id) },
-                onDisconnect: { model.tapDeckDisconnect($0.id) }
-            )
-            .id(model.deckResetToken)
-        } else {
-            ProfileV3SettingsLoadState(
-                title: title,
-                phase: model.controlPanelPhase,
-                onBack: onBack,
-                retry: model.loadControlPanel
-            )
+        Group {
+            if isLoaded || !apps.deckEntries.isEmpty {
+                ProfileV3ConnectorDeckView(
+                    entries: entries,
+                    confirm: model.disconnectConfirm,
+                    onBack: onBack,
+                    onEngage: { model.loadDisconnectConfirm($0.id) },
+                    onDisconnect: { entry in
+                        if entry.isApp {
+                            apps.disconnect(entry.id)
+                        } else {
+                            model.tapDeckDisconnect(entry.id)
+                        }
+                    },
+                    onEdit: { apps.tapEdit($0.id) }
+                )
+                .id("\(model.deckResetToken)-\(apps.deckResetToken)")
+            } else {
+                ProfileV3SettingsLoadState(
+                    title: title,
+                    phase: model.controlPanelPhase,
+                    onBack: onBack,
+                    retry: model.loadControlPanel
+                )
+            }
         }
+        .sheet(item: editor) { editor in
+            ProfileV3AppCredentialsView(viewModel: editor, onClose: apps.closeEditor)
+        }
+    }
+
+    private var editor: Binding<ProfileV3AppCredentialsViewModel?> {
+        Binding(get: { apps.editor(from: .panel) }, set: { if $0 == nil { apps.closeEditor() } })
     }
 }
 

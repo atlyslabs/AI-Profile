@@ -70,6 +70,7 @@ struct ProfileV3ConnectorDeckCard: View {
     let confirm: ProfileV3DisconnectConfirm?
     let onEngaged: (() -> Void)?
     let onArmed: (() -> Void)?
+    let onEdit: (() -> Void)?
 
     @State private var drag: CGFloat = 0
     @State private var isEngaged = false
@@ -81,12 +82,14 @@ struct ProfileV3ConnectorDeckCard: View {
         confirm: ProfileV3DisconnectConfirm? = nil,
         initiallyArmed: Bool = false,
         onEngaged: (() -> Void)? = nil,
-        onArmed: (() -> Void)? = nil
+        onArmed: (() -> Void)? = nil,
+        onEdit: (() -> Void)? = nil
     ) {
         self.entry = entry
         self.confirm = confirm
         self.onEngaged = onEngaged
         self.onArmed = onArmed
+        self.onEdit = onEdit
         _stage = State(initialValue: initiallyArmed ? .paired : .rest)
     }
 
@@ -172,23 +175,30 @@ struct ProfileV3ConnectorDeckCard: View {
             }
             .frame(width: Deck.cardWidth, height: Deck.cardHeight, alignment: .top)
             .mask(alignment: .top) { bowlMask }
-            Text(entry.account)
-                .typoGraphy(.B2InterSemibold12)
-                .foregroundStyle(Color(at: .pureWhite))
-                .padding(.top, Deck.emailTop)
-                .opacity(isDragging ? 0 : 1)
+            if !entry.account.isEmpty {
+                Text(entry.account)
+                    .typoGraphy(.B2InterSemibold12)
+                    .foregroundStyle(Color(at: .pureWhite))
+                    .padding(.top, Deck.emailTop)
+                    .opacity(isDragging ? 0 : 1)
+            }
             Text(entry.headline)
                 .typoGraphy(.B1InterSemibold14)
                 .foregroundStyle(Color(at: .pureWhite))
-                .padding(.top, Deck.titleTop)
+                .padding(.top, entry.isApp ? Deck.appTitleTop : Deck.titleTop)
                 .opacity(isDragging ? 0 : 1)
             Text(entry.blurb)
                 .typoGraphy(.B2InterMedium12)
                 .foregroundStyle(ProfileV3Theme.connectorDeckBodyText)
                 .multilineTextAlignment(.center)
                 .frame(width: Deck.bodyWidth)
-                .padding(.top, Deck.bodyTop)
+                .padding(.top, entry.isApp ? Deck.appBodyTop : Deck.bodyTop)
                 .opacity(isDragging ? 0 : 1)
+            if entry.isApp, let onEdit {
+                editPill(onEdit)
+                    .padding(.top, Deck.editTop)
+                    .opacity(isDragging ? 0 : 1)
+            }
             Text(entry.hint)
                 .typoGraphy(.B2InterSemibold12)
                 .foregroundStyle(Color(at: .neutralGrey500))
@@ -200,11 +210,37 @@ struct ProfileV3ConnectorDeckCard: View {
         .clipShape(RoundedRectangle(cornerRadius: ProfileV3Theme.Radius.xxl, style: .continuous))
         .animation(ProfileV3Theme.Motion.selection, value: isDragging)
         .accessibilityElement(children: .combine)
-        .accessibilityAction(named: ProfileV3Strings.disconnectEmail) {
+        .accessibilityAction(named: entry.isApp ? ProfileV3Strings.disconnectApp : ProfileV3Strings.disconnectEmail) {
             guard !hasDropped else { return }
             drop()
         }
+        .accessibilityActions {
+            if entry.isApp, let onEdit {
+                Button(ProfileV3Strings.editConnector, action: onEdit)
+            }
+        }
         .onDisappear { finaleTask?.cancel() }
+    }
+
+    private func editPill(_ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: ProfileV3Theme.Space.s8) {
+                ProfileV3ConnectorGlyph.editStroke.image
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Deck.editGlyph, height: Deck.editGlyph)
+                Text(ProfileV3Strings.editConnector)
+                    .typoGraphy(.B1InterSemibold14)
+                    .foregroundStyle(Color(at: .pureWhite))
+            }
+            .padding(.leading, Deck.editLeading)
+            .padding(.trailing, Deck.editTrailing)
+            .padding(.vertical, Deck.editVertical)
+            .background(Capsule().fill(ProfileV3Theme.Palette.deckEditPill))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.profileV3Pressable)
+        .accessibilityLabel(ProfileV3Strings.editConnector)
     }
 
     private var dragGesture: some Gesture {
@@ -359,8 +395,10 @@ struct ProfileV3ConnectorDeckCard: View {
     }
 
     private var badge: some View {
-        badgeChrome {
+        badgeChrome(isPlain: entry.isApp) {
             switch entry.icon {
+            case .remote(let url) where entry.isApp:
+                ProfileV3AppLogo(url: url, size: Deck.appLogo)
             case .remote(let url):
                 ProfileV3RemoteImage(url: url, contentMode: .fit, placeholder: .clear)
                     .frame(width: Deck.logo, height: Deck.logo)
@@ -372,10 +410,17 @@ struct ProfileV3ConnectorDeckCard: View {
         }
     }
 
-    private func badgeChrome<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+    private func badgeChrome<Content: View>(
+        isPlain: Bool = false,
+        @ViewBuilder _ content: () -> Content
+    ) -> some View {
         content()
             .frame(width: Deck.badge, height: Deck.badge)
-            .background(Circle().fill(ProfileV3Theme.connectorDeckBadge))
+            .background(
+                Circle().fill(
+                    isPlain ? AnyShapeStyle(Color(at: .pureWhite)) : AnyShapeStyle(ProfileV3Theme.connectorDeckBadge)
+                )
+            )
             .shadow(
                 color: ProfileV3Theme.Palette.shadow,
                 radius: ProfileV3Theme.Shadow.pillRadius,

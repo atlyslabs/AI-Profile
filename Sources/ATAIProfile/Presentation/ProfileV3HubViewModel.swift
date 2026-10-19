@@ -13,6 +13,7 @@ protocol ProfileV3HubRouter: AnyObject {
     func openKYC()
     func openBenefitKYC(_ benefit: ProfileV3Benefit)
     func openAddTraveller()
+    func openTravelPersona(profileID: String?)
 }
 
 @MainActor
@@ -75,7 +76,6 @@ final class ProfileV3HubViewModel: ObservableObject {
     @Published private(set) var isFetchingBenefits = false
     @Published private(set) var showsAllCoupons = false
     @Published private(set) var pastTrips: ProfileV3PastTripsViewModel?
-    @Published private(set) var pastTripCodes: [String: [String]] = [:]
     @Published private(set) var couponsSheet = ProfileV3CouponsSheet.empty
     @Published private(set) var allCouponsPhase: ProfileV3LoadPhase = .loading
     @Published private(set) var isFetchingCoupons = false
@@ -102,7 +102,6 @@ final class ProfileV3HubViewModel: ObservableObject {
     private var hasCountedHoldHint = false
     private var pendingKYCGlowPassIDs: Set<String> = []
     private var kycAnnounceTasks: [String: Task<Void, Never>] = [:]
-    private var pastTripCodesTasks: [String: Task<Void, Never>] = [:]
     private var captureGeneration = 0
     private var loadTask: Task<Void, Never>?
     private var refreshTask: Task<Void, Never>?
@@ -240,8 +239,6 @@ final class ProfileV3HubViewModel: ObservableObject {
         couponsTask?.cancel()
         captureRefreshTask?.cancel()
         revalidateTask?.cancel()
-        pastTripCodesTasks.values.forEach { $0.cancel() }
-        pastTripCodesTasks.removeAll()
         isFetchingBenefits = false
         isFetchingCoupons = false
         finishKYCAnnouncements()
@@ -475,7 +472,15 @@ final class ProfileV3HubViewModel: ObservableObject {
             requiresKYC: requiresKYC
         )
         ProfileV3Analytics.cta(agent.next, origin: .agentCard)
-        router?.openAgent(agent, requiresKYC: false, profileID: selectedPassID)
+        switch agent.next?.route(fallbackProfileID: selectedPassID) {
+        case .agent(_, let profileID):
+            router?.openAgent(agent, requiresKYC: false, profileID: profileID ?? selectedPassID)
+        case .travelPersona(let profileID):
+            router?.openTravelPersona(profileID: profileID)
+        default:
+            guard agent.agentID != nil else { return }
+            router?.openAgent(agent, requiresKYC: false, profileID: selectedPassID)
+        }
     }
 
     func useInsight() {
@@ -553,13 +558,28 @@ final class ProfileV3HubViewModel: ObservableObject {
 
     // MARK: - Past trips
 
+    var latestPasses: [String: ProfileV3WorldPass] {
+        Dictionary((home?.worldPasses ?? []).map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    func openTrips(_ pass: ProfileV3WorldPass, directive: ProfileV3Directive) {
+        switch directive.route(fallbackProfileID: pass.id) {
+        case .pastTrips:
+            openPastTrips(pass, startsAdding: false)
+        case .addTrip:
+            openPastTrips(pass, startsAdding: true)
+        default:
+            break
+        }
+    }
+
     func openPastTrips(_ pass: ProfileV3WorldPass, startsAdding: Bool) {
         guard pastTrips == nil else { return }
         let model = ProfileV3PastTripsViewModel(
             pass: pass,
             repository: repository,
             startsAdding: startsAdding,
-            onChange: { [weak self] trips in self?.pastTripsChanged(trips, for: pass) },
+            onChange: { [weak self] in self?.refreshAfterTripChange() },
             onClose: { [weak self] in self?.dismissPastTrips() }
         )
         withAnimation(ProfileV3Theme.Motion.entry) { pastTrips = model }
@@ -569,22 +589,11 @@ final class ProfileV3HubViewModel: ObservableObject {
         withAnimation(ProfileV3Theme.Motion.contentFade) { pastTrips = nil }
     }
 
-    func loadPastTripCodes(for pass: ProfileV3WorldPass) {
-        guard ProfileV3FeatureFlags.isPastTripsEnabled else { return }
-        let repository = repository
-        pastTripCodesTasks[pass.id]?.cancel()
-        pastTripCodesTasks[pass.id] = Task { [weak self] in
-            let trips = try? await repository.loadPastTrips(profileID: pass.id)
-            guard !Task.isCancelled, let self else { return }
-            pastTripCodesTasks[pass.id] = nil
-            guard let trips else { return }
-            pastTripCodes[pass.id] = trips.countryCodes
+    private func refreshAfterTripChange() {
+        refreshTask?.cancel()
+        refreshTask = Task { [weak self] in
+            await self?.refreshHome()
         }
-    }
-
-    private func pastTripsChanged(_ trips: [ProfileV3PastTrip], for pass: ProfileV3WorldPass) {
-        pastTripCodesTasks.removeValue(forKey: pass.id)?.cancel()
-        pastTripCodes[pass.id] = trips.countryCodes
     }
 
     func dismissAllBenefits() {

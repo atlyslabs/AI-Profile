@@ -11,6 +11,25 @@ extension ProfileV3Strings {
     static var appAccess: String { ProfileV3L10n.moAiprofileAgentsLabelAppAccess }
     static var appAccessBlurb: String { ProfileV3L10n.moAiprofileAgentsDescriptionAppVault }
     static var appAccessComingSoon: String { ProfileV3L10n.moAiprofileAgentsStatusAppVaultPending }
+    static var appAccessConnectedHint: String { ProfileV3L10n.moAiprofileAgentsHintConnectedApps }
+    static var appAccessAddCredentials: String { ProfileV3L10n.moAiprofileAgentsButtonAddCredentials }
+    static var appAccessAutoConnected: String { ProfileV3L10n.moAiprofileAgentsStatusAutoConnected }
+    static var appAccessAddNew: String { ProfileV3L10n.moAiprofileAgentsButtonAddNewPassword }
+    static var appCredentialsTitle: String { ProfileV3L10n.moAiprofileAgentsTitleAddCredentials }
+    static var appPasswordTitle: String { ProfileV3L10n.moAiprofileAgentsTitleAddNewPassword }
+    static var appCredentialsWebsite: String { ProfileV3L10n.moAiprofileAgentsLabelWebsite }
+    static var appCredentialsUsername: String { ProfileV3L10n.moAiprofileAgentsLabelUsernameEmail }
+    static var appCredentialsPassword: String { ProfileV3L10n.moAiprofileAgentsLabelPassword }
+    static var appCredentialsNote: String { ProfileV3L10n.moAiprofileAgentsDescriptionCredentialsUse }
+    static var appCredentialsAdd: String { ProfileV3L10n.moAiprofileGeneralButtonAdd1 }
+    static var appPasswordAdded: String { ProfileV3L10n.moAiprofileAgentsToastPasswordAdded }
+    static var appCredentialsUpdated: String { ProfileV3L10n.moAiprofileAgentsToastCredentialsUpdated }
+    static var personaUpdated: String { ProfileV3L10n.moAiprofileAgentsToastPersonaUpdated }
+    static var disconnectApp: String { ProfileV3L10n.moAiprofileAgentsButtonDisconnectApp }
+    static var editConnector: String { ProfileV3L10n.moAiprofileGeneralButtonEdit }
+    static var showPassword: String { ProfileV3L10n.moAiprofileGeneralAccessibilityShowPassword }
+    static var hidePassword: String { ProfileV3L10n.moAiprofileGeneralAccessibilityHidePassword }
+    static var openWebsite: String { ProfileV3L10n.moAiprofileGeneralAccessibilityOpenWebsite }
     static var comingSoon: String { ProfileV3L10n.moAiprofileGeneralBadgeComingSoon }
     static var emailConnector: String { ProfileV3L10n.moAiprofileAgentsLabelEmailConnector }
     static var addEmail: String { ProfileV3L10n.moAiprofileGeneralButtonAdd }

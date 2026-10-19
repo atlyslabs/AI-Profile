@@ -42,32 +42,44 @@ struct ProfileV3AddPastTripSheet: View {
         .padding(.top, Sizes.titleTop)
     }
 
-    private var countryStep: some View {
-        ProfileV3CountryList(
-            query: $viewModel.query,
-            selection: viewModel.selectedCountry,
-            pinned: viewModel.pinnedCountry,
-            focusesSearch: false,
-            listBottomInset: Sizes.fadeHeight,
-            onSelect: viewModel.select
-        )
-        .padding(.top, Sizes.countryListTop)
-        .overlay(alignment: .bottom) {
-            ctaBar(title: ProfileV3Strings.tripDone, isEnabled: viewModel.canContinue, fades: true) {
-                viewModel.continueToDuration()
-            }
+    @ViewBuilder
+    private var countryList: some View {
+        if viewModel.isLoadingScreen, viewModel.countries == nil {
+            ProfileV3Spinner()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ProfileV3CountryList(
+                query: $viewModel.query,
+                selection: viewModel.selectedCountry,
+                pinned: viewModel.pinnedCountry,
+                countries: viewModel.countries,
+                searchPlaceholder: viewModel.searchPlaceholder,
+                focusesSearch: false,
+                listBottomInset: Sizes.fadeHeight,
+                onSelect: viewModel.select
+            )
         }
+    }
+
+    private var countryStep: some View {
+        countryList
+            .padding(.top, Sizes.countryListTop)
+            .overlay(alignment: .bottom) {
+                ctaBar(title: viewModel.countryCTA, isEnabled: viewModel.canContinue, fades: true) {
+                    viewModel.continueToDuration()
+                }
+            }
     }
 
     private var durationStep: some View {
         ZStack(alignment: .top) {
-            wheelLabel(ProfileV3Strings.tripYear)
+            wheelLabel(viewModel.duration.yearLabel)
                 .padding(.top, Sizes.yearLabelTop)
             ProfileV3DurationWheel(
                 values: viewModel.years,
                 selection: $viewModel.selectedYear,
                 pitch: Sizes.yearPitch,
-                accessibilityTitle: ProfileV3Strings.tripYear
+                accessibilityTitle: viewModel.duration.yearLabel
             ) { String($0) }
             .padding(.top, Sizes.yearWheelTop)
             ProfileV3NotchedDivider()
@@ -79,14 +91,14 @@ struct ProfileV3AddPastTripSheet: View {
                 .padding(.horizontal, Sizes.notchInset)
                 .padding(.top, Sizes.notchTop)
                 .accessibilityHidden(true)
-            wheelLabel(ProfileV3Strings.tripMonth)
+            wheelLabel(viewModel.duration.monthLabel)
                 .padding(.top, Sizes.monthLabelTop)
             ProfileV3DurationWheel(
                 values: viewModel.months,
                 selection: $viewModel.selectedMonth,
                 pitch: Sizes.monthPitch,
-                accessibilityTitle: ProfileV3Strings.tripMonth,
-                label: ProfileV3TripCalendar.shortMonthName
+                accessibilityTitle: viewModel.duration.monthLabel,
+                label: viewModel.monthLabel
             )
             .padding(.top, Sizes.monthWheelTop)
         }
@@ -173,6 +185,8 @@ private struct ProfileV3TripSheetButton: View {
 }
 
 struct ProfileV3PastTripActionsSheet: View {
+    var editTitle = ProfileV3Strings.editTrip
+    var deleteTitle = ProfileV3Strings.deleteTrip
     let onEdit: () -> Void
     let onDelete: () -> Void
 
@@ -180,7 +194,7 @@ struct ProfileV3PastTripActionsSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            row(icon: ATIcon.SwiftUIImage.edit, title: ProfileV3Strings.editTrip, action: onEdit)
+            row(icon: ATIcon.SwiftUIImage.edit, title: editTitle, action: onEdit)
             Line()
                 .stroke(
                     Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.tripDivider),
@@ -193,7 +207,7 @@ struct ProfileV3PastTripActionsSheet: View {
                 .frame(height: ProfileV3Theme.Stroke.hairline)
                 .padding(.top, Sizes.actionsDividerGap)
                 .accessibilityHidden(true)
-            row(icon: ATIcon.SwiftUIImage.delete, title: ProfileV3Strings.deleteTrip, action: onDelete)
+            row(icon: ATIcon.SwiftUIImage.delete, title: deleteTitle, action: onDelete)
                 .padding(.top, Sizes.actionsSecondGap)
         }
         .padding(.horizontal, Sizes.inset)

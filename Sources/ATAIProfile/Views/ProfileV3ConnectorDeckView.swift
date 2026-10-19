@@ -7,6 +7,7 @@ struct ProfileV3ConnectorDeckView: View {
     let onBack: () -> Void
     let onEngage: ((ProfileV3ConnectorDeckEntry) -> Void)?
     let onDisconnect: ((ProfileV3ConnectorDeckEntry) -> Void)?
+    let onEdit: ((ProfileV3ConnectorDeckEntry) -> Void)?
 
     @State private var armedEntry: ProfileV3ConnectorDeckEntry?
     @State private var width: CGFloat = 0
@@ -17,13 +18,15 @@ struct ProfileV3ConnectorDeckView: View {
         initialArmedEntry: ProfileV3ConnectorDeckEntry? = nil,
         onBack: @escaping () -> Void,
         onEngage: ((ProfileV3ConnectorDeckEntry) -> Void)? = nil,
-        onDisconnect: ((ProfileV3ConnectorDeckEntry) -> Void)? = nil
+        onDisconnect: ((ProfileV3ConnectorDeckEntry) -> Void)? = nil,
+        onEdit: ((ProfileV3ConnectorDeckEntry) -> Void)? = nil
     ) {
         self.entries = entries
         self.confirm = confirm
         self.onBack = onBack
         self.onEngage = onEngage
         self.onDisconnect = onDisconnect
+        self.onEdit = onEdit
         _armedEntry = State(initialValue: initialArmedEntry)
     }
 
@@ -46,10 +49,11 @@ struct ProfileV3ConnectorDeckView: View {
                     ForEach(entries) { entry in
                         ProfileV3ConnectorDeckCard(
                             entry: entry,
-                            confirm: confirm,
+                            confirm: entry.isApp ? nil : confirm,
                             initiallyArmed: entry == armedEntry,
                             onEngaged: { onEngage?(entry) },
-                            onArmed: { armedEntry = entry }
+                            onArmed: { armedEntry = entry },
+                            onEdit: entry.isApp ? onEdit.map { edit in { edit(entry) } } : nil
                         )
                         .scaleEffect(canvasScale)
                         .frame(
@@ -77,7 +81,9 @@ struct ProfileV3ConnectorDeckView: View {
         .overlay(alignment: .bottom) {
             if let armedEntry {
                 ProfileV3ContinueButton(
-                    title: confirm?.confirmTitle ?? ProfileV3Strings.disconnectEmail,
+                    title: armedEntry.isApp
+                        ? ProfileV3Strings.disconnectApp
+                        : confirm?.confirmTitle ?? ProfileV3Strings.disconnectEmail,
                     icon: ATIcon.SwiftUIImage.callSplit,
                     iconSize: ProfileV3Theme.Icon.lg,
                     tint: ProfileV3Theme.Palette.destructive

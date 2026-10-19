@@ -12,9 +12,12 @@ struct ProfileV3DirectiveDTO: Decodable, Equatable {
     let field: String?
     let fieldKey: String?
     let reason: String?
+    let trait: String?
     private let rawSteps: ProfileV3LossyDTO<[String]>?
+    private let rawPage: ProfileV3LossyDTO<ProfileV3ScalarDTO>?
 
     var steps: [String] { rawSteps?.value ?? [] }
+    var page: Int? { rawPage?.value?.intValue }
 
     enum CodingKeys: String, CodingKey {
         case go
@@ -28,7 +31,9 @@ struct ProfileV3DirectiveDTO: Decodable, Equatable {
         case field
         case fieldKey = "field_key"
         case reason
+        case trait
         case rawSteps = "steps"
+        case rawPage = "page"
     }
 
     var directive: ProfileV3Directive {
@@ -44,7 +49,9 @@ struct ProfileV3DirectiveDTO: Decodable, Equatable {
             field: field,
             fieldKey: fieldKey,
             reason: reason,
-            steps: steps
+            steps: steps,
+            trait: trait,
+            page: page
         )
     }
 }

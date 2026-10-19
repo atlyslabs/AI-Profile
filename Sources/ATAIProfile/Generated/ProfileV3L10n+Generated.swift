@@ -104,13 +104,18 @@ internal enum ProfileV3L10n {
   internal static func moAiprofileAgentTagLabel(_ p1: Any, _ p2: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-tag-label", String(describing: p1), String(describing: p2), fallback: "%1$@ %2$@")
   }
+  internal static var moAiprofileAgentsButtonAddCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-add-credentials", fallback: "+ credentials") }
+  internal static var moAiprofileAgentsButtonAddNewPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-add-new-password", fallback: "+ Add new") }
   internal static var moAiprofileAgentsButtonConnectEmails: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-connect-emails", fallback: "Connect other emails") }
+  internal static var moAiprofileAgentsButtonDisconnectApp: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-disconnect-app", fallback: "Disconnect app") }
   internal static var moAiprofileAgentsButtonDontDisconnect: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-dont-disconnect", fallback: "Don't disconnect") }
   internal static var moAiprofileAgentsDescriptionAppVault: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-app-vault", fallback: "A secure vault for your apps") }
+  internal static var moAiprofileAgentsDescriptionCredentialsUse: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-credentials-use", fallback: "Atlys only uses them to access the services you authorise, keeping you in control at every step.") }
   internal static var moAiprofileAgentsDescriptionDataVault: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-data-vault", fallback: "A secure vault for your sources") }
   internal static var moAiprofileAgentsDescriptionGmailConnector: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-gmail-connector", fallback: "Your travel details, bookings and updates are already there. Connecting email helps the agent understand and act on them without asking you to find or share everything manually.") }
   internal static var moAiprofileAgentsDescriptionItrConnector: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-itr-connector", fallback: "Your filings confirm income and travel history, so the agent can prefill applications without asking you to dig up documents.") }
   internal static var moAiprofileAgentsErrorDisconnectFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-disconnect-failed", fallback: "Couldn't disconnect. Please try again.") }
+  internal static var moAiprofileAgentsHintConnectedApps: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-hint-connected-apps", fallback: "Find your connected apps here") }
   internal static var moAiprofileAgentsHintDisconnectConnector: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-hint-disconnect-connector", fallback: "Drag icon to disconnect") }
   internal static var moAiprofileAgentsLabelAppAccess: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-app-access", fallback: "App access") }
   internal static var moAiprofileAgentsLabelBuildUnderstanding: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-build-understanding", fallback: "Our agents build an understanding of") }
@@ -118,15 +123,24 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelGmail: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-gmail", fallback: "Gmail") }
   internal static var moAiprofileAgentsLabelInformationAccess: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-information-access", fallback: "Information access") }
   internal static var moAiprofileAgentsLabelItr: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-itr", fallback: "ITR") }
+  internal static var moAiprofileAgentsLabelPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-password", fallback: "Password") }
   internal static var moAiprofileAgentsLabelPreferenceSlider: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-preference-slider", fallback: "Preference") }
   internal static var moAiprofileAgentsLabelRegainAccess: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-regain-access", fallback: "Regain access to agents and benefits.") }
   internal static var moAiprofileAgentsLabelTravelPreferences: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-travel-preferences", fallback: "your travel preferences") }
+  internal static var moAiprofileAgentsLabelUsernameEmail: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-username-email", fallback: "Username/Email address") }
+  internal static var moAiprofileAgentsLabelWebsite: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-website", fallback: "Website") }
   internal static var moAiprofileAgentsPrivacyTextSecurity: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-privacy-text-security", fallback: "Data stays secure while your agent learns") }
   internal static var moAiprofileAgentsSecurityNoteAccess: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-security-note-access", fallback: "Access is securely managed and your data is used only to help the agent work for you.") }
   internal static var moAiprofileAgentsStatusAppVaultPending: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-app-vault-pending", fallback: "A secure vault for your apps is on its way.") }
+  internal static var moAiprofileAgentsStatusAutoConnected: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-auto-connected", fallback: "Auto connected") }
   internal static var moAiprofileAgentsStatusConnected: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-connected", fallback: "Connected") }
   internal static var moAiprofileAgentsSubtitleTravelSecurity: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-subtitle-travel-security", fallback: "Your travel data stays secure while your agent learns from the sources you trust.") }
+  internal static var moAiprofileAgentsTitleAddCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-credentials", fallback: "Add credentials") }
+  internal static var moAiprofileAgentsTitleAddNewPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-new-password", fallback: "Add new password") }
   internal static var moAiprofileAgentsTitleConnectors: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-connectors", fallback: "Connectors") }
+  internal static var moAiprofileAgentsToastCredentialsUpdated: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-credentials-updated", fallback: "Credentials updated") }
+  internal static var moAiprofileAgentsToastPasswordAdded: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-password-added", fallback: "Password added successfully") }
+  internal static var moAiprofileAgentsToastPersonaUpdated: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-persona-updated", fallback: "Travel persona updated") }
   internal static var moAiprofileAgentsToastPreferencesUpdated: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-preferences-updated", fallback: "Agent preferences updated") }
   internal static var moAiprofileAgentsWarningDisconnectImpact: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-warning-disconnect-impact", fallback: "Disconnecting means your agents lose access to the travel history, preferences, documents and rewards that help make every trip more personal.") }
   internal static var moAiprofileDocumentsActionScan: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-action-scan", fallback: "Scan") }
@@ -172,11 +186,14 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileDocumentsTextHowUsedEmphasis: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-text-how-used-emphasis", fallback: "used") }
   internal static var moAiprofileDocumentsTextHowUsedLead: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-text-how-used-lead", fallback: "How this is") }
   internal static var moAiprofileDocumentsTextUploadBlurbStart: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-text-upload-blurb-start", fallback: "Your details are ready whenever you need a visa. No forms, no re-entering information, no repeating yourself.") }
+  internal static var moAiprofileGeneralAccessibilityHidePassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-accessibility-hide-password", fallback: "Hide password") }
   internal static var moAiprofileGeneralAccessibilityHintCollapse: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-accessibility-hint-collapse", fallback: "Double tap to collapse") }
   internal static var moAiprofileGeneralAccessibilityHintExpand: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-accessibility-hint-expand", fallback: "Double tap to expand") }
   internal static func moAiprofileGeneralAccessibilityNudge(_ p1: Any, _ p2: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-accessibility-nudge", String(describing: p1), String(describing: p2), fallback: "%1$@. %2$@")
   }
+  internal static var moAiprofileGeneralAccessibilityOpenWebsite: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-accessibility-open-website", fallback: "Open website") }
+  internal static var moAiprofileGeneralAccessibilityShowPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-accessibility-show-password", fallback: "Show password") }
   internal static var moAiprofileGeneralAccessibilityValueCollapsed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-accessibility-value-collapsed", fallback: "Collapsed") }
   internal static var moAiprofileGeneralAccessibilityValueExpanded: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-accessibility-value-expanded", fallback: "Expanded") }
   internal static var moAiprofileGeneralBadgeComingSoon: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-badge-coming-soon", fallback: "Coming soon") }

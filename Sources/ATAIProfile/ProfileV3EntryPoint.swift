@@ -112,6 +112,13 @@ public enum ProfileV3EntryPoint {
         )
     }
 
+    static func makeTravelPersona(
+        profileID: String?,
+        repository: any ProfileV3PersonaRepository
+    ) -> UIViewController {
+        ProfileV3TravelPersonaHostingController(profileID: profileID, repository: repository)
+    }
+
     static func makeProgrammes(
         pass: ProfileV3WorldPass,
         passes: [ProfileV3WorldPass],

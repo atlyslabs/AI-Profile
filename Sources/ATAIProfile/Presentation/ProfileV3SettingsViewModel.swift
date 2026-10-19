@@ -12,6 +12,7 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
 
     let fields: ProfileV3ProfileFieldsModel
     let connectors: ProfileV3ConnectorsSettingsModel
+    let appAccess: ProfileV3AppAccessModel
     let travellers: ProfileV3TravellersSettingsModel
     let account: ProfileV3AccountSettingsModel
     let permissions: ProfileV3PermissionsSettingsModel
@@ -22,6 +23,7 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
         didSet {
             fields.router = router
             connectors.router = router
+            appAccess.router = router
             travellers.router = router
             account.router = router
         }
@@ -40,7 +42,9 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
         monogram = deps.currentFirstName()?.trimmingCharacters(in: .whitespaces).first.map { String($0).lowercased() }
         let fields = ProfileV3ProfileFieldsModel(deps: deps, repository: repository, profileID: profileID)
         self.fields = fields
-        connectors = ProfileV3ConnectorsSettingsModel(repository: repository)
+        let connectors = ProfileV3ConnectorsSettingsModel(repository: repository)
+        self.connectors = connectors
+        appAccess = ProfileV3AppAccessModel(repository: repository, connectors: connectors)
         travellers = ProfileV3TravellersSettingsModel(
             deps: deps,
             repository: repository,
@@ -50,6 +54,7 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
         permissions = ProfileV3PermissionsSettingsModel(repository: repository)
         fields.navigator = self
         connectors.navigator = self
+        appAccess.navigator = self
         travellers.navigator = self
         account.navigator = self
         permissions.navigator = self
@@ -122,7 +127,11 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
 
     func tapAppAccess() {
         ProfileV3Analytics.settingsRowClicked(rowKey: "app_access")
-        push(.appAccess)
+        guard ProfileV3FeatureFlags.isAppAccessEnabled else {
+            push(.appAccess)
+            return
+        }
+        appAccess.open()
     }
 
     func tapConcierge(_ concierge: ProfileV3Concierge) {
@@ -144,6 +153,7 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
         presentTask?.cancel()
         fields.cancelReads()
         connectors.cancelReads()
+        appAccess.cancelReads()
         travellers.cancelReads()
         permissions.cancelReads()
     }
