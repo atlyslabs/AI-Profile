@@ -1441,6 +1441,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-status-persona-processing": {
+      "comment": "Shown under the loading dial on the Traveller profile card while the travel persona is still being worked out.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Decoding your travel choices, won’t take long..."
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-subtitle-travel-security": {
       "comment": "Privacy reassurance subtitle for travel data.",
       "extractionState": "manual",

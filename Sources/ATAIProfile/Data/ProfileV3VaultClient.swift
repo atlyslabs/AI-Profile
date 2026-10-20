@@ -166,6 +166,7 @@ final class ProfileV3VaultClient: @unchecked Sendable {
 
     @MainActor
     private static func signedInRecently() -> Bool {
+        guard ProfileV3FeatureFlags.isVaultRecentSignInCheckEnabled else { return true }
         guard let date = ATAuthKit.currentUser?.metadata.lastSignInDate else { return false }
         return Date().timeIntervalSince(date) < 10 * 60
     }

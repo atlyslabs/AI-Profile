@@ -141,6 +141,7 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsStatusAppVaultPending: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-app-vault-pending", fallback: "A secure vault for your apps is on its way.") }
   internal static var moAiprofileAgentsStatusAutoConnected: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-auto-connected", fallback: "Auto connected") }
   internal static var moAiprofileAgentsStatusConnected: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-connected", fallback: "Connected") }
+  internal static var moAiprofileAgentsStatusPersonaProcessing: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-persona-processing", fallback: "Decoding your travel choices, won’t take long...") }
   internal static var moAiprofileAgentsSubtitleTravelSecurity: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-subtitle-travel-security", fallback: "Your travel data stays secure while your agent learns from the sources you trust.") }
   internal static var moAiprofileAgentsTitleAddCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-credentials", fallback: "Add credentials") }
   internal static var moAiprofileAgentsTitleAddNewPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-new-password", fallback: "Add new password") }
