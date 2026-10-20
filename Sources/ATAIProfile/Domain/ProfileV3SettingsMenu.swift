@@ -37,3 +37,17 @@ struct ProfileV3SettingsMenu: Equatable {
         rows.filter(\.isDanger)
     }
 }
+
+struct ProfileV3DeleteAccountReason: Equatable {
+    let title: String
+    let subtitle: String
+    let placeholder: String
+    let submitLabel: String
+}
+
+struct ProfileV3DeleteAccountConfirm: Equatable {
+    let title: String
+    let warning: String
+    let proceedLabel: String
+    let cancelLabel: String
+}

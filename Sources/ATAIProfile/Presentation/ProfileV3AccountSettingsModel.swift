@@ -5,8 +5,11 @@ import Foundation
 final class ProfileV3AccountSettingsModel: ObservableObject {
     @Published private(set) var isAccountDeletionRequested: Bool
     @Published private(set) var isSubmittingDeletion = false
-    @Published private(set) var deletionError: String?
     @Published private(set) var isLoggingOut = false
+    @Published private(set) var deleteReason: ProfileV3DeleteAccountReason?
+    @Published private(set) var deleteReasonPhase: ProfileV3LoadPhase = .loading
+    @Published private(set) var deleteConfirm: ProfileV3DeleteAccountConfirm?
+    @Published private(set) var deleteConfirmPhase: ProfileV3LoadPhase = .loading
 
     weak var navigator: ProfileV3SettingsNavigating?
     weak var router: (any ProfileV3SettingsSheetRouting & ProfileV3SettingsFeedbackRouting & ProfileV3SessionRouting)?
@@ -15,6 +18,9 @@ final class ProfileV3AccountSettingsModel: ObservableObject {
     private let repository: any ProfileV3SettingsRepository
     private var logoutTask: Task<Void, Never>?
     private var deletionTask: Task<Void, Never>?
+    private var deleteReasonTask: Task<Void, Never>?
+    private var deleteConfirmTask: Task<Void, Never>?
+    private var deletionReason = ""
 
     init(deps: ProfileV3SettingsDependencies, repository: any ProfileV3SettingsRepository) {
         self.deps = deps
@@ -29,11 +35,40 @@ final class ProfileV3AccountSettingsModel: ObservableObject {
     func tapDeleteAccount() {
         guard !isAccountDeletionRequested else { return }
         navigator?.push(.deleteAccount)
+        loadDeleteReason()
+        loadDeleteConfirm()
     }
 
-    func tapProceedToDelete() {
-        deletionError = nil
-        navigator?.push(.deleteReason)
+    func loadDeleteReason() {
+        guard deleteReason == nil else { return }
+        let repository = repository
+        ProfileV3PhasedLoad.start(
+            on: self,
+            task: \.deleteReasonTask,
+            phase: \.deleteReasonPhase,
+            content: \.deleteReason,
+            fetch: { try await repository.loadDeleteAccountReason() },
+            apply: { $0.deleteReason = $1 }
+        )
+    }
+
+    func loadDeleteConfirm() {
+        guard deleteConfirm == nil else { return }
+        let repository = repository
+        ProfileV3PhasedLoad.start(
+            on: self,
+            task: \.deleteConfirmTask,
+            phase: \.deleteConfirmPhase,
+            content: \.deleteConfirm,
+            fetch: { try await repository.loadDeleteAccountConfirm() },
+            apply: { $0.deleteConfirm = $1 }
+        )
+    }
+
+    func submitDeletionReason(_ reason: String) {
+        deletionReason = reason
+        navigator?.push(.deleteAccountConfirm)
+        loadDeleteConfirm()
     }
 
     func confirmLogout() {
@@ -52,11 +87,10 @@ final class ProfileV3AccountSettingsModel: ObservableObject {
         }
     }
 
-    func submitDeletion(reason: String) {
+    func confirmDeletion() {
         guard !isSubmittingDeletion else { return }
         isSubmittingDeletion = true
-        deletionError = nil
-        deps.logAccountDeletionReason(reason)
+        deps.logAccountDeletionReason(deletionReason)
         let repository = repository
         let markRequested = deps.markAccountDeletionRequested
         deletionTask = Task { [weak self] in
@@ -71,13 +105,8 @@ final class ProfileV3AccountSettingsModel: ObservableObject {
             } catch {
                 guard let self else { return }
                 isSubmittingDeletion = false
-                deletionError = ProfileV3Strings.deleteRequestFailed
+                router?.showFlash(ProfileV3Strings.deleteRequestFailed, isSuccess: false)
             }
         }
-    }
-
-    func clearDeletionError() {
-        guard deletionError != nil else { return }
-        deletionError = nil
     }
 }

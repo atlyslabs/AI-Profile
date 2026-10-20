@@ -85,13 +85,8 @@ extension ProfileV3Strings {
     static var confirmEdit: String { ProfileV3L10n.moAiprofileGeneralButtonConfirm }
     static var logoutConfirmTitle: String { ProfileV3L10n.moAiprofileAccountConfirmationLogout }
     static var staySignedIn: String { ProfileV3L10n.moAiprofileAccountButtonStaySignedIn }
-    static var deleteConfirmTitle: String { ProfileV3L10n.moAiprofileAccountConfirmationDelete }
-    static var deleteConfirmBody: String { ProfileV3L10n.moAiprofileAccountDeletionDetails }
     static var proceedToDelete: String { ProfileV3L10n.moAiprofileAccountButtonConfirmDelete }
     static var dontDelete: String { ProfileV3L10n.moAiprofileProfileButtonDontDelete }
-    static var deleteReasonTitle: String { ProfileV3L10n.moAiprofileAccountDeletionReasonTitle }
-    static var deleteReasonSubtitle: String { ProfileV3L10n.moAiprofileAccountDeletionReasonDescription }
-    static var deleteReasonPlaceholder: String { ProfileV3L10n.moAiprofileAccountInputReason }
     static var deleteRequestFailed: String { ProfileV3L10n.moAiprofileAccountErrorDeleteRequestFailed }
     static var deleteRequestSubmitted: String { ProfileV3L10n.moAiprofileAccountSuccessDeletionSubmitted }
     static var accountDeletionInRequest: String { ProfileV3L10n.moAiprofileAccountStatusDeletionPending }

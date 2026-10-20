@@ -8,12 +8,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAccountButtonConfirmDelete: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-button-confirm-delete", fallback: "Proceed to delete") }
   internal static var moAiprofileAccountButtonDelete: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-button-delete", fallback: "Delete account") }
   internal static var moAiprofileAccountButtonStaySignedIn: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-button-stay-signed-in", fallback: "Stay signed in") }
-  internal static var moAiprofileAccountConfirmationDelete: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-confirmation-delete", fallback: "Are you sure you want to delete your Atlys account?") }
   internal static var moAiprofileAccountConfirmationLogout: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-confirmation-logout", fallback: "Are you sure you want to logout") }
   internal static var moAiprofileAccountContactHelperText: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-contact-helper-text", fallback: "We need your phone number to provide urgent status updates on your visa application.") }
-  internal static var moAiprofileAccountDeletionDetails: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-deletion-details", fallback: "Deleting your account will delete all of its data. You will have to re-enter your documents to apply for a visa again.") }
-  internal static var moAiprofileAccountDeletionReasonDescription: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-deletion-reason-description", fallback: "We would like to know so we can improve things in our mission to making travel seamless") }
-  internal static var moAiprofileAccountDeletionReasonTitle: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-deletion-reason-title", fallback: "Tell us why you want to delete your Atlys account") }
   internal static var moAiprofileAccountErrorContactSaveFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-error-contact-save-failed", fallback: "We couldn't sync your contact info. Please try again.") }
   internal static var moAiprofileAccountErrorDeleteRequestFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-error-delete-request-failed", fallback: "We couldn't submit your request. Please try again.") }
   internal static var moAiprofileAccountErrorEmailTaken: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-error-email-taken", fallback: "This email is already linked to another Atlys account") }
@@ -31,7 +27,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAccountInputEmailPlaceholder: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-input-email-placeholder", fallback: "name@example.com") }
   internal static var moAiprofileAccountInputPhoneLabel: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-input-phone-label", fallback: "Number") }
   internal static var moAiprofileAccountInputPhonePlaceholder: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-input-phone-placeholder", fallback: "Phone number") }
-  internal static var moAiprofileAccountInputReason: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-input-reason", fallback: "Enter your reason here") }
   internal static func moAiprofileAccountMeasurementHeightCm(_ p1: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-measurement-height-cm", String(describing: p1), fallback: "(%1$@cm)")
   }

@@ -303,7 +303,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func uploadPassportScan(_ side: ProfileV3PassportSide, data: Data, profileID: String?) async throws
-        -> ProfileV3PassportField? {
+        -> ProfileV3PassportScanResult {
         let body = ProfileV3PassportScanEncoder.body(side: side, data: data, profileID: profileID)
         let country = await accountCountry(for: profileID)
         let dto: ProfileV3PassportScanResponseDTO = try await request(
@@ -312,7 +312,10 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         )
         await store.invalidate()
         guard dto.ok != false else { throw ProfileV3Error.server(code: nil, message: nil) }
-        return dto.passport.map { ProfileV3PassportMapper.field($0, accountCountry: country) }
+        return ProfileV3PassportScanResult(
+            field: dto.passport.map { ProfileV3PassportMapper.field($0, accountCountry: country) },
+            backRequired: dto.backRequired
+        )
     }
 
     func loadRidePicker(agentType: String, profileID: String?) async throws -> ProfileV3RidePicker {
@@ -436,6 +439,19 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
             profileID: profileID
         )
         try await submit(try JSONEncoder().encode(request), action: "edit_profile_field")
+    }
+
+    func loadDeleteAccountReason() async throws -> ProfileV3DeleteAccountReason {
+        let dto: ProfileV3DeleteAccountReasonDTO = try await request(ProfileV3API.deleteAccount, action: "delete_account")
+        return ProfileV3SettingsMapper.deleteAccountReason(dto)
+    }
+
+    func loadDeleteAccountConfirm() async throws -> ProfileV3DeleteAccountConfirm {
+        let dto: ProfileV3DeleteAccountConfirmDTO = try await request(
+            ProfileV3API.deleteAccountConfirm,
+            action: "delete_confirm"
+        )
+        return ProfileV3SettingsMapper.deleteAccountConfirm(dto)
     }
 
     func loadPermissions() async throws -> ProfileV3Permissions {

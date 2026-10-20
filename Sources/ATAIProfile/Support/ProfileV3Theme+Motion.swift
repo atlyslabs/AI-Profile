@@ -50,6 +50,7 @@ extension ProfileV3Theme {
         static let reorderHintSeconds: TimeInterval = 0.5
         static let reorderHint: Animation = .smooth(duration: reorderHintSeconds)
         static let reorderHintDelayMilliseconds = 900
+        static let passportFrontOnlyFinishMilliseconds = 600
         static let reorderDemoMoveSeconds: TimeInterval = 0.6
         static let reorderDemoHoldSeconds: TimeInterval = 0.4
         static let reorderDemoCycleSeconds = reorderDemoMoveSeconds + reorderDemoHoldSeconds

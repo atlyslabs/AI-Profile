@@ -330,9 +330,9 @@ struct ProfileV3MockRepository: ProfileV3Repository {
     }
 
     func uploadPassportScan(_: ProfileV3PassportSide, data _: Data, profileID _: String?) async throws
-        -> ProfileV3PassportField? {
+        -> ProfileV3PassportScanResult {
         try await Task.sleep(for: delay)
-        return ProfileV3PassportFixtures.field
+        return ProfileV3PassportScanResult(field: ProfileV3PassportFixtures.field, backRequired: true)
     }
 
     func loadPassportReason() async throws -> ProfileV3PassportReasonScreen {
@@ -558,6 +558,16 @@ struct ProfileV3MockRepository: ProfileV3Repository {
 
     func requestAccountDeletion() async throws {
         try await Task.sleep(for: delay)
+    }
+
+    func loadDeleteAccountReason() async throws -> ProfileV3DeleteAccountReason {
+        try await Task.sleep(for: delay)
+        return ProfileV3Fixtures.deleteAccountReason
+    }
+
+    func loadDeleteAccountConfirm() async throws -> ProfileV3DeleteAccountConfirm {
+        try await Task.sleep(for: delay)
+        return ProfileV3Fixtures.deleteAccountConfirm
     }
 
     func loadProgrammes(passID: String) async throws -> ProfileV3ProgrammeOverview {

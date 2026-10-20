@@ -90,6 +90,14 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
+    func loadDeleteAccountReason() async throws -> ProfileV3DeleteAccountReason {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadDeleteAccountConfirm() async throws -> ProfileV3DeleteAccountConfirm {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
     func disconnectConnector(_: ProfileV3ConnectorKey) async throws {
         throw ProfileV3RepositoryError.unavailable
     }
@@ -208,7 +216,7 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
     }
 
     func uploadPassportScan(_: ProfileV3PassportSide, data _: Data, profileID _: String?) async throws
-        -> ProfileV3PassportField? {
+        -> ProfileV3PassportScanResult {
         throw ProfileV3RepositoryError.unavailable
     }
 

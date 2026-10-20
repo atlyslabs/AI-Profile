@@ -48,7 +48,11 @@ struct ProfileV3SettingsView: View {
         .background(Color(at: .pureWhite))
         .background(alignment: .top) {
             if viewModel.menu != nil {
-                ProfileV3SettingsPremeasure(viewModel: viewModel, permissions: viewModel.permissions)
+                ProfileV3SettingsPremeasure(
+                    viewModel: viewModel,
+                    permissions: viewModel.permissions,
+                    account: viewModel.account
+                )
             }
         }
         .onAppear {
@@ -112,12 +116,17 @@ struct ProfileV3SettingsView: View {
 private struct ProfileV3SettingsPremeasure: View {
     let viewModel: ProfileV3SettingsViewModel
     @ObservedObject var permissions: ProfileV3PermissionsSettingsModel
+    @ObservedObject var account: ProfileV3AccountSettingsModel
     @State private var measured: Set<ProfileV3SettingsDestination> = []
 
     private var pending: [ProfileV3SettingsDestination] {
         ProfileV3SettingsDestination.premeasured.filter { destination in
             guard !measured.contains(destination) else { return false }
-            return destination != .permissions || permissions.permissions != nil
+            switch destination {
+            case .permissions: return permissions.permissions != nil
+            case .deleteAccountConfirm: return account.deleteConfirm != nil
+            default: return true
+            }
         }
     }
 

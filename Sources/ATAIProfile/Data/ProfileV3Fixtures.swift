@@ -80,6 +80,21 @@ enum ProfileV3Fixtures {
         ProfileV3Connector(id: "itr", name: "ITR connector", icon: .contract, status: .needsAttention)
     ]
 
+    static let deleteAccountReason = ProfileV3DeleteAccountReason(
+        title: "Tell us why you want to delete your ayl account",
+        subtitle: "We would like to know so we can improve things in our mission to making travel seamless",
+        placeholder: "Enter your reason here",
+        submitLabel: "Delete account"
+    )
+
+    static let deleteAccountConfirm = ProfileV3DeleteAccountConfirm(
+        title: "Are you sure you want to delete your ayl account?",
+        warning: "Deleting your account will delete all of its data. "
+            + "You will have to re-enter your documents to apply for a visa again.",
+        proceedLabel: "Proceed to delete",
+        cancelLabel: "Don't delete"
+    )
+
     static let kycExpired = ProfileV3KYCStatus.expired(on: "23 Dec, 2027")
     static let kycComplete = ProfileV3KYCStatus.complete(validTill: "Jan 2027")
 

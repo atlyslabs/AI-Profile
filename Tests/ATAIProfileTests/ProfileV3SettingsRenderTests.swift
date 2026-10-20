@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 import Observation
 import Testing
@@ -55,17 +54,6 @@ struct ProfileV3SettingsRenderTests {
 
         #expect(!changed.value)
         #expect(viewModel.pagePath.isEmpty)
-    }
-
-    @Test func typingADeletionReasonPublishesNothingWhileThereIsNoError() {
-        let account = ProfileV3AccountSettingsModel(deps: .preview(), repository: ProfileV3MockRepository(delay: .zero))
-        var publishes = 0
-        let subscription = account.objectWillChange.sink { publishes += 1 }
-
-        for _ in 0 ..< 5 { account.clearDeletionError() }
-
-        #expect(publishes == 0)
-        subscription.cancel()
     }
 }
 

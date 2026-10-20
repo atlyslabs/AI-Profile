@@ -58,6 +58,7 @@ enum ProfileV3Route: Equatable {
     case worldPassAbout
     case logout
     case deleteAccount
+    case deleteAccountConfirm
     case passportUpdate(profileID: String?)
     case passportReason
     case passportHowUsed
@@ -138,8 +139,10 @@ extension ProfileV3Directive {
             return .worldPassAbout
         case "logout", "logout_confirm":
             return .logout
-        case "delete_account", "delete_confirm":
+        case "delete_account":
             return .deleteAccount
+        case "delete_confirm":
+            return .deleteAccountConfirm
         case ProfileV3PassportRoute.update:
             return .passportUpdate(profileID: profileID)
         case ProfileV3PassportRoute.reason:

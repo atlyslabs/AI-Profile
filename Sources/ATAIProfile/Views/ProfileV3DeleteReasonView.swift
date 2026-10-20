@@ -2,10 +2,8 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3DeleteReasonView: View {
-    var isSubmitting = false
-    var errorMessage: String?
+    let screen: ProfileV3DeleteAccountReason
     let onBack: () -> Void
-    var onReasonChange: () -> Void = {}
     let onSubmit: (String) -> Void
 
     @State private var reason = ""
@@ -22,21 +20,24 @@ struct ProfileV3DeleteReasonView: View {
                 VStack(spacing: 0) {
                     ZStack(alignment: .top) {
                         VStack(spacing: ProfileV3Theme.Sizes.Confirmation.textSpacing) {
-                            Text(ProfileV3Strings.deleteReasonTitle)
-                                .typoGraphy(.H6InterMedium18)
-                                .foregroundStyle(Color(at: .pureBlack))
-                                .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.titleWidth)
-                            Text(ProfileV3Strings.deleteReasonSubtitle)
-                                .typoGraphy(.B2InterMedium12)
-                                .foregroundStyle(Color(at: .neutralGrey400))
-                                .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.bodyWidth)
+                            if !screen.title.isEmpty {
+                                Text(screen.title)
+                                    .typoGraphy(.H6InterMedium18)
+                                    .foregroundStyle(Color(at: .pureBlack))
+                                    .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.titleWidth)
+                            }
+                            if !screen.subtitle.isEmpty {
+                                Text(screen.subtitle)
+                                    .typoGraphy(.B2InterMedium12)
+                                    .foregroundStyle(Color(at: .neutralGrey400))
+                                    .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.bodyWidth)
+                            }
                         }
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
                         .padding(.top, ProfileV3Theme.Sizes.deleteReasonTitleTop)
                         HStack {
                             ProfileV3CircleIconButton.back(action: onBack)
-                                .disabled(isSubmitting)
                             Spacer()
                         }
                         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
@@ -45,31 +46,23 @@ struct ProfileV3DeleteReasonView: View {
                     reasonField
                         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                         .padding(.top, ProfileV3Theme.Sizes.deleteReasonFieldTop)
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .typoGraphy(.B2InterMedium12)
-                            .foregroundStyle(ProfileV3Theme.Palette.error)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                            .padding(.top, ProfileV3Theme.Sizes.fieldErrorSpacing)
-                    }
                 }
             }
         }
         .background(Color(at: .pureWhite))
-        .sensoryFeedback(.error, trigger: errorMessage) { _, error in error != nil }
         .safeAreaInset(edge: .bottom) {
-            ProfileV3ContinueButton(
-                title: ProfileV3Strings.deleteAccount,
-                icon: ATIcon.SwiftUIImage.deleteOutline,
-                tint: ProfileV3Theme.Palette.destructive,
-                disabledTint: ProfileV3Theme.Palette.disabledText,
-                isLoading: isSubmitting,
-                isEnabled: !trimmedReason.isEmpty
-            ) {
-                onSubmit(trimmedReason)
+            if !screen.submitLabel.isEmpty {
+                ProfileV3ContinueButton(
+                    title: screen.submitLabel,
+                    icon: ATIcon.SwiftUIImage.deleteOutline,
+                    tint: ProfileV3Theme.Palette.destructive,
+                    disabledTint: ProfileV3Theme.Palette.disabledText,
+                    isEnabled: !trimmedReason.isEmpty
+                ) {
+                    onSubmit(trimmedReason)
+                }
+                .profileV3CTABar(bottom: ProfileV3Theme.Sizes.deleteReasonCTABottom)
             }
-            .profileV3CTABar(bottom: ProfileV3Theme.Sizes.deleteReasonCTABottom)
         }
         .task {
             try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.searchFocusDelayMilliseconds))
@@ -91,8 +84,8 @@ struct ProfileV3DeleteReasonView: View {
                     dash: ProfileV3Theme.Sizes.deleteReasonDash
                 )
             )
-            if reason.isEmpty {
-                Text(ProfileV3Strings.deleteReasonPlaceholder)
+            if reason.isEmpty, !screen.placeholder.isEmpty {
+                Text(screen.placeholder)
                     .typoGraphy(.B1InterMedium14)
                     .foregroundStyle(ProfileV3Theme.Palette.reasonPlaceholder)
                     .padding(ProfileV3Theme.Sizes.deleteReasonFieldPadding)
@@ -104,25 +97,13 @@ struct ProfileV3DeleteReasonView: View {
                 .scrollContentBackground(.hidden)
                 .focused($isEditing)
                 .padding(ProfileV3Theme.Sizes.deleteReasonEditorInset)
-                .disabled(isSubmitting)
         }
         .frame(height: ProfileV3Theme.Sizes.deleteReasonFieldHeight)
-        .onChange(of: reason) { _, _ in
-            onReasonChange()
-        }
     }
 }
 
 #if DEBUG
 #Preview("Delete reason") {
-    ProfileV3DeleteReasonView(onBack: {}, onSubmit: { _ in })
-}
-
-#Preview("Delete reason · submitting") {
-    ProfileV3DeleteReasonView(isSubmitting: true, onBack: {}, onSubmit: { _ in })
-}
-
-#Preview("Delete reason · failed") {
-    ProfileV3DeleteReasonView(errorMessage: ProfileV3Strings.deleteRequestFailed, onBack: {}, onSubmit: { _ in })
+    ProfileV3DeleteReasonView(screen: ProfileV3Fixtures.deleteAccountReason, onBack: {}, onSubmit: { _ in })
 }
 #endif

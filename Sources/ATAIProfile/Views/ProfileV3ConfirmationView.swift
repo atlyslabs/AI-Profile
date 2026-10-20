@@ -153,16 +153,19 @@ extension ProfileV3ConfirmationView {
     }
 
     static func deleteAccount(
+        _ confirm: ProfileV3DeleteAccountConfirm,
+        isDeleting: Bool = false,
         onBack: @escaping () -> Void,
         onProceed: @escaping () -> Void
     ) -> ProfileV3ConfirmationView {
         ProfileV3ConfirmationView(
             icon: ATIcon.SwiftUIImage.delete,
             style: .destructive,
-            title: ProfileV3Strings.deleteConfirmTitle,
-            message: ProfileV3Strings.deleteConfirmBody,
-            primaryTitle: ProfileV3Strings.proceedToDelete,
-            secondaryTitle: ProfileV3Strings.dontDelete,
+            title: confirm.title,
+            message: confirm.warning.nonEmpty,
+            primaryTitle: confirm.proceedLabel,
+            secondaryTitle: confirm.cancelLabel,
+            isPrimaryLoading: isDeleting,
             onBack: onBack,
             onPrimary: onProceed,
             onSecondary: onBack
@@ -201,7 +204,7 @@ extension ProfileV3ConfirmationView {
 }
 
 #Preview("Delete account") {
-    ProfileV3ConfirmationView.deleteAccount(onBack: {}, onProceed: {})
+    ProfileV3ConfirmationView.deleteAccount(ProfileV3Fixtures.deleteAccountConfirm, onBack: {}, onProceed: {})
 }
 
 #Preview("Delete login") {

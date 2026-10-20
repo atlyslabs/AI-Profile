@@ -11,6 +11,11 @@ enum ProfileV3Error: LocalizedError, Equatable {
     case passportFrontPending
     case underlying(String)
 
+    static func isRetryable(_ error: Error) -> Bool {
+        if case .transient = error as? ProfileV3Error { return true }
+        return false
+    }
+
     static func message(for error: Error, fallback: String = ProfileV3Strings.somethingWentWrong) -> String {
         (error as? ProfileV3Error)?.errorDescription ?? fallback
     }

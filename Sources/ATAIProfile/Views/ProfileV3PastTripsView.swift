@@ -28,6 +28,9 @@ struct ProfileV3PastTripsView: View {
         .sensoryFeedback(.success, trigger: viewModel.completions)
         .sensoryFeedback(.error, trigger: viewModel.notice) { _, notice in notice != nil }
         .alert(ProfileV3Strings.loadFailedTitle, isPresented: noticeBinding) {
+            if viewModel.canRetryNotice {
+                Button(ProfileV3Strings.retry) { viewModel.retryAfterNotice() }
+            }
             Button(ProfileV3Strings.close, role: .cancel) { viewModel.clearNotice() }
         } message: {
             Text(viewModel.notice ?? "")

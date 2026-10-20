@@ -37,18 +37,6 @@
         }
       }
     },
-    "mo-aiprofile-account-confirmation-delete": {
-      "comment": "Confirmation dialog title for account deletion.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Are you sure you want to delete your Atlys account?"
-          }
-        }
-      }
-    },
     "mo-aiprofile-account-confirmation-logout": {
       "comment": "Confirmation message for logout action.",
       "extractionState": "manual",
@@ -69,42 +57,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "We need your phone number to provide urgent status updates on your visa application."
-          }
-        }
-      }
-    },
-    "mo-aiprofile-account-deletion-details": {
-      "comment": "Explanation of consequences for account deletion.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deleting your account will delete all of its data. You will have to re-enter your documents to apply for a visa again."
-          }
-        }
-      }
-    },
-    "mo-aiprofile-account-deletion-reason-description": {
-      "comment": "Subtitle requesting feedback on account deletion.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "We would like to know so we can improve things in our mission to making travel seamless"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-account-deletion-reason-title": {
-      "comment": "Title for the deletion reason feedback form.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tell us why you want to delete your Atlys account"
           }
         }
       }
@@ -285,18 +237,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Phone number"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-account-input-reason": {
-      "comment": "Placeholder text for the deletion reason input field.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enter your reason here"
           }
         }
       }

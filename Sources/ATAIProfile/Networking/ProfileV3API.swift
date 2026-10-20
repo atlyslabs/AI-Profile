@@ -32,6 +32,8 @@ enum ProfileV3API {
     case disconnectConfirm(connector: ProfileV3ConnectorKey)
     case editTravellers
     case permissions
+    case deleteAccount
+    case deleteAccountConfirm
     case deleteTravellerConfirm(profileID: String)
     case addTraveller
     case terms(locale: String?)
@@ -125,6 +127,10 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.boardBasePath + "/edit-traveler"
         case .permissions:
             return Self.boardBasePath + "/permissions"
+        case .deleteAccount:
+            return Self.boardBasePath + "/settings/delete-account"
+        case .deleteAccountConfirm:
+            return Self.boardBasePath + "/settings/delete-account/confirm"
         case .deleteTravellerConfirm(let profileID):
             return Self.boardBasePath + "/edit-traveler/delete/\(profileID)"
         case .addTraveller:

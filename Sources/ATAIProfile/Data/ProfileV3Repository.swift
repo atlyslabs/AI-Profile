@@ -26,7 +26,7 @@ protocol ProfileV3AgentRepository: Sendable {
     func loadPassportHistory(profileID: String?) async throws -> [ProfileV3Passport]
     func loadPassportScan(profileID: String?) async throws -> ProfileV3PassportScan
     func uploadPassportScan(_ side: ProfileV3PassportSide, data: Data, profileID: String?) async throws
-        -> ProfileV3PassportField?
+        -> ProfileV3PassportScanResult
     func loadPassportReason() async throws -> ProfileV3PassportReasonScreen
     func loadPassportHowUsed() async throws -> ProfileV3PassportHowUsed
     func updatePassport(reason: String, profileID: String?) async throws
@@ -111,6 +111,8 @@ protocol ProfileV3SettingsRepository: ProfileV3AppAccessRepository {
     func loadTerms(locale: String?) async throws -> ProfileV3Terms?
     func acknowledgeLogout() async throws
     func requestAccountDeletion() async throws
+    func loadDeleteAccountReason() async throws -> ProfileV3DeleteAccountReason
+    func loadDeleteAccountConfirm() async throws -> ProfileV3DeleteAccountConfirm
     func loadPermissions() async throws -> ProfileV3Permissions
     func savePermission(_ optionID: String, in sectionID: String) async throws
 }

@@ -17,6 +17,7 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
     @Published private(set) var revealingTripID: String?
     @Published private(set) var isDeleting = false
     @Published private(set) var notice: String?
+    @Published private(set) var canRetryNotice = false
     @Published private(set) var completions = 0
 
     let pass: ProfileV3WorldPass
@@ -27,6 +28,7 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
     private var startsAdding: Bool
     private var hasStarted = false
     private var isSheetDetached = false
+    private var retryNotice: (() -> Void)?
     private var addScreen: ProfileV3AddTripScreen?
     private var loadTask: Task<Void, Never>?
     private var addScreenTask: Task<Void, Never>?
@@ -104,8 +106,12 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
     }
 
     func confirmDelete() {
-        guard case .confirmDelete(let id) = sheet, !isDeleting,
-              let submit = trips.first(where: { $0.id == id })?.delete?.submit else { return }
+        guard case .confirmDelete(let id) = sheet else { return }
+        delete(id)
+    }
+
+    private func delete(_ id: String) {
+        guard !isDeleting, let submit = trips.first(where: { $0.id == id })?.delete?.submit else { return }
         isDeleting = true
         let repository = repository
         deleteTask = Task { [weak self] in
@@ -124,7 +130,10 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
                 guard let self else { return }
                 isDeleting = false
                 present(nil)
-                notice = ProfileV3Error.message(for: error, fallback: ProfileV3Strings.pastTripDeleteFailed)
+                showNotice(
+                    ProfileV3Error.message(for: error, fallback: ProfileV3Strings.pastTripDeleteFailed),
+                    retry: ProfileV3Error.isRetryable(error) ? { [weak self] in self?.delete(id) } : nil
+                )
             }
         }
     }
@@ -150,6 +159,20 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
 
     func clearNotice() {
         notice = nil
+        retryNotice = nil
+        canRetryNotice = false
+    }
+
+    func retryAfterNotice() {
+        let retry = retryNotice
+        clearNotice()
+        retry?()
+    }
+
+    private func showNotice(_ message: String, retry: (() -> Void)? = nil) {
+        retryNotice = retry
+        canRetryNotice = retry != nil
+        notice = message
     }
 
     func didFinishReveal(_ id: String) {
@@ -193,7 +216,10 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
                 if self.screen == nil {
                     phase = .failed
                 } else {
-                    notice = ProfileV3Error.message(for: error, fallback: ProfileV3Strings.loadFailed)
+                    showNotice(
+                        ProfileV3Error.message(for: error, fallback: ProfileV3Strings.loadFailed),
+                        retry: ProfileV3Error.isRetryable(error) ? { [weak self] in self?.reload(revealing: draft) } : nil
+                    )
                 }
             }
         }
@@ -234,7 +260,7 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
     private func saveFailed() {
         guard isSheetDetached else { return }
         present(nil)
-        notice = editor?.errorMessage ?? ProfileV3Strings.pastTripSaveFailed
+        showNotice(editor?.errorMessage ?? ProfileV3Strings.pastTripSaveFailed)
     }
 
     private func saved(_ draft: ProfileV3PastTripDraft) {

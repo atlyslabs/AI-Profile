@@ -121,3 +121,58 @@ struct ProfileV3SavePermissionsRequest: Encodable, Equatable {
     let action = "save_permissions"
     let updates: [String: String]
 }
+
+struct ProfileV3DeleteAccountReasonDTO: Decodable, Equatable {
+    struct Field: Decodable, Equatable {
+        let key: String?
+        let input: String?
+        let placeholder: String?
+    }
+
+    struct Submit: Decodable, Equatable {
+        let label: String?
+        let style: String?
+        let next: ProfileV3DirectiveDTO?
+    }
+
+    let type: String?
+    let title: String?
+    let subtitle: String?
+    private let rawField: ProfileV3LossyDTO<Field>?
+    private let rawSubmit: ProfileV3LossyDTO<Submit>?
+
+    var field: Field? { rawField?.value }
+    var submit: Submit? { rawSubmit?.value }
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case title
+        case subtitle
+        case rawField = "field"
+        case rawSubmit = "submit"
+    }
+}
+
+struct ProfileV3DeleteAccountConfirmDTO: Decodable, Equatable {
+    struct Action: Decodable, Equatable {
+        let key: String?
+        let label: String?
+        let style: String?
+        let action: String?
+        let next: ProfileV3DirectiveDTO?
+    }
+
+    let type: String?
+    let title: String?
+    let warning: String?
+    private let rawActions: [ProfileV3LossyDTO<Action>]?
+
+    var actions: [Action] { rawActions?.compactMap(\.value) ?? [] }
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case title
+        case warning
+        case rawActions = "actions"
+    }
+}

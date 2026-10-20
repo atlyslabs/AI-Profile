@@ -219,6 +219,35 @@ struct ProfileV3PastTripsTests {
         #expect(!viewModel.trips.contains { $0.id == trip.id })
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func aBrieflyUnavailableDeleteOffersRetry() async throws {
+        let repository = TripsRepositoryStub()
+        repository.failNextDelete()
+        let viewModel = ProfileV3PastTripsViewModel(
+            pass: ProfileV3Fixtures.worldPass,
+            repository: repository,
+            startsAdding: false,
+            onChange: {},
+            onClose: {}
+        )
+        viewModel.start()
+        try await waitUntil { viewModel.phase == .loaded }
+        let trip = try #require(viewModel.trips.first)
+
+        viewModel.tapMore(trip)
+        viewModel.tapDelete()
+        viewModel.confirmDelete()
+        try await waitUntil { viewModel.notice != nil }
+        #expect(viewModel.notice == "The traveller list is unavailable right now.")
+        #expect(viewModel.canRetryNotice)
+        #expect(repository.deleted.isEmpty)
+
+        viewModel.retryAfterNotice()
+        #expect(viewModel.notice == nil)
+        try await waitUntil { !repository.deleted.isEmpty && !viewModel.isDeleting }
+        #expect(!viewModel.trips.contains { $0.id == trip.id })
+    }
+
     private func decode<T: Decodable>(_ type: T.Type, _ text: String) throws -> T {
         try JSONDecoder().decode(type, from: Data(text.utf8))
     }
@@ -256,10 +285,15 @@ private final class TripsRepositoryStub: ProfileV3PastTripsRepository, @unchecke
     private var _added: [Added] = []
     private var _edited: [Edited] = []
     private var _deleted: [ProfileV3BoardAction] = []
+    private var unavailableDeletes = 0
 
     var added: [Added] { lock.withLock { _added } }
     var edited: [Edited] { lock.withLock { _edited } }
     var deleted: [ProfileV3BoardAction] { lock.withLock { _deleted } }
+
+    func failNextDelete() {
+        lock.withLock { unavailableDeletes += 1 }
+    }
 
     func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen {
         let trips = lock.withLock { self.trips }
@@ -300,6 +334,12 @@ private final class TripsRepositoryStub: ProfileV3PastTripsRepository, @unchecke
     }
 
     func deletePastTrip(_ submit: ProfileV3BoardAction) async throws {
+        let fails = lock.withLock {
+            guard unavailableDeletes > 0 else { return false }
+            unavailableDeletes -= 1
+            return true
+        }
+        if fails { throw ProfileV3Error.transient(message: "The traveller list is unavailable right now.") }
         lock.withLock {
             _deleted.append(submit)
             let id = submit.fields["trip_id"]?.stringValue

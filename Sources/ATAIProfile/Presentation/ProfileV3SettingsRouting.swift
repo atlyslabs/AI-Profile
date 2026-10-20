@@ -10,7 +10,7 @@ enum ProfileV3SettingsDestination: Hashable {
     case controlPanel
     case logout
     case deleteAccount
-    case deleteReason
+    case deleteAccountConfirm
     case editTravellers
     case editTraveller(String)
     case travellerRelationship(String)
@@ -29,15 +29,15 @@ enum ProfileV3SettingsDestination: Hashable {
     var isFullHeight: Bool {
         switch self {
         case .residence, .citizenship, .currency, .contactInfo, .connectors, .appAccess,
-             .controlPanel, .deleteReason, .editTraveller, .travellerRelationship, .addTraveller,
+             .controlPanel, .deleteAccount, .editTraveller, .travellerRelationship, .addTraveller,
              .addTravellerCitizenship:
             return true
-        case .logout, .deleteAccount, .editTravellers, .deleteTravellerConfirm, .permissions:
+        case .logout, .deleteAccountConfirm, .editTravellers, .deleteTravellerConfirm, .permissions:
             return false
         }
     }
 
-    static let premeasured: [ProfileV3SettingsDestination] = [.logout, .deleteAccount, .permissions]
+    static let premeasured: [ProfileV3SettingsDestination] = [.logout, .deleteAccountConfirm, .permissions]
 }
 
 @MainActor
