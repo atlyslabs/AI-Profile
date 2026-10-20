@@ -5,7 +5,7 @@ enum ProfileV3CouponsMapper: ProfileV3DTOReading {
     static func sheet(_ dto: ProfileV3CouponsSheetDTO) -> ProfileV3CouponsSheet {
         let coupons = dto.coupons.compactMap(coupon)
         return ProfileV3CouponsSheet(
-            title: text(dto.title) ?? ProfileV3Strings.coupons,
+            title: text(dto.title) ?? "",
             subtitle: text(dto.subtitle) ?? "",
             count: dto.count?.intValue ?? coupons.count,
             coupons: coupons
@@ -37,10 +37,10 @@ enum ProfileV3CouponsMapper: ProfileV3DTOReading {
             usedLabel: text(dto.amountRedeemed?.label).map(ProfileV3Strings.couponUsed) ?? "",
             percentRedeemed: fraction(dto.percentRedeemed),
             activeLabel: text(dto.activeLabel) ?? "",
-            termsTitle: text(dto.termsTitle) ?? ProfileV3Strings.termsAndConditions,
+            termsTitle: text(dto.termsTitle) ?? "",
             terms: text(dto.terms) ?? "",
             redeemLabel: text(dto.redeem?.label),
-            gotItLabel: text(dto.gotIt?.label) ?? ProfileV3Strings.gotIt
+            gotItLabel: text(dto.gotIt?.label) ?? ""
         )
     }
 }

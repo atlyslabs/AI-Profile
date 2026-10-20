@@ -5,10 +5,10 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
 
     static func screen(_ dto: ProfileV3PastTripsScreenDTO) -> ProfileV3PastTripsScreen {
         ProfileV3PastTripsScreen(
-            title: text(dto.title) ?? ProfileV3Strings.pastTripsTitle,
+            title: text(dto.title) ?? "",
             trips: dto.trips.compactMap(trip),
             addDirective: dto.add?.directive,
-            duration: dto.duration.map { duration($0, ctaFallback: ProfileV3Strings.saveTrip) },
+            duration: dto.duration.map(duration),
             deleteConfirm: dto.deleteConfirm.map(deleteConfirm)
         )
     }
@@ -16,12 +16,11 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
     static func addScreen(_ dto: ProfileV3AddTripScreenDTO) -> ProfileV3AddTripScreen {
         let step = dto.country
         return ProfileV3AddTripScreen(
-            countryTitle: text(step?.title) ?? ProfileV3Strings.searchForCountry,
-            searchPlaceholder: text(step?.searchPlaceholder) ?? ProfileV3Strings.search,
-            countryCTA: text(step?.ctaLabel) ?? ProfileV3Strings.tripDone,
+            countryTitle: text(step?.title) ?? "",
+            searchPlaceholder: text(step?.searchPlaceholder) ?? "",
+            countryCTA: text(step?.ctaLabel) ?? "",
             countries: (step?.countries ?? []).compactMap(country),
-            duration: dto.duration.map { duration($0, ctaFallback: ProfileV3Strings.addCountry) }
-                ?? .fallback(ctaLabel: ProfileV3Strings.addCountry),
+            duration: dto.duration.map(duration) ?? .fallback(),
             submit: action(dto.submit)
         )
     }
@@ -34,8 +33,8 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
                 return .pill(flags: flags, more: more, next: pill.next?.directive, add: pill.add?.directive)
             }
         }
-        if let add = dto?.addTrips, let next = add.next?.directive {
-            return .add(label: text(add.label) ?? ProfileV3Strings.addPastTrips, next: next)
+        if let add = dto?.addTrips, let next = add.next?.directive, let label = text(add.label) {
+            return .add(label: label, next: next)
         }
         return nil
     }
@@ -53,14 +52,14 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
             imageURL: remoteURL(dto.imageURL),
             name: text(dto.name),
             monthLabel: text(dto.monthLabel),
-            edit: tripAction(dto.edit, fallback: ProfileV3Strings.editTrip),
-            delete: tripAction(dto.delete, fallback: ProfileV3Strings.deleteTrip)
+            edit: tripAction(dto.edit),
+            delete: tripAction(dto.delete)
         )
     }
 
-    private static func tripAction(_ dto: ProfileV3TripActionDTO?, fallback: String) -> ProfileV3TripAction? {
-        guard let dto, let submit = action(dto.submit) else { return nil }
-        return ProfileV3TripAction(label: text(dto.label) ?? fallback, submit: submit)
+    private static func tripAction(_ dto: ProfileV3TripActionDTO?) -> ProfileV3TripAction? {
+        guard let dto, let submit = action(dto.submit), let label = text(dto.label) else { return nil }
+        return ProfileV3TripAction(label: label, submit: submit)
     }
 
     private static func action(_ dto: ProfileV3BoardActionDTO?) -> ProfileV3BoardAction? {
@@ -68,22 +67,22 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
         return ProfileV3BoardAction(fields: fields)
     }
 
-    private static func duration(_ dto: ProfileV3TripDurationDTO, ctaFallback: String) -> ProfileV3TripDuration {
-        let fallback = ProfileV3TripDuration.fallback(ctaLabel: ctaFallback)
+    private static func duration(_ dto: ProfileV3TripDurationDTO) -> ProfileV3TripDuration {
+        let fallback = ProfileV3TripDuration.fallback()
         let years = dto.years.compactMap(\.intValue)
         let months = dto.months.compactMap { month -> ProfileV3TripMonth? in
             guard let value = month.value?.intValue, monthRange.contains(value) else { return nil }
             return ProfileV3TripMonth(value: value, label: text(month.label) ?? ProfileV3TripCalendar.shortMonthName(value))
         }
         return ProfileV3TripDuration(
-            title: text(dto.title) ?? fallback.title,
-            yearLabel: text(dto.yearLabel) ?? fallback.yearLabel,
-            monthLabel: text(dto.monthLabel) ?? fallback.monthLabel,
+            title: text(dto.title) ?? "",
+            yearLabel: text(dto.yearLabel) ?? "",
+            monthLabel: text(dto.monthLabel) ?? "",
             years: years.isEmpty ? fallback.years : years,
             months: months.isEmpty ? fallback.months : months,
             max: yearMonth(dto.max) ?? fallback.max,
             defaultValue: yearMonth(dto.defaultValue) ?? fallback.defaultValue,
-            ctaLabel: text(dto.ctaLabel) ?? ctaFallback
+            ctaLabel: text(dto.ctaLabel) ?? ""
         )
     }
 
@@ -96,9 +95,9 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
 
     private static func deleteConfirm(_ dto: ProfileV3TripDeleteConfirmDTO) -> ProfileV3TripDeleteConfirm {
         ProfileV3TripDeleteConfirm(
-            title: text(dto.title) ?? ProfileV3Strings.deletePastTripTitle,
-            confirmLabel: text(dto.confirmLabel) ?? ProfileV3Strings.proceedToDelete,
-            cancelLabel: text(dto.cancelLabel) ?? ProfileV3Strings.keepPastTrip
+            title: text(dto.title) ?? "",
+            confirmLabel: text(dto.confirmLabel) ?? "",
+            cancelLabel: text(dto.cancelLabel) ?? ""
         )
     }
 

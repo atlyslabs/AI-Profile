@@ -35,8 +35,8 @@ struct ProfileV3TravellerRelationshipTests {
          "submit":{"label":"Save","action":"edit_profile_field","field":"relationship","profile_id":"p2"}}
         """#)
         #expect(field.input == .singleSelect)
-        #expect(field.options.map(\.value) == ["son", "daughter", "father_in_law"])
-        #expect(field.options.map(\.title) == ["Son", "Daughter", "Father in law"])
+        #expect(field.options.map(\.value) == ["son", "daughter"])
+        #expect(field.options.map(\.title) == ["Son", "Daughter"])
         #expect(field.selectedValue == "daughter")
         #expect(field.submitLabel == "Save")
         #expect(field.submitProfileID == "p2")
@@ -44,11 +44,12 @@ struct ProfileV3TravellerRelationshipTests {
 
     @Test func selectionFallsBackToCurrentOnlyWhenItIsAnOption() throws {
         let known = try editField(#"""
-        {"field":"relationship","input":"single_select","options":[{"value":"son"},{"value":"daughter"}],"current":"son"}
+        {"field":"relationship","input":"single_select",
+         "options":[{"value":"son","title":"Son"},{"value":"daughter","title":"Daughter"}],"current":"son"}
         """#)
         #expect(known.selectedValue == "son")
         let unknown = try editField(#"""
-        {"field":"relationship","input":"single_select","options":[{"value":"son"}],"current":"cousin"}
+        {"field":"relationship","input":"single_select","options":[{"value":"son","title":"Son"}],"current":"cousin"}
         """#)
         #expect(unknown.selectedValue == nil)
     }
@@ -87,12 +88,6 @@ struct ProfileV3TravellerRelationshipTests {
             "value": "son",
             "profile_id": "p2",
         ])
-    }
-
-    @Test func displayTitleHumanisesTheValue() {
-        #expect(ProfileV3RelationshipEntry.title(for: "daughter") == "Daughter")
-        #expect(ProfileV3RelationshipEntry.title(for: "father_in_law") == "Father in law")
-        #expect(ProfileV3RelationshipEntry.title(for: "step-son") == "Step son")
     }
 
     private func editTravellers(_ json: String) throws -> ProfileV3EditTravellersScreen {

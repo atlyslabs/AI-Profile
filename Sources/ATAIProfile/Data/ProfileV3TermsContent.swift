@@ -3,7 +3,7 @@ import Foundation
 #if DEBUG
 enum ProfileV3TermsContent {
     static let terms = ProfileV3Terms(
-        title: ProfileV3Strings.termsTitle,
+        title: "Terms and Conditions",
         sections: [interpretation, acknowledgment, placingOrders]
     )
 

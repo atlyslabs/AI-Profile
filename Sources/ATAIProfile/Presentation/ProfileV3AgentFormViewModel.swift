@@ -470,8 +470,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
                 guard !Task.isCancelled else { return }
                 if var session = householdApply {
                     session.phase = .saved
-                    session.doneLabel = doneLabel?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty
-                        ?? ProfileV3Strings.agentPreferencesUpdated
+                    session.doneLabel = doneLabel?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
                     householdApply = session
                 }
                 self.saveState = .saved

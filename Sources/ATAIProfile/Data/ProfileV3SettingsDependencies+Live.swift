@@ -134,9 +134,13 @@ extension ProfileV3SettingsDependencies {
     }
 
     #if DEBUG
-    static func preview(passportCitizenship: ProfileV3Country? = nil, isAccountDeletionRequested: Bool = false) -> Self {
+    static func preview(
+        firstName: String? = "mohak",
+        passportCitizenship: ProfileV3Country? = nil,
+        isAccountDeletionRequested: Bool = false
+    ) -> Self {
         Self(
-            currentFirstName: { "mohak" },
+            currentFirstName: { firstName },
             currentResidence: { .india },
             currentCitizenship: { .india },
             passportCitizenship: { passportCitizenship },

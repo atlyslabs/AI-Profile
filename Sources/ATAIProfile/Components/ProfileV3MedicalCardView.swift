@@ -43,12 +43,12 @@ struct ProfileV3MedicalCardView: View {
                     .textCase(.uppercase)
                 }
             }
-            if card.rendersLockToggle {
+            if card.rendersLockToggle, let lockToggleTitle = card.lockToggleTitle {
                 Capsule()
                     .fill(ProfileV3Theme.Palette.medicalCardDivider)
                     .frame(height: ProfileV3Theme.Stroke.hairline)
                 ProfileV3ToggleRow(
-                    title: card.lockToggleTitle ?? ProfileV3Strings.openMedicalCardWhenLocked,
+                    title: lockToggleTitle,
                     isOn: $showsOnLockScreen,
                     titleColor: ProfileV3Theme.Palette.medicalCardCaption,
                     tint: ProfileV3Theme.Palette.medicalCardDivider

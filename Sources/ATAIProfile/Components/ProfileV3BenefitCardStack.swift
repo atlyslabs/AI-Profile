@@ -38,7 +38,9 @@ struct ProfileV3BenefitCardStack: View {
             }
             .padding(.bottom, ProfileV3Theme.Sizes.stackThirdPeek)
             .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
-            ProfileV3PillButton(title: viewAllLabel, action: onViewAll)
+            if !viewAllLabel.isEmpty {
+                ProfileV3PillButton(title: viewAllLabel, action: onViewAll)
+            }
         }
         .profileV3OnImpression {
             isOnScreen = true

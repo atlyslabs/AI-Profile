@@ -104,8 +104,10 @@ struct ProfileV3WorldPassCardDTO: Decodable, Equatable {
     private let rawNext: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
     private let rawStats: [ProfileV3LossyDTO<ProfileV3GlobeStatDTO>]?
     private let rawGlobe: ProfileV3LossyDTO<ProfileV3GlobeDTO>?
+    private let rawWorldpassLabel: ProfileV3LossyDTO<String>?
 
     var passNumber: String? { rawPassNumber?.value?.stringValue }
+    var worldpassLabel: String? { rawWorldpassLabel?.value }
     var next: ProfileV3DirectiveDTO? { rawNext?.value }
     var globe: ProfileV3GlobeDTO? { rawGlobe?.value }
     var kycComplete: Bool? { rawKYCComplete?.value }
@@ -126,6 +128,7 @@ struct ProfileV3WorldPassCardDTO: Decodable, Equatable {
         case rawNext = "next"
         case rawStats = "stats"
         case rawGlobe = "globe"
+        case rawWorldpassLabel = "worldpass_label"
     }
 }
 

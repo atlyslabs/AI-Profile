@@ -585,7 +585,7 @@ extension ProfileV3LoyaltyEntryForm {
             programID: programID,
             programName: programName,
             kind: kind,
-            title: ProfileV3Strings.enterDetails,
+            title: "Enter details",
             submitLabel: nil,
             fields: isCard ? [points] : [membership, points]
         )

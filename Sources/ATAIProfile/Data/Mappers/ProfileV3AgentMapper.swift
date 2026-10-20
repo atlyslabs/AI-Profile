@@ -99,7 +99,7 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             sections.append(section)
         }
         let card = medicalCard(from: dto.card, fields: fields, residuals: &residuals)
-        let agentTag = tag(title: dto.title, agentID: agentID)
+        let agentTag = text(dto.title) ?? ""
         return ProfileV3AgentForm(
             agentID: agentID,
             agentTag: agentTag,
@@ -243,12 +243,12 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
 
     static func ridePicker(_ dto: ProfileV3RidePickerScreenDTO) -> ProfileV3RidePicker {
         ProfileV3RidePicker(
-            title: text(dto.title) ?? ProfileV3Strings.selectAirportPickup,
-            subtitle: text(dto.subtitle) ?? ProfileV3Strings.airportPickupSubtitle,
-            note: text(dto.note) ?? ProfileV3Strings.airportPickupNote,
+            title: text(dto.title) ?? "",
+            subtitle: text(dto.subtitle) ?? "",
+            note: text(dto.note) ?? "",
             fieldKey: text(dto.fieldKey) ?? "car_pickup",
             options: dto.options.compactMap(rideOption(from:)),
-            footer: text(dto.footer) ?? ProfileV3Strings.carIncluded,
+            footer: text(dto.footer) ?? "",
             regions: dto.regions.compactMap { text($0)?.uppercased() }
         )
     }
@@ -596,13 +596,6 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
         )
     }
 
-    private static func tag(title: String?, agentID: String) -> String {
-        if let trimmed = text(title) { return trimmed }
-        let base = noun(for: agentID).capitalized
-        guard !base.isEmpty else { return ProfileV3Strings.agentFallbackTag }
-        return ProfileV3Strings.agentTag(base)
-    }
-
     private static func noun(for agentID: String) -> String {
         agentID.replacingOccurrences(of: "-", with: " ")
     }
@@ -612,8 +605,7 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
     }
 
     private static func pickerTitle(for field: ProfileV3AgentFieldDTO) -> String {
-        guard let label = text(field.label) else { return ProfileV3Strings.addChip }
-        return ProfileV3Strings.addOption(label)
+        text(field.label).map(ProfileV3Strings.addOption) ?? ""
     }
 
     private static func number(_ scalar: ProfileV3ScalarDTO?) -> Double? {

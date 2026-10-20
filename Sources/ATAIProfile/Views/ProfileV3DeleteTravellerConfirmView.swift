@@ -20,16 +20,20 @@ struct ProfileV3DeleteTravellerConfirmView: View {
                     ProfileV3TravellerCardLip()
                 }
                 VStack(spacing: ProfileV3Theme.Space.s12) {
-                    Text(confirm?.title ?? ProfileV3Strings.deleteTravellerTitle)
-                        .typoGraphy(.H6InterMedium18)
-                        .foregroundStyle(Color(at: .pureBlack))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.titleWidth)
-                    Text(confirm?.body.nonEmpty ?? ProfileV3Strings.deleteConfirmBody)
-                        .typoGraphy(.B2InterMedium12)
-                        .foregroundStyle(Color(at: .neutralGrey400))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.bodyWidth)
+                    if let title = confirm?.title.nonEmpty {
+                        Text(title)
+                            .typoGraphy(.H6InterMedium18)
+                            .foregroundStyle(Color(at: .pureBlack))
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.titleWidth)
+                    }
+                    if let body = confirm?.body.nonEmpty {
+                        Text(body)
+                            .typoGraphy(.B2InterMedium12)
+                            .foregroundStyle(Color(at: .neutralGrey400))
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.bodyWidth)
+                    }
                 }
                 .multilineTextAlignment(.center)
             }
@@ -42,17 +46,17 @@ struct ProfileV3DeleteTravellerConfirmView: View {
 
     private var actions: some View {
         VStack(spacing: ProfileV3Theme.Sizes.Traveller.cardSpacing) {
-            ProfileV3ContinueButton(
-                title: confirm?.proceedLabel ?? ProfileV3Strings.proceedToDelete,
-                tint: ProfileV3Theme.Palette.destructive,
-                isLoading: isDeleting,
-                action: onProceed
-            )
-            ProfileV3ContinueButton(
-                title: confirm?.cancelLabel ?? ProfileV3Strings.dontDelete,
-                isEnabled: !isDeleting,
-                action: onBack
-            )
+            if let proceedLabel = confirm?.proceedLabel.nonEmpty {
+                ProfileV3ContinueButton(
+                    title: proceedLabel,
+                    tint: ProfileV3Theme.Palette.destructive,
+                    isLoading: isDeleting,
+                    action: onProceed
+                )
+            }
+            if let cancelLabel = confirm?.cancelLabel.nonEmpty {
+                ProfileV3ContinueButton(title: cancelLabel, isEnabled: !isDeleting, action: onBack)
+            }
         }
         .profileV3CTABar(top: ProfileV3Theme.Sizes.Confirmation.buttonsTop)
     }

@@ -9,7 +9,7 @@ struct ProfileV3PermissionsView: View {
         VStack(spacing: 0) {
             ProfileV3SheetChrome(
                 icon: ATIcon.SwiftUIImage.settings,
-                title: model.permissions?.title ?? ProfileV3Strings.permissions,
+                title: model.permissions?.title ?? "",
                 onClose: onClose
             )
             if let permissions = model.permissions {

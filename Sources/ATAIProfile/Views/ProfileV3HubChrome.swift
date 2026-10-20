@@ -159,8 +159,9 @@ struct ProfileV3HubPinnedBlock: View {
             passes: viewModel.home?.worldPasses ?? [],
             selectedID: selection,
             expandedID: stage.expandedPass?.id,
-            showsHint: viewModel.showsHoldHint && viewModel.home != nil && stage.isEntryComplete,
-            playsFlipDemo: viewModel.playsFlipDemo && viewModel.home != nil && stage.isEntryComplete,
+            showsHint: viewModel.showsHoldHint && viewModel.flipDemoPassID != viewModel.selectedPassID
+                && viewModel.home != nil && stage.isEntryComplete,
+            flipDemoPassID: viewModel.home != nil && stage.isEntryComplete ? viewModel.flipDemoPassID : nil,
             kycGlowPlays: viewModel.kycGlowPlays,
             collapseProgress: collapse,
             flipAffordancePassIDs: viewModel.kycAnnouncedPassIDs,

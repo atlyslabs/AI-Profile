@@ -120,7 +120,7 @@ final class ProfileV3HubViewModel: ObservableObject {
         self.hints = hints
         placeholderName = userFirstName?.nonEmpty?.lowercased()
         showsHoldHint = hints.isHoldHintDue
-        playsFlipDemo = !hints.hasSeenFlipDemo
+        playsFlipDemo = hints.isFlipDemoDue
         if let cached = repository.cachedBoard(), let profile = cached.mainProfile {
             board = cached
             selectedPassID = profile.pass.id
@@ -143,6 +143,10 @@ final class ProfileV3HubViewModel: ObservableObject {
 
     var mainProfileID: String? {
         board?.mainProfile?.profileID
+    }
+
+    var flipDemoPassID: String? {
+        playsFlipDemo ? mainProfileID : nil
     }
 
     var allBenefits: [ProfileV3Benefit] {
@@ -443,7 +447,7 @@ final class ProfileV3HubViewModel: ObservableObject {
     func markFlipSeen() {
         guard playsFlipDemo else { return }
         playsFlipDemo = false
-        hints.hasSeenFlipDemo = true
+        hints.flipDemoShows += 1
     }
 
     // MARK: - Navigation

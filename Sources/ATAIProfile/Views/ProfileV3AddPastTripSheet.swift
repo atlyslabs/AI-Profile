@@ -132,12 +132,14 @@ struct ProfileV3AddPastTripSheet: View {
                     .multilineTextAlignment(.center)
                     .transition(.opacity)
             }
-            ProfileV3TripSheetButton(
-                title: title,
-                isEnabled: isEnabled,
-                isLoading: viewModel.isSubmitting,
-                action: action
-            )
+            if !title.isEmpty {
+                ProfileV3TripSheetButton(
+                    title: title,
+                    isEnabled: isEnabled,
+                    isLoading: viewModel.isSubmitting,
+                    action: action
+                )
+            }
         }
         .padding(.horizontal, Sizes.ctaInset)
         .padding(.bottom, Sizes.ctaBottom)
@@ -185,8 +187,8 @@ private struct ProfileV3TripSheetButton: View {
 }
 
 struct ProfileV3PastTripActionsSheet: View {
-    var editTitle = ProfileV3Strings.editTrip
-    var deleteTitle = ProfileV3Strings.deleteTrip
+    let editTitle: String
+    let deleteTitle: String
     let onEdit: () -> Void
     let onDelete: () -> Void
 
@@ -194,21 +196,27 @@ struct ProfileV3PastTripActionsSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            row(icon: ATIcon.SwiftUIImage.edit, title: editTitle, action: onEdit)
-            Line()
-                .stroke(
-                    Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.tripDivider),
-                    style: StrokeStyle(
-                        lineWidth: ProfileV3Theme.Stroke.hairline,
-                        lineCap: .round,
-                        dash: Sizes.dividerDash
+            if !editTitle.isEmpty {
+                row(icon: ATIcon.SwiftUIImage.edit, title: editTitle, action: onEdit)
+            }
+            if !editTitle.isEmpty, !deleteTitle.isEmpty {
+                Line()
+                    .stroke(
+                        Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.tripDivider),
+                        style: StrokeStyle(
+                            lineWidth: ProfileV3Theme.Stroke.hairline,
+                            lineCap: .round,
+                            dash: Sizes.dividerDash
+                        )
                     )
-                )
-                .frame(height: ProfileV3Theme.Stroke.hairline)
-                .padding(.top, Sizes.actionsDividerGap)
-                .accessibilityHidden(true)
-            row(icon: ATIcon.SwiftUIImage.delete, title: deleteTitle, action: onDelete)
-                .padding(.top, Sizes.actionsSecondGap)
+                    .frame(height: ProfileV3Theme.Stroke.hairline)
+                    .padding(.top, Sizes.actionsDividerGap)
+                    .accessibilityHidden(true)
+            }
+            if !deleteTitle.isEmpty {
+                row(icon: ATIcon.SwiftUIImage.delete, title: deleteTitle, action: onDelete)
+                    .padding(.top, editTitle.isEmpty ? 0 : Sizes.actionsSecondGap)
+            }
         }
         .padding(.horizontal, Sizes.inset)
         .padding(.top, Sizes.actionsTop)

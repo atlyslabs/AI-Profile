@@ -369,7 +369,7 @@ enum ProfileV3AgentFixtures {
                 hasHistory: true
             ),
             chips(
-                "travelling-with", "Travelling with", status: .complete,
+                "travelling-with", "Traveling with", status: .complete,
                 options: ["Solo", "Partner", "Family", "Friends", "Colleagues"], selected: ["Solo"],
                 note: "...I will size rooms, tables and transfers accordingly"
             ),

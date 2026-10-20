@@ -79,11 +79,9 @@ struct ProfileV3ConnectorDeckView: View {
                 .ignoresSafeArea(edges: .bottom)
         }
         .overlay(alignment: .bottom) {
-            if let armedEntry {
+            if let armedEntry, let title = disconnectTitle(for: armedEntry) {
                 ProfileV3ContinueButton(
-                    title: armedEntry.isApp
-                        ? ProfileV3Strings.disconnectApp
-                        : confirm?.confirmTitle ?? ProfileV3Strings.disconnectEmail,
+                    title: title,
                     icon: ATIcon.SwiftUIImage.callSplit,
                     iconSize: ProfileV3Theme.Icon.lg,
                     tint: ProfileV3Theme.Palette.destructive
@@ -94,6 +92,10 @@ struct ProfileV3ConnectorDeckView: View {
             }
         }
         .animation(ProfileV3Theme.Motion.connectorDeckDim, value: armedEntry)
+    }
+
+    private func disconnectTitle(for entry: ProfileV3ConnectorDeckEntry) -> String? {
+        entry.isApp ? ProfileV3Strings.disconnectApp : confirm?.confirmTitle.nonEmpty
     }
 
     private var header: some View {

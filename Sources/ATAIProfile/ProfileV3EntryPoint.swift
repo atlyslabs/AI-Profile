@@ -19,9 +19,11 @@ public enum ProfileV3EntryPoint {
 
     public static func presentAddTraveller(navCon: UINavigationController) {
         guard addTravellerPresenter == nil else { return }
+        let repository = environment.makeRepository()
         let presenter = ProfileV3SettingsSheetPresenter(
             navCon: navCon,
-            repository: environment.makeRepository(),
+            repository: repository,
+            board: repository,
             kyc: environment.kyc,
             account: environment.account,
             coupons: environment.coupons,

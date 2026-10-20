@@ -37,7 +37,7 @@ struct ProfileV3WorldPassCard: View {
                 )
             }
             VStack(spacing: 0) {
-                ProfileV3WorldPassHeader()
+                ProfileV3WorldPassHeader(brand: pass.brand)
                     .padding(.top, ProfileV3Theme.Space.s20)
                 Spacer()
                 footer
@@ -77,12 +77,14 @@ struct ProfileV3WorldPassCard: View {
 }
 
 struct ProfileV3WorldPassHeader: View {
+    let brand: String?
+
     var body: some View {
         HStack(spacing: ProfileV3Theme.Space.s4) {
             ProfileV3Vector.worldPassPlus.image
                 .profileV3Icon(ProfileV3Theme.Icon.sm)
                 .rotationEffect(.degrees(ProfileV3Theme.Rotation.quarter))
-            Text(ProfileV3Strings.worldPass)
+            Text(ProfileV3Strings.worldPass(brand: brand))
                 .font(Font.Inter.get(size: ProfileV3Theme.Typography.worldPassHeaderSize, weight: .regular))
                 .tracking(ProfileV3Theme.Typography.worldPassHeaderTracking)
         }

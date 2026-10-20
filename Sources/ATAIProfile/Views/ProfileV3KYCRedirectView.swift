@@ -42,7 +42,7 @@ struct ProfileV3KYCRedirectView: View {
             centreToCopy: ProfileV3Theme.Sizes.KYCRedirect.cardToCopy,
             copyToStatus: ProfileV3Theme.Sizes.KYCRedirect.copyToStatus,
             bottomSpace: ProfileV3Theme.Sizes.KYCRedirect.bottom,
-            status: status ?? ProfileV3Strings.redirectingToKYC
+            status: status ?? ""
         ) {
             subjectCard
                 .allowsHitTesting(false)

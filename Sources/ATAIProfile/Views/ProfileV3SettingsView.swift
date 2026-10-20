@@ -51,7 +51,10 @@ struct ProfileV3SettingsView: View {
                 ProfileV3SettingsPremeasure(viewModel: viewModel, permissions: viewModel.permissions)
             }
         }
-        .onAppear { viewModel.loadMenuIfNeeded() }
+        .onAppear {
+            viewModel.loadMenuIfNeeded()
+            viewModel.loadMonogramIfNeeded()
+        }
         .profileV3CredentialStore(viewModel.credentialStore)
     }
 
@@ -82,6 +85,10 @@ struct ProfileV3SettingsView: View {
             }
             ProfileV3SettingsRowList(menu: menu, account: viewModel.account, onSelect: viewModel.tap)
                 .padding(.top, Layout.rowsTop)
+            #if DEBUG
+            ProfileV3SettingsDebugSection()
+                .padding(.top, Layout.rowsTop)
+            #endif
         }
     }
 

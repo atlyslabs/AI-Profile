@@ -48,9 +48,9 @@ extension ProfileV3Theme.Sizes {
     }
 
     enum ProgrammeTile {
-        static let height: CGFloat = 253
         static let insightWidth: CGFloat = 275
-        static let pillBottom: CGFloat = 30
+        static let pillBottom = ProfileV3Theme.Space.s24
+        static let bottomRowReserve = pillBottom + ProfileV3Theme.Control.compact + ProfileV3Theme.Space.s20
         static let pillSpacing: CGFloat = 2
         static let flight: CGFloat = 36
         static let dot: CGFloat = 3
@@ -67,7 +67,6 @@ extension ProfileV3Theme.Sizes {
         static let tabSpacing: CGFloat = 28
         static let listSpacing = ProfileV3Theme.Space.s16
         static let reorderShift: CGFloat = 190
-        static let reorderStep = ProfileV3Theme.Sizes.ProgrammeTile.height + listSpacing
         static let reorderHintLeading: CGFloat = 32
         static let reorderHintTop: CGFloat = 53
         static let reorderHintTextWidth: CGFloat = 166

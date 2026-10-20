@@ -56,24 +56,16 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
             fields: dto.fields.map { field in
                 ProfileV3LoyaltyEntryForm.Field(
                     key: field.key,
-                    label: text(field.label) ?? fallbackLabel(forKey: field.key),
+                    label: text(field.label) ?? "",
                     isRequired: field.required ?? false
                 )
             }
         )
     }
 
-    private static func fallbackLabel(forKey key: String) -> String {
-        switch key {
-        case ProfileV3LoyaltyEntryForm.Field.membershipNumberKey: return ProfileV3Strings.membershipNumber
-        case ProfileV3LoyaltyEntryForm.Field.pointsKey: return ProfileV3Strings.pointsMiles
-        default: return ProfileV3Strings.fieldLabel(fromKey: key)
-        }
-    }
-
     static func insight(_ dto: ProfileV3ProgrammeInsightScreenDTO) -> ProfileV3ProgrammeInsight {
         let summary = (dto.insight ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        let action = dto.continueCTA?.label ?? ""
+        let action = text(dto.continueCTA?.label) ?? ""
         let showsSources = dto.sources?.show ?? true
         return ProfileV3ProgrammeInsight(
             summary: summary,
@@ -84,7 +76,8 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
                 sourceCount: showsSources ? (dto.sources?.count?.intValue ?? 0) : 0,
                 sources: showsSources ? dto.sources?.next?.directive : nil
             ),
-            action: dto.action?.directive
+            action: dto.action?.directive,
+            continueDirective: dto.continueCTA?.next.directive
         )
     }
 
@@ -103,7 +96,8 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
             expiryLabel: text(row.expiry),
             pointsLine: text(row.pointsLine),
             tier: text(row.tier),
-            updatedLine: text(row.updatedLine)
+            updatedLine: text(row.updatedLine),
+            artAspect: row.artAspect.flatMap { $0 > 0 ? CGFloat($0) : nil }
         )
     }
 

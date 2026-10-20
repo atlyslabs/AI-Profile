@@ -182,11 +182,13 @@ struct ProfileV3ConnectorDeckCard: View {
                     .padding(.top, Deck.emailTop)
                     .opacity(isDragging ? 0 : 1)
             }
-            Text(entry.headline)
-                .typoGraphy(.B1InterSemibold14)
-                .foregroundStyle(Color(at: .pureWhite))
-                .padding(.top, entry.isApp ? Deck.appTitleTop : Deck.titleTop)
-                .opacity(isDragging ? 0 : 1)
+            if !entry.headline.isEmpty {
+                Text(entry.headline)
+                    .typoGraphy(.B1InterSemibold14)
+                    .foregroundStyle(Color(at: .pureWhite))
+                    .padding(.top, entry.isApp ? Deck.appTitleTop : Deck.titleTop)
+                    .opacity(isDragging ? 0 : 1)
+            }
             Text(entry.blurb)
                 .typoGraphy(.B2InterMedium12)
                 .foregroundStyle(ProfileV3Theme.connectorDeckBodyText)
@@ -199,11 +201,13 @@ struct ProfileV3ConnectorDeckCard: View {
                     .padding(.top, Deck.editTop)
                     .opacity(isDragging ? 0 : 1)
             }
-            Text(entry.hint)
-                .typoGraphy(.B2InterSemibold12)
-                .foregroundStyle(Color(at: .neutralGrey500))
-                .padding(.top, Deck.hintTop)
-                .opacity(hasDropped ? 0 : 1)
+            if !entry.hint.isEmpty {
+                Text(entry.hint)
+                    .typoGraphy(.B2InterSemibold12)
+                    .foregroundStyle(Color(at: .neutralGrey500))
+                    .padding(.top, Deck.hintTop)
+                    .opacity(hasDropped ? 0 : 1)
+            }
         }
         .frame(width: Deck.cardWidth, height: Deck.cardHeight, alignment: .top)
         .background(Color(at: .pureBlack))
@@ -310,12 +314,14 @@ struct ProfileV3ConnectorDeckCard: View {
 
     private var pairedChrome: some View {
         ZStack(alignment: .top) {
-            Text(confirm?.warning ?? ProfileV3Strings.connectorDeckWarning)
-                .typoGraphy(.B1InterMedium14)
-                .foregroundStyle(ProfileV3Theme.Palette.destructive)
-                .multilineTextAlignment(.center)
-                .frame(width: Deck.warningWidth)
-                .padding(.top, Deck.warningTop)
+            if let warning = confirm?.warning.nonEmpty {
+                Text(warning)
+                    .typoGraphy(.B1InterMedium14)
+                    .foregroundStyle(ProfileV3Theme.Palette.destructive)
+                    .multilineTextAlignment(.center)
+                    .frame(width: Deck.warningWidth)
+                    .padding(.top, Deck.warningTop)
+            }
             badgeChrome {
                 ProfileV3ConnectorGlyph.atlysMark.image
                     .resizable()

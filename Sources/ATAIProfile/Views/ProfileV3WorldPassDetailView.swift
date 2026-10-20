@@ -16,7 +16,7 @@ struct ProfileV3WorldPassDetailView: View {
             streak
                 .opacity(showsChrome ? 1 : 0)
             VStack(spacing: 0) {
-                ProfileV3WorldPassHeader()
+                ProfileV3WorldPassHeader(brand: pass.brand)
                     .padding(.top, ProfileV3Theme.Space.s30)
                     .opacity(showsChrome ? 1 : 0)
                 Color.clear

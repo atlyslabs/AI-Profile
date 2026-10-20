@@ -75,8 +75,8 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
 
     var duration: ProfileV3TripDuration {
         switch mode {
-        case .add: return screen?.duration ?? .fallback(ctaLabel: ProfileV3Strings.addCountry)
-        case .edit: return editDuration ?? .fallback(ctaLabel: ProfileV3Strings.saveTrip)
+        case .add: return screen?.duration ?? .fallback()
+        case .edit: return editDuration ?? .fallback()
         }
     }
 
@@ -93,9 +93,9 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
         return countries
     }
 
-    var searchPlaceholder: String { screen?.searchPlaceholder ?? ProfileV3Strings.search }
+    var searchPlaceholder: String { screen?.searchPlaceholder ?? "" }
 
-    var countryCTA: String { screen?.countryCTA ?? ProfileV3Strings.tripDone }
+    var countryCTA: String { screen?.countryCTA ?? "" }
 
     var canContinue: Bool { selectedCountry != nil }
 
@@ -108,7 +108,7 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
     var stepCount: Int { isEditing ? 1 : Step.allCases.count }
 
     var title: String {
-        step == .country ? screen?.countryTitle ?? ProfileV3Strings.searchForCountry : duration.title
+        step == .country ? screen?.countryTitle ?? "" : duration.title
     }
 
     var submitTitle: String { duration.ctaLabel }

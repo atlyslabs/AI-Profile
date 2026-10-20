@@ -27,6 +27,7 @@ struct ProfileV3Directive: Equatable {
     var steps: [String] = []
     var trait: String?
     var page: Int?
+    var prompt: String?
 }
 
 enum ProfileV3Route: Equatable {
@@ -66,6 +67,7 @@ enum ProfileV3Route: Equatable {
     case personaTrait(trait: String, profileID: String?, page: Int)
     case pastTrips(profileID: String?)
     case addTrip(profileID: String?)
+    case aiChat(prompt: String)
     case unsupported(String)
 }
 
@@ -75,6 +77,11 @@ extension ProfileV3Directive {
         switch go {
         case "settings":
             return .settings
+        case "ai_chat":
+            guard let prompt = prompt?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty else {
+                return .unsupported(go)
+            }
+            return .aiChat(prompt: prompt)
         case "edit_field":
             return field.map(ProfileV3Route.editField) ?? .unsupported(go)
         case "connectors":

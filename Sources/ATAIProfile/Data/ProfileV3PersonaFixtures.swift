@@ -204,7 +204,7 @@ enum ProfileV3PersonaFixtures {
             iconURL: ProfileV3PlaceholderArt.agentPersonal.url,
             foundLabel: "Found \(found)/\(traits.count) traits",
             subtitle: "Build a travel personality that gets more personal with every trip.",
-            profileTitle: "Traveller profile",
+            profileTitle: "Traveler profile",
             range: ProfileV3PersonaStore.range,
             traits: traits.map { info in
                 ProfileV3TravelPersona.Trait(

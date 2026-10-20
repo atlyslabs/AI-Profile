@@ -223,6 +223,8 @@ enum ProfileV3Theme {
         static let worldPassNumberMinScale: CGFloat = 0.5
         static let carNameSize: CGFloat = 20
         static let benefitsWordmarkSize: CGFloat = 22
+        static let programmeNumberSize: CGFloat = 13
+        static let programmeNumberTracking: CGFloat = 1.04
         static let benefitsWordmarkTracking: CGFloat = -0.88
     }
 

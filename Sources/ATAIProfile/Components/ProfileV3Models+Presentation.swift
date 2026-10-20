@@ -3,33 +3,27 @@ import os
 
 extension ProfileV3Home {
     func kycStatusText(showsExpiryDate: Bool) -> String? {
-        if needsKYCReconnect { return kycStatusLabel ?? ProfileV3Strings.reconnectGmail }
+        if needsKYCReconnect { return kycStatusLabel }
         switch kycStatus {
         case .complete:
             return nil
         case .notStarted:
-            return kycStatusLabel ?? ProfileV3Strings.kycIncomplete
-        case .expired(let date):
-            if let kycLine {
-                guard showsExpiryDate, let subtitle = kycLine.subtitle else { return kycLine.title }
-                return ProfileV3Strings.kycStatusLine(kycLine.title, subtitle)
-            }
-            guard showsExpiryDate, let date = date.nonEmpty else { return ProfileV3Strings.kycExpired }
-            return ProfileV3Strings.kycExpiredOn(date)
+            return kycStatusLabel
+        case .expired:
+            guard let kycLine else { return kycStatusLabel }
+            guard showsExpiryDate, let subtitle = kycLine.subtitle else { return kycLine.title }
+            return ProfileV3Strings.kycStatusLine(kycLine.title, subtitle)
         }
     }
 }
 
 extension ProfileV3WorldPass {
-    var kycTitle: String { kycLine?.title ?? kycStatus.title }
+    var kycTitle: String { kycLine?.title ?? "" }
 
-    var kycSubtitle: String? {
-        guard let kycLine else { return kycStatus.subtitle }
-        return kycLine.subtitle
-    }
+    var kycSubtitle: String? { kycLine?.subtitle }
 
     var kycAccessibilityDescription: String {
-        [kycTitle, kycSubtitle].compactMap { $0 }.joined(separator: ", ")
+        [kycTitle, kycSubtitle].compactMap { $0?.nonEmpty }.joined(separator: ", ")
     }
 }
 
@@ -56,7 +50,7 @@ extension ProfileV3UpdateStamp {
 extension ProfileV3Agent {
     var sheetTag: String {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return ProfileV3Strings.agentFallbackTag }
+        guard !trimmed.isEmpty else { return "" }
         if trimmed.lowercased().hasSuffix(ProfileV3Strings.agentSuffix) { return trimmed }
         return ProfileV3Strings.agentTag(trimmed)
     }
@@ -119,25 +113,6 @@ extension ProfileV3Connector.Status {
         switch self {
         case .connected: return ProfileV3Strings.connectorConnected
         case .needsAttention: return ProfileV3Strings.connectorNeedsAttention
-        }
-    }
-}
-
-extension ProfileV3KYCStatus {
-    var title: String {
-        switch self {
-        case .complete: return ProfileV3Strings.kycComplete
-        case .notStarted: return ProfileV3Strings.kycIncomplete
-        case .expired: return ProfileV3Strings.kycExpired
-        }
-    }
-
-    var subtitle: String? {
-        switch self {
-        case .complete(let validTill):
-            return validTill.nonEmpty.map(ProfileV3Strings.activeTill)
-        case .expired(let date): return date.nonEmpty.map(ProfileV3Strings.expiredOn)
-        case .notStarted: return nil
         }
     }
 }

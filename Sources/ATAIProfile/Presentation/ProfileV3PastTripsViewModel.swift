@@ -49,14 +49,10 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
 
     var trips: [ProfileV3PastTrip] { screen?.trips ?? [] }
 
-    var title: String { screen?.title ?? ProfileV3Strings.pastTripsTitle }
+    var title: String { screen?.title ?? "" }
 
     var deleteConfirm: ProfileV3TripDeleteConfirm {
-        screen?.deleteConfirm ?? ProfileV3TripDeleteConfirm(
-            title: ProfileV3Strings.deletePastTripTitle,
-            confirmLabel: ProfileV3Strings.proceedToDelete,
-            cancelLabel: ProfileV3Strings.keepPastTrip
-        )
+        screen?.deleteConfirm ?? ProfileV3TripDeleteConfirm(title: "", confirmLabel: "", cancelLabel: "")
     }
 
     var actionsTrip: ProfileV3PastTrip? {

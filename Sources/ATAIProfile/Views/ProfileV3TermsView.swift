@@ -44,10 +44,12 @@ struct ProfileV3TermsView: View {
                 )
                 .padding(.top, ProfileV3Theme.Sizes.Terms.wordmarkTop)
                 .accessibilityHidden(true)
-            Text(terms?.title ?? ProfileV3Strings.termsTitle)
-                .typoGraphy(.H6InterSemibold18)
-                .foregroundStyle(Color(at: .pureBlack))
-                .padding(.top, ProfileV3Theme.Sizes.Terms.titleTop)
+            if let title = terms?.title.nonEmpty {
+                Text(title)
+                    .typoGraphy(.H6InterSemibold18)
+                    .foregroundStyle(Color(at: .pureBlack))
+                    .padding(.top, ProfileV3Theme.Sizes.Terms.titleTop)
+            }
             Rectangle()
                 .fill(Color(at: .borderLightLight200))
                 .frame(height: ProfileV3Theme.Stroke.hairline)

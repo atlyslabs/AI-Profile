@@ -7,20 +7,9 @@ enum ProfileV3Strings {
     static func maskedNumber(_ lastDigits: String) -> String { ProfileV3L10n.moAiprofileGeneralMaskedNumber(lastDigits) }
     static var settings: String { ProfileV3L10n.moAiprofileAccountHeaderSettings }
     static var permissions: String { ProfileV3L10n.moAiprofileAccountHeaderPermissions }
-    static var pastTripsTitle: String { ProfileV3L10n.moAiprofileAccountHeaderPastTrips }
     static var addPastTrips: String { ProfileV3L10n.moAiprofileProfileButtonAddPastTrips }
     static var addPastTrip: String { ProfileV3L10n.moAiprofileProfileButtonAddPastTrip }
-    static var searchForCountry: String { ProfileV3L10n.moAiprofileGeneralInputPlaceholderSearchForCountry }
-    static var selectDuration: String { ProfileV3L10n.moAiprofileProfileInputLabelSelectDuration }
-    static var tripYear: String { ProfileV3L10n.moAiprofileProfileInputLabelYear }
     static var tripMonth: String { ProfileV3L10n.moAiprofileProfileInputLabelMonth }
-    static var tripDone: String { ProfileV3L10n.moAiprofileGeneralButtonDone }
-    static var addCountry: String { ProfileV3L10n.moAiprofileProfileButtonAddCountry }
-    static var saveTrip: String { ProfileV3L10n.moAiprofileGeneralButtonSave }
-    static var editTrip: String { ProfileV3L10n.moAiprofileGeneralButtonEdit }
-    static var deleteTrip: String { ProfileV3L10n.moAiprofileGeneralButtonDelete }
-    static var deletePastTripTitle: String { ProfileV3L10n.moAiprofileProfileConfirmationDeleteDestination }
-    static var keepPastTrip: String { ProfileV3L10n.moAiprofileProfileButtonDontDelete }
     static var pastTripDuplicate: String { ProfileV3L10n.moAiprofileProfileErrorPastTripDuplicate }
     static var pastTripSaveFailed: String { ProfileV3L10n.moAiprofileProfileErrorPastTripSaveFailed }
     static var pastTripDeleteFailed: String { ProfileV3L10n.moAiprofileProfileErrorPastTripDeleteFailed }
@@ -44,11 +33,8 @@ enum ProfileV3Strings {
     static var back: String { ProfileV3L10n.moAiprofileGeneralButtonBack }
     static var close: String { ProfileV3L10n.moAiprofileGeneralButtonClose }
     static var search: String { ProfileV3L10n.moAiprofileGeneralButtonSearch }
-    static var completeKYC: String { ProfileV3L10n.moAiprofileProfileButtonCompleteKyc }
     static var ratherNotSay: String { ProfileV3L10n.moAiprofileProfileOptionRatherNotSay }
     static var saveChanges: String { ProfileV3L10n.moAiprofileProfileButtonSaveChanges }
-    static var accountsCenter: String { ProfileV3L10n.moAiprofileAccountSettingsLabelAccountsCenter }
-    static var accountsCenterSubtitle: String { ProfileV3L10n.moAiprofileAccountSettingsLabelAccountSubtitle }
     static var countryOfResidence: String { ProfileV3L10n.moAiprofileAccountSettingsLabelCountryOfResidence }
     static var citizenship: String { ProfileV3L10n.moAiprofileAccountSettingsLabelCitizenship }
     static var citizenshipFromPassport: String { ProfileV3L10n.moAiprofileAccountSettingsLabelCitizenshipFromPassport }
@@ -63,27 +49,27 @@ enum ProfileV3Strings {
     static var firstNamePlaceholder: String { ProfileV3L10n.moAiprofileAccountSettingsPlaceholderFirstName }
     static var lastNamePlaceholder: String { ProfileV3L10n.moAiprofileAccountSettingsPlaceholderLastName }
     static var removeTraveller: String { ProfileV3L10n.moAiprofileAccountSettingsButtonRemoveTraveller }
-    static var deleteTravellerTitle: String { ProfileV3L10n.moAiprofileAccountSettingsLabelDeleteConfirmation }
     static func travellerDeleted(_ name: String) -> String { ProfileV3L10n.moAiprofileAccountSuccessDeletedTraveller(name) }
     static func travellerAdded(_ name: String) -> String { ProfileV3L10n.moAiprofileAccountSuccessAddedTraveller(name) }
     static var travellerDeleteFailed: String { ProfileV3L10n.moAiprofileAccountErrorTravellerDeleteFailed }
     static var travellerAddFailed: String { ProfileV3L10n.moAiprofileAccountErrorTravellerAddFailed }
     static var passportInUse: String { ProfileV3L10n.moAiprofileTravelDocumentsErrorDuplicatePassport }
     static var selectPlaceholder: String { ProfileV3L10n.moAiprofileGeneralUiButtonSelect }
-    static var contactConcierge: String { ProfileV3L10n.moAiprofileGeneralUiButtonContactConcierge }
     static var coupons: String { ProfileV3L10n.moAiprofileLoyaltyProgramsLabelCoupons }
+    static var noCoupons: String { ProfileV3L10n.moAiprofileLoyaltyEmptyStateNoCoupons }
     static func couponUsed(_ amount: String) -> String { ProfileV3L10n.moAiprofileLoyaltyCouponUsedAmount(amount) }
     static var loyaltyProgrammes: String { ProfileV3L10n.moAiprofileLoyaltyProgramsLabelTitle }
     static var termsOfService: String { ProfileV3L10n.moAiprofileAccountSettingsLabelTermsOfService }
     static var logout: String { ProfileV3L10n.moAiprofileAccountSettingsButtonLogout }
     static var redeemed: String { ProfileV3L10n.moAiprofileLoyaltyProgramsLabelRedeemed }
     static var agentsHeadingLead: String { ProfileV3L10n.moAiprofileAgentsLabelBuildUnderstanding + " " }
-    static var agentsHeadingEmphasis: String { ProfileV3L10n.moAiprofileAgentsLabelTravelPreferences }
     static var kycRegainAccess: String { ProfileV3L10n.moAiprofileAgentsLabelRegainAccess }
     static var kycAlmostThere: String { ProfileV3L10n.moAiprofileGeneralUiLabelAlmostThere }
     static var kycStepsDone: String { " " + ProfileV3L10n.moAiprofileGeneralUiLabelStepsDone }
     static func kycStepFraction(done: Int, total: Int) -> String { ProfileV3L10n.moAiprofileGeneralLabelKycStepFraction(done, total) }
-    static var worldPass: String { ProfileV3L10n.moAiprofileLoyaltyProgramsLabelWorldpassName }
+    static func worldPass(brand: String?) -> String {
+        ProfileV3L10n.moAiprofileLoyaltyProgramsLabelWorldpassBranded(brand ?? "").trimmingCharacters(in: .whitespaces)
+    }
     static var holdToExplore: String { ProfileV3L10n.moAiprofileGeneralButtonHoldToExplore }
     static var flights: String { ProfileV3L10n.moAiprofileProfileStatLabelFlights }
     static var distance: String { ProfileV3L10n.moAiprofileProfileStatLabelDistance }
@@ -91,11 +77,9 @@ enum ProfileV3Strings {
     static var airports: String { ProfileV3L10n.moAiprofileProfileStatLabelAirports }
     static var airlines: String { ProfileV3L10n.moAiprofileProfileStatLabelAirlines }
     static var addTraveller: String { ProfileV3L10n.moAiprofileDocumentsButtonAddTraveller }
-    static var termsAndConditions: String { ProfileV3L10n.moAiprofileGeneralLabelTermsConditions }
     static var redeem: String { ProfileV3L10n.moAiprofileLoyaltyButtonRedeem }
     static var flightCashbackTerms: String { ProfileV3L10n.moAiprofileLoyaltyTextCashbackOfferLead }
     static var programmesConnected: String { ProfileV3L10n.moAiprofileLoyaltyLabelProgramsConnected }
-    static var benefitsTagline: String { ProfileV3L10n.moAiprofileLoyaltyLabelBenefitsTagline }
     static var knowMore: String { ProfileV3L10n.moAiprofileGeneralButtonKnowMore }
     static var addProgramme: String { ProfileV3L10n.moAiprofileLoyaltyButtonAddProgram }
     static var points: String { ProfileV3L10n.moAiprofileLoyaltyLabelPoints }
@@ -113,21 +97,15 @@ enum ProfileV3Strings {
     static func programmesSummary(statements: Int) -> String { ProfileV3L10n.moAiprofileLoyaltyProgramSummary(statements) }
     static var connectProgrammesLead: String { ProfileV3L10n.moAiprofileLoyaltyLabelConnectProgramsLead + " " }
     static var connectProgrammesEmphasis: String { ProfileV3L10n.moAiprofileLoyaltyLabelConnectProgramsEmphasis }
-    static var genericBenefitTerms: String { ProfileV3L10n.moAiprofileLoyaltyTextBenefitTermsHeader }
     static var found: String { ProfileV3L10n.moAiprofileGeneralLabelFound + " " }
     static var agentPreferencesUpdated: String { ProfileV3L10n.moAiprofileAgentsToastPreferencesUpdated }
     static var preferenceSlider: String { ProfileV3L10n.moAiprofileAgentsLabelPreferenceSlider }
     static var searchEmptyTitle: String { ProfileV3L10n.moAiprofileGeneralSearchEmptyTitle }
     static var searchEmptySubtitle: String { ProfileV3L10n.moAiprofileGeneralSearchEmptySubtitle }
-    static var selectAirportPickup: String { ProfileV3L10n.moAiprofileAccountSettingsButtonAirportPickup }
     static var stagingAirportPickup: String { ProfileV3L10n.moAiprofileAccountSettingsStatusStagingPickup }
-    static var airportPickupSubtitle: String { ProfileV3L10n.moAiprofileAccountSettingsTextPickupBenefits }
-    static var airportPickupNote: String { ProfileV3L10n.moAiprofileAccountSettingsNoteEligibleRegions }
     static var selectMyCar: String { ProfileV3L10n.moAiprofileAccountSettingsButtonSelectCar }
-    static var carIncluded: String { ProfileV3L10n.moAiprofileAccountSettingsTextCarMembership }
     static var rideStaged: String { ProfileV3L10n.moAiprofileAccountSettingsStatusRideStaged }
     static func carLocked(_ name: String) -> String { ProfileV3L10n.moAiprofileGeneralServiceLockedStatus(name) }
-    static var openMedicalCardWhenLocked: String { ProfileV3L10n.moAiprofileTravelDocsLabelMedicalCardLocked }
     static var dateOfBirth: String { ProfileV3L10n.moAiprofileTravelDocsInputLabelDob }
     static var bloodGroup: String { ProfileV3L10n.moAiprofileTravelDocsInputLabelBloodGroup }
     static var emergencyContact: String { ProfileV3L10n.moAiprofileTravelDocsInputLabelEmergencyContact }
@@ -151,7 +129,6 @@ enum ProfileV3Strings {
     static func dialCode(_ code: String, region: String) -> String { ProfileV3L10n.moAiprofileAccountInputCountryCode(code, region) }
     static func dialCodeDisplay(_ code: String) -> String { ProfileV3L10n.moAiprofileSettingsLabelDialCode(code) }
     static func requiredLabel(_ label: String) -> String { ProfileV3L10n.moAiprofileSettingsLabelRequiredField(label) }
-    static func fieldLabel(fromKey key: String) -> String { key.replacingOccurrences(of: "_", with: " ") }
     static var sectionComplete: String { ProfileV3L10n.moAiprofileGeneralLabelSectionComplete }
     static var sectionPending: String { ProfileV3L10n.moAiprofileGeneralLabelSectionPending }
     static var agentUnavailable: String { ProfileV3L10n.moAiprofileAgentErrorUnavailable }
@@ -167,7 +144,6 @@ enum ProfileV3Strings {
     static var saveFailed: String { ProfileV3L10n.moAiprofileGeneralErrorSaveFailed }
     static var redeemFailed: String { ProfileV3L10n.moAiprofileLoyaltyErrorRedeemFailed }
     static var countrySearchEmpty: String { ProfileV3L10n.moAiprofileGeneralEmptyStateCountrySearch }
-    static var agentFallbackTag: String { ProfileV3L10n.moAiprofileAgentDefaultLabel }
     static var agentSuffix: String { ProfileV3L10n.moAiprofileAgentSuffix }
     static func agentTag(_ name: String) -> String { ProfileV3L10n.moAiprofileAgentTagLabel(name, agentSuffix) }
     static var flipCard: String { ProfileV3L10n.moAiprofileLoyaltyButtonFlipCard }
@@ -190,7 +166,6 @@ enum ProfileV3Strings {
     static var goingThroughEmails: String { ProfileV3L10n.moAiprofileLoyaltyScanningStatusGoingThroughEmails }
     static var foundLead: String { ProfileV3L10n.moAiprofileGeneralLabelFound }
     static var pickLoyaltyProgramme: String { ProfileV3L10n.moAiprofileLoyaltyLabelPickProgram }
-    static var enterDetails: String { ProfileV3L10n.moAiprofileGeneralLabelEnterDetails }
     static var membershipNumber: String { ProfileV3L10n.moAiprofileLoyaltyInputLabelMembershipNumber }
     static var typeHere: String { ProfileV3L10n.moAiprofileGeneralInputPlaceholderTypeHere }
     static var continueTitle: String { ProfileV3L10n.moAiprofileGeneralButtonContinue }
@@ -219,17 +194,10 @@ enum ProfileV3Strings {
     static var viewAllBenefits: String { ProfileV3L10n.moAiprofileLoyaltyButtonViewBenefits }
     static func passNumberLabel(_ number: String) -> String { ProfileV3L10n.moAiprofileDocumentsLabelPassNumber(number) }
     static func viewAllBenefits(_ count: Int) -> String { ProfileV3L10n.moAiprofileLoyaltyButtonViewBenefits1(count) }
-    static func kycExpiredOn(_ date: String) -> String { ProfileV3L10n.moAiprofileDocumentsErrorKycExpired(date) }
     static func kycStatusLine(_ status: String, _ detail: String) -> String { ProfileV3L10n.moAiprofileGeneralLabelKycStatusLine(status, detail) }
     static var kycComplete: String { ProfileV3L10n.moAiprofileAccountStatusKycComplete }
     static var kycIncomplete: String { ProfileV3L10n.moAiprofileAccountStatusKycIncomplete }
-    static var reconnectGmail: String { ProfileV3L10n.moAiprofileAccountButtonReconnectGmail }
-    static var reconnect: String { ProfileV3L10n.moAiprofileAccountButtonReconnect }
-    static var kycReconnectMessage: String { ProfileV3L10n.moAiprofileAccountReconnectInstruction }
     static var gmailSyncTimedOut: String { ProfileV3L10n.moAiprofileAccountErrorGmailSyncTimeout }
-    static var kycExpired: String { ProfileV3L10n.moAiprofileAccountStatusKycExpired }
-    static func activeTill(_ date: String) -> String { ProfileV3L10n.moAiprofileDocumentsLabelActiveUntil(date) }
-    static func expiredOn(_ date: String) -> String { ProfileV3L10n.moAiprofileDocumentsLabelExpiredOn(date) }
     static func updatedOn(_ text: String) -> String { ProfileV3L10n.moAiprofileGeneralMetadataUpdatedOn(text) }
     static func distanceKilometres(_ kilometres: Int) -> String { ProfileV3L10n.moAiprofileGeneralDataDistanceKm(kilometres.formatted()) }
     static func unitValue(_ value: Int, unit: String) -> String { ProfileV3L10n.moAiprofileGeneralLabelUnitValue(value, unit) }

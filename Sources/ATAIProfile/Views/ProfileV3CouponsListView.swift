@@ -21,10 +21,12 @@ struct ProfileV3CouponsListView: View {
             onRetry: onRetry,
             onClose: onClose
         ) {
-            Text(title.nonEmpty ?? ProfileV3Strings.coupons)
-                .typoGraphy(.H5InterMedium20)
-                .foregroundStyle(Color(at: .pureBlack))
-                .padding(.top, ProfileV3Theme.Space.s14)
+            if !title.isEmpty {
+                Text(title)
+                    .typoGraphy(.H5InterMedium20)
+                    .foregroundStyle(Color(at: .pureBlack))
+                    .padding(.top, ProfileV3Theme.Space.s14)
+            }
             if !subtitle.isEmpty {
                 Text(subtitle)
                     .typoGraphy(.B2InterSemibold12)
@@ -36,6 +38,13 @@ struct ProfileV3CouponsListView: View {
                 ProfileV3UsageCard(usage: ProfileV3Usage(coupon: coupon)) { presenter.present(coupon) }
             }
         } overlay: {
+            if phase == .loaded, coupons.isEmpty, !isLoadingMore {
+                ProfileV3EmptyState(icon: ATIcon.SwiftUIImage.localOffer, title: ProfileV3Strings.noCoupons)
+                    .frame(width: ProfileV3Theme.Sizes.emptyStateTextWidth)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+            }
             ProfileV3CouponHeroOverlay(presenter: presenter, loadDetail: loadDetail)
         }
     }
@@ -60,7 +69,7 @@ struct ProfileV3CouponsListView: View {
 }
 
 #Preview("Coupons list · empty") {
-    ProfileV3CouponsListView(coupons: [], onClose: {})
+    ProfileV3CouponsListView(coupons: [], title: ProfileV3Fixtures.couponsSheet.title, onClose: {})
 }
 
 #Preview("Coupons list · loading more") {

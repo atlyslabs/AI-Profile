@@ -66,6 +66,7 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
         let presenter = ProfileV3SettingsSheetPresenter(
             navCon: navCon,
             repository: repository,
+            board: repository,
             kyc: environment.kyc,
             account: environment.account,
             coupons: environment.coupons,
@@ -152,11 +153,13 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
     }
 
     func openProgrammes(for pass: ProfileV3WorldPass, passes: [ProfileV3WorldPass]) {
+        let app = environment.app
         let events = ProfileV3ProgrammesEvents(
             requiresKYC: { [weak viewModel] in viewModel?.addProgrammeRequiresKYC(for: $0) ?? false },
             onProgrammesChanged: { [weak viewModel] in viewModel?.requestRefresh() },
             onPassChanged: { [weak viewModel] in viewModel?.selectPass(id: $0.id) },
             onUseInsight: { [weak self] in self?.afterSettings { self?.viewModel.useInsight() } },
+            onOpenChat: app.opensChat ? { app.openChat(prompt: $0) } : nil,
             onOpenBenefits: { [weak self] in self?.afterSettings { self?.viewModel.tapViewAllBenefits() } },
             onRequestKYC: { [weak self] in
                 self?.dismiss(animated: true) {

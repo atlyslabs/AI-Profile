@@ -18,7 +18,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     let travellers: ProfileV3TravellersSettingsModel
     let account: ProfileV3AccountSettingsModel
     let permissions: ProfileV3PermissionsSettingsModel
-    let monogram: String?
+    private(set) var monogram: String?
     @ObservationIgnored var sheetHeights: [ProfileV3SettingsDestination: CGFloat] = [:]
 
     @ObservationIgnored weak var router: (any ProfileV3SettingsRouter)? {
@@ -32,16 +32,21 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     @ObservationIgnored private let repository: any ProfileV3SettingsRepository
+    @ObservationIgnored private let board: (any ProfileV3BoardRepository)?
     @ObservationIgnored private var menuTask: Task<Void, Never>?
     @ObservationIgnored private var presentTask: Task<Void, Never>?
+    @ObservationIgnored private var monogramTask: Task<Void, Never>?
 
     init(
         deps: ProfileV3SettingsDependencies,
         repository: any ProfileV3SettingsRepository,
+        board: (any ProfileV3BoardRepository)? = nil,
         profileID: String? = nil
     ) {
         self.repository = repository
-        monogram = deps.currentFirstName()?.trimmingCharacters(in: .whitespaces).first.map { String($0).lowercased() }
+        self.board = board
+        monogram = Self.monogram(from: deps.currentFirstName())
+            ?? Self.monogram(from: board?.cachedBoard()?.mainProfile?.name)
         let fields = ProfileV3ProfileFieldsModel(deps: deps, repository: repository, profileID: profileID)
         self.fields = fields
         let connectors = ProfileV3ConnectorsSettingsModel(repository: repository)
@@ -69,12 +74,28 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     var title: String {
-        menu?.title.nonEmpty ?? ProfileV3Strings.settings
+        menu?.title ?? ""
     }
 
     func loadMenuIfNeeded() {
         guard menu == nil else { return }
         loadMenu()
+    }
+
+    func loadMonogramIfNeeded() {
+        guard monogram == nil, monogramTask == nil, let board else { return }
+        monogramTask = Task { [weak self] in
+            let name = try? await board.loadLatestBoard().mainProfile?.name
+            guard let self, !Task.isCancelled else { return }
+            monogramTask = nil
+            if monogram == nil {
+                monogram = Self.monogram(from: name)
+            }
+        }
+    }
+
+    static func monogram(from name: String?) -> String? {
+        name?.trimmingCharacters(in: .whitespacesAndNewlines).first.map { String($0).lowercased() }
     }
 
     func loadMenu() {
@@ -164,6 +185,8 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     func cancelReads() {
         menuTask?.cancel()
         presentTask?.cancel()
+        monogramTask?.cancel()
+        monogramTask = nil
         fields.cancelReads()
         connectors.cancelReads()
         appAccess.cancelReads()

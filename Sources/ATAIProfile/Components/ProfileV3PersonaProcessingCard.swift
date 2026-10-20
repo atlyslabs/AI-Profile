@@ -261,7 +261,7 @@ struct ProfileV3PersonaLoader: View {
 #Preview("Persona processing card") {
     ScrollView {
         ProfileV3PersonaProcessingCard(
-            title: "Traveller profile",
+            title: "Traveler profile",
             traits: ProfileV3PersonaFixtures.traits.map(\.name)
         )
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)

@@ -204,7 +204,6 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
 
     func dismissReorderHint() {
         reorderHintTask?.cancel()
-        hints.hasSeenProgrammeReorderHint = true
         withAnimation(ProfileV3Theme.Motion.reorderHint) {
             showsReorderHint = false
         }
@@ -212,10 +211,12 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
 
     private func scheduleReorderHint() {
         reorderHintTask?.cancel()
-        guard !hints.hasSeenProgrammeReorderHint, !showsReorderHint, orderedOthers.count > 1 else { return }
+        guard hints.isProgrammeReorderHintDue, !showsReorderHint, orderedOthers.count > 1 else { return }
         reorderHintTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.reorderHintDelayMilliseconds))
-            guard let self, !Task.isCancelled, !isEditing, orderedOthers.count > 1 else { return }
+            guard let self, !Task.isCancelled, !isEditing, orderedOthers.count > 1,
+                  hints.isProgrammeReorderHintDue else { return }
+            hints.programmeReorderHintShows += 1
             withAnimation(ProfileV3Theme.Motion.reorderHint) {
                 self.flippedID = nil
                 self.showsReorderHint = true

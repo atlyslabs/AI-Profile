@@ -3,7 +3,7 @@ import Foundation
 enum ProfileV3TermsMapper: ProfileV3DTOReading {
 
     static func terms(_ dto: ProfileV3TermsScreenDTO) -> ProfileV3Terms? {
-        let title = text(dto.title) ?? ProfileV3Strings.termsTitle
+        let title = text(dto.title) ?? ""
         let nodes = dto.blocks.flatMap { $0.richText?.content ?? [] }
         let sections = sections(from: nodes, documentTitle: title)
         guard !sections.isEmpty else { return nil }

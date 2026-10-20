@@ -360,7 +360,7 @@ struct ProfileV3AddProgrammeView: View {
     }
 
     private var detailsTitle: String {
-        viewModel.entryForm?.title ?? ProfileV3Strings.enterDetails
+        viewModel.entryForm?.title ?? ""
     }
 
     private var detailsContent: some View {
@@ -427,8 +427,10 @@ struct ProfileV3AddProgrammeView: View {
 
     private func field(label: String, text: Binding<String>, keyboard: UIKeyboardType) -> some View {
         VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s14) {
-            ProfileV3TagLabel(text: label)
-                .accessibilityHidden(true)
+            if !label.isEmpty {
+                ProfileV3TagLabel(text: label)
+                    .accessibilityHidden(true)
+            }
             ProfileV3UnderlinedField(
                 placeholder: ProfileV3Strings.typeHere,
                 accessibilityLabel: label,

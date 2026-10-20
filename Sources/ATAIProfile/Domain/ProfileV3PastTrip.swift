@@ -78,7 +78,6 @@ struct ProfileV3TripDuration: Equatable, Sendable {
     }
 
     static func fallback(
-        ctaLabel: String,
         now: Date = Date(),
         calendar: Calendar = Calendar(identifier: .gregorian)
     ) -> ProfileV3TripDuration {
@@ -86,16 +85,16 @@ struct ProfileV3TripDuration: Equatable, Sendable {
         let year = today.year ?? 0
         let month = today.month ?? 1
         return ProfileV3TripDuration(
-            title: ProfileV3Strings.selectDuration,
-            yearLabel: ProfileV3Strings.tripYear,
-            monthLabel: ProfileV3Strings.tripMonth,
+            title: "",
+            yearLabel: "",
+            monthLabel: "",
             years: Array((year - ProfileV3Theme.Counts.pastTripYears)...year),
             months: (1...ProfileV3Theme.Counts.monthsInYear).map {
                 ProfileV3TripMonth(value: $0, label: ProfileV3TripCalendar.shortMonthName($0))
             },
             max: ProfileV3TripYearMonth(year: year, month: month),
             defaultValue: ProfileV3TripYearMonth(year: year, month: month),
-            ctaLabel: ctaLabel
+            ctaLabel: ""
         )
     }
 }

@@ -11,9 +11,9 @@ struct ProfileV3DisconnectEmailView: View {
     @State private var hasArrived = false
     @State private var hasConsented = false
 
-    private var consentLabel: String { confirm?.consentLabel ?? ProfileV3Strings.disconnectConsent }
+    private var consentLabel: String { confirm?.consentLabel ?? "" }
 
-    private var isConsentRequired: Bool { confirm?.isConsentRequired ?? true }
+    private var isConsentRequired: Bool { !consentLabel.isEmpty && confirm?.isConsentRequired ?? true }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -42,9 +42,11 @@ struct ProfileV3DisconnectEmailView: View {
                     terms
                         .padding(.horizontal, ProfileV3Theme.Sizes.Disconnect.termsInset)
                         .padding(.top, ProfileV3Theme.Sizes.Disconnect.termsTop)
-                    consent
-                        .padding(.horizontal, ProfileV3Theme.Sizes.Disconnect.termsInset)
-                        .padding(.top, ProfileV3Theme.Sizes.Disconnect.consentTop)
+                    if !consentLabel.isEmpty {
+                        consent
+                            .padding(.horizontal, ProfileV3Theme.Sizes.Disconnect.termsInset)
+                            .padding(.top, ProfileV3Theme.Sizes.Disconnect.consentTop)
+                    }
                 }
                 .padding(.top, ProfileV3Theme.Sizes.Disconnect.topInset)
                 .padding(.bottom, ProfileV3Theme.Sizes.Disconnect.scrollBottom)
@@ -72,16 +74,20 @@ struct ProfileV3DisconnectEmailView: View {
             ProfileV3RemoteImage(url: ProfileV3ConnectorArt.gmail.url, contentMode: .fit, placeholder: .clear)
                 .frame(width: ProfileV3Theme.Sizes.Disconnect.logo, height: ProfileV3Theme.Sizes.Disconnect.logo)
                 .accessibilityHidden(true)
-            Text(confirm?.title ?? ProfileV3Strings.disconnectConfirmTitle)
-                .typoGraphy(.H6InterMedium18)
-                .foregroundStyle(ProfileV3Theme.Palette.confirmTitle)
-                .frame(width: ProfileV3Theme.Sizes.Confirmation.titleWidth)
-                .padding(.top, ProfileV3Theme.Sizes.Disconnect.titleTop)
-            Text(confirm?.warning ?? ProfileV3Strings.disconnectConfirmBody)
-                .typoGraphy(.B2InterMedium12)
-                .foregroundStyle(ProfileV3Theme.Palette.confirmBody)
-                .frame(width: ProfileV3Theme.Sizes.Confirmation.bodyWidth)
-                .padding(.top, ProfileV3Theme.Sizes.Disconnect.bodyTop)
+            if let title = confirm?.title.nonEmpty {
+                Text(title)
+                    .typoGraphy(.H6InterMedium18)
+                    .foregroundStyle(ProfileV3Theme.Palette.confirmTitle)
+                    .frame(width: ProfileV3Theme.Sizes.Confirmation.titleWidth)
+                    .padding(.top, ProfileV3Theme.Sizes.Disconnect.titleTop)
+            }
+            if let warning = confirm?.warning.nonEmpty {
+                Text(warning)
+                    .typoGraphy(.B2InterMedium12)
+                    .foregroundStyle(ProfileV3Theme.Palette.confirmBody)
+                    .frame(width: ProfileV3Theme.Sizes.Confirmation.bodyWidth)
+                    .padding(.top, ProfileV3Theme.Sizes.Disconnect.bodyTop)
+            }
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
@@ -90,7 +96,7 @@ struct ProfileV3DisconnectEmailView: View {
     private var losses: some View {
         HStack(alignment: .top, spacing: 0) {
             ForEach(
-                Array((confirm?.losses ?? ProfileV3Strings.disconnectLosses).enumerated()),
+                Array((confirm?.losses ?? []).enumerated()),
                 id: \.offset
             ) { _, item in
                 VStack(spacing: ProfileV3Theme.Sizes.Disconnect.lossSpacing) {
@@ -111,18 +117,19 @@ struct ProfileV3DisconnectEmailView: View {
 
     private var terms: some View {
         VStack(alignment: .leading, spacing: ProfileV3Theme.Sizes.Disconnect.termsSpacing) {
-            Text(confirm?.detailIntro ?? ProfileV3Strings.disconnectTermsIntro)
-            Text(ProfileV3Strings.disconnectTermsListLead)
-            VStack(alignment: .leading, spacing: 0) {
-                ForEach(
-                    Array((confirm?.detailLosses ?? ProfileV3Strings.disconnectTermsItems).enumerated()),
-                    id: \.offset
-                ) { _, item in
-                    Text(ProfileV3Strings.bulleted(item))
+            if let intro = confirm?.detailIntro.nonEmpty {
+                Text(intro)
+            }
+            if let detailLosses = confirm?.detailLosses.nonEmpty {
+                Text(ProfileV3Strings.disconnectTermsListLead)
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(Array(detailLosses.enumerated()), id: \.offset) { _, item in
+                        Text(ProfileV3Strings.bulleted(item))
+                    }
                 }
             }
             ForEach(
-                Array((confirm?.detailParagraphs ?? ProfileV3Strings.disconnectTermsClosing).enumerated()),
+                Array((confirm?.detailParagraphs ?? []).enumerated()),
                 id: \.offset
             ) { _, paragraph in
                 Text(paragraph)
@@ -171,15 +178,17 @@ struct ProfileV3DisconnectEmailView: View {
 
     private var footer: some View {
         VStack(spacing: ProfileV3Theme.Sizes.Disconnect.footerSpacing) {
-            if hasConsented || !isConsentRequired {
+            if hasConsented || !isConsentRequired, let confirmTitle = confirm?.confirmTitle.nonEmpty {
                 ProfileV3ContinueButton(
-                    title: confirm?.confirmTitle ?? ProfileV3Strings.disconnectEmail,
+                    title: confirmTitle,
                     tint: ProfileV3Theme.Palette.destructive,
                     action: onDisconnect
                 )
                 .transition(.opacity)
             }
-            ProfileV3ContinueButton(title: confirm?.cancelTitle ?? ProfileV3Strings.dontDisconnect, action: onBack)
+            if let cancelTitle = confirm?.cancelTitle.nonEmpty {
+                ProfileV3ContinueButton(title: cancelTitle, action: onBack)
+            }
         }
         .profileV3CTABar(top: ProfileV3Theme.Sizes.Disconnect.barTop)
         .opacity(isDisconnecting ? 0 : 1)

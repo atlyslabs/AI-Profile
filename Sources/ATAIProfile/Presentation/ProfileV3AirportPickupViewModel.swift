@@ -40,14 +40,14 @@ final class ProfileV3AirportPickupViewModel: ObservableObject, Identifiable {
     }
 
     var title: String {
-        autoLaunches ? ProfileV3Strings.stagingAirportPickup : picker?.title ?? ProfileV3Strings.selectAirportPickup
+        autoLaunches ? ProfileV3Strings.stagingAirportPickup : picker?.title ?? ""
     }
 
-    var subtitle: String { picker?.subtitle ?? ProfileV3Strings.airportPickupSubtitle }
+    var subtitle: String { picker?.subtitle ?? "" }
 
-    var note: String { picker?.note ?? ProfileV3Strings.airportPickupNote }
+    var note: String { picker?.note ?? "" }
 
-    var footer: String { picker?.footer ?? ProfileV3Strings.carIncluded }
+    var footer: String { picker?.footer ?? "" }
 
     var isEligible: Bool { picker?.isEligible(region: region) ?? true }
 

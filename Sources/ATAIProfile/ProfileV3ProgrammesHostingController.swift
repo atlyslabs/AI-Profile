@@ -7,6 +7,7 @@ struct ProfileV3ProgrammesEvents {
     var onProgrammesChanged: () -> Void
     var onPassChanged: (ProfileV3WorldPass) -> Void
     var onUseInsight: () -> Void
+    var onOpenChat: ((String) -> Void)?
     var onOpenBenefits: () -> Void
     var onRequestKYC: () -> Void
 }
@@ -78,13 +79,7 @@ extension ProfileV3ProgrammesHostingController: ProfileV3ProgrammesRouter {
             programme: programme,
             insight: insight,
             onClose: dismissInsight,
-            onContinue: { [weak self] in
-                self?.presentedViewController?.dismiss(animated: true) {
-                    self?.dismiss(animated: true) {
-                        self?.events.onUseInsight()
-                    }
-                }
-            },
+            onContinue: continueAction(for: insight),
             onAction: insight.action.map { directive in
                 { [weak self] in
                     self?.presentedViewController?.dismiss(animated: true) {
@@ -103,6 +98,25 @@ extension ProfileV3ProgrammesHostingController: ProfileV3ProgrammesRouter {
         host.modalPresentationStyle = .overFullScreen
         host.modalTransitionStyle = .crossDissolve
         present(host, animated: true)
+    }
+
+    private func continueAction(for insight: ProfileV3ProgrammeInsight) -> (() -> Void)? {
+        if let prompt = insight.chatPrompt, let openChat = events.onOpenChat {
+            return { [weak self] in
+                ProfileV3Analytics.cta(insight.continueDirective, origin: .programmeInsight)
+                self?.presentedViewController?.dismiss(animated: true) {
+                    openChat(prompt)
+                }
+            }
+        }
+        guard ProfileV3FeatureFlags.isProgrammeInsightContinueEnabled else { return nil }
+        return { [weak self] in
+            self?.presentedViewController?.dismiss(animated: true) {
+                self?.dismiss(animated: true) {
+                    self?.events.onUseInsight()
+                }
+            }
+        }
     }
 
     private func openSources(for programme: ProfileV3LoyaltyProgramme, programID: String, profileID: String?) {

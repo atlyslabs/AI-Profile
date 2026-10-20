@@ -24,8 +24,8 @@ struct ProfileV3BenefitDetailView: View {
         ProfileV3OfferDetailScaffold(
             imageURL: benefit.imageURL,
             title: benefit.title,
-            termsTitle: ProfileV3Strings.termsAndConditions,
-            terms: benefit.terms ?? ProfileV3Strings.genericBenefitTerms,
+            termsTitle: benefit.termsTitle ?? "",
+            terms: benefit.terms ?? "",
             isDepleted: benefit.isDepleted,
             footer: footer,
             onClose: onClose

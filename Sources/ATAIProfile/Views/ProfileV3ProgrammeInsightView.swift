@@ -5,7 +5,7 @@ struct ProfileV3ProgrammeInsightView: View {
     let programme: ProfileV3LoyaltyProgramme
     let insight: ProfileV3ProgrammeInsight
     let onClose: () -> Void
-    let onContinue: () -> Void
+    var onContinue: (() -> Void)?
     var onAction: (() -> Void)?
     var onOpenSources: (() -> Void)?
 
@@ -51,7 +51,7 @@ struct ProfileV3ProgrammeInsightView: View {
             if let title = secondaryActionTitle {
                 ProfileV3ContinueButton(title: title, action: { onAction?() })
             }
-            if ProfileV3FeatureFlags.isProgrammeInsightContinueEnabled {
+            if let onContinue = continueAction {
                 ProfileV3ContinueButton(title: insight.actionTitle, action: onContinue)
             }
         }
@@ -63,7 +63,11 @@ struct ProfileV3ProgrammeInsightView: View {
     }
 
     private var hasActions: Bool {
-        ProfileV3FeatureFlags.isProgrammeInsightContinueEnabled || secondaryActionTitle != nil
+        continueAction != nil || secondaryActionTitle != nil
+    }
+
+    private var continueAction: (() -> Void)? {
+        insight.actionTitle.isEmpty ? nil : onContinue
     }
 
     private var secondaryActionTitle: String? {

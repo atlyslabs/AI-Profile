@@ -11,36 +11,45 @@ enum ProfileV3PastTripsFixtures {
 
     static func screen(_ trips: [ProfileV3PastTrip], profileID: String) -> ProfileV3PastTripsScreen {
         ProfileV3PastTripsScreen(
-            title: ProfileV3Strings.pastTripsTitle,
+            title: "Your past trips",
             trips: trips.map { trip in
                 var trip = trip
                 trip.edit = ProfileV3TripAction(
-                    label: ProfileV3Strings.editTrip,
+                    label: "Edit",
                     submit: action("edit_past_trip", tripID: trip.id, profileID: profileID)
                 )
                 trip.delete = ProfileV3TripAction(
-                    label: ProfileV3Strings.deleteTrip,
+                    label: "Delete",
                     submit: action("delete_past_trip", tripID: trip.id, profileID: profileID)
                 )
                 return trip
             },
             addDirective: ProfileV3Directive(go: "add_trip", profileID: profileID),
-            duration: .fallback(ctaLabel: ProfileV3Strings.saveTrip),
+            duration: duration(ctaLabel: "Save"),
             deleteConfirm: ProfileV3TripDeleteConfirm(
-                title: ProfileV3Strings.deletePastTripTitle,
+                title: "Are you sure you want to delete your past destination?",
                 confirmLabel: ProfileV3Strings.proceedToDelete,
-                cancelLabel: ProfileV3Strings.keepPastTrip
+                cancelLabel: "Don't delete"
             )
         )
     }
 
+    static func duration(ctaLabel: String) -> ProfileV3TripDuration {
+        var duration = ProfileV3TripDuration.fallback()
+        duration.title = "Select duration"
+        duration.yearLabel = "Year"
+        duration.monthLabel = ProfileV3Strings.tripMonth
+        duration.ctaLabel = ctaLabel
+        return duration
+    }
+
     static func addScreen(profileID: String) -> ProfileV3AddTripScreen {
         ProfileV3AddTripScreen(
-            countryTitle: ProfileV3Strings.searchForCountry,
+            countryTitle: "Search for country",
             searchPlaceholder: ProfileV3Strings.search,
-            countryCTA: ProfileV3Strings.tripDone,
+            countryCTA: "Done",
             countries: ProfileV3Countries.all,
-            duration: .fallback(ctaLabel: ProfileV3Strings.addCountry),
+            duration: duration(ctaLabel: "Add country"),
             submit: ProfileV3BoardAction(fields: [
                 "action": .string("add_past_trip"),
                 "profile_id": .string(profileID)

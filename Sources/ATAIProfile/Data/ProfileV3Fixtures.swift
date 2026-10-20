@@ -107,7 +107,8 @@ enum ProfileV3Fixtures {
             ),
             programmes: ProfileV3ProgrammeFixtures.extraProgrammes + programmes,
             connectedProgrammeCount: 6,
-            programmesUpdate: .label("14 mins ago")
+            programmesUpdate: .label("14 mins ago"),
+            brand: "atlys"
         )
     }
 
@@ -140,7 +141,8 @@ enum ProfileV3Fixtures {
         tripsEntry: .add(
             label: ProfileV3Strings.addPastTrips,
             next: ProfileV3Directive(go: "add_trip", profileID: "co-traveller")
-        )
+        ),
+        brand: "atlys"
     )
 
     static let worldPasses = [worldPass, coTravellerPass]
@@ -413,7 +415,7 @@ enum ProfileV3Fixtures {
         ProfileV3DeleteTravellerConfirm(
             profileID: profileID,
             name: travellers.first { $0.id == profileID }?.displayName ?? "",
-            title: ProfileV3Strings.deleteTravellerTitle,
+            title: "Are you sure you want to delete traveler profile",
             body: "Their passport, visas and saved documents will be removed from your account.",
             proceedLabel: ProfileV3Strings.proceedToDelete,
             cancelLabel: ProfileV3Strings.dontDelete
@@ -438,7 +440,7 @@ enum ProfileV3Fixtures {
         cards: [
             ProfileV3ConnectorCard(
                 key: .gmail,
-                headline: ProfileV3Strings.connectorDeckTitle("Gmail"),
+                headline: "Atlys x Gmail",
                 body: ProfileV3Strings.connectorDeckGmailBlurb,
                 isConnected: true,
                 disconnectHint: ProfileV3Strings.connectorDeckHint,
@@ -446,7 +448,7 @@ enum ProfileV3Fixtures {
             ),
             ProfileV3ConnectorCard(
                 key: .itr,
-                headline: ProfileV3Strings.connectorDeckTitle("ITR"),
+                headline: "Atlys x ITR",
                 body: ProfileV3Strings.connectorDeckITRBlurb,
                 isConnected: false,
                 disconnectHint: ProfileV3Strings.connectorDeckHint,
@@ -461,16 +463,16 @@ enum ProfileV3Fixtures {
     ) -> ProfileV3DisconnectConfirm {
         ProfileV3DisconnectConfirm(
             connector: connector,
-            title: ProfileV3Strings.disconnectConfirmTitle,
-            warning: ProfileV3Strings.disconnectConfirmBody,
-            losses: ProfileV3Strings.disconnectLosses,
-            detailIntro: ProfileV3Strings.disconnectTermsIntro,
-            detailLosses: ProfileV3Strings.disconnectTermsItems,
-            detailParagraphs: ProfileV3Strings.disconnectTermsClosing,
-            consentLabel: ProfileV3Strings.disconnectConsent,
+            title: "Are you sure you want to disconnect your email?",
+            warning: "Your agents will lose access to everything this connection provides. You can reconnect a supported service at any time.",
+            losses: ["No automated slot booking", "No visa applications", "No personalised offers"],
+            detailIntro: "By proceeding with disconnection, the selected account connection will be revoked and the associated data will no longer be available to your agents for future use.",
+            detailLosses: ["Flight and travel history", "Airport, immigration and other travel logistics information"],
+            detailParagraphs: ["You may reconnect supported services at any time."],
+            consentLabel: "I have read and agree to the terms",
             isConsentRequired: isConsentRequired,
             confirmTitle: ProfileV3Strings.disconnectEmail,
-            cancelTitle: ProfileV3Strings.dontDisconnect
+            cancelTitle: "Don't disconnect"
         )
     }
 
@@ -521,8 +523,8 @@ enum ProfileV3Fixtures {
 
     static let settingsMenu = ProfileV3SettingsMenu(
         title: ProfileV3Strings.settings,
-        accountsLabel: ProfileV3Strings.accountsCenter,
-        accountsSubtitle: ProfileV3Strings.accountsCenterSubtitle,
+        accountsLabel: "Accounts center",
+        accountsSubtitle: "Residence, Citizenship, Currency & Contact Info",
         accountsRows: [
             settingsRow("residence", ProfileV3Strings.countryOfResidence, go: "edit_field", field: "residence"),
             settingsRow("citizenship", ProfileV3Strings.citizenship, go: "edit_field", field: "citizenship"),

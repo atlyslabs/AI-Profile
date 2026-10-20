@@ -37,8 +37,8 @@ final class ProfileV3PastTripsSheetPresenter {
             let trip = viewModel.actionsTrip
             presentFloating(onDismiss: onDismiss) {
                 ProfileV3PastTripActionsSheet(
-                    editTitle: trip?.edit?.label ?? ProfileV3Strings.editTrip,
-                    deleteTitle: trip?.delete?.label ?? ProfileV3Strings.deleteTrip,
+                    editTitle: trip?.edit?.label ?? "",
+                    deleteTitle: trip?.delete?.label ?? "",
                     onEdit: viewModel.tapEdit,
                     onDelete: viewModel.tapDelete
                 )

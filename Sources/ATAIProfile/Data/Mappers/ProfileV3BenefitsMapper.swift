@@ -27,6 +27,7 @@ enum ProfileV3BenefitsMapper: ProfileV3DTOReading {
                 progress: dto.progress ?? dto.percentRedeemed
             ),
             terms: text(dto.terms),
+            termsTitle: text(dto.termsTitle),
             iconState: dto.iconState
         )
     }

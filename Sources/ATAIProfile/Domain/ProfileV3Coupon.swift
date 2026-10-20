@@ -22,10 +22,10 @@ struct ProfileV3Coupon: Identifiable, Equatable {
             usedLabel: usedLabel,
             percentRedeemed: percentRedeemed,
             activeLabel: activeLabel,
-            termsTitle: ProfileV3Strings.termsAndConditions,
+            termsTitle: "",
             terms: "",
             redeemLabel: nil,
-            gotItLabel: ProfileV3Strings.gotIt
+            gotItLabel: ""
         )
     }
 }

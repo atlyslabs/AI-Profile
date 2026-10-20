@@ -40,6 +40,7 @@ struct ProfileV3LoyaltyProgramme: Identifiable, Equatable {
     var pointsLine: String? = nil
     var tier: String? = nil
     var updatedLine: String? = nil
+    var artAspect: CGFloat? = nil
 
     var displayNumber: String? { membershipNumber ?? maskedNumber.nonEmpty }
 }
@@ -49,6 +50,12 @@ struct ProfileV3ProgrammeInsight: Equatable {
     let actionTitle: String
     let detail: ProfileV3ProgrammeInsightDetail
     var action: ProfileV3Directive?
+    var continueDirective: ProfileV3Directive?
+
+    var chatPrompt: String? {
+        guard case .aiChat(let prompt) = continueDirective?.route() else { return nil }
+        return prompt
+    }
 }
 
 struct ProfileV3ProgrammeInsightDetail: Equatable {
@@ -131,6 +138,7 @@ struct ProfileV3WorldPass: Identifiable, Equatable {
     var kycCapture: ProfileV3KYCCapture?
     var kycGlowTone: ProfileV3KYCGlowTone?
     var kycLine: ProfileV3KYCLine?
+    var brand: String?
 
     var resolvedKYCGlowTone: ProfileV3KYCGlowTone { kycGlowTone ?? ProfileV3KYCGlowTone(status: kycStatus) }
 
@@ -194,6 +202,7 @@ struct ProfileV3Benefit: Identifiable, Equatable {
     var imageURL: URL?
     var status: Status
     var terms: String?
+    var termsTitle: String?
     var iconState: String?
 
     var isDepleted: Bool {

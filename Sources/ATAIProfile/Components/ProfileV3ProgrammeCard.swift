@@ -15,7 +15,7 @@ struct ProfileV3ProgrammeCard: View {
 
     private var height: CGFloat {
         guard programme.artURL != nil else { return Layout.cardHeight }
-        return width / (artAspect ?? Layout.artAspectRatio)
+        return width / (artAspect ?? programme.artAspect ?? Layout.artAspectRatio)
     }
 
     private var numberInset: CGFloat {

@@ -25,7 +25,7 @@ struct ProfileV3TwoToneTitle: View {
     VStack(spacing: ProfileV3Theme.Space.s32) {
         ProfileV3TwoToneTitle(
             lead: ProfileV3Strings.agentsHeadingLead,
-            emphasis: ProfileV3Strings.agentsHeadingEmphasis
+            emphasis: "your travel preferences"
         )
         ProfileV3TwoToneTitle(lead: "Found ", emphasis: "6/8 flight preferences", style: .H5InterMedium20)
     }

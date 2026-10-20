@@ -19,11 +19,6 @@ struct ProfileV3TravellerRow: Identifiable, Equatable {
 struct ProfileV3RelationshipEntry: Equatable {
     let label: String
     let profileID: String
-
-    static func title(for value: String) -> String {
-        let spaced = value.replacingOccurrences(of: "_", with: " ").replacingOccurrences(of: "-", with: " ")
-        return spaced.prefix(1).uppercased() + spaced.dropFirst()
-    }
 }
 
 struct ProfileV3EditTravellersScreen: Equatable {

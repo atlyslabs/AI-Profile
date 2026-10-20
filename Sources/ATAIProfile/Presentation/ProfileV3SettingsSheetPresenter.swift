@@ -29,6 +29,7 @@ final class ProfileV3SettingsSheetPresenter {
     init(
         navCon: UINavigationController,
         repository: any ProfileV3SettingsRepository,
+        board: (any ProfileV3BoardRepository)?,
         kyc: any ProfileV3KYCHost,
         account: any ProfileV3AccountHost,
         coupons: any ProfileV3CouponsHost,
@@ -54,6 +55,7 @@ final class ProfileV3SettingsSheetPresenter {
         viewModel = ProfileV3SettingsViewModel(
             deps: .live(account: account, session: session, client: client),
             repository: repository,
+            board: board,
             profileID: profileID
         )
         viewModel.router = self

@@ -59,14 +59,17 @@ struct ProfileV3TravellerRelationshipView: View {
         .scrollBounceBehavior(.basedOnSize)
     }
 
+    @ViewBuilder
     private var confirmBar: some View {
-        ProfileV3ContinueButton(
-            title: field?.submitLabel?.nonEmpty ?? ProfileV3Strings.confirmEdit,
-            isLoading: isSaving,
-            isEnabled: canSave,
-            action: onConfirm
-        )
-        .profileV3CTABar()
+        if let submitLabel = field?.submitLabel?.nonEmpty {
+            ProfileV3ContinueButton(
+                title: submitLabel,
+                isLoading: isSaving,
+                isEnabled: canSave,
+                action: onConfirm
+            )
+            .profileV3CTABar()
+        }
     }
 }
 

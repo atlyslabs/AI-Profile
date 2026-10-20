@@ -57,11 +57,13 @@ struct ProfileV3ConfirmationView: View {
                 VStack(spacing: metrics.iconSpacing) {
                     iconCircle
                     VStack(spacing: ProfileV3Theme.Sizes.Confirmation.textSpacing) {
-                        Text(title)
-                            .typoGraphy(.H6InterMedium18)
-                            .foregroundStyle(Color(at: .pureBlack))
-                            .fixedSize(horizontal: false, vertical: true)
-                            .frame(width: ProfileV3Theme.Sizes.Confirmation.titleWidth)
+                        if !title.isEmpty {
+                            Text(title)
+                                .typoGraphy(.H6InterMedium18)
+                                .foregroundStyle(Color(at: .pureBlack))
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(width: ProfileV3Theme.Sizes.Confirmation.titleWidth)
+                        }
                         if let message {
                             messageText(message)
                                 .frame(width: metrics.bodyWidth)
@@ -80,13 +82,17 @@ struct ProfileV3ConfirmationView: View {
                 .padding(.top, ProfileV3Theme.Sizes.sheetHeaderTop)
             }
             VStack(spacing: ProfileV3Theme.Sizes.Confirmation.buttonSpacing) {
-                ProfileV3ContinueButton(
-                    title: primaryTitle,
-                    tint: ProfileV3Theme.Palette.destructive,
-                    isLoading: isPrimaryLoading,
-                    action: onPrimary
-                )
-                ProfileV3ContinueButton(title: secondaryTitle, isEnabled: !isPrimaryLoading, action: onSecondary)
+                if !primaryTitle.isEmpty {
+                    ProfileV3ContinueButton(
+                        title: primaryTitle,
+                        tint: ProfileV3Theme.Palette.destructive,
+                        isLoading: isPrimaryLoading,
+                        action: onPrimary
+                    )
+                }
+                if !secondaryTitle.isEmpty {
+                    ProfileV3ContinueButton(title: secondaryTitle, isEnabled: !isPrimaryLoading, action: onSecondary)
+                }
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, metrics.buttonsTop)

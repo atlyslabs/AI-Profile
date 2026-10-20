@@ -259,10 +259,7 @@ private struct ProfileV3ConnectedEmailChip: View {
                 .foregroundStyle(ProfileV3Theme.Palette.accessChipText)
                 .lineLimit(1)
         }
-        .padding(.leading, Layout.chipPadding)
-        .padding(.trailing, Layout.chipTrailing)
         .padding(.vertical, Layout.chipPadding)
-        .background(Capsule().fill(Color(at: .pureWhite)))
         .accessibilityElement(children: .combine)
     }
 }

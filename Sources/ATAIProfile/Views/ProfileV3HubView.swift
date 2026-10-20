@@ -61,6 +61,11 @@ struct ProfileV3HubView: View {
         .onChange(of: viewModel.benefitRedemption) { _, redemption in
             benefitPresenter.dismiss(after: redemption)
         }
+        #if DEBUG
+        .onReceive(NotificationCenter.default.publisher(for: ProfileV3DebugKYCScenario.didChange)) { _ in
+            viewModel.requestRefresh()
+        }
+        #endif
         .sensoryFeedback(.success, trigger: viewModel.kycStepCompletions)
         .sensoryFeedback(trigger: viewModel.kycGlowCue) { _, cue in
             switch cue?.tone {
@@ -262,14 +267,14 @@ struct ProfileV3HubView: View {
                     )
                 } else if home.needsKYCReconnect {
                     ProfileV3NudgeCard(
-                        message: home.kycBannerTitle ?? ProfileV3Strings.kycReconnectMessage,
-                        actionTitle: home.kycActionLabel ?? ProfileV3Strings.reconnect,
+                        message: home.kycBannerTitle ?? "",
+                        actionTitle: home.kycActionLabel ?? "",
                         action: viewModel.tapCompleteKYC
                     )
                 } else {
                     ProfileV3NudgeCard(
                         message: ProfileV3Strings.kycRegainAccess,
-                        actionTitle: home.kycActionLabel ?? ProfileV3Strings.completeKYC,
+                        actionTitle: home.kycActionLabel ?? "",
                         action: viewModel.tapCompleteKYC
                     )
                 }

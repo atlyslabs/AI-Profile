@@ -42,7 +42,8 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
             kycProgress: kycProgress(dto),
             kycCapture: kycCapture(dto),
             kycGlowTone: kycGlowTone(dto),
-            kycLine: kycLine(dto)
+            kycLine: kycLine(dto),
+            brand: text(dto.worldpassCard?.worldpassLabel)
         )
     }
 
@@ -64,7 +65,7 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
             featuredBenefit: featured,
             benefits: featured.map { [$0] } ?? [],
             giftCards: [],
-            viewAllBenefitsLabel: viewAllBenefitsLabel(benefits),
+            viewAllBenefitsLabel: text(benefits?.viewAll?.label) ?? "",
             agents: grid?.tiles.compactMap(agent) ?? [],
             isGmailConnected: isGmailConnected,
             agentsUpdatedAt: agentsUpdatedAt(grid?.updatedAt),
@@ -248,10 +249,6 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
         formatter.dateFormat = "h:mma, d MMM"
         return formatter
     }()
-
-    private static func viewAllBenefitsLabel(_ section: ProfileV3BenefitsSectionDTO?) -> String {
-        text(section?.viewAll?.label) ?? ProfileV3Strings.viewAllBenefits
-    }
 
     private static func name(_ dto: ProfileV3ProfileBoardDTO, switcher: [ProfileV3TravellerSwitchDTO]) -> String {
         text(dto.name) ?? text(entry(for: dto, in: switcher)?.name) ?? ""

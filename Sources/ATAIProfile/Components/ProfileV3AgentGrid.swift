@@ -25,7 +25,7 @@ struct ProfileV3AgentsHeader: View {
     }
 
     private var emphasis: String {
-        headingEmphasis ?? ProfileV3Strings.agentsHeadingEmphasis
+        headingEmphasis ?? ""
     }
 }
 

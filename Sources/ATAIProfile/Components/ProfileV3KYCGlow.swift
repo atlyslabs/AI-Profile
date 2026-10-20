@@ -57,10 +57,12 @@ struct ProfileV3KYCGlow: View {
 
     private var caption: some View {
         VStack(spacing: ProfileV3Theme.Space.s6) {
-            Text(title)
-                .typoGraphy(.T1InterBold11)
-                .textCase(.uppercase)
-                .foregroundStyle(ProfileV3Theme.Palette.kycGlowTitle)
+            if !title.isEmpty {
+                Text(title)
+                    .typoGraphy(.T1InterBold11)
+                    .textCase(.uppercase)
+                    .foregroundStyle(ProfileV3Theme.Palette.kycGlowTitle)
+            }
             if let subtitle {
                 Text(subtitle)
                     .typoGraphy(.B2InterMedium12)

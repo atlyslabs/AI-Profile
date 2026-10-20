@@ -15,9 +15,11 @@ struct ProfileV3DirectiveDTO: Decodable, Equatable {
     let trait: String?
     private let rawSteps: ProfileV3LossyDTO<[String]>?
     private let rawPage: ProfileV3LossyDTO<ProfileV3ScalarDTO>?
+    private let rawPrompt: ProfileV3LossyDTO<String>?
 
     var steps: [String] { rawSteps?.value ?? [] }
     var page: Int? { rawPage?.value?.intValue }
+    var prompt: String? { rawPrompt?.value }
 
     enum CodingKeys: String, CodingKey {
         case go
@@ -34,6 +36,7 @@ struct ProfileV3DirectiveDTO: Decodable, Equatable {
         case trait
         case rawSteps = "steps"
         case rawPage = "page"
+        case rawPrompt = "prompt"
     }
 
     var directive: ProfileV3Directive {
@@ -51,7 +54,8 @@ struct ProfileV3DirectiveDTO: Decodable, Equatable {
             reason: reason,
             steps: steps,
             trait: trait,
-            page: page
+            page: page,
+            prompt: prompt
         )
     }
 }
@@ -105,6 +109,7 @@ struct ProfileV3ProgrammeRowDTO: Decodable, Equatable {
     let lastUpdatedAt: String?
     let tier: String?
     let updatedLine: String?
+    let artAspect: Double?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -122,6 +127,7 @@ struct ProfileV3ProgrammeRowDTO: Decodable, Equatable {
         case lastUpdatedAt = "last_updated_at"
         case tier
         case updatedLine = "updated_line"
+        case artAspect = "art_aspect"
     }
 
     init(from decoder: Decoder) throws {
@@ -144,6 +150,7 @@ struct ProfileV3ProgrammeRowDTO: Decodable, Equatable {
         lastUpdatedAt = container.lenientString(forKey: .lastUpdatedAt)
         tier = container.lenientString(forKey: .tier)
         updatedLine = container.lenientString(forKey: .updatedLine)
+        artAspect = ((try? container.decodeIfPresent(ProfileV3ScalarDTO.self, forKey: .artAspect)) ?? nil)?.doubleValue
     }
 }
 

@@ -57,7 +57,7 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
 
     var editingRelationshipTitle: String? {
         guard let value = rows.first(where: { $0.id == editingTraveller.id })?.relationship else { return nil }
-        return relationshipTitles[value] ?? ProfileV3RelationshipEntry.title(for: value)
+        return relationshipTitles[value]
     }
 
     var canSaveRelationship: Bool {
