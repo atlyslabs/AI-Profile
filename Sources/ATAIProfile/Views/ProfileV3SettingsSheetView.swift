@@ -2,7 +2,7 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3SettingsSheetView: View {
-    @ObservedObject var viewModel: ProfileV3SettingsViewModel
+    @Bindable var viewModel: ProfileV3SettingsViewModel
     let entry: ProfileV3SettingsDestination
     var maxHeight: CGFloat = ProfileV3Theme.Sizes.sheetFallbackHeight
     var bottomInset: CGFloat = 0

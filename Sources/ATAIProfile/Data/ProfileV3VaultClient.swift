@@ -1,4 +1,5 @@
 import ATAuthKit
+import ATCore
 import Foundation
 
 final class ProfileV3VaultClient: @unchecked Sendable {
@@ -12,14 +13,9 @@ final class ProfileV3VaultClient: @unchecked Sendable {
         self.session = session
     }
 
-    func credentials() async throws -> ProfileV3AppAccess {
+    func credentials() async throws -> [ProfileV3VaultCredential] {
         let rows: [CredentialDTO] = try await send(.vaultCredentials, action: "vault_credentials")
-        return ProfileV3AppAccess(
-            autoConnected: [],
-            apps: [],
-            vault: rows.map { $0.credential(includeUsername: false) },
-            usesVault: true
-        )
+        return rows.map { $0.credential(includeUsername: false) }
     }
 
     func sites() async throws -> [ProfileV3VaultSite] {
@@ -64,6 +60,10 @@ final class ProfileV3VaultClient: @unchecked Sendable {
     }
 
     func revealPassword(id: String, deviceName: String) async throws -> String {
+        if ProfileV3VaultDevice.deviceID() == nil, !(await Self.signedInRecently()) {
+            ATCoreLogger.error("[ProfileV3] vault_reveal stopped: this device isn't registered and the last sign-in is over 10 minutes old")
+            throw ProfileV3Error.server(code: "reauth", message: ProfileV3VaultStrings.confirmItsYou)
+        }
         let context = try await ProfileV3VaultDevice.authenticate()
         let deviceID = try await enrolledDeviceID(name: deviceName)
         let challenge: ChallengeDTO = try await send(

@@ -19,6 +19,7 @@ final class ProfileV3ProgrammesHostingController: UIHostingController<ProfileV3P
     private let events: ProfileV3ProgrammesEvents
     private var addProgrammePresenter: ProfileV3AddProgrammeSheetPresenter?
     private let pageTransition = ProfileV3PushTransition()
+    private let cover = ProfileV3ScreenCoverToken()
 
     init(
         pass: ProfileV3WorldPass,
@@ -46,6 +47,21 @@ final class ProfileV3ProgrammesHostingController: UIHostingController<ProfileV3P
         super.viewDidLoad()
         view.backgroundColor = UIColor(Color(at: .pureWhite))
         ProfileV3Analytics.screen(.programmes)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        cover.begin()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if isLeavingScreen { cover.end() }
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        cover.end()
     }
 }
 

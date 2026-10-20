@@ -89,6 +89,22 @@ enum ProfileV3VaultDevice {
         return context
     }
 
+    static func unlockVault() async -> ProfileV3VaultUnlock {
+        let context = LAContext()
+        context.localizedCancelTitle = ProfileV3Strings.close
+        var error: NSError?
+        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else { return .unlocked }
+        do {
+            let success = try await context.evaluatePolicy(
+                .deviceOwnerAuthentication,
+                localizedReason: ProfileV3VaultStrings.unlockVault
+            )
+            return success ? .unlocked : .cancelled
+        } catch {
+            return .cancelled
+        }
+    }
+
     private static func clearDeviceID() {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,

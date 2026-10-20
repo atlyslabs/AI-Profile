@@ -77,6 +77,7 @@ final class ProfileV3AccountSettingsModel: ObservableObject {
     }
 
     func clearDeletionError() {
+        guard deletionError != nil else { return }
         deletionError = nil
     }
 }

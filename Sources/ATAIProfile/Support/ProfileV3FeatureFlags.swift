@@ -10,9 +10,10 @@ enum ProfileV3FeatureFlags {
     static let isAgentSourcesPillEnabled = false
     static let isProgrammeScanLoaderEnabled = false
     static let isPersonaEditingEnabled = false
-    #if DEBUG
-    static let isAppAccessEnabled = true
-    #else
     static let isAppAccessEnabled = false
+    #if DEBUG
+    static let isCredentialStoreEnabled = true
+    #else
+    static let isCredentialStoreEnabled = false
     #endif
 }

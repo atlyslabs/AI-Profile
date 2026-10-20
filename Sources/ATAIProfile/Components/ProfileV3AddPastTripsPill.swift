@@ -43,8 +43,10 @@ private struct ProfileV3PulseRings: View {
     private typealias Sizes = ProfileV3Theme.Sizes.PastTripsPill
     private typealias Motion = ProfileV3Theme.Motion
 
+    @Environment(\.profileV3PausesAnimations) private var isPaused
+
     var body: some View {
-        SwiftUI.TimelineView(.animation) { context in
+        SwiftUI.TimelineView(.animation(paused: isPaused)) { context in
             let elapsed = context.date.timeIntervalSinceReferenceDate
             ZStack {
                 ForEach((0..<Sizes.ringCount).reversed(), id: \.self) { index in

@@ -20,9 +20,6 @@ struct ProfileV3AppAccessView: View {
         .sheet(item: editor) { editor in
             ProfileV3AppCredentialsView(viewModel: editor, onClose: model.closeEditor)
         }
-        .sheet(isPresented: $model.isPickingSite) {
-            ProfileV3VaultSitePicker(model: model)
-        }
         .sensoryFeedback(.success, trigger: model.disconnectCompletions)
     }
 
@@ -78,7 +75,7 @@ struct ProfileV3AppAccessContent: View {
                 .frame(maxWidth: Access.titleWidth)
                 .padding(.top, Access.subtitleTop)
             apps
-                .padding(.top, model.usesVault || model.autoConnected.isEmpty ? Access.cardsTop : Layout.contentTop)
+                .padding(.top, model.autoConnected.isEmpty ? Access.cardsTop : Layout.contentTop)
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
@@ -92,10 +89,7 @@ struct ProfileV3AppAccessContent: View {
 
     @ViewBuilder
     private var apps: some View {
-        if model.usesVault, model.phase == .loaded {
-            ProfileV3VaultList(model: model)
-                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-        } else if model.phase == .loaded {
+        if model.phase == .loaded {
             VStack(spacing: 0) {
                 if !model.autoConnected.isEmpty {
                     autoConnected

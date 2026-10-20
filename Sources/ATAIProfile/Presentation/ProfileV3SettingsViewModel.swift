@@ -1,25 +1,27 @@
-import Combine
 import Foundation
+import Observation
 
 @MainActor
-final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavigating {
-    @Published var pagePath: [ProfileV3SettingsDestination] = []
-    @Published var sheetPath: [ProfileV3SettingsDestination] = []
-    @Published private(set) var sheetEntry: ProfileV3SettingsDestination?
-    @Published var isAccountExpanded = false
-    @Published private(set) var menu: ProfileV3SettingsMenu?
-    @Published private(set) var menuPhase: ProfileV3LoadPhase = .loading
+@Observable
+final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
+    var pagePath: [ProfileV3SettingsDestination] = []
+    var sheetPath: [ProfileV3SettingsDestination] = []
+    private(set) var sheetEntry: ProfileV3SettingsDestination?
+    var isAccountExpanded = false
+    private(set) var menu: ProfileV3SettingsMenu?
+    private(set) var menuPhase: ProfileV3LoadPhase = .loading
 
     let fields: ProfileV3ProfileFieldsModel
     let connectors: ProfileV3ConnectorsSettingsModel
     let appAccess: ProfileV3AppAccessModel
+    let credentialStore: ProfileV3CredentialStoreModel
     let travellers: ProfileV3TravellersSettingsModel
     let account: ProfileV3AccountSettingsModel
     let permissions: ProfileV3PermissionsSettingsModel
     let monogram: String?
-    var sheetHeights: [ProfileV3SettingsDestination: CGFloat] = [:]
+    @ObservationIgnored var sheetHeights: [ProfileV3SettingsDestination: CGFloat] = [:]
 
-    weak var router: (any ProfileV3SettingsRouter)? {
+    @ObservationIgnored weak var router: (any ProfileV3SettingsRouter)? {
         didSet {
             fields.router = router
             connectors.router = router
@@ -29,9 +31,9 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
         }
     }
 
-    private let repository: any ProfileV3SettingsRepository
-    private var menuTask: Task<Void, Never>?
-    private var presentTask: Task<Void, Never>?
+    @ObservationIgnored private let repository: any ProfileV3SettingsRepository
+    @ObservationIgnored private var menuTask: Task<Void, Never>?
+    @ObservationIgnored private var presentTask: Task<Void, Never>?
 
     init(
         deps: ProfileV3SettingsDependencies,
@@ -45,6 +47,7 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
         let connectors = ProfileV3ConnectorsSettingsModel(repository: repository)
         self.connectors = connectors
         appAccess = ProfileV3AppAccessModel(repository: repository, connectors: connectors)
+        credentialStore = ProfileV3CredentialStoreModel(repository: repository)
         travellers = ProfileV3TravellersSettingsModel(
             deps: deps,
             repository: repository,
@@ -67,6 +70,11 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
 
     var title: String {
         menu?.title.nonEmpty ?? ProfileV3Strings.settings
+    }
+
+    func loadMenuIfNeeded() {
+        guard menu == nil else { return }
+        loadMenu()
     }
 
     func loadMenu() {
@@ -134,6 +142,11 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
         appAccess.open()
     }
 
+    func tapCredentialStore() {
+        ProfileV3Analytics.settingsRowClicked(rowKey: "credential_store")
+        credentialStore.open()
+    }
+
     func tapConcierge(_ concierge: ProfileV3Concierge) {
         ProfileV3Analytics.settingsRowClicked(rowKey: "concierge")
         router?.openExternalURL(concierge.openURL)
@@ -154,6 +167,7 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
         fields.cancelReads()
         connectors.cancelReads()
         appAccess.cancelReads()
+        credentialStore.cancelReads()
         travellers.cancelReads()
         permissions.cancelReads()
     }

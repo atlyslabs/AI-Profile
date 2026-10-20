@@ -8,6 +8,10 @@ struct ProfileV3VaultCredential: Identifiable, Equatable, Sendable {
     var attentionReason: String?
     var usernameHint: String?
     var username: String?
+
+    var displayURL: String? {
+        url.flatMap(ProfileV3VaultSite.displayAddress)
+    }
 }
 
 enum ProfileV3VaultStatus: String, Equatable, Sendable {
@@ -36,6 +40,29 @@ struct ProfileV3VaultSite: Identifiable, Equatable, Sendable {
     let slug: String
     let displayName: String
     let loginURL: String?
+
+    static func matching(_ url: URL, in sites: [ProfileV3VaultSite]) -> ProfileV3VaultSite? {
+        guard let host = bareHost(url) else { return nil }
+        return sites.first { site in
+            guard let siteHost = site.loginURL.flatMap(URL.init(string:)).flatMap(bareHost) else { return false }
+            return host == siteHost || host.hasSuffix("." + siteHost)
+        }
+    }
+
+    static func bareHost(_ url: URL) -> String? {
+        guard let host = url.host()?.lowercased().nonEmpty else { return nil }
+        return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
+    }
+
+    static func displayAddress(_ address: String) -> String? {
+        var text = address.trimmingCharacters(in: .whitespacesAndNewlines)
+        for scheme in ["https://", "http://"] where text.lowercased().hasPrefix(scheme) {
+            text = String(text.dropFirst(scheme.count))
+        }
+        if text.lowercased().hasPrefix("www.") { text = String(text.dropFirst(4)) }
+        while text.hasSuffix("/") { text = String(text.dropLast()) }
+        return text.nonEmpty
+    }
 }
 
 struct ProfileV3VaultDraft: Equatable, Sendable {
@@ -44,6 +71,21 @@ struct ProfileV3VaultDraft: Equatable, Sendable {
     var url: String?
     var username: String?
     var password: String?
+
+    static func new(_ credentials: ProfileV3AppCredentials, sites: [ProfileV3VaultSite]) -> ProfileV3VaultDraft {
+        guard let url = credentials.websiteURL else {
+            return ProfileV3VaultDraft(username: credentials.username, password: credentials.password)
+        }
+        if let site = ProfileV3VaultSite.matching(url, in: sites) {
+            return ProfileV3VaultDraft(siteSlug: site.slug, username: credentials.username, password: credentials.password)
+        }
+        return ProfileV3VaultDraft(
+            label: ProfileV3VaultSite.bareHost(url),
+            url: url.absoluteString,
+            username: credentials.username,
+            password: credentials.password
+        )
+    }
 
     func encoded() throws -> Data {
         try JSONEncoder().encode(Payload(draft: self))
@@ -94,47 +136,14 @@ struct ProfileV3VaultAlreadySaved: Error, Equatable {
 }
 
 enum ProfileV3VaultStrings {
-    static let addLogin = "Add a login"
-    static let updateLogin = "Update login"
-    static let somewhereElse = "Somewhere else"
-    static let siteName = "Name"
-    static let verifying = "Verifying…"
-    static let verified = "Verified"
-    static let needsAttention = "Needs attention"
-    static let paused = "Paused"
-    static let stillVerifying = "Still verifying"
     static let wrongPassword = "Wrong username or password. Update it."
     static let otpUnsupported = "This site asks for a one-time code. Not supported yet."
     static let siteUnreachable = "Couldn't reach the site. Try again later."
-    static let retry = "Retry"
-    static let deleteLogin = "Delete login"
-    static let deleteLoginConfirm = "Delete this login? This can't be undone."
-    static let delete = "Delete"
-    static let pause = "Pause"
-    static let resume = "Resume"
     static let showPassword = "Show password"
+    static let unlockVault = "Unlock your saved passwords"
     static let passwordHidden = "••••••••"
-    static let copyPassword = "Copy"
-    static let copied = "Copied"
-    static let confirmItsYou = "Confirm it's you, then try again."
+    static let confirmItsYou = "For your security, sign in to Atlys again, then show the password within 10 minutes."
     static let revealNeedsPhone = "Showing a password needs Face ID on an iPhone."
-    static let emptyTitle = "No saved logins"
-    static let emptyBody = "Add a website login and Atlys will check that it works."
-    static let website = "Website"
-    static let username = "Username"
-}
-
-extension ProfileV3VaultStatus {
-    func badge(attention: String?, timedOut: Bool) -> String {
-        if isChecking, timedOut { return ProfileV3VaultStrings.stillVerifying }
-        switch self {
-        case .added, .inUse: return ProfileV3VaultStrings.verifying
-        case .live: return ProfileV3VaultStrings.verified
-        case .needsAttention: return ProfileV3VaultStrings.needsAttention
-        case .paused: return ProfileV3VaultStrings.paused
-        case .revoked: return ProfileV3VaultStrings.needsAttention
-        }
-    }
 }
 
 extension ProfileV3VaultAttention {
@@ -145,6 +154,11 @@ extension ProfileV3VaultAttention {
         case .loginError: return ProfileV3VaultStrings.siteUnreachable
         }
     }
+}
+
+enum ProfileV3VaultUnlock: Equatable, Sendable {
+    case unlocked
+    case cancelled
 }
 
 enum ProfileV3VaultParsing {

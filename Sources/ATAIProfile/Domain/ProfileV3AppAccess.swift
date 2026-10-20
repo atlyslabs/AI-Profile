@@ -3,8 +3,6 @@ import Foundation
 struct ProfileV3AppAccess: Equatable, Sendable {
     var autoConnected: [ProfileV3AutoConnectedApp]
     var apps: [ProfileV3LinkedApp]
-    var vault: [ProfileV3VaultCredential] = []
-    var usesVault = false
 
     var pending: [ProfileV3LinkedApp] { apps.filter { !$0.isConnected } }
     var connected: [ProfileV3LinkedApp] { apps.filter(\.isConnected) }

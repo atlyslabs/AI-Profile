@@ -2,7 +2,7 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3SettingsView: View {
-    @ObservedObject var viewModel: ProfileV3SettingsViewModel
+    @Bindable var viewModel: ProfileV3SettingsViewModel
     @State private var headerPin = ProfileV3HeaderPin()
 
     private typealias Layout = ProfileV3Theme.Sizes.SettingsPage
@@ -48,10 +48,11 @@ struct ProfileV3SettingsView: View {
         .background(Color(at: .pureWhite))
         .background(alignment: .top) {
             if viewModel.menu != nil {
-                premeasure
+                ProfileV3SettingsPremeasure(viewModel: viewModel, permissions: viewModel.permissions)
             }
         }
-        .onAppear { viewModel.loadMenu() }
+        .onAppear { viewModel.loadMenuIfNeeded() }
+        .profileV3CredentialStore(viewModel.credentialStore)
     }
 
     private var headerOffset: Binding<CGFloat> {
@@ -74,27 +75,14 @@ struct ProfileV3SettingsView: View {
                     onInformationAccess: viewModel.tapInformationAccess,
                     onAppAccess: viewModel.tapAppAccess
                 )
+                if ProfileV3FeatureFlags.isCredentialStoreEnabled {
+                    ProfileV3CredentialStoreCard(action: viewModel.tapCredentialStore)
+                        .padding(.top, ProfileV3Theme.Sizes.CredentialStore.cardTop)
+                }
             }
             ProfileV3SettingsRowList(menu: menu, account: viewModel.account, onSelect: viewModel.tap)
                 .padding(.top, Layout.rowsTop)
         }
-    }
-
-    private var premeasure: some View {
-        ZStack(alignment: .top) {
-            ForEach(ProfileV3SettingsDestination.premeasured, id: \.self) { destination in
-                ProfileV3SettingsDestinationView(destination: destination, viewModel: viewModel)
-                    .frame(maxWidth: .infinity)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
-                        guard height > 0 else { return }
-                        viewModel.sheetHeights[destination] = height
-                    }
-            }
-        }
-        .opacity(0)
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
     }
 
     @ViewBuilder
@@ -111,6 +99,37 @@ struct ProfileV3SettingsView: View {
         default:
             EmptyView()
         }
+    }
+}
+
+private struct ProfileV3SettingsPremeasure: View {
+    let viewModel: ProfileV3SettingsViewModel
+    @ObservedObject var permissions: ProfileV3PermissionsSettingsModel
+    @State private var measured: Set<ProfileV3SettingsDestination> = []
+
+    private var pending: [ProfileV3SettingsDestination] {
+        ProfileV3SettingsDestination.premeasured.filter { destination in
+            guard !measured.contains(destination) else { return false }
+            return destination != .permissions || permissions.permissions != nil
+        }
+    }
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            ForEach(pending, id: \.self) { destination in
+                ProfileV3SettingsDestinationView(destination: destination, viewModel: viewModel)
+                    .frame(maxWidth: .infinity)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                        guard height > 0 else { return }
+                        viewModel.sheetHeights[destination] = height
+                        measured.insert(destination)
+                    }
+            }
+        }
+        .opacity(0)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
 
@@ -405,6 +424,12 @@ private struct ProfileV3CitizenshipLockLayer: View {
 #Preview("Settings · app access") {
     let viewModel = ProfileV3SettingsViewModel.preview()
     viewModel.appAccess.open()
+    return ProfileV3SettingsView(viewModel: viewModel)
+}
+
+#Preview("Settings · credential store") {
+    let viewModel = ProfileV3SettingsViewModel.preview()
+    viewModel.credentialStore.open()
     return ProfileV3SettingsView(viewModel: viewModel)
 }
 #endif

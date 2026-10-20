@@ -104,6 +104,7 @@ enum ProfileV3ConnectorGlyph: String {
     case shieldCheck = "profile_v3_shield_check"
     case addCircle = "profile_v3_add_circle"
     case editStroke = "profile_v3_edit_stroke"
+    case vaultLock = "profile_v3_vault_lock"
     case reserveGlyph = "reserve_logo_clear"
 
     var image: Image {

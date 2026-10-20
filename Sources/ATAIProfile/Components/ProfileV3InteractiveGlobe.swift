@@ -8,6 +8,7 @@ struct ProfileV3InteractiveGlobe: View {
     var onSphere: ((ProfileV3GlobeSphere) -> Void)?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.profileV3PausesAnimations) private var isPaused
     @Environment(\.profileV3Globe) private var globe
     @State private var isLandReady = false
     @State private var hasTakenHandoff = false
@@ -26,7 +27,7 @@ struct ProfileV3InteractiveGlobe: View {
 
     var body: some View {
         let landReady = isLandReady
-        SwiftUI.TimelineView(.animation(paused: !isRunning)) { timeline in
+        SwiftUI.TimelineView(.animation(paused: !isRunning || isPaused)) { timeline in
             Canvas { context, size in
                 frameClock.date = timeline.date
                 _ = landReady

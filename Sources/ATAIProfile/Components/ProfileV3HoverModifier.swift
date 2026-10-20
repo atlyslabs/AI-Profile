@@ -4,9 +4,10 @@ import SwiftUI
 private struct ProfileV3HoverModifier: ViewModifier {
     let isActive: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.profileV3PausesAnimations) private var isPaused
     @State private var activatedAt: Date?
 
-    private var isAnimating: Bool { isActive && !reduceMotion }
+    private var isAnimating: Bool { isActive && !reduceMotion && !isPaused }
 
     func body(content: Content) -> some View {
         SwiftUI.TimelineView(.animation(paused: !isAnimating)) { context in

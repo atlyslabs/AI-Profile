@@ -110,27 +110,43 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadAppAccess() async throws -> ProfileV3AppAccess {
-        try await vault.credentials()
+        #if DEBUG
+        try await Task.sleep(for: ProfileV3AppAccessStore.latency)
+        return ProfileV3AppAccessStore.shared.snapshot()
+        #else
+        throw ProfileV3Error.notImplemented(action: "app_access")
+        #endif
     }
 
     func saveAppCredentials(_ credentials: ProfileV3AppCredentials, appID: String) async throws {
-        _ = try await vault.update(id: appID, draft: ProfileV3VaultDraft(
-            username: credentials.username,
-            password: credentials.password
-        ))
+        #if DEBUG
+        try await Task.sleep(for: ProfileV3AppAccessStore.latency)
+        try ProfileV3AppAccessStore.shared.connect(appID, credentials: credentials)
+        #else
+        throw ProfileV3Error.notImplemented(action: "app_credentials")
+        #endif
     }
 
     func addAppPassword(_ credentials: ProfileV3AppCredentials) async throws {
-        _ = try await vault.save(ProfileV3VaultDraft(
-            label: credentials.websiteURL?.host(),
-            url: credentials.websiteURL?.absoluteString,
-            username: credentials.username,
-            password: credentials.password
-        ))
+        #if DEBUG
+        try await Task.sleep(for: ProfileV3AppAccessStore.latency)
+        ProfileV3AppAccessStore.shared.addPassword(credentials)
+        #else
+        throw ProfileV3Error.notImplemented(action: "app_password")
+        #endif
     }
 
     func disconnectApp(_ appID: String) async throws {
-        try await vault.delete(id: appID)
+        #if DEBUG
+        try await Task.sleep(for: ProfileV3AppAccessStore.latency)
+        ProfileV3AppAccessStore.shared.disconnect(appID)
+        #else
+        throw ProfileV3Error.notImplemented(action: "disconnect_app")
+        #endif
+    }
+
+    func loadVaultCredentials() async throws -> [ProfileV3VaultCredential] {
+        try await vault.credentials()
     }
 
     func loadVaultSites() async throws -> [ProfileV3VaultSite] {

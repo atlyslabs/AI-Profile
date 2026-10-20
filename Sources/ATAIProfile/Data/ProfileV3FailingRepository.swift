@@ -114,6 +114,10 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
+    func loadVaultCredentials() async throws -> [ProfileV3VaultCredential] {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
     func loadVaultSites() async throws -> [ProfileV3VaultSite] {
         throw ProfileV3RepositoryError.unavailable
     }

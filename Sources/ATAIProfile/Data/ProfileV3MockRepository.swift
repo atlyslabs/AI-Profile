@@ -75,6 +75,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
     private let pastTrips: ProfileV3PastTripsStore
     private let persona: ProfileV3PersonaStore
     private let appAccess: ProfileV3AppAccessStore
+    private let vault: ProfileV3VaultStore
 
     init(
         delay: Duration = .milliseconds(600),
@@ -83,13 +84,15 @@ struct ProfileV3MockRepository: ProfileV3Repository {
             tripsByProfile: ProfileV3PastTripsFixtures.byProfile
         ),
         persona: ProfileV3PersonaStore = ProfileV3PersonaStore(),
-        appAccess: ProfileV3AppAccessStore = ProfileV3AppAccessStore()
+        appAccess: ProfileV3AppAccessStore = ProfileV3AppAccessStore(),
+        vault: ProfileV3VaultStore = ProfileV3VaultStore()
     ) {
         self.delay = delay
         self.session = session
         self.pastTrips = pastTrips
         self.persona = persona
         self.appAccess = appAccess
+        self.vault = vault
     }
 
     func loadAppAccess() async throws -> ProfileV3AppAccess {
@@ -112,18 +115,28 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         appAccess.disconnect(appID)
     }
 
-    func loadVaultSites() async throws -> [ProfileV3VaultSite] { [] }
+    func loadVaultCredentials() async throws -> [ProfileV3VaultCredential] {
+        try await Task.sleep(for: delay)
+        return vault.list()
+    }
+
+    func loadVaultSites() async throws -> [ProfileV3VaultSite] {
+        ProfileV3VaultFixtures.sites
+    }
 
     func saveVault(_ draft: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult {
-        throw ProfileV3Error.notImplemented(action: "save_vault")
+        try await Task.sleep(for: delay)
+        return try vault.save(draft)
     }
 
     func updateVault(id: String, draft: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult {
-        throw ProfileV3Error.notImplemented(action: "update_vault")
+        try await Task.sleep(for: delay)
+        return try vault.update(id: id, draft: draft)
     }
 
     func vaultCredential(id: String, includeUsername: Bool) async throws -> ProfileV3VaultCredential {
-        throw ProfileV3Error.notImplemented(action: "vault_credential")
+        try await Task.sleep(for: delay)
+        return try vault.credential(id: id, includeUsername: includeUsername)
     }
 
     func retestVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult {
@@ -131,7 +144,8 @@ struct ProfileV3MockRepository: ProfileV3Repository {
     }
 
     func deleteVaultCredential(id: String) async throws {
-        throw ProfileV3Error.notImplemented(action: "vault_delete")
+        try await Task.sleep(for: delay)
+        vault.delete(id: id)
     }
 
     func pauseVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult {
@@ -142,8 +156,9 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         throw ProfileV3Error.notImplemented(action: "vault_resume")
     }
 
-    func revealVaultPassword(id: String, deviceName: String) async throws -> String {
-        throw ProfileV3Error.notImplemented(action: "vault_reveal")
+    func revealVaultPassword(id: String, deviceName _: String) async throws -> String {
+        try await Task.sleep(for: delay)
+        return try vault.password(id: id)
     }
 
     func loadTravelPersona(profileID: String?) async throws -> ProfileV3TravelPersona {

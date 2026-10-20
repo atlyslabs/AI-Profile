@@ -267,7 +267,7 @@ private struct ProfileV3SettingsTravellersScreen: View {
 
 private struct ProfileV3SettingsAccountScreen: View {
     let destination: ProfileV3SettingsDestination
-    @ObservedObject var settings: ProfileV3SettingsViewModel
+    let settings: ProfileV3SettingsViewModel
     @ObservedObject var model: ProfileV3AccountSettingsModel
 
     var body: some View {

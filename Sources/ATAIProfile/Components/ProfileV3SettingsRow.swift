@@ -5,6 +5,7 @@ struct ProfileV3SettingsRow: View {
     let icon: Image
     let title: String
     var iconSize: CGFloat = ProfileV3Theme.Sizes.settingsRowIcon
+    var iconSlot: CGFloat?
     var tint: Color = Color(at: .pureBlack)
     var showsChevron = true
     var flag: ATCountry?
@@ -15,7 +16,7 @@ struct ProfileV3SettingsRow: View {
         Button(action: action) {
             HStack(spacing: ProfileV3Theme.Space.s12) {
                 leadingIcon
-                    .frame(width: min(iconSize, ProfileV3Theme.Sizes.settingsRowIcon))
+                    .frame(width: iconSlot ?? min(iconSize, ProfileV3Theme.Sizes.settingsRowIcon))
                     .frame(height: ProfileV3Theme.Sizes.settingsRowIcon)
                 Text(title)
                     .typoGraphy(.B1InterMedium14)

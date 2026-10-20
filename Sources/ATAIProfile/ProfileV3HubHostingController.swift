@@ -301,5 +301,6 @@ struct ProfileV3HubRoot: View {
         ProfileV3HubView(viewModel: viewModel)
             .environment(\.profileV3Globe, globe)
             .environment(\.profileV3FloatingBarClearance, floatingBarClearance)
+            .environment(\.profileV3PausesAnimations, ProfileV3ScreenCover.shared.isCovered)
     }
 }

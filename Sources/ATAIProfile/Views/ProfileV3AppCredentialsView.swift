@@ -39,6 +39,43 @@ struct ProfileV3AppCredentialsView: View {
     }
 }
 
+struct ProfileV3DeleteLoginSheet: View {
+    @ObservedObject var viewModel: ProfileV3AppCredentialsViewModel
+
+    @State private var measured = Measured()
+
+    private struct Measured: Equatable {
+        var content: CGFloat = 0
+        var bottomInset: CGFloat = 0
+    }
+
+    var body: some View {
+        ProfileV3ConfirmationView.deleteLogin(
+            subject: viewModel.deleteSubject,
+            isDeleting: viewModel.isDeleting,
+            onBack: viewModel.cancelDelete,
+            onDelete: viewModel.confirmDelete
+        )
+        .fixedSize(horizontal: false, vertical: true)
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.content = $0 }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Color(at: .pureWhite).ignoresSafeArea())
+        .background {
+            Color.clear
+                .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
+        }
+        .presentationDetents(detents)
+        .presentationCornerRadius(ProfileV3Theme.Sizes.AppCredentials.cornerRadius)
+        .presentationDragIndicator(.hidden)
+        .interactiveDismissDisabled(viewModel.isDeleting)
+    }
+
+    private var detents: Set<PresentationDetent> {
+        guard measured.content > 0 else { return [.medium] }
+        return [.height(measured.content + measured.bottomInset)]
+    }
+}
+
 struct ProfileV3AppCredentialsSheet: View {
     @ObservedObject var viewModel: ProfileV3AppCredentialsViewModel
     let onClose: () -> Void
@@ -74,7 +111,10 @@ struct ProfileV3AppCredentialsSheet: View {
         .background(Color(at: .pureWhite).ignoresSafeArea())
         .sensoryFeedback(.success, trigger: viewModel.phase == .succeeded)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-            viewModel.hideStoredPassword()
+            viewModel.hidePassword()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIPasteboard.changedNotification)) { _ in
+            viewModel.pasteboardChanged()
         }
     }
 
@@ -100,28 +140,50 @@ struct ProfileV3AppCredentialsSheet: View {
         }
     }
 
+    @ViewBuilder
     private var content: some View {
-        VStack(spacing: 0) {
-            shield
-            Text(viewModel.title)
-                .typoGraphy(.H5InterMedium20)
-                .foregroundStyle(Color(at: .pureBlack))
-                .multilineTextAlignment(.center)
-                .frame(width: Layout.titleWidth)
-                .padding(.top, Layout.titleTop)
-                .accessibilityAddTraits(.isHeader)
-            fields
-                .padding(.top, Layout.fieldsTop)
-                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            Text(ProfileV3Strings.appCredentialsNote)
-                .typoGraphy(.B2InterMedium12)
-                .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.appCredentialsNote))
-                .multilineTextAlignment(.center)
-                .frame(width: Layout.noteWidth)
-                .padding(.top, viewModel.asksForWebsite ? Layout.passwordNoteTop : Layout.noteTop)
+        if viewModel.showsHeader {
+            VStack(spacing: 0) {
+                shield
+                Text(viewModel.title)
+                    .typoGraphy(.H5InterMedium20)
+                    .foregroundStyle(Color(at: .pureBlack))
+                    .multilineTextAlignment(.center)
+                    .frame(width: Layout.titleWidth)
+                    .padding(.top, Layout.titleTop)
+                    .accessibilityAddTraits(.isHeader)
+                fields
+                    .padding(.top, Layout.fieldsTop)
+                    .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                Text(ProfileV3Strings.appCredentialsNote)
+                    .typoGraphy(.B2InterMedium12)
+                    .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.appCredentialsNote))
+                    .multilineTextAlignment(.center)
+                    .frame(width: Layout.noteWidth)
+                    .padding(.top, viewModel.asksForWebsite ? Layout.passwordNoteTop : Layout.noteTop)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.top, ProfileV3Theme.Sizes.Agent.backTop + Layout.shieldTop)
+        } else {
+            VStack(spacing: 0) {
+                fields
+                ProfileV3DashedDivider()
+                    .padding(.top, Layout.deleteDividerTop)
+                ProfileV3SettingsRow(
+                    icon: ATIcon.SwiftUIImage.deleteOutline,
+                    title: ProfileV3Strings.credentialDelete,
+                    iconSize: Layout.deleteIcon,
+                    iconSlot: ProfileV3Theme.Sizes.settingsRowIcon,
+                    tint: ProfileV3Theme.Palette.destructive,
+                    action: viewModel.askToDelete
+                )
+                .disabled(viewModel.phase != .editing)
+                .padding(.top, Layout.deleteRowTop)
+            }
+            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+            .padding(.top, Layout.editFieldsTop)
+            .padding(.bottom, Layout.editBottom)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.top, ProfileV3Theme.Sizes.Agent.backTop + Layout.shieldTop)
     }
 
     private var shield: some View {
@@ -153,15 +215,13 @@ struct ProfileV3AppCredentialsSheet: View {
 
     private var fields: some View {
         VStack(spacing: Layout.fieldSpacing) {
-            if viewModel.asksForLabel {
-                ProfileV3CredentialField(label: ProfileV3VaultStrings.siteName, text: $viewModel.label)
-            }
-            if viewModel.asksForWebsite {
+            if viewModel.showsWebsite {
                 ProfileV3CredentialField(
                     label: ProfileV3Strings.appCredentialsWebsite,
                     text: $viewModel.credentials.website,
                     keyboard: .URL,
-                    contentType: .URL
+                    contentType: .URL,
+                    isEditable: viewModel.asksForWebsite
                 ) {
                     ProfileV3CredentialAccessory(
                         icon: ATIcon.SwiftUIImage.callMade,
@@ -178,22 +238,36 @@ struct ProfileV3AppCredentialsSheet: View {
                 keyboard: .emailAddress,
                 contentType: .username
             )
-            ProfileV3CredentialField(
-                label: ProfileV3Strings.appCredentialsPassword,
-                text: $viewModel.credentials.password,
-                isSecure: !viewModel.isPasswordRevealed,
-                contentType: .password
-            ) {
-                ProfileV3CredentialAccessory(
-                    icon: viewModel.isPasswordRevealed
-                        ? ATIcon.SwiftUIImage.visibility
-                        : ATIcon.SwiftUIImage.visibilityOff,
-                    accessibilityLabel: viewModel.isPasswordRevealed
-                        ? ProfileV3Strings.hidePassword
-                        : ProfileV3Strings.showPassword,
-                    isEnabled: !viewModel.isRevealingPassword,
-                    action: viewModel.togglePasswordVisibility
-                )
+            VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s8) {
+                ProfileV3CredentialField(
+                    label: ProfileV3Strings.appCredentialsPassword,
+                    text: $viewModel.credentials.password,
+                    isSecure: !viewModel.isPasswordRevealed,
+                    contentType: .password,
+                    prompt: viewModel.passwordPrompt
+                ) {
+                    if viewModel.isRevealingPassword {
+                        ProfileV3Spinner(size: Layout.accessory, lineWidth: ProfileV3Theme.Stroke.regular)
+                            .frame(minWidth: ProfileV3Theme.Control.tapTarget, minHeight: Layout.accessory)
+                    } else {
+                        ProfileV3CredentialAccessory(
+                            icon: viewModel.isPasswordRevealed
+                                ? ATIcon.SwiftUIImage.visibility
+                                : ATIcon.SwiftUIImage.visibilityOff,
+                            accessibilityLabel: viewModel.isPasswordRevealed
+                                ? ProfileV3Strings.hidePassword
+                                : ProfileV3Strings.showPassword,
+                            action: viewModel.togglePasswordVisibility
+                        )
+                    }
+                }
+                if let error = viewModel.inlineError {
+                    Text(error)
+                        .typoGraphy(.B2InterMedium12)
+                        .foregroundStyle(ProfileV3Theme.Palette.destructive)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
         }
         .disabled(viewModel.phase != .editing)
@@ -209,7 +283,9 @@ struct ProfileV3AppCredentialsSheet: View {
                     action: viewModel.submit
                 )
                 .disabled(!viewModel.canSubmit && viewModel.phase == .editing)
-                .opacity(viewModel.canSubmit || viewModel.phase != .editing ? 1 : ProfileV3Theme.Motion.disabledOpacity)
+                .opacity(saveOpacity)
+                .allowsHitTesting(viewModel.showsSaveButton)
+                .accessibilityHidden(!viewModel.showsSaveButton)
             } else {
                 switch viewModel.phase {
                 case .editing:
@@ -233,9 +309,15 @@ struct ProfileV3AppCredentialsSheet: View {
             }
         }
         .animation(ProfileV3Theme.Motion.saveState, value: viewModel.phase)
+        .animation(ProfileV3Theme.Motion.saveState, value: viewModel.showsSaveButton)
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
         .padding(.top, Layout.barTop)
         .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
+    }
+
+    private var saveOpacity: Double {
+        guard viewModel.showsSaveButton else { return 0 }
+        return viewModel.canSubmit || viewModel.phase != .editing ? 1 : ProfileV3Theme.Motion.disabledOpacity
     }
 }
 
@@ -266,5 +348,19 @@ private struct ProfileV3AppCredentialsPreview: View {
 
 #Preview("Add new password") {
     ProfileV3AppCredentialsPreview(mode: .newPassword)
+}
+
+#Preview("Add new password · vault") {
+    ProfileV3AppCredentialsPreview(mode: .vaultNew(site: ProfileV3VaultFixtures.sites.first))
+}
+
+#Preview("Saved login") {
+    ProfileV3AppCredentialsPreview(mode: .vaultEdit(ProfileV3VaultCredential(
+        id: "fd2c2c21-abdf-4f43-ba4a-3a1b9a374af1",
+        displayName: "Singapore Airlines KrisFlyer",
+        url: "https://www.singaporeair.com/en_UK/ppsclub-krisflyer/",
+        status: .live,
+        username: "someone@gmail.com"
+    )))
 }
 #endif

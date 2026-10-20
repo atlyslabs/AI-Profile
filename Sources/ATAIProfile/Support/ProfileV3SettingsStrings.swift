@@ -24,6 +24,13 @@ extension ProfileV3Strings {
     static var appCredentialsAdd: String { ProfileV3L10n.moAiprofileGeneralButtonAdd1 }
     static var appPasswordAdded: String { ProfileV3L10n.moAiprofileAgentsToastPasswordAdded }
     static var appCredentialsUpdated: String { ProfileV3L10n.moAiprofileAgentsToastCredentialsUpdated }
+    static var credentialStore: String { ProfileV3L10n.moAiprofileAgentsLabelCredentialStore }
+    static var credentialStoreBlurb: String { ProfileV3L10n.moAiprofileAgentsDescriptionCredentialStore }
+    static var credentialStoreSubtitle: String { ProfileV3L10n.moAiprofileAgentsDescriptionCredentialStoreSheet }
+    static var credentialStoreAdd: String { ProfileV3L10n.moAiprofileAgentsButtonAddStoredCredentials }
+    static var credentialOtherWebsite: String { ProfileV3L10n.moAiprofileAgentsButtonOtherWebsite }
+    static var credentialDelete: String { ProfileV3L10n.moAiprofileAgentsButtonDeleteCredentials }
+    static var credentialDeleteConfirm: String { ProfileV3L10n.moAiprofileAgentsConfirmationDeleteCredentials }
     static var personaUpdated: String { ProfileV3L10n.moAiprofileAgentsToastPersonaUpdated }
     static var disconnectApp: String { ProfileV3L10n.moAiprofileAgentsButtonDisconnectApp }
     static var editConnector: String { ProfileV3L10n.moAiprofileGeneralButtonEdit }

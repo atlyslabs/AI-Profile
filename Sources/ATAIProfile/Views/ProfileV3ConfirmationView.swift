@@ -28,15 +28,33 @@ struct ProfileV3ConfirmationView: View {
     let primaryTitle: String
     let secondaryTitle: String
     var isPrimaryLoading = false
+    var metrics = Metrics.standard
     let onBack: () -> Void
     let onPrimary: () -> Void
     let onSecondary: () -> Void
+
+    struct Metrics {
+        var top = ProfileV3Theme.Sizes.Confirmation.top
+        var iconSpacing = ProfileV3Theme.Sizes.Confirmation.iconSpacing
+        var bodyWidth = ProfileV3Theme.Sizes.Confirmation.bodyWidth
+        var buttonsTop = ProfileV3Theme.Sizes.Confirmation.buttonsTop
+        var showsSubject = false
+
+        static let standard = Metrics()
+        static let subject = Metrics(
+            top: ProfileV3Theme.Sizes.Confirmation.subjectTop,
+            iconSpacing: ProfileV3Theme.Sizes.Confirmation.subjectIconSpacing,
+            bodyWidth: ProfileV3Theme.Sizes.Confirmation.subjectWidth,
+            buttonsTop: ProfileV3Theme.Sizes.Confirmation.subjectButtonsTop,
+            showsSubject: true
+        )
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             ProfileV3SheetGrabber()
             ZStack(alignment: .top) {
-                VStack(spacing: ProfileV3Theme.Sizes.Confirmation.iconSpacing) {
+                VStack(spacing: metrics.iconSpacing) {
                     iconCircle
                     VStack(spacing: ProfileV3Theme.Sizes.Confirmation.textSpacing) {
                         Text(title)
@@ -45,17 +63,14 @@ struct ProfileV3ConfirmationView: View {
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(width: ProfileV3Theme.Sizes.Confirmation.titleWidth)
                         if let message {
-                            Text(message)
-                                .typoGraphy(.B2InterMedium12)
-                                .foregroundStyle(Color(at: .neutralGrey400))
-                                .fixedSize(horizontal: false, vertical: true)
-                                .frame(width: ProfileV3Theme.Sizes.Confirmation.bodyWidth)
+                            messageText(message)
+                                .frame(width: metrics.bodyWidth)
                         }
                     }
                     .multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.top, ProfileV3Theme.Sizes.Confirmation.top)
+                .padding(.top, metrics.top)
                 HStack {
                     ProfileV3CircleIconButton.back(action: onBack)
                         .disabled(isPrimaryLoading)
@@ -74,10 +89,26 @@ struct ProfileV3ConfirmationView: View {
                 ProfileV3ContinueButton(title: secondaryTitle, isEnabled: !isPrimaryLoading, action: onSecondary)
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.Confirmation.buttonsTop)
+            .padding(.top, metrics.buttonsTop)
             .padding(.bottom, ProfileV3Theme.Sizes.ctaBarBottom)
         }
         .background(Color(at: .pureWhite))
+    }
+
+    @ViewBuilder
+    private func messageText(_ message: String) -> some View {
+        if metrics.showsSubject {
+            Text(message)
+                .typoGraphy(.B1InterMedium14)
+                .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.credentialDeleteSubject))
+                .lineLimit(1)
+                .truncationMode(.tail)
+        } else {
+            Text(message)
+                .typoGraphy(.B2InterMedium12)
+                .foregroundStyle(Color(at: .neutralGrey400))
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     private var iconCircle: some View {
@@ -131,6 +162,27 @@ extension ProfileV3ConfirmationView {
             onSecondary: onBack
         )
     }
+
+    static func deleteLogin(
+        subject: String?,
+        isDeleting: Bool,
+        onBack: @escaping () -> Void,
+        onDelete: @escaping () -> Void
+    ) -> ProfileV3ConfirmationView {
+        ProfileV3ConfirmationView(
+            icon: ATIcon.SwiftUIImage.delete,
+            style: .destructive,
+            title: ProfileV3Strings.credentialDeleteConfirm,
+            message: subject,
+            primaryTitle: ProfileV3Strings.proceedToDelete,
+            secondaryTitle: ProfileV3Strings.dontDelete,
+            isPrimaryLoading: isDeleting,
+            metrics: .subject,
+            onBack: onBack,
+            onPrimary: onDelete,
+            onSecondary: onBack
+        )
+    }
 }
 
 #if DEBUG
@@ -144,5 +196,14 @@ extension ProfileV3ConfirmationView {
 
 #Preview("Delete account") {
     ProfileV3ConfirmationView.deleteAccount(onBack: {}, onProceed: {})
+}
+
+#Preview("Delete login") {
+    ProfileV3ConfirmationView.deleteLogin(
+        subject: "hdfcbank.in/ways-to-bank/digital-banking",
+        isDeleting: false,
+        onBack: {},
+        onDelete: {}
+    )
 }
 #endif

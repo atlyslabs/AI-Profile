@@ -1,99 +1,307 @@
 import ATUIKit
 import SwiftUI
 
-struct ProfileV3VaultList: View {
-    @ObservedObject var model: ProfileV3AppAccessModel
+struct ProfileV3CredentialStoreCard: View {
+    let action: () -> Void
 
-    private typealias Access = ProfileV3Theme.Sizes.InformationAccess
+    private typealias Layout = ProfileV3Theme.Sizes.CredentialStore
+
+    private var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: Layout.cardRadius, style: .continuous)
+    }
 
     var body: some View {
-        if model.vaultEntries.isEmpty {
-            VStack(spacing: ProfileV3Theme.Space.s8) {
-                Text(ProfileV3VaultStrings.emptyTitle)
-                    .typoGraphy(.H7InterMedium16)
-                    .foregroundStyle(Color(at: .pureBlack))
-                Text(ProfileV3VaultStrings.emptyBody)
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: Layout.cardBlurbTop) {
+                Text(ProfileV3Strings.credentialStore)
+                    .typoGraphy(.B1InterMedium14)
+                    .foregroundStyle(Color(at: .pureWhite))
+                Text(ProfileV3Strings.credentialStoreBlurb)
                     .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.accessSubtitle))
+                    .foregroundStyle(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.credentialCardBlurb))
+                    .frame(width: Layout.cardBlurbWidth, alignment: .leading)
             }
-            .frame(maxWidth: .infinity)
-        } else {
-            VStack(spacing: Access.cardSpacing) {
-                ForEach(model.vaultEntries) { entry in
-                    Button { model.open(entry) } label: {
-                        ProfileV3VaultWebsiteRow(title: entry.displayName) {
-                            Text(model.badge(for: entry))
-                                .typoGraphy(.H7InterSemibold16)
-                                .foregroundStyle(ProfileV3Theme.Palette.accessAction)
-                                .lineLimit(1)
-                        }
+            .multilineTextAlignment(.leading)
+            .padding(.leading, Layout.cardTextLeading)
+            .padding(.top, Layout.cardTitleTop)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .frame(height: Layout.cardHeight, alignment: .top)
+            .background { art }
+            .background(ProfileV3Theme.credentialCardGradient)
+            .overlay { bottomEdge }
+            .clipShape(shape)
+            .contentShape(shape)
+        }
+        .buttonStyle(.profileV3Pressable)
+        .accessibilityLabel(ProfileV3Strings.credentialStore)
+        .accessibilityHint(ProfileV3Strings.credentialStoreBlurb)
+    }
+
+    private var art: some View {
+        ZStack(alignment: .topTrailing) {
+            ProfileV3ShieldShape()
+                .fill(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.credentialCardBigShield))
+                .frame(width: Layout.cardBigShield.width, height: Layout.cardBigShield.height)
+                .padding(.trailing, Layout.cardBigShieldTrailing)
+                .padding(.top, Layout.cardBigShieldTop)
+            ProfileV3ShieldShape()
+                .fill(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.credentialCardShield))
+                .frame(width: Layout.cardShield.width, height: Layout.cardShield.height)
+                .padding(.trailing, Layout.cardShieldTrailing)
+                .padding(.top, Layout.cardShieldTop)
+            ProfileV3CredentialLock(size: Layout.cardLock, box: Layout.cardLockBox)
+                .opacity(ProfileV3Theme.Opacity.credentialCardLock)
+                .padding(.trailing, Layout.cardLockTrailing)
+                .padding(.top, Layout.cardLockTop)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    private var bottomEdge: some View {
+        shape
+            .fill(Color.black.opacity(ProfileV3Theme.Opacity.credentialCardInsetShadow))
+            .mask {
+                ZStack {
+                    shape
+                    shape
+                        .offset(y: -Layout.cardInsetShadow)
+                        .blendMode(.destinationOut)
+                }
+                .compositingGroup()
+            }
+            .allowsHitTesting(false)
+    }
+}
+
+struct ProfileV3CredentialLock: View {
+    let size: CGSize
+    let box: CGSize
+
+    var body: some View {
+        ProfileV3ConnectorGlyph.vaultLock.image
+            .resizable()
+            .frame(width: size.width, height: size.height)
+            .rotationEffect(.degrees(ProfileV3Theme.Sizes.CredentialStore.lockRotation))
+            .frame(width: box.width, height: box.height)
+            .accessibilityHidden(true)
+    }
+}
+
+struct ProfileV3CredentialStoreSheet: View {
+    @ObservedObject var model: ProfileV3CredentialStoreModel
+    var scrolls = true
+    @State private var measured = Measured()
+
+    private struct Measured: Equatable {
+        var content: CGFloat = 0
+        var bar: CGFloat = 0
+        var bottomInset: CGFloat = 0
+    }
+
+    private typealias Layout = ProfileV3Theme.Sizes.CredentialStore
+    private typealias Credentials = ProfileV3Theme.Sizes.AppCredentials
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Group {
+                if scrolls {
+                    ScrollView(showsIndicators: false) {
+                        measuredContent
                     }
-                    .buttonStyle(.plain)
+                    .scrollBounceBehavior(.basedOnSize)
+                } else {
+                    measuredContent
                 }
             }
+            .overlay(alignment: .top) { header }
+            bar
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.bar = $0 }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Color(at: .pureWhite).ignoresSafeArea())
+        .background {
+            Color.clear
+                .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
+        }
+        .presentationDetents(detents)
+        .presentationCornerRadius(Credentials.cornerRadius)
+        .presentationDragIndicator(.hidden)
+        .sheet(item: route) { route in
+            switch route {
+            case .picker:
+                ProfileV3VaultSitePicker(model: model)
+            case .editor(let editor):
+                ProfileV3AppCredentialsView(viewModel: editor, onClose: model.closeSheet)
+            case .deleteConfirm(let editor):
+                ProfileV3DeleteLoginSheet(viewModel: editor)
+            }
+        }
+        .sensoryFeedback(.success, trigger: model.deleteCompletions)
+    }
+
+    private var detents: Set<PresentationDetent> {
+        guard measured.content > 0, measured.bar > 0 else { return [.large] }
+        return [.height(measured.content + measured.bar + measured.bottomInset)]
+    }
+
+    private var measuredContent: some View {
+        content
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.content = $0 }
+    }
+
+    private var route: Binding<ProfileV3CredentialStoreModel.Sheet?> {
+        Binding(get: { model.sheet }, set: { if $0 == nil { model.closeSheet() } })
+    }
+
+    private var header: some View {
+        ProfileV3VaultSheetHeader { model.isPresented = false }
+    }
+
+    private var content: some View {
+        VStack(spacing: 0) {
+            ProfileV3CredentialStoreShield()
+            Text(ProfileV3Strings.credentialStore)
+                .typoGraphy(.H5InterMedium20)
+                .foregroundStyle(Color(at: .pureBlack))
+                .multilineTextAlignment(.center)
+                .frame(width: Credentials.titleWidth)
+                .padding(.top, Credentials.titleTop)
+                .accessibilityAddTraits(.isHeader)
+            Text(ProfileV3Strings.credentialStoreSubtitle)
+                .typoGraphy(.B2InterMedium12)
+                .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.appCredentialsNote))
+                .multilineTextAlignment(.center)
+                .frame(width: Credentials.noteWidth)
+                .padding(.top, Layout.subtitleTop)
+            list
+                .padding(.top, Layout.rowsTop)
+                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, ProfileV3Theme.Sizes.Agent.backTop + Credentials.shieldTop)
+        .padding(.bottom, Layout.listBottom)
+    }
+
+    @ViewBuilder
+    private var list: some View {
+        if model.entries != nil {
+            VStack(spacing: Layout.rowSpacing) {
+                ForEach(model.rows) { entry in
+                    ProfileV3CredentialStoreRow(
+                        title: entry.displayName,
+                        isOpening: model.openingID == entry.id
+                    ) {
+                        model.open(entry)
+                    }
+                    .disabled(model.openingID != nil)
+                }
+            }
+        } else {
+            ProfileV3LoadStateView(phase: model.phase, retry: model.load)
+                .frame(height: Layout.rowHeight)
+        }
+    }
+
+    private var bar: some View {
+        ProfileV3ContinueButton(title: ProfileV3Strings.credentialStoreAdd, action: model.tapAdd)
+            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+            .padding(.top, Credentials.barTop)
+            .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
+    }
+}
+
+private struct ProfileV3CredentialStoreShield: View {
+    private typealias Layout = ProfileV3Theme.Sizes.CredentialStore
+    private typealias Credentials = ProfileV3Theme.Sizes.AppCredentials
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            ProfileV3ShieldShape()
+                .fill(ProfileV3Theme.credentialShieldGradient)
+                .opacity(ProfileV3Theme.Opacity.credentialSheetShield)
+            ProfileV3CredentialLock(size: Layout.lock, box: Layout.lockBox)
+                .offset(x: Layout.lockOffset.width, y: Layout.lockOffset.height)
+        }
+        .frame(width: Credentials.shield.width, height: Credentials.shield.height, alignment: .topLeading)
+        .accessibilityHidden(true)
     }
 }
 
 struct ProfileV3VaultSitePicker: View {
-    @ObservedObject var model: ProfileV3AppAccessModel
+    @ObservedObject var model: ProfileV3CredentialStoreModel
+    var scrolls = true
     @State private var query = ""
 
-    private typealias Layout = ProfileV3Theme.Sizes.AppCredentials
-    private typealias Access = ProfileV3Theme.Sizes.InformationAccess
+    private typealias Layout = ProfileV3Theme.Sizes.CredentialStore
+    private typealias Credentials = ProfileV3Theme.Sizes.AppCredentials
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    Text(ProfileV3Strings.appCredentialsTitle)
-                        .typoGraphy(.H5InterMedium20)
-                        .foregroundStyle(Color(at: .pureBlack))
-                        .multilineTextAlignment(.center)
-                        .frame(width: Layout.titleWidth)
-                        .padding(.top, Layout.titleTop)
-                        .accessibilityAddTraits(.isHeader)
-                    ProfileV3CredentialField(label: ProfileV3VaultStrings.website, text: $query, keyboard: .URL)
-                        .padding(.top, Layout.fieldsTop)
-                        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                    VStack(spacing: Access.cardSpacing) {
-                        ForEach(filtered) { site in
-                            Button { model.pick(site) } label: {
-                                ProfileV3VaultWebsiteRow(title: site.displayName) {
-                                    EmptyView()
-                                }
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        Button(action: model.pickCustomSite) {
-                            ProfileV3VaultWebsiteRow(
-                                title: ProfileV3VaultStrings.somewhereElse,
-                                icon: ATIcon.SwiftUIImage.addCircle,
-                                titleColor: ProfileV3Theme.Palette.accessAction
-                            ) {
-                                EmptyView()
-                            }
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .padding(.top, Access.cardsTop)
-                    .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                    .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
+        Group {
+            if scrolls {
+                ScrollView(showsIndicators: false) {
+                    content
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.top, ProfileV3Theme.Sizes.Agent.backTop + ProfileV3Theme.Sizes.circleButton)
+                .scrollBounceBehavior(.basedOnSize)
+                .scrollDismissesKeyboard(.interactively)
+            } else {
+                content
             }
-            .scrollBounceBehavior(.basedOnSize)
-            .overlay(alignment: .top) { header }
+        }
+        .overlay(alignment: .top) {
+            ProfileV3VaultSheetHeader(onClose: model.closeSheet)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())
         .presentationDetents([.large])
-        .presentationCornerRadius(Layout.cornerRadius)
+        .presentationCornerRadius(Credentials.cornerRadius)
         .presentationDragIndicator(.hidden)
     }
 
-    private var header: some View {
+    private var content: some View {
+        VStack(spacing: 0) {
+            Text(ProfileV3Strings.appCredentialsTitle)
+                .typoGraphy(.H5InterMedium20)
+                .foregroundStyle(Color(at: .pureBlack))
+                .multilineTextAlignment(.center)
+                .frame(width: Credentials.titleWidth)
+                .accessibilityAddTraits(.isHeader)
+            ProfileV3CredentialField(
+                label: ProfileV3Strings.appCredentialsWebsite,
+                text: $query,
+                keyboard: .URL,
+                contentType: .URL
+            )
+            .padding(.top, Layout.pickerSearchTop)
+            VStack(spacing: Layout.rowSpacing) {
+                if model.sites == nil, model.sitesPhase == .loading {
+                    ProfileV3Spinner(size: ProfileV3Theme.Icon.xl, lineWidth: ProfileV3Theme.Stroke.regular)
+                        .frame(height: Layout.rowHeight)
+                }
+                ForEach(model.sites(matching: query)) { site in
+                    ProfileV3CredentialStoreRow(title: site.displayName) { model.pick(site) }
+                }
+                ProfileV3CredentialStoreRow(
+                    title: ProfileV3Strings.credentialOtherWebsite,
+                    icon: ATIcon.SwiftUIImage.addCircle
+                ) {
+                    model.pickOtherWebsite(query)
+                }
+            }
+            .padding(.top, Layout.pickerRowsTop)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+        .padding(.top, Layout.pickerTitleTop)
+        .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
+    }
+}
+
+private struct ProfileV3VaultSheetHeader: View {
+    let onClose: () -> Void
+
+    var body: some View {
         ZStack(alignment: .top) {
             ProfileV3SheetGrabber(
                 width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
@@ -102,46 +310,79 @@ struct ProfileV3VaultSitePicker: View {
             )
             HStack {
                 Spacer()
-                ProfileV3CircleIconButton.close { model.isPickingSite = false }
+                ProfileV3CircleIconButton.close(action: onClose)
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
         }
     }
-
-    private var filtered: [ProfileV3VaultSite] {
-        let text = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty else { return model.sites }
-        return model.sites.filter {
-            $0.displayName.localizedCaseInsensitiveContains(text) || ($0.loginURL?.localizedCaseInsensitiveContains(text) == true)
-        }
-    }
 }
 
-private struct ProfileV3VaultWebsiteRow<Accessory: View>: View {
+private struct ProfileV3CredentialStoreRow: View {
     let title: String
-    var icon: Image = ATIcon.SwiftUIImage.globe
-    var titleColor = Color(at: .pureBlack)
-    @ViewBuilder var accessory: () -> Accessory
+    var icon: Image = ATIcon.SwiftUIImage.language
+    var isOpening = false
+    let action: () -> Void
 
-    private typealias Access = ProfileV3Theme.Sizes.InformationAccess
+    private typealias Layout = ProfileV3Theme.Sizes.CredentialStore
 
     var body: some View {
-        HStack(spacing: ProfileV3Theme.Space.s12) {
-            icon
-                .profileV3Icon(Access.cardIcon)
-                .foregroundStyle(titleColor)
-            Text(title)
-                .typoGraphy(.H7InterMedium16)
-                .foregroundStyle(titleColor)
-                .lineLimit(1)
-            Spacer(minLength: ProfileV3Theme.Space.s8)
-            accessory()
+        Button(action: action) {
+            HStack(spacing: Layout.rowTextGap) {
+                icon
+                    .profileV3Icon(Layout.rowIcon)
+                    .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.credentialDeleteSubject))
+                Text(title)
+                    .typoGraphy(.H7InterMedium16)
+                    .foregroundStyle(Color(at: .pureBlack))
+                    .lineLimit(1)
+                Spacer(minLength: ProfileV3Theme.Space.s8)
+                if isOpening {
+                    ProfileV3Spinner(size: ProfileV3Theme.Icon.xl, lineWidth: ProfileV3Theme.Stroke.regular)
+                } else {
+                    ATIcon.SwiftUIImage.chevronRight
+                        .profileV3Icon(ProfileV3Theme.Icon.xl)
+                        .foregroundStyle(Color(at: .neutralGrey800))
+                }
+            }
+            .padding(.leading, Layout.rowLeading)
+            .padding(.trailing, Layout.rowTrailing)
+            .frame(maxWidth: .infinity, minHeight: Layout.rowHeight)
+            .profileV3SettingsCard(cornerRadius: Layout.rowRadius)
+            .contentShape(RoundedRectangle(cornerRadius: Layout.rowRadius, style: .continuous))
         }
-        .padding(.leading, Access.cardLeading)
-        .padding(.trailing, Access.cardTrailing)
-        .padding(.top, Access.cardTop)
-        .frame(maxWidth: .infinity, minHeight: Access.cardHeight, alignment: .top)
-        .profileV3SettingsCard(cornerRadius: Access.cardRadius)
+        .buttonStyle(.profileV3Pressable)
+        .accessibilityLabel(title)
     }
 }
+
+extension View {
+    func profileV3CredentialStore(_ model: ProfileV3CredentialStoreModel) -> some View {
+        modifier(ProfileV3CredentialStorePresenter(model: model))
+    }
+}
+
+private struct ProfileV3CredentialStorePresenter: ViewModifier {
+    @ObservedObject var model: ProfileV3CredentialStoreModel
+
+    func body(content: Content) -> some View {
+        content.sheet(isPresented: $model.isPresented, onDismiss: model.cancelReads) {
+            ProfileV3CredentialStoreSheet(model: model)
+        }
+    }
+}
+
+#if DEBUG
+#Preview("Credential store card") {
+    ProfileV3CredentialStoreCard {}
+        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+}
+
+#Preview("Credential store") {
+    let model = ProfileV3CredentialStoreModel(repository: ProfileV3MockRepository(delay: .milliseconds(200)))
+    return Color(at: .neutralGrey600)
+        .ignoresSafeArea()
+        .profileV3CredentialStore(model)
+        .task { model.open() }
+}
+#endif

@@ -1021,6 +1021,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-button-add-stored-credentials": {
+      "comment": "Button on the Secure credential store sheet that opens the add new password sheet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ Add credentials"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-button-connect-emails": {
       "comment": "Button to trigger the flow for adding additional email accounts.",
       "extractionState": "manual",
@@ -1029,6 +1041,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Connect other emails"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-button-delete-credentials": {
+      "comment": "Row on a saved password sheet that deletes the saved login. Copy as designed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete account"
           }
         }
       }
@@ -1057,6 +1081,30 @@
         }
       }
     },
+    "mo-aiprofile-agents-button-other-website": {
+      "comment": "Last row of the website picker in the Secure credential store. Opens the add new password sheet without a known site.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other website"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-confirmation-delete-credentials": {
+      "comment": "Title of the confirmation before a saved password is deleted. The website address shows under it.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to delete your password credentials?"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-description-app-vault": {
       "comment": "Description for the app connector vault feature.",
       "extractionState": "manual",
@@ -1065,6 +1113,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "A secure vault for your apps"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-credential-store": {
+      "comment": "Subtitle on the Secure credential store card in settings.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A secure vault for your passwords"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-credential-store-sheet": {
+      "comment": "Description under the title of the Secure credential store sheet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Securely store your passwords so Atlys can access the services you authorise when needed."
           }
         }
       }
@@ -1173,6 +1245,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Our agents build an understanding of"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-credential-store": {
+      "comment": "Title of the settings card and the sheet that hold the user's saved website passwords.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secure credential store"
           }
         }
       }

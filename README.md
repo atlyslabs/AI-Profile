@@ -1,13 +1,13 @@
 # AIProfile
 
-**Not yet versioned** — the Atlys AI Profile: the profile hub with its world-pass cards and globe,
+**Version 1.0.1** — the Atlys AI Profile: the profile hub with its world-pass cards and globe,
 settings, travellers and their relationships, loyalty programmes, past trips, KYC capture and the
 profile agents, extracted from the VDC app's `Modules/ProfileV3` into a standalone SPM package. The
-module is `ATAIProfile`; its types keep the app's `ProfileV3` prefix. There is no release tag yet,
-so hosts track `master`.
+module is `ATAIProfile`; its types keep the app's `ProfileV3` prefix. Versions are git tags on
+`master`; `CHANGELOG.md` lists what each one changed.
 
 ```swift
-.package(url: "https://github.com/atlyslabs/AI-Profile.git", branch: "master")
+.package(url: "https://github.com/atlyslabs/AI-Profile.git", from: "1.0.1")
 .product(name: "ATAIProfile", package: "AI-Profile")
 ```
 
@@ -121,6 +121,9 @@ dependency; the host only supplies the current token.
   world-pass number falls back to the system font.
 - A navigation controller already on screen when using `makeHub`, with its bar hidden while the hub
   shows. `makeHubSurface` creates that controller itself.
+- `NSFaceIDUsageDescription` in the host's Info.plist. The credential store asks for Face ID (or the
+  passcode) before it opens and before it shows a saved password. It is on only in DEBUG builds for
+  now, but without the key iOS ends the app at the first prompt.
 
 ## Also public
 

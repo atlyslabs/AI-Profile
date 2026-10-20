@@ -29,6 +29,8 @@ struct ProfileV3CredentialField<Accessory: View>: View {
     var isSecure = false
     var keyboard: UIKeyboardType = .default
     var contentType: UITextContentType?
+    var prompt: String?
+    var isEditable = true
     @ViewBuilder var accessory: () -> Accessory
 
     @FocusState private var isFocused: Bool
@@ -56,10 +58,14 @@ struct ProfileV3CredentialField<Accessory: View>: View {
     @ViewBuilder
     private var input: some View {
         Group {
-            if isSecure {
-                SecureField(label.lowercased(), text: $text)
+            if !isEditable {
+                Text(text)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            } else if isSecure {
+                SecureField(label.lowercased(), text: $text, prompt: promptText)
             } else {
-                TextField(label.lowercased(), text: $text)
+                TextField(label.lowercased(), text: $text, prompt: promptText)
             }
         }
         .typoGraphy(.B1InterMedium14)
@@ -70,6 +76,10 @@ struct ProfileV3CredentialField<Accessory: View>: View {
         .autocorrectionDisabled()
         .focused($isFocused)
         .accessibilityLabel(label)
+    }
+
+    private var promptText: Text? {
+        prompt.map { Text($0).foregroundStyle(Color(at: .pureBlack)) }
     }
 }
 

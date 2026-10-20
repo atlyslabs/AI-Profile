@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import LocalAuthentication
 import UIKit
 
 @MainActor
@@ -8,8 +9,7 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
         case add(ProfileV3LinkedApp)
         case newPassword
         case edit(ProfileV3LinkedApp)
-        case vaultSite(ProfileV3VaultSite)
-        case vaultCustom
+        case vaultNew(site: ProfileV3VaultSite? = nil, website: String = "")
         case vaultEdit(ProfileV3VaultCredential)
     }
 
@@ -27,21 +27,34 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
     let id = UUID()
     let mode: Mode
     let origin: Origin
-    @Published var credentials: ProfileV3AppCredentials
-    @Published var label = ""
+    @Published var credentials: ProfileV3AppCredentials {
+        didSet { if inlineError != nil { inlineError = nil } }
+    }
     @Published var isPasswordRevealed = false
     @Published private(set) var isRevealingPassword = false
+    @Published private(set) var inlineError: String?
     @Published private(set) var phase: Phase = .editing
+    @Published private(set) var isConfirmingDelete = false {
+        didSet {
+            guard isConfirmingDelete != oldValue else { return }
+            onConfirmingDeleteChange?(isConfirmingDelete)
+        }
+    }
+    @Published private(set) var isDeleting = false
 
     var onFinish: (() -> Void)?
     var onFailure: ((String) -> Void)?
     var onAlreadySaved: ((String) -> Void)?
+    var onDeleted: (() -> Void)?
+    var onConfirmingDeleteChange: ((Bool) -> Void)?
     private(set) var savedID: String?
 
     private let repository: any ProfileV3AppAccessRepository
+    private var storedPassword: String?
     private var submitTask: Task<Void, Never>?
     private var revealTask: Task<Void, Never>?
     private var hideTask: Task<Void, Never>?
+    private var deleteTask: Task<Void, Never>?
 
     init(mode: Mode, origin: Origin, repository: any ProfileV3AppAccessRepository) {
         self.mode = mode
@@ -51,10 +64,11 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
         case .edit(let app):
             credentials = ProfileV3AppCredentials(username: app.username ?? "")
         case .vaultEdit(let entry):
-            credentials = ProfileV3AppCredentials(username: entry.username ?? "")
-        case .vaultCustom:
-            credentials = ProfileV3AppCredentials()
-        default:
+            credentials = ProfileV3AppCredentials(website: entry.displayURL ?? "", username: entry.username ?? "")
+        case .vaultNew(let site, let website):
+            let link = site?.loginURL.flatMap(ProfileV3VaultSite.displayAddress)
+            credentials = ProfileV3AppCredentials(website: link ?? website.trimmingCharacters(in: .whitespacesAndNewlines))
+        case .add, .newPassword:
             credentials = ProfileV3AppCredentials()
         }
     }
@@ -62,42 +76,68 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
     var app: ProfileV3LinkedApp? {
         switch mode {
         case .add(let app), .edit(let app): return app
-        case .newPassword, .vaultSite, .vaultCustom, .vaultEdit: return nil
+        case .newPassword, .vaultNew, .vaultEdit: return nil
         }
     }
 
     var asksForWebsite: Bool {
-        if case .newPassword = mode { return true }
-        if case .vaultCustom = mode { return true }
+        switch mode {
+        case .newPassword, .vaultNew: return true
+        case .add, .edit, .vaultEdit: return false
+        }
+    }
+
+    var showsWebsite: Bool {
+        asksForWebsite || (canDelete && !credentials.website.isEmpty)
+    }
+
+    var showsHeader: Bool {
+        !canDelete
+    }
+
+    var canDelete: Bool {
+        if case .vaultEdit = mode { return true }
         return false
     }
 
-    var asksForLabel: Bool {
-        if case .vaultCustom = mode { return true }
-        return false
+    var showsSaveButton: Bool {
+        !canDelete || canSubmit || phase != .editing
+    }
+
+    var passwordPrompt: String? {
+        isEditing ? ProfileV3VaultStrings.passwordHidden : nil
+    }
+
+    var deleteSubject: String? {
+        if case .vaultEdit(let entry) = mode { return entry.displayURL ?? entry.displayName }
+        return nil
     }
 
     var isEditing: Bool {
         switch mode {
         case .edit, .vaultEdit: return true
-        case .add, .newPassword, .vaultSite, .vaultCustom: return false
+        case .add, .newPassword, .vaultNew: return false
+        }
+    }
+
+    private var isVault: Bool {
+        switch mode {
+        case .vaultNew, .vaultEdit: return true
+        case .add, .newPassword, .edit: return false
         }
     }
 
     var title: String {
         switch mode {
-        case .vaultSite(let site): return site.displayName
-        case .vaultCustom: return ProfileV3VaultStrings.addLogin
-        case .vaultEdit: return ProfileV3Strings.appCredentialsTitle
-        case .newPassword: return ProfileV3Strings.appPasswordTitle
-        case .add, .edit: return ProfileV3Strings.appCredentialsTitle
+        case .newPassword, .vaultNew: return ProfileV3Strings.appPasswordTitle
+        case .add, .edit, .vaultEdit: return ProfileV3Strings.appCredentialsTitle
         }
     }
 
     var submitTitle: String {
         switch mode {
-        case .add, .vaultSite, .vaultCustom: return ProfileV3Strings.appCredentialsAdd
-        case .newPassword: return ProfileV3Strings.continueTitle
+        case .add: return ProfileV3Strings.appCredentialsAdd
+        case .newPassword, .vaultNew: return ProfileV3Strings.continueTitle
         case .edit, .vaultEdit: return ProfileV3Strings.saveChanges
         }
     }
@@ -109,12 +149,15 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
     var canSubmit: Bool {
         let value = credentials.trimmed
         guard phase == .editing, !value.username.isEmpty else { return false }
-        if asksForLabel, label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return false }
         if asksForWebsite, value.websiteURL == nil { return false }
-        if case .vaultEdit(let entry) = mode, value.password.isEmpty {
+        if case .vaultEdit(let entry) = mode, newPassword.isEmpty {
             return value.username != (entry.username ?? "")
         }
         return !value.password.isEmpty
+    }
+
+    private var newPassword: String {
+        credentials.password == storedPassword ? "" : credentials.password
     }
 
     var savePhase: ProfileV3SavePhase {
@@ -126,25 +169,73 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
     }
 
     func togglePasswordVisibility() {
-        if case .vaultEdit(let entry) = mode, credentials.password.isEmpty {
-            revealStoredPassword(entry.id)
-            return
+        inlineError = nil
+        if case .vaultEdit(let entry) = mode {
+            if credentials.password.isEmpty {
+                revealStoredPassword(entry.id)
+                return
+            }
+            if storedPassword != nil, newPassword.isEmpty {
+                hidePassword()
+                return
+            }
         }
         isPasswordRevealed.toggle()
     }
 
-    func hideStoredPassword() {
-        guard case .vaultEdit = mode else { return }
+    func hidePassword() {
         hideTask?.cancel()
-        credentials.password = ""
+        if storedPassword != nil, newPassword.isEmpty {
+            credentials.password = ""
+        }
+        storedPassword = nil
         isPasswordRevealed = false
+    }
+
+    func pasteboardChanged() {
+        guard let storedPassword, newPassword.isEmpty else { return }
+        ProfileV3VaultClipboard.expire(storedPassword)
+    }
+
+    func askToDelete() {
+        guard canDelete, phase == .editing else { return }
+        hidePassword()
+        inlineError = nil
+        isConfirmingDelete = true
+    }
+
+    func cancelDelete() {
+        guard !isDeleting else { return }
+        isConfirmingDelete = false
+    }
+
+    func confirmDelete() {
+        guard case .vaultEdit(let entry) = mode, !isDeleting else { return }
+        isDeleting = true
+        let repository = repository
+        deleteTask = Task { [weak self] in
+            do {
+                try await repository.deleteVaultCredential(id: entry.id)
+                guard let self, !Task.isCancelled else { return }
+                isDeleting = false
+                onDeleted?()
+            } catch is CancellationError {
+                return
+            } catch {
+                guard let self, !Task.isCancelled else { return }
+                isDeleting = false
+                isConfirmingDelete = false
+                fail(ProfileV3Error.message(for: error, fallback: ProfileV3Strings.disconnectFailed))
+            }
+        }
     }
 
     func submit() {
         guard canSubmit else { return }
         phase = .submitting
+        inlineError = nil
         let credentials = credentials.trimmed
-        let label = label.trimmingCharacters(in: .whitespacesAndNewlines)
+        let newPassword = newPassword
         let mode = mode
         let repository = repository
         submitTask = Task { [weak self] in
@@ -157,31 +248,19 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
                 case .newPassword:
                     try await repository.addAppPassword(credentials)
                     saved = nil
-                case .vaultSite(let site):
-                    let result = try await repository.saveVault(ProfileV3VaultDraft(
-                        siteSlug: site.slug,
-                        username: credentials.username,
-                        password: credentials.password
-                    ))
-                    saved = result.id
-                case .vaultCustom:
-                    let result = try await repository.saveVault(ProfileV3VaultDraft(
-                        label: label,
-                        url: credentials.websiteURL?.absoluteString,
-                        username: credentials.username,
-                        password: credentials.password
-                    ))
-                    saved = result.id
+                case .vaultNew(let site, _):
+                    var sites = site.map { [$0] } ?? []
+                    if site == nil {
+                        sites = (try? await repository.loadVaultSites()) ?? []
+                    }
+                    let draft = ProfileV3VaultDraft.new(credentials, sites: sites)
+                    saved = try await repository.saveVault(draft).id
                 case .vaultEdit(let entry):
                     let draft = ProfileV3VaultDraft(
-                        siteSlug: nil,
-                        label: nil,
-                        url: nil,
                         username: credentials.username == entry.username ? nil : credentials.username,
-                        password: credentials.password.isEmpty ? nil : credentials.password
+                        password: newPassword.isEmpty ? nil : newPassword
                     )
-                    let result = try await repository.updateVault(id: entry.id, draft: draft)
-                    saved = result.id
+                    saved = try await repository.updateVault(id: entry.id, draft: draft).id
                 }
                 guard let self, !Task.isCancelled else { return }
                 savedID = saved
@@ -193,13 +272,13 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
                 guard let self, !Task.isCancelled else { return }
                 phase = .editing
                 onAlreadySaved?(saved.id)
-                onFailure?(saved.message)
+                fail(saved.message)
             } catch is CancellationError {
                 return
             } catch {
                 guard let self, !Task.isCancelled else { return }
                 phase = .editing
-                onFailure?(ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed))
+                fail(ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed))
             }
         }
     }
@@ -208,6 +287,12 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
         submitTask?.cancel()
         revealTask?.cancel()
         hideTask?.cancel()
+        deleteTask?.cancel()
+    }
+
+    private func fail(_ message: String) {
+        if isVault { inlineError = message }
+        onFailure?(message)
     }
 
     private func revealStoredPassword(_ id: String) {
@@ -218,6 +303,7 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
             do {
                 let password = try await repository.revealVaultPassword(id: id, deviceName: UIDevice.current.name)
                 guard let self, !Task.isCancelled else { return }
+                storedPassword = password
                 credentials.password = password
                 isPasswordRevealed = true
                 isRevealingPassword = false
@@ -227,17 +313,24 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
             } catch {
                 guard let self, !Task.isCancelled else { return }
                 isRevealingPassword = false
-                onFailure?(ProfileV3Error.message(for: error))
+                inlineError = Self.revealMessage(for: error)
             }
         }
+    }
+
+    private static func revealMessage(for error: Error) -> String? {
+        if let error = error as? LAError, [.userCancel, .appCancel, .systemCancel].contains(error.code) {
+            return nil
+        }
+        return ProfileV3Error.message(for: error)
     }
 
     private func scheduleHide() {
         hideTask?.cancel()
         hideTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(30))
+            try? await Task.sleep(for: .seconds(ProfileV3VaultClipboard.lifetime))
             guard !Task.isCancelled else { return }
-            self?.hideStoredPassword()
+            self?.hidePassword()
         }
     }
 }
