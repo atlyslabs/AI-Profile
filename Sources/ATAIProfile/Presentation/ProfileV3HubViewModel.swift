@@ -102,10 +102,10 @@ final class ProfileV3HubViewModel: ObservableObject {
     private var hasCountedHoldHint = false
     private var pendingKYCGlowPassIDs: Set<String> = []
     private var kycAnnounceTasks: [String: Task<Void, Never>] = [:]
-    private var captureGeneration = 0
+    private var kycSyncGeneration = 0
     private var loadTask: Task<Void, Never>?
     private var refreshTask: Task<Void, Never>?
-    private var captureRefreshTask: Task<Void, Never>?
+    private var kycSyncTask: Task<Void, Never>?
     private var revalidateTask: Task<Void, Never>?
     private var benefitsTask: Task<Void, Never>?
     private var couponsTask: Task<Void, Never>?
@@ -208,24 +208,34 @@ final class ProfileV3HubViewModel: ObservableObject {
     }
 
     func refreshAfterCapture(profileID: String, completedSteps: [String]) {
-        captureRefreshTask?.cancel()
-        captureGeneration += 1
-        let generation = captureGeneration
+        let cueBeforeCapture = kycGlowCue?.sequence
+        syncKYC(startsImmediately: false) { [weak self] board in
+            guard Self.reflects(board, completedSteps: completedSteps, profileID: profileID) else { return false }
+            if let self, kycGlowCue?.sequence == cueBeforeCapture {
+                kycStepCompletions += 1
+            }
+            return true
+        }
+    }
+
+    func refreshAfterDisconnecting(_ connectors: Set<ProfileV3ConnectorKey>) {
+        syncKYC(startsImmediately: true) { Self.reflects($0, disconnected: connectors) }
+    }
+
+    private func syncKYC(startsImmediately: Bool, until isSettled: @escaping (ProfileV3Board) -> Bool) {
+        kycSyncTask?.cancel()
+        kycSyncGeneration += 1
+        let generation = kycSyncGeneration
         isSyncingKYC = true
-        captureRefreshTask = Task { [weak self] in
+        kycSyncTask = Task { [weak self] in
             guard let self else { return }
             defer {
-                if captureGeneration == generation { isSyncingKYC = false }
+                if kycSyncGeneration == generation { isSyncingKYC = false }
             }
-            let cueBeforeCapture = kycGlowCue?.sequence
-            await ProfileV3Backoff.poll {
+            await ProfileV3Backoff.poll(startsImmediately: startsImmediately) {
                 guard let board = try? await self.repository.loadBoard(), !Task.isCancelled else { return false }
                 self.apply(board)
-                guard Self.reflects(board, completedSteps: completedSteps, profileID: profileID) else { return false }
-                if self.kycGlowCue?.sequence == cueBeforeCapture {
-                    self.kycStepCompletions += 1
-                }
-                return true
+                return isSettled(board)
             }
             guard !Task.isCancelled else { return }
             prefetchOffers()
@@ -241,7 +251,7 @@ final class ProfileV3HubViewModel: ObservableObject {
         loadTask?.cancel()
         benefitsTask?.cancel()
         couponsTask?.cancel()
-        captureRefreshTask?.cancel()
+        kycSyncTask?.cancel()
         revalidateTask?.cancel()
         isFetchingBenefits = false
         isFetchingCoupons = false
@@ -808,13 +818,13 @@ final class ProfileV3HubViewModel: ObservableObject {
 
     private static func passIDsNeedingKYCGlow(from old: ProfileV3Board?, to new: ProfileV3Board) -> Set<String> {
         guard let old else { return [] }
-        let wasComplete = Dictionary(
-            old.profiles.map { ($0.pass.id, $0.pass.kycStatus.isComplete) },
-            uniquingKeysWith: { first, _ in first }
-        )
+        let previous = Dictionary(old.profiles.map { ($0.pass.id, $0.pass) }, uniquingKeysWith: { first, _ in first })
         return Set(new.profiles.compactMap { profile -> String? in
-            guard let complete = wasComplete[profile.pass.id] else { return profile.pass.id }
-            return !complete && profile.pass.kycStatus.isComplete ? profile.pass.id : nil
+            let pass = profile.pass
+            guard let before = previous[pass.id] else { return pass.id }
+            let completed = !before.kycStatus.isComplete && pass.kycStatus.isComplete
+            let turnedNegative = before.resolvedKYCGlowTone != .negative && pass.resolvedKYCGlowTone == .negative
+            return completed || turnedNegative ? pass.id : nil
         })
     }
 
@@ -822,5 +832,9 @@ final class ProfileV3HubViewModel: ObservableObject {
         let profile = board.profiles.first { $0.profileID == profileID }
         guard let outstanding = profile?.pass.kycCapture?.steps else { return true }
         return !completedSteps.contains(where: outstanding.contains)
+    }
+
+    private static func reflects(_ board: ProfileV3Board, disconnected connectors: Set<ProfileV3ConnectorKey>) -> Bool {
+        !connectors.contains(.gmail) || board.mainProfile?.home.isGmailConnected != true
     }
 }

@@ -142,6 +142,20 @@ extension ProfileV3Theme {
             endPoint: UnitPoint(x: 0.6, y: 1)
         )
 
+        static let shimmerGradient = LinearGradient(
+            stops: [
+                .init(color: Color(at: .pureWhite).opacity(0), location: 0),
+                .init(color: Color(at: .pureWhite).opacity(0.08), location: 0.22),
+                .init(color: Color(at: .pureWhite).opacity(0.75), location: 0.42),
+                .init(color: Color(at: .pureWhite), location: 0.5),
+                .init(color: Color(at: .pureWhite).opacity(0.75), location: 0.58),
+                .init(color: Color(at: .pureWhite).opacity(0.08), location: 0.78),
+                .init(color: Color(at: .pureWhite).opacity(0), location: 1)
+            ],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+
         static let badgeGradient = LinearGradient(
             colors: [Color(hex: "5F9310"), Color(hex: "9DD645")],
             startPoint: UnitPoint(x: 0, y: 0.33),
@@ -203,6 +217,35 @@ extension ProfileV3Theme {
             static func row(_ index: Int) -> ProfileV3Reveal {
                 let shift = Double(index) * rowStagger
                 return ProfileV3Reveal(start: firstRow.start + shift, end: firstRow.end + shift, rise: firstRow.rise)
+            }
+
+            enum Intro {
+                private static let easeOut = UnitCurve.bezier(
+                    startControlPoint: UnitPoint(x: 0, y: 0),
+                    endControlPoint: UnitPoint(x: 0.58, y: 1)
+                )
+                private static let easeInOut = UnitCurve.bezier(
+                    startControlPoint: UnitPoint(x: 0.42, y: 0),
+                    endControlPoint: UnitPoint(x: 0.58, y: 1)
+                )
+
+                static let delay: Double = 0.4
+                static let duration: Double = 1.4
+
+                static let fade = ProfileV3MotionTrack(start: 0, keys: [(0.65, 1, easeOut)])
+                static let rise = ProfileV3MotionTrack(start: 16, keys: [(0.75, 0, easeOut)])
+                static let cardScale = ProfileV3MotionTrack(start: 0.98, keys: [(0.75, 1, easeOut)])
+                static let cardX = ProfileV3MotionTrack(start: 3.8, keys: [(0.75, 0, easeOut)])
+                static let cardY = ProfileV3MotionTrack(start: 21.97, keys: [(0.75, 0, easeOut)])
+                static let shimmerOpacity = ProfileV3MotionTrack(
+                    start: 0,
+                    keys: [(0.3, 0, .linear), (0.55, 0.65, easeInOut), (1.1, 0.65, .linear), (1.4, 0, easeInOut)]
+                )
+                static let shimmerStart: Double = -470 / 380
+                static let shimmerTravel = ProfileV3MotionTrack(
+                    start: 0,
+                    keys: [(0.3, 0, .linear), (1.35, 1050 / 380, easeInOut)]
+                )
             }
 
             static let detail: Animation = .spring(response: 0.45, dampingFraction: 0.88)

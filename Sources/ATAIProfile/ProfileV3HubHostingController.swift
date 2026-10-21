@@ -76,6 +76,7 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
             profileID: profileID,
             onConnectConnector: { [weak self] step in self?.startConnectorCapture(step) },
             onTravellersChanged: { [weak viewModel] in viewModel?.requestRefresh() },
+            onConnectorsDisconnected: { [weak viewModel] in viewModel?.refreshAfterDisconnecting($0) },
             onOpenProgrammes: { [weak viewModel] in viewModel?.tapMainProgrammes() },
             onFinish: { [weak self] finished in
                 guard self?.settingsPresenter === finished else { return }

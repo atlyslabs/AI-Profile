@@ -28,6 +28,26 @@ struct ProfileV3GloveBoxTests {
         #expect(Motion.blobY.value(at: .infinity) == 0)
     }
 
+    @Test func theIntroCardRisesInAndTheShimmerSweepsOnce() {
+        let intro = Motion.Intro.self
+        #expect(intro.fade.value(at: -intro.delay) == 0)
+        #expect(intro.cardY.value(at: -intro.delay) == 21.97)
+        #expect(intro.fade.value(at: 0) == 0)
+        #expect(intro.rise.value(at: 0) == 16)
+        #expect(intro.cardScale.value(at: 0) == 0.98)
+        #expect(intro.cardX.value(at: 0) == 3.8)
+        #expect(intro.cardY.value(at: 0) == 21.97)
+        #expect(intro.fade.value(at: 0.3) > 0.5)
+        #expect(intro.cardY.value(at: 0.8) == 0)
+        #expect(intro.cardScale.value(at: 0.8) == 1)
+        #expect(intro.rise.value(at: 0.8) == 0)
+        #expect(intro.shimmerOpacity.value(at: 0.3) == 0)
+        #expect(intro.shimmerOpacity.value(at: 0.8) == 0.65)
+        #expect(intro.shimmerStart + intro.shimmerTravel.value(at: 1.36) > 1)
+        #expect(intro.shimmerOpacity.value(at: 1.5) == 0)
+        #expect(intro.fade.value(at: .infinity) == 1)
+    }
+
     @Test func theIntroButtonReportsItsAction() {
         let viewModel = ProfileV3GloveBoxViewModel(gloveBox: ProfileV3GloveBoxFixtures.Start.unlock.gloveBox)
         var actions: [ProfileV3GloveBoxIntro.Action] = []

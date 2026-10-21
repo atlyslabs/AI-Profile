@@ -33,6 +33,7 @@ public enum ProfileV3EntryPoint {
             profileID: environment.boardStore.cachedBoard()?.mainProfile?.profileID,
             onConnectConnector: nil,
             onTravellersChanged: nil,
+            onConnectorsDisconnected: nil,
             onOpenProgrammes: nil,
             onFinish: { finished in
                 guard addTravellerPresenter === finished else { return }

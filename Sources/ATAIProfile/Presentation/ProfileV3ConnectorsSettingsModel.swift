@@ -170,6 +170,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
         switch result {
         case .success:
             ProfileV3Analytics.connectorDisconnected(connectorKey: connector.rawValue)
+            router?.connectorDidDisconnect(connector)
             disconnectedKeys.insert(connector)
             connectors = reconciled(connectors)
             disconnectCompletions += 1

@@ -14,9 +14,11 @@ final class ProfileV3SettingsSheetPresenter {
     private let viewModel: ProfileV3SettingsViewModel
     private let onConnectConnector: ((String) -> Void)?
     private let onTravellersChanged: (() -> Void)?
+    private let onConnectorsDisconnected: ((Set<ProfileV3ConnectorKey>) -> Void)?
     private let onOpenProgrammes: (() -> Void)?
     private let onFinish: (ProfileV3SettingsSheetPresenter) -> Void
     private var afterDismiss: (@MainActor () -> Void)?
+    private var disconnectedConnectors: Set<ProfileV3ConnectorKey> = []
     private var isAwaitingOnboarding = false
     private var didReportFinish = false
     private weak var disconnectHost: UIViewController?
@@ -40,6 +42,7 @@ final class ProfileV3SettingsSheetPresenter {
         profileID: String?,
         onConnectConnector: ((String) -> Void)?,
         onTravellersChanged: (() -> Void)?,
+        onConnectorsDisconnected: ((Set<ProfileV3ConnectorKey>) -> Void)?,
         onOpenProgrammes: (() -> Void)?,
         onFinish: @escaping (ProfileV3SettingsSheetPresenter) -> Void
     ) {
@@ -51,6 +54,7 @@ final class ProfileV3SettingsSheetPresenter {
         self.app = app
         self.onConnectConnector = onConnectConnector
         self.onTravellersChanged = onTravellersChanged
+        self.onConnectorsDisconnected = onConnectorsDisconnected
         self.onOpenProgrammes = onOpenProgrammes
         self.onFinish = onFinish
         viewModel = ProfileV3SettingsViewModel(
@@ -123,6 +127,9 @@ final class ProfileV3SettingsSheetPresenter {
         let completion = afterDismiss
         afterDismiss = nil
         withExtendedLifetime(self) {
+            if completion == nil, !disconnectedConnectors.isEmpty {
+                onConnectorsDisconnected?(disconnectedConnectors)
+            }
             completion?()
             if !isAwaitingOnboarding {
                 reportFinish()
@@ -291,6 +298,10 @@ extension ProfileV3SettingsSheetPresenter: ProfileV3ConnectorsRouting {
         guard isDisconnectProgressPresented else { return }
         isDisconnectProgressPresented = false
         ProfileV3SheetWindow.dismiss()
+    }
+
+    func connectorDidDisconnect(_ connector: ProfileV3ConnectorKey) {
+        disconnectedConnectors.insert(connector)
     }
 }
 

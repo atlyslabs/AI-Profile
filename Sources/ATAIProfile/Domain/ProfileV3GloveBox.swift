@@ -10,8 +10,8 @@ struct ProfileV3GloveBox: Equatable {
     var stage: Stage
 }
 
-struct ProfileV3GloveBoxIntro: Equatable {
-    enum Action: Equatable {
+struct ProfileV3GloveBoxIntro: Hashable {
+    enum Action: Hashable {
         case completeKYC
         case activate
     }
