@@ -1,0 +1,73 @@
+Sources/ATAIProfile/Views/ProfileV3WorldPassDetailView.swift
+  s_9f6a8e768dcac7::t_df4707e1a4bcd4 25
+Sources/ATAIProfile/Data/ProfileV3MockRepository.swift
+  s_9f6a8e768dcac7::t_b305683a3e401c 79,89-90,98
+  s_9f6a8e768dcac7::t_3f8ae13e1e109e 373-375
+Sources/ATAIProfile/Views/ProfileV3HubChrome.swift
+  s_9f6a8e768dcac7::t_5b5e9b3854ed9d 230
+Sources/ATAIProfile/Views/ProfileV3SettingsView.swift
+  s_9f6a8e768dcac7::t_ef7ea8eca4bbb8 429
+Sources/ATAIProfile/Components/ProfileV3WorldPassCard.swift
+  s_9f6a8e768dcac7::t_dbfbbaae147521 15-30
+Sources/ATAIProfile/Presentation/ProfileV3SettingsViewModel.swift
+  s_9f6a8e768dcac7::t_66b4464fbd691f 116
+CLAUDE.md
+  s_9f6a8e768dcac7::t_cb6f6aacd5bd68 576-582
+  s_9f6a8e768dcac7::t_d89165f6c7fab2 64
+  s_c482717a7a4db6::t_7e2d57a29ed374 34
+  s_9f6a8e768dcac7::t_f8db19ef83d9b2 593-597
+  s_9f6a8e768dcac7::t_51ea0e183fd3b6 572-575
+  s_9f6a8e768dcac7::t_fdbcb338b84383 588-590
+  s_9f6a8e768dcac7::t_02055e296df11f 598
+  s_9f6a8e768dcac7::t_fb4525e8c61d6a 591-592
+  s_c482717a7a4db6::t_6ef56857358141 612
+  s_9f6a8e768dcac7::t_4b1f8a074cc9d3 583-587
+Sources/ATAIProfile/Components/ProfileV3WorldPassBackFace.swift
+  s_9f6a8e768dcac7::t_a62a2510d3ec12 157,159
+Sources/ATAIProfile/Presentation/ProfileV3ProfileFieldsModel.swift
+  s_9f6a8e768dcac7::t_0b551e7749399e 63
+  s_9f6a8e768dcac7::t_ad9c3e68132d8c 62,64
+Sources/ATAIProfile/Data/Mappers/ProfileV3SettingsMapper.swift
+  s_9f6a8e768dcac7::t_b8135b6b23b787 17-18
+Sources/ATAIProfile/Data/DTOs/ProfileV3SettingsDTO.swift
+  s_9f6a8e768dcac7::t_01ca308570631b 6,14,20
+Sources/ATAIProfile/Domain/ProfileV3SettingsMenu.swift
+  s_9f6a8e768dcac7::t_40bdaa6e82bd22 27
+Tests/ATAIProfileTests/ProfileV3CitizenshipLockTests.swift
+  s_9f6a8e768dcac7::t_d935d74fb55f40 1-71
+Sources/ATAIProfile/Components/ProfileV3CardGlobe.swift
+  s_9f6a8e768dcac7::t_963b51c133c960 30
+Sources/ATAIProfile/Support/ProfileV3Theme+Globe.swift
+  s_9f6a8e768dcac7::t_1e0f79eb0a4578 37
+  s_9f6a8e768dcac7::t_1881e3d92537d0 5
+  s_9f6a8e768dcac7::t_13786eac5f1171 6-11
+  s_9f6a8e768dcac7::t_fe4cf7ba6d2973 24
+Sources/ATAIProfile/Presentation/ProfileV3HubStage.swift
+  s_9f6a8e768dcac7::t_f1453e840eea9b 112-114
+Sources/ATAIProfile/Components/ProfileV3InteractiveGlobe.swift
+  s_9f6a8e768dcac7::t_a8f8537533a024 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "05016b2423396cb06eed05597c49692d5d3ad7c8",
+  "prompts": {},
+  "sessions": {
+    "s_9f6a8e768dcac7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12965eae-c634-4029-8616-6735faaef3fd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
