@@ -3,6 +3,14 @@
 All notable changes to ATAIProfile. Versions are git tags on `master`; hosts depend on them with
 `.package(url: "https://github.com/atlyslabs/AI-Profile.git", from: "<version>")`.
 
+## Unreleased
+
+### Changed
+
+- A phone number stored without a country code is read against the host's residence
+  (`ATCoreBaseProvider.userResidencyCode`, from the registered configuration provider) instead of
+  the device's region. The device region, then India, are used only when the host gives none.
+
 ## 1.0.1 — 2026-10-20
 
 ### Added
