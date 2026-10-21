@@ -40,6 +40,7 @@ final class ProfileV3SettingsSheetPresenter {
         session: any ProfileV3SessionProviding,
         client: ProfileV3NetworkClient,
         profileID: String?,
+        profileName: String?,
         onConnectConnector: ((String) -> Void)?,
         onTravellersChanged: (() -> Void)?,
         onConnectorsDisconnected: ((Set<ProfileV3ConnectorKey>) -> Void)?,
@@ -61,7 +62,8 @@ final class ProfileV3SettingsSheetPresenter {
             deps: .live(account: account, session: session, client: client),
             repository: repository,
             board: board,
-            profileID: profileID
+            profileID: profileID,
+            profileName: profileName
         )
         viewModel.router = self
     }

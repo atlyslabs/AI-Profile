@@ -2,6 +2,7 @@ import SwiftUI
 
 extension ProfileV3Theme.Sizes {
     static let headerRevealDistance = ProfileV3Theme.Space.s24
+    static let headerFadeGap: CGFloat = 12
 
     enum SettingsPage {
         static let headerTop: CGFloat = 21

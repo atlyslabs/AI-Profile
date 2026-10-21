@@ -41,11 +41,13 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         deps: ProfileV3SettingsDependencies,
         repository: any ProfileV3SettingsRepository,
         board: (any ProfileV3BoardRepository)? = nil,
-        profileID: String? = nil
+        profileID: String? = nil,
+        profileName: String? = nil
     ) {
         self.repository = repository
         self.board = board
         monogram = Self.monogram(from: deps.currentFirstName())
+            ?? Self.monogram(from: profileName)
             ?? Self.monogram(from: board?.cachedBoard()?.mainProfile?.name)
         let fields = ProfileV3ProfileFieldsModel(deps: deps, repository: repository, profileID: profileID)
         self.fields = fields

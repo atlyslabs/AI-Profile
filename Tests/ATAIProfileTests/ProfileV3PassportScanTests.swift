@@ -17,23 +17,23 @@ struct ProfileV3PassportScanTests {
         #expect(unread.nationality == nil)
     }
 
-    @Test func onlyAnExplicitFalseSkipsTheBack() {
+    @Test func onlyAnExplicitTrueAsksForTheBack() {
         #expect(ProfileV3PassportScanResult(backRequired: true).needsBack)
-        #expect(ProfileV3PassportScanResult(backRequired: nil).needsBack)
+        #expect(!ProfileV3PassportScanResult(backRequired: nil).needsBack)
         #expect(!ProfileV3PassportScanResult(backRequired: false).needsBack)
     }
 
     @Test func aFrontThatNeedsNoBackEndsTheScan() async {
         let skipped = await Self.backSkips(after: .passportFront, backRequired: false)
+        let unknown = await Self.backSkips(after: .passportFront, backRequired: nil)
         #expect(skipped)
+        #expect(unknown)
     }
 
     @Test func aFrontThatNeedsTheBackKeepsGoing() async {
         let required = await Self.backSkips(after: .passportFront, backRequired: true)
-        let unknown = await Self.backSkips(after: .passportFront, backRequired: nil)
         let back = await Self.backSkips(after: .passportBack, backRequired: false)
         #expect(!required)
-        #expect(!unknown)
         #expect(!back)
     }
 

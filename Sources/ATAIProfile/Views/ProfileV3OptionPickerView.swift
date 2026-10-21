@@ -9,6 +9,7 @@ struct ProfileV3OptionPickerView: View {
     let onToggle: (String) -> Void
 
     @State private var query = ""
+    @State private var headerPin = ProfileV3HeaderPin()
 
     private var trimmedQuery: String { query.trimmingCharacters(in: .whitespacesAndNewlines) }
 
@@ -44,7 +45,9 @@ struct ProfileV3OptionPickerView: View {
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, ProfileV3Theme.Space.s40)
+            .profileV3HeaderFadeAnchor(headerPin)
         }
+        .profileV3HeaderFade(headerPin)
         .scrollDismissesKeyboard(.interactively)
     }
 

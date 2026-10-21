@@ -31,6 +31,7 @@ public enum ProfileV3EntryPoint {
             session: environment.session,
             client: environment.client,
             profileID: environment.boardStore.cachedBoard()?.mainProfile?.profileID,
+            profileName: nil,
             onConnectConnector: nil,
             onTravellersChanged: nil,
             onConnectorsDisconnected: nil,

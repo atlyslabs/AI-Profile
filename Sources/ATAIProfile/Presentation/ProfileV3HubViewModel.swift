@@ -145,6 +145,10 @@ final class ProfileV3HubViewModel: ObservableObject {
         board?.mainProfile?.profileID
     }
 
+    var mainProfileName: String? {
+        board?.mainProfile?.name
+    }
+
     var flipDemoPassID: String? {
         playsFlipDemo ? mainProfileID : nil
     }
