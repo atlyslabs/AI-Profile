@@ -1,0 +1,113 @@
+Sources/ATAIProfile/ProfileV3HubHostingController.swift
+  s_9f6a8e768dcac7::t_1a9ba9737bbaa4 77
+Tests/ATAIProfileTests/ProfileV3SettingsMonogramTests.swift
+  s_9f6a8e768dcac7::t_18b246c06287e9 45-74,78-86
+  s_9f6a8e768dcac7::t_39587dfba6e33e 87-88
+Sources/ATAIProfile/Components/ProfileV3KeyboardAvoidance.swift
+  s_9f6a8e768dcac7::t_899fb015129596 161,168,170
+Sources/ATAIProfile/Support/ProfileV3Theme+TravellerSizes.swift
+  s_9f6a8e768dcac7::t_86308597143ed2 11
+Sources/ATAIProfile/Views/ProfileV3TravellerRelationshipView.swift
+  s_9f6a8e768dcac7::t_6762fc25d54798 60,62
+  s_9f6a8e768dcac7::t_2873d9b87ca00e 17-18
+Sources/ATAIProfile/Views/ProfileV3SectionSourcesView.swift
+  s_9f6a8e768dcac7::t_b0e1720dde6e58 23,25
+  s_9f6a8e768dcac7::t_aad0cc0655275d 11-12
+Sources/ATAIProfile/Presentation/ProfileV3TravellersSettingsModel.swift
+  s_9f6a8e768dcac7::t_32ddefec99f118 191,193,197-200
+  s_9f6a8e768dcac7::t_31ed7dc352fe00 38
+  s_9f6a8e768dcac7::t_e67282c2baf6bb 133
+  s_9f6a8e768dcac7::t_973806f18fcb36 55-58,60,64-65,70,201
+  s_9f6a8e768dcac7::t_d4a57cf3d9df54 190
+  s_9f6a8e768dcac7::t_f1185ed2c9ce74 202
+Sources/ATAIProfile/Presentation/ProfileV3HubViewModel.swift
+  s_9f6a8e768dcac7::t_e07089d8ca8912 148-151
+Sources/ATAIProfile/Domain/ProfileV3Passport.swift
+  s_9f6a8e768dcac7::t_a9aa924829b697 51
+Sources/ATAIProfile/Support/ProfileV3Theme+SettingsPage.swift
+  s_9f6a8e768dcac7::t_ca22b2b2b78a09 5
+Sources/ATAIProfile/Views/ProfileV3TermsView.swift
+  s_9f6a8e768dcac7::t_39da524580bd9a 10-11,21,23
+Sources/ATAIProfile/Presentation/ProfileV3SettingsViewModel.swift
+  s_9f6a8e768dcac7::t_745a706bd8938b 44-45,50
+Sources/ATAIProfile/Views/ProfileV3OptionPickerView.swift
+  s_9f6a8e768dcac7::t_0f11b2a2a54871 12
+  s_9f6a8e768dcac7::t_a600d2992e4447 48,50
+Sources/ATAIProfile/Views/ProfileV3PreviousPassportsView.swift
+  s_9f6a8e768dcac7::t_ce85b989a24242 13-14
+  s_9f6a8e768dcac7::t_5916549a4a897f 56,58
+Tests/ATAIProfileTests/ProfileV3TravellerRelationshipTests.swift
+  s_9f6a8e768dcac7::t_c3d17ef48eeaba 157-163
+  s_9f6a8e768dcac7::t_fc25a8dd5d74f5 57-111
+Sources/ATAIProfile/Views/ProfileV3PassportReasonView.swift
+  s_9f6a8e768dcac7::t_13ff0fb6b065d2 35,37
+  s_9f6a8e768dcac7::t_02cc1a01ff1274 10-11
+Sources/ATAIProfile/Domain/ProfileV3BoardScreens.swift
+  s_9f6a8e768dcac7::t_814e25890edca1 37-40
+  s_9f6a8e768dcac7::t_bd0af369438e85 34-36,41-47
+Sources/ATAIProfile/Support/ProfileV3ScrollOffset.swift
+  s_9f6a8e768dcac7::t_cd676d03885221 90
+  s_9f6a8e768dcac7::t_0baa5d0adbe76d 1
+  s_9f6a8e768dcac7::t_2bafdcf06ca5d8 58-60,63-64,66-70,73-75,77-79,81,83-87,99-101
+  s_9f6a8e768dcac7::t_fcdc3f0626a755 76,80,82
+  s_9f6a8e768dcac7::t_170a03f6c3d727 61-62,65
+  s_9f6a8e768dcac7::t_b0c858a9cf95fc 88-89
+  s_9f6a8e768dcac7::t_7e83aa0dd3ae28 102
+Sources/ATAIProfile/Views/ProfileV3EditTravellersView.swift
+  s_9f6a8e768dcac7::t_58b924f30f23c4 36,39
+Sources/ATAIProfile/Views/ProfileV3PermissionsView.swift
+  s_9f6a8e768dcac7::t_6d5c05c0eb30c9 8-9,22,24
+Tests/ATAIProfileTests/ProfileV3HeaderFadeTests.swift
+  s_9f6a8e768dcac7::t_1913d340627866 1-60
+Sources/ATAIProfile/ProfileV3EntryPoint.swift
+  s_9f6a8e768dcac7::t_67f57d5e677482 34
+Sources/ATAIProfile/Views/ProfileV3ProgrammesView.swift
+  s_9f6a8e768dcac7::t_60f4d76062890d 100,102
+  s_9f6a8e768dcac7::t_769d3fafb021be 19
+  s_9f6a8e768dcac7::t_d015ff23740b11 33-34
+CLAUDE.md
+  s_9f6a8e768dcac7::t_5f116999102de7 564
+  s_c482717a7a4db6::t_c4cd09db563239 585
+  s_c482717a7a4db6::t_1aa63fa2e517cb 34
+  s_9f6a8e768dcac7::t_cb7e98d8c1ad35 560
+  s_9f6a8e768dcac7::t_99ce58dee62f17 64
+  s_9f6a8e768dcac7::t_c70b8d26d8120e 565-569
+  s_9f6a8e768dcac7::t_1674dec8f9ee39 561-563
+  s_9f6a8e768dcac7::t_54a9a4a6b06937 506
+  s_9f6a8e768dcac7::t_0d9623c0cbc2b5 551-559
+  s_9f6a8e768dcac7::t_6ee1c3e60d6d98 570-571
+Sources/ATAIProfile/Presentation/ProfileV3SettingsSheetPresenter.swift
+  s_9f6a8e768dcac7::t_571bb8a61e6cdb 65-66
+  s_9f6a8e768dcac7::t_3e5873c5cb1b44 43
+Sources/ATAIProfile/Views/ProfileV3RideRegionsView.swift
+  s_9f6a8e768dcac7::t_33127739598305 8,22,24
+Sources/ATAIProfile/Views/ProfileV3PassportHowUsedView.swift
+  s_9f6a8e768dcac7::t_76123e9c3b911d 30,32
+  s_9f6a8e768dcac7::t_e0a7c8baab4de0 10
+Tests/ATAIProfileTests/ProfileV3PassportScanTests.swift
+  s_9f6a8e768dcac7::t_149f06e953e96d 20,22,28,30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3be4a7add9025000ba9885ea0e8409951bf5a1ec",
+  "prompts": {},
+  "sessions": {
+    "s_9f6a8e768dcac7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12965eae-c634-4029-8616-6735faaef3fd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
