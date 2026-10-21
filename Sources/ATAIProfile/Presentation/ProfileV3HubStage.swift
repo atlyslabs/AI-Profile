@@ -109,7 +109,9 @@ final class ProfileV3HubStage: ObservableObject {
         let flight = flight
         isCollapsing = false
         isGlobePaused = false
-        Task { await ProfileV3InteractiveGlobe.prepare(using: renderer) }
+        if ProfileV3FeatureFlags.isGlobeEnabled {
+            Task { await ProfileV3InteractiveGlobe.prepare(using: renderer) }
+        }
         heroSource = source
         heroGlobe = ProfileV3HeroGlobeState(
             pose: pose,

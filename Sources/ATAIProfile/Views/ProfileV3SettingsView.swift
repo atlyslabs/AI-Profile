@@ -426,7 +426,7 @@ private struct ProfileV3CitizenshipLockLayer: View {
 }
 
 #Preview("Settings · citizenship locked") {
-    ProfileV3SettingsView(viewModel: .preview(deps: .preview(passportCitizenship: .india)))
+    ProfileV3SettingsView(viewModel: .preview(repository: ProfileV3MockRepository(settingsCitizenship: "IN")))
 }
 
 #Preview("Settings · deletion requested") {

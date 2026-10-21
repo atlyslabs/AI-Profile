@@ -3,6 +3,7 @@ import Foundation
 struct ProfileV3SettingsMenuDTO: Decodable, Equatable {
     let type: String?
     let title: String?
+    private let rawCitizenshipCountryCode: ProfileV3LossyDTO<String>?
     private let rawAccountsCenter: ProfileV3LossyDTO<ProfileV3AccountsCenterDTO>?
     private let rawRows: [ProfileV3LossyDTO<ProfileV3SettingsRowDTO>]?
     private let rawConcierge: ProfileV3LossyDTO<ProfileV3ConciergeDTO>?
@@ -10,11 +11,13 @@ struct ProfileV3SettingsMenuDTO: Decodable, Equatable {
     enum CodingKeys: String, CodingKey {
         case type
         case title
+        case rawCitizenshipCountryCode = "citizenship_country_code"
         case rawAccountsCenter = "accounts_center"
         case rawRows = "rows"
         case rawConcierge = "contact_concierge"
     }
 
+    var citizenshipCountryCode: String? { rawCitizenshipCountryCode?.value }
     var accountsCenter: ProfileV3AccountsCenterDTO? { rawAccountsCenter?.value }
     var concierge: ProfileV3ConciergeDTO? { rawConcierge?.value }
     var rows: [ProfileV3SettingsRowDTO] { (rawRows ?? []).compactMap(\.value) }

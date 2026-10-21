@@ -113,11 +113,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
                 if menu.rows.contains(where: { $0.route == .permissions }) {
                     model.permissions.preload()
                 }
-                if menu.accountsRows.contains(where: {
-                    $0.route == .editField(ProfileV3ProfileField.citizenship.rawValue)
-                }) {
-                    model.fields.preloadCitizenshipIcon()
-                }
+                model.fields.applyCitizenship(code: menu.citizenshipCode)
             }
         )
     }

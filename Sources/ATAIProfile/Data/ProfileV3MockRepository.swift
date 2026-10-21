@@ -76,6 +76,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
     private let persona: ProfileV3PersonaStore
     private let appAccess: ProfileV3AppAccessStore
     private let vault: ProfileV3VaultStore
+    private let settingsCitizenship: String?
 
     init(
         delay: Duration = .milliseconds(600),
@@ -85,7 +86,8 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         ),
         persona: ProfileV3PersonaStore = ProfileV3PersonaStore(),
         appAccess: ProfileV3AppAccessStore = ProfileV3AppAccessStore(),
-        vault: ProfileV3VaultStore = ProfileV3VaultStore()
+        vault: ProfileV3VaultStore = ProfileV3VaultStore(),
+        settingsCitizenship: String? = nil
     ) {
         self.delay = delay
         self.session = session
@@ -93,6 +95,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         self.persona = persona
         self.appAccess = appAccess
         self.vault = vault
+        self.settingsCitizenship = settingsCitizenship
     }
 
     func loadAppAccess() async throws -> ProfileV3AppAccess {
@@ -367,7 +370,9 @@ struct ProfileV3MockRepository: ProfileV3Repository {
 
     func loadSettings() async throws -> ProfileV3SettingsMenu {
         try await Task.sleep(for: delay)
-        return ProfileV3Fixtures.settingsMenu
+        var menu = ProfileV3Fixtures.settingsMenu
+        menu.citizenshipCode = settingsCitizenship
+        return menu
     }
 
     func loadBenefits(profileID _: String?) async throws -> ProfileV3BenefitsSheet {

@@ -227,7 +227,7 @@ struct ProfileV3HubPassOverlay: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel(ProfileV3Strings.close)
                 ProfileV3HeroRect(state: hero, fill: Color(at: .pureBlack))
-                if let heroGlobe = stage.heroGlobe, !stage.isDetailSettled {
+                if ProfileV3FeatureFlags.isGlobeEnabled, let heroGlobe = stage.heroGlobe, !stage.isDetailSettled {
                     ProfileV3HeroGlobe(
                         progress: hero.progress,
                         source: .card(in: stage.heroSource),

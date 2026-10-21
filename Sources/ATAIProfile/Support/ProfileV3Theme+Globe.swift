@@ -2,6 +2,13 @@ import SwiftUI
 
 extension ProfileV3Theme {
     enum Globe {
+        static let frameInterval: TimeInterval = 1.0 / 24
+        static let landDensity = ProfileV3Globe.Density(
+            samples: 4000,
+            keep: 0.5,
+            minLatitude: -60,
+            land: .coastlines(spacing: 2)
+        )
         static let cardLongitude = 15.0
         static let cardPitch = 0.32
         static let cardSpinSpeed = 0.35
@@ -14,7 +21,7 @@ extension ProfileV3Theme {
             strayOpacity: 0.55,
             interiorOpacity: 0.22,
             landTint: Palette.globeLandTint,
-            density: ProfileV3Globe.Density(samples: 40000, keep: 0.8, minLatitude: -60, land: .coastlines(spacing: 1)),
+            density: landDensity,
             dotScale: 0.005,
             depthFade: 0.25,
             edgeGlow: 1.5
@@ -27,7 +34,7 @@ extension ProfileV3Theme {
             strayOpacity: 0.6,
             interiorOpacity: 0.5,
             landTint: nil,
-            density: ProfileV3Globe.Density(samples: 60000, keep: 0.5, minLatitude: -60, land: .coastlines(spacing: 0.9)),
+            density: landDensity,
             dotScale: 0.005,
             depthFade: 0.25,
             edgeGlow: 3

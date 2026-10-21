@@ -12,9 +12,7 @@ enum ProfileV3FeatureFlags {
     static let isPersonaEditingEnabled = false
     static let isAppAccessEnabled = false
     static let isVaultRecentSignInCheckEnabled = false
-    #if DEBUG
-    static let isCredentialStoreEnabled = true
-    #else
+    static let isGlobeEnabled = true
     static let isCredentialStoreEnabled = false
-    #endif
+    static let isEmptyProgrammeSlotEnabled = false
 }

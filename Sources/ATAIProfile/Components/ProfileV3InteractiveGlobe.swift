@@ -27,7 +27,7 @@ struct ProfileV3InteractiveGlobe: View {
 
     var body: some View {
         let landReady = isLandReady
-        SwiftUI.TimelineView(.animation(paused: !isRunning || isPaused)) { timeline in
+        SwiftUI.TimelineView(.animation(minimumInterval: Globe.frameInterval, paused: !isRunning || isPaused)) { timeline in
             Canvas { context, size in
                 frameClock.date = timeline.date
                 _ = landReady
