@@ -1,0 +1,101 @@
+CLAUDE.md
+  s_9f6a8e768dcac7::t_51f40d045cf3e1 521-526
+  s_9f6a8e768dcac7::t_ebc8fbd578a05d 516-520
+  s_c482717a7a4db6::t_f2aed6d136f14e 136
+  s_c482717a7a4db6::t_d9dfc096c5aa8d 34
+  s_c482717a7a4db6::t_f8b8a23f0d1d62 64
+  s_c482717a7a4db6::t_d98df16b3af03e 540
+  s_9f6a8e768dcac7::t_3bd977ccf36633 509-515
+  s_c482717a7a4db6::t_f9b44fc4734fac 563
+Sources/ATAIProfile/Components/ProfileV3GloveBoxBlobs.swift
+  s_9f6a8e768dcac7::t_3a7bfca188a8d5 1-62
+Sources/ATAIProfile/Views/ProfileV3GloveBoxView.swift
+  s_9f6a8e768dcac7::t_c2e28f88347c2f 1-124
+  s_9f6a8e768dcac7::t_027127898064bc 125-134
+Sources/ATAIProfile/Views/ProfileV3GloveBoxEmailDetail.swift
+  s_9f6a8e768dcac7::t_94fe75a8c68957 1-93
+Sources/ATAIProfile/Views/ProfileV3GloveBoxInboxView.swift
+  s_9f6a8e768dcac7::t_e4054b1584d188 1-309
+  s_9f6a8e768dcac7::t_bc99c6d2baf6ac 310-333
+Tests/ATAIProfileTests/ProfileV3GloveBoxTests.swift
+  s_9f6a8e768dcac7::t_dfd60195a80adc 1-61
+  s_9f6a8e768dcac7::t_b5fda4b888bcbd 62-64
+Sources/ATAIProfile/Presentation/ProfileV3GloveBoxViewModel.swift
+  s_9f6a8e768dcac7::t_74aab4c5e21481 1-56
+Sources/ATAIProfile/Views/ProfileV3SettingsDebugSection.swift
+  s_9f6a8e768dcac7::t_e92f85a6d54a2e 7,13-17,23-35,39-57,60,63,68,79-106,111-127
+Sources/ATAIProfile/Data/ProfileV3GloveBoxFixtures.swift
+  s_9f6a8e768dcac7::t_e5e119e666e9a3 1-129
+  s_9f6a8e768dcac7::t_5b1b60f4f36f0f 130-133
+Sources/ATAIProfile/Support/ProfileV3Theme+GloveBox.swift
+  s_9f6a8e768dcac7::t_925f315b65a196 1-242
+  s_9f6a8e768dcac7::t_fd5d5fa085071a 243-251
+Sources/ATAIProfile/Domain/ProfileV3GloveBox.swift
+  s_9f6a8e768dcac7::t_8c1192fe25f0d1 1-55
+Sources/ATAIProfile/Components/ProfileV3WorldPassCard.swift
+  s_9f6a8e768dcac7::t_c79592d76da67f 83-93
+Sources/ATAIProfile/Data/ProfileV3Fixtures.swift
+  s_9f6a8e768dcac7::t_7cd6a917b82ca0 126,160
+Sources/ATAIProfile/Generated/ProfileV3L10n+Generated.swift
+  s_9f6a8e768dcac7::t_9f22989b424fcd 263-267
+Sources/ATAIProfile/Presentation/ProfileV3ConnectorsSettingsModel.swift
+  s_9f6a8e768dcac7::t_d9f07d640227ac 128,151,169
+Sources/ATAIProfile/Presentation/ProfileV3SettingsRouting.swift
+  s_9f6a8e768dcac7::t_20cd5cbf6baa02 78-79
+Sources/ATAIProfile/Presentation/ProfileV3SettingsSheetPresenter.swift
+  s_9f6a8e768dcac7::t_1da086b801c20d 23,277-294
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_glovebox_attention.imageset/Contents.json
+  s_9f6a8e768dcac7::t_1a650cf7b78144 1-16
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_glovebox_attention.imageset/profile_v3_glovebox_attention.svg
+  s_9f6a8e768dcac7::t_1b01852b61b904 1-3
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_glovebox_envelope.imageset/Contents.json
+  s_9f6a8e768dcac7::t_0cc189f575dcb3 1-12
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_glovebox_folder.imageset/Contents.json
+  s_9f6a8e768dcac7::t_56904ab7603949 1-15
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_glovebox_folder.imageset/profile_v3_glovebox_folder.svg
+  s_9f6a8e768dcac7::t_64860ff4ff3ad6 1-23
+Sources/ATAIProfile/Resources/ProfileV3Localizable.xcstrings
+  s_9f6a8e768dcac7::t_6fc45e97c11bf0 2392-2427
+Sources/ATAIProfile/Support/ProfileV3Assets.swift
+  s_9f6a8e768dcac7::t_88c0d0cd23bdc1 125-132
+Sources/ATAIProfile/Support/ProfileV3Strings.swift
+  s_9f6a8e768dcac7::t_c95f0ac1102527 60-62
+Sources/ATAIProfile/Support/ProfileV3Theme+Globe.swift
+  s_9f6a8e768dcac7::t_7906dd433c93b2 40
+Sources/ATAIProfile/Support/ProfileV3Theme+Settings.swift
+  s_9f6a8e768dcac7::t_ac568c095df0bc 114,161
+Sources/ATAIProfile/Views/ProfileV3DisconnectEmailView.swift
+  s_9f6a8e768dcac7::t_6a3c36ddf28133 18-21,190,197,205
+Sources/ATAIProfile/Views/ProfileV3DisconnectProgressSheet.swift
+  s_9f6a8e768dcac7::t_34c4eac5350db9 1-85
+Sources/ATAIProfile/Views/ProfileV3SettingsDestinationView.swift
+  s_9f6a8e768dcac7::t_184b8e4be9db23 178
+Sources/ATAIProfile/Views/ProfileV3WorldPassDetailView.swift
+  s_9f6a8e768dcac7::t_6606f00045dd74 51
+Tests/ATAIProfileTests/ProfileV3DiscoveryHintTests.swift
+  s_9f6a8e768dcac7::t_4759fc56111393 92,124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f0d795b25e9c19b87fff28e838591e8b84e87099",
+  "prompts": {},
+  "sessions": {
+    "s_9f6a8e768dcac7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12965eae-c634-4029-8616-6735faaef3fd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
