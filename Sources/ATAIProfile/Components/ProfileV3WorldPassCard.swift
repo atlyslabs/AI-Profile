@@ -80,16 +80,18 @@ struct ProfileV3WorldPassHeader: View {
     let brand: String?
 
     var body: some View {
-        HStack(spacing: ProfileV3Theme.Space.s4) {
-            ProfileV3Vector.worldPassPlus.image
-                .profileV3Icon(ProfileV3Theme.Icon.sm)
-                .rotationEffect(.degrees(ProfileV3Theme.Rotation.quarter))
-            Text(ProfileV3Strings.worldPass(brand: brand))
-                .font(Font.Inter.get(size: ProfileV3Theme.Typography.worldPassHeaderSize, weight: .regular))
-                .tracking(ProfileV3Theme.Typography.worldPassHeaderTracking)
+        if let brand = brand?.nonEmpty {
+            HStack(spacing: ProfileV3Theme.Space.s4) {
+                ProfileV3Vector.worldPassPlus.image
+                    .profileV3Icon(ProfileV3Theme.Icon.sm)
+                    .rotationEffect(.degrees(ProfileV3Theme.Rotation.quarter))
+                Text(brand)
+                    .font(Font.Inter.get(size: ProfileV3Theme.Typography.worldPassHeaderSize, weight: .regular))
+                    .tracking(ProfileV3Theme.Typography.worldPassHeaderTracking)
+            }
+            .foregroundStyle(ProfileV3Theme.worldPassTitleGradient)
+            .opacity(ProfileV3Theme.Opacity.worldPassSubtitle)
         }
-        .foregroundStyle(ProfileV3Theme.worldPassTitleGradient)
-        .opacity(ProfileV3Theme.Opacity.worldPassSubtitle)
     }
 }
 

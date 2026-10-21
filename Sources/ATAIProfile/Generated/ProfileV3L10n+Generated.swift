@@ -260,6 +260,11 @@ internal enum ProfileV3L10n {
   internal static func moAiprofileGeneralUiStepIndicator(_ p1: Any, _ p2: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-ui-step-indicator", String(describing: p1), String(describing: p2), fallback: "Step %1$@ of %2$@")
   }
+  internal static var moAiprofileGloveboxButtonCopied: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-copied", fallback: "Copied") }
+  internal static var moAiprofileGloveboxButtonCopy: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-copy", fallback: "Copy") }
+  internal static func moAiprofileGloveboxLabelDated(_ p1: Any) -> String {
+    return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-dated", String(describing: p1), fallback: "·  %1$@")
+  }
   internal static var moAiprofileLoyaltyButtonAddAirlines: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-add-airlines", fallback: "+Add preferred airlines") }
   internal static var moAiprofileLoyaltyButtonAddProgram: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-add-program", fallback: "Add program") }
   internal static var moAiprofileLoyaltyButtonConnectMorePrograms: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-connect-more-programs", fallback: "Connect more programs") }
@@ -324,9 +329,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileLoyaltyProgramsLabelCoupons: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-programs-label-coupons", fallback: "Coupons") }
   internal static var moAiprofileLoyaltyProgramsLabelRedeemed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-programs-label-redeemed", fallback: "Redeemed") }
   internal static var moAiprofileLoyaltyProgramsLabelTitle: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-programs-label-title", fallback: "Loyalty Programs") }
-  internal static func moAiprofileLoyaltyProgramsLabelWorldpassBranded(_ p1: Any) -> String {
-    return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-programs-label-worldpass-branded", String(describing: p1), fallback: "%1$@ worldpass")
-  }
   internal static var moAiprofileLoyaltyScanningStatusEmphasis: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-scanning-status-emphasis", fallback: "travel benefits together.") }
   internal static var moAiprofileLoyaltyScanningStatusGoingThroughEmails: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-scanning-status-going-through-emails", fallback: "Going through emails...") }
   internal static var moAiprofileLoyaltyScanningStatusLead: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-scanning-status-lead", fallback: "bringing all your") }

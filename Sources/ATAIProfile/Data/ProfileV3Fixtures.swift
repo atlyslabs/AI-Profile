@@ -123,7 +123,7 @@ enum ProfileV3Fixtures {
             programmes: ProfileV3ProgrammeFixtures.extraProgrammes + programmes,
             connectedProgrammeCount: 6,
             programmesUpdate: .label("14 mins ago"),
-            brand: "atlys"
+            brand: "atlys worldpass"
         )
     }
 
@@ -157,7 +157,7 @@ enum ProfileV3Fixtures {
             label: ProfileV3Strings.addPastTrips,
             next: ProfileV3Directive(go: "add_trip", profileID: "co-traveller")
         ),
-        brand: "atlys"
+        brand: "atlys worldpass"
     )
 
     static let worldPasses = [worldPass, coTravellerPass]

@@ -122,6 +122,14 @@ enum ProfileV3PersonaArt: String {
     var image: Image { Image(rawValue, bundle: .module) }
 }
 
+enum ProfileV3GloveBoxArt: String {
+    case envelope = "profile_v3_glovebox_envelope"
+    case attention = "profile_v3_glovebox_attention"
+    case folder = "profile_v3_glovebox_folder"
+
+    var image: Image { Image(rawValue, bundle: .module) }
+}
+
 enum ProfileV3AgentArt: String {
     case sourceGoogle = "profile_v3_source_google"
     case sourceEmail = "profile_v3_source_email"

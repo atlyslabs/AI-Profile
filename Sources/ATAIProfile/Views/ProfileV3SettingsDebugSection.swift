@@ -4,45 +4,68 @@ import SwiftUI
 
 struct ProfileV3SettingsDebugSection: View {
     @State private var scenario = ProfileV3DebugKYCScenario.current
+    @State private var gloveBoxStart: ProfileV3GloveBoxFixtures.Start?
 
     var body: some View {
         VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s16) {
             ProfileV3DashedDivider()
             ProfileV3TagLabel(text: "Debug · KYC state")
-            VStack(spacing: 0) {
-                ForEach(Array(ProfileV3DebugKYCScenario.allCases.enumerated()), id: \.element) { index, option in
-                    if index > 0 {
-                        Rectangle()
-                            .fill(ProfileV3Theme.Palette.settingsCardBorder)
-                            .frame(height: ProfileV3Theme.Stroke.hairline)
-                    }
-                    row(option)
+            card(ProfileV3DebugKYCScenario.allCases) { option in
+                row(title: option.title, detail: option.detail, isSelected: option == scenario) {
+                    guard option != scenario else { return }
+                    scenario = option
+                    ProfileV3DebugKYCScenario.current = option
                 }
             }
-            .profileV3SettingsCard()
             Text("Overrides the main traveler's KYC on the board. The hub reloads when you pick one.")
                 .typoGraphy(.B2InterMedium12)
                 .foregroundStyle(Color(at: .neutralGrey400))
+            ProfileV3TagLabel(text: "Debug · Glove box")
+                .padding(.top, ProfileV3Theme.Space.s16)
+            card(ProfileV3GloveBoxFixtures.Start.allCases) { start in
+                row(title: start.title, detail: start.detail, isSelected: false) {
+                    gloveBoxStart = start
+                }
+            }
+            Text("Opens the Glove box flow with sample data. Nothing is sent to the server.")
+                .typoGraphy(.B2InterMedium12)
+                .foregroundStyle(Color(at: .neutralGrey400))
+        }
+        .fullScreenCover(item: $gloveBoxStart) { start in
+            ProfileV3GloveBoxDebugFlow(start: start) { gloveBoxStart = nil }
         }
     }
 
-    private func row(_ option: ProfileV3DebugKYCScenario) -> some View {
-        Button {
-            guard option != scenario else { return }
-            scenario = option
-            ProfileV3DebugKYCScenario.current = option
-        } label: {
+    private func card<Option: Hashable, Row: View>(
+        _ options: [Option],
+        @ViewBuilder row: @escaping (Option) -> Row
+    ) -> some View {
+        VStack(spacing: 0) {
+            ForEach(Array(options.enumerated()), id: \.element) { index, option in
+                if index > 0 {
+                    Rectangle()
+                        .fill(ProfileV3Theme.Palette.settingsCardBorder)
+                        .frame(height: ProfileV3Theme.Stroke.hairline)
+                }
+                row(option)
+            }
+        }
+        .profileV3SettingsCard()
+    }
+
+    private func row(title: String, detail: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
             HStack(spacing: ProfileV3Theme.Space.s12) {
                 VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s4) {
-                    Text(option.title)
+                    Text(title)
                         .typoGraphy(.H7InterMedium16)
                         .foregroundStyle(Color(at: .pureBlack))
-                    Text(option.detail)
+                    Text(detail)
                         .typoGraphy(.B2InterMedium12)
                         .foregroundStyle(Color(at: .neutralGrey400))
                 }
                 Spacer(minLength: 0)
-                if option == scenario {
+                if isSelected {
                     ATIcon.SwiftUIImage.check
                         .profileV3Icon(ProfileV3Theme.Icon.md)
                         .foregroundStyle(Color(at: .pureBlack))
@@ -53,13 +76,54 @@ struct ProfileV3SettingsDebugSection: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.profileV3Pressable(.selection))
-        .accessibilityAddTraits(option == scenario ? [.isButton, .isSelected] : .isButton)
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+    }
+}
+
+struct ProfileV3GloveBoxDebugFlow: View {
+    let onClose: () -> Void
+
+    @StateObject private var viewModel: ProfileV3GloveBoxViewModel
+
+    init(start: ProfileV3GloveBoxFixtures.Start, onClose: @escaping () -> Void) {
+        self.onClose = onClose
+        _viewModel = StateObject(wrappedValue: ProfileV3GloveBoxViewModel(gloveBox: start.gloveBox))
+    }
+
+    var body: some View {
+        ProfileV3GloveBoxView(viewModel: viewModel, onBack: onClose)
+            .onAppear(perform: wire)
+    }
+
+    private func wire() {
+        let viewModel = viewModel
+        viewModel.onIntroAction = { [weak viewModel] action in
+            switch action {
+            case .completeKYC: viewModel?.show(.intro(ProfileV3GloveBoxFixtures.activateNow))
+            case .activate: viewModel?.show(.inbox(ProfileV3GloveBoxFixtures.inbox))
+            }
+        }
+        viewModel.onFollowUp = { [weak viewModel] _ in viewModel?.closeEmail() }
     }
 }
 
 #Preview("Settings debug section") {
-    ProfileV3SettingsDebugSection()
-        .padding(ProfileV3Theme.Sizes.screenHorizontalMargin)
-        .background(Color(at: .pureWhite))
+    ScrollView {
+        ProfileV3SettingsDebugSection()
+            .padding(ProfileV3Theme.Sizes.screenHorizontalMargin)
+    }
+    .background(Color(at: .pureWhite))
+}
+
+#Preview("Glove box · unlock") {
+    ProfileV3GloveBoxDebugFlow(start: .unlock) {}
+}
+
+#Preview("Glove box · inbox") {
+    ProfileV3GloveBoxDebugFlow(start: .inbox) {}
+}
+
+#Preview("Glove box · empty") {
+    ProfileV3GloveBoxDebugFlow(start: .emptyInbox) {}
 }
 #endif

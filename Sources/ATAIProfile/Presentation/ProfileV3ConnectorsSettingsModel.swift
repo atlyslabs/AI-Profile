@@ -125,6 +125,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     func confirmDisconnect() {
         guard let pendingDisconnect, pendingDisconnect.canDisconnect, !isDisconnecting else { return }
         isDisconnecting = true
+        router?.presentDisconnectProgress()
         let connector = pendingDisconnect
         let repository = repository
         disconnectTask = Task { [weak self] in
@@ -147,6 +148,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
         guard isDisconnecting else { return }
         disconnectTask?.cancel()
         isDisconnecting = false
+        router?.dismissDisconnectProgress()
         load()
         router?.dismissDisconnectEmail()
         deckResetToken += 1
@@ -164,6 +166,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
 
     private func finishDisconnect(_ connector: ProfileV3ConnectorKey, result: Result<Void, Error>) {
         isDisconnecting = false
+        router?.dismissDisconnectProgress()
         switch result {
         case .success:
             ProfileV3Analytics.connectorDisconnected(connectorKey: connector.rawValue)

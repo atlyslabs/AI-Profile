@@ -2389,6 +2389,42 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-button-copied": {
+      "comment": "The Glove box copy button right after the address was copied.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copied"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-button-copy": {
+      "comment": "Button under the Glove box travel inbox address that copies the address.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-dated": {
+      "comment": "Date after the status on a Glove box email row, e.g. \"·  25 Jun, 2026\". %1$@ is the date the server sends.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "·  %1$@"
+          }
+        }
+      }
+    },
     "mo-aiprofile-loyalty-button-add-airlines": {
       "comment": "Action button to add airlines to loyalty programs.",
       "extractionState": "manual",
@@ -2985,18 +3021,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Loyalty Programs"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-loyalty-programs-label-worldpass-branded": {
-      "comment": "WorldPass card header. %1$@ is the brand the server sends in worldpass_label, such as atlys or ayl.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ worldpass"
           }
         }
       }

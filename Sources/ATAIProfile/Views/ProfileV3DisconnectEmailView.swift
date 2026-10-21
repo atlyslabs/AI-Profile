@@ -6,7 +6,6 @@ struct ProfileV3DisconnectEmailView: View {
     var isDisconnecting = false
     let onBack: () -> Void
     let onDisconnect: () -> Void
-    let onStop: () -> Void
 
     @State private var hasArrived = false
     @State private var hasConsented = false
@@ -16,20 +15,10 @@ struct ProfileV3DisconnectEmailView: View {
     private var isConsentRequired: Bool { !consentLabel.isEmpty && confirm?.isConsentRequired ?? true }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            confirmScreen
-            if isDisconnecting {
-                Color(at: .pureBlack)
-                    .opacity(ProfileV3Theme.Motion.progressScrimOpacity)
-                    .ignoresSafeArea()
-                    .transition(.opacity.animation(ProfileV3Theme.Motion.progressScrim))
-                ProfileV3DisconnectProgressPanel(onStop: onStop)
-                    .transition(.move(edge: .bottom))
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(at: .pureWhite))
-        .animation(ProfileV3Theme.Motion.progressPanel, value: isDisconnecting)
+        confirmScreen
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(at: .pureWhite))
+            .animation(ProfileV3Theme.Motion.progressPanel, value: isDisconnecting)
     }
 
     private var confirmScreen: some View {
@@ -196,100 +185,16 @@ struct ProfileV3DisconnectEmailView: View {
     }
 }
 
-private struct ProfileV3DisconnectProgressPanel: View {
-    let onStop: () -> Void
-
-    @State private var isBreathing = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    var body: some View {
-        VStack(spacing: 0) {
-            severedLink
-            Text(ProfileV3Strings.disconnectProgressTitle)
-                .typoGraphy(.H6InterMedium18)
-                .foregroundStyle(ProfileV3Theme.Palette.confirmTitle)
-                .padding(.top, ProfileV3Theme.Sizes.Progress.titleTop)
-            Text(ProfileV3Strings.disconnectProgressBody)
-                .typoGraphy(.B2InterMedium12)
-                .foregroundStyle(ProfileV3Theme.Palette.confirmBody)
-                .frame(width: ProfileV3Theme.Sizes.Progress.bodyWidth)
-                .padding(.top, ProfileV3Theme.Sizes.Progress.bodyTop)
-                .opacity(isBreathing ? ProfileV3Theme.Motion.progressBreathLow : 1)
-                .animation(
-                    reduceMotion ? nil : ProfileV3Theme.Motion.progressBreath.repeatForever(autoreverses: true),
-                    value: isBreathing
-                )
-            ProfileV3ContinueButton(
-                title: ProfileV3Strings.stopDisconnecting,
-                icon: ProfileV3Vector.autostop.image,
-                iconSize: ProfileV3Theme.Icon.lg,
-                action: onStop
-            )
-            .padding(.top, ProfileV3Theme.Sizes.Progress.stopTop)
-        }
-        .multilineTextAlignment(.center)
-        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-        .padding(.top, ProfileV3Theme.Sizes.Progress.panelTop)
-        .padding(.bottom, ProfileV3Theme.Sizes.Disconnect.footerBottom)
-        .frame(maxWidth: .infinity)
-        .background(
-            UnevenRoundedRectangle(
-                topLeadingRadius: ProfileV3Theme.Sizes.Progress.panelRadius,
-                topTrailingRadius: ProfileV3Theme.Sizes.Progress.panelRadius,
-                style: .continuous
-            )
-            .fill(Color(at: .pureWhite))
-            .ignoresSafeArea(edges: .bottom)
-        )
-        .onAppear { isBreathing = true }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel(ProfileV3Strings.disconnectProgressTitle)
-    }
-
-    private var severedLink: some View {
-        HStack(spacing: 0) {
-            ProfileV3ConnectorGlyph.atlysMark.image
-                .resizable()
-                .scaledToFit()
-                .frame(
-                    width: ProfileV3Theme.Sizes.Progress.atlysMark,
-                    height: ProfileV3Theme.Sizes.Progress.atlysMark
-                )
-                .rotationEffect(.degrees(ProfileV3Theme.Rotation.quarter))
-            ProfileV3ConnectorGlyph.disconnectLink.image
-                .resizable()
-                .scaledToFit()
-                .frame(
-                    width: ProfileV3Theme.Sizes.Progress.linkWidth,
-                    height: ProfileV3Theme.Sizes.Progress.linkHeight
-                )
-                .padding(.leading, ProfileV3Theme.Sizes.Progress.linkLeading)
-                .padding(.trailing, ProfileV3Theme.Sizes.Progress.linkTrailing)
-            ProfileV3RemoteImage(url: ProfileV3ConnectorArt.gmail.url, contentMode: .fit, placeholder: .clear)
-                .frame(
-                    width: ProfileV3Theme.Sizes.Progress.gmailMark,
-                    height: ProfileV3Theme.Sizes.Progress.gmailMark
-                )
-        }
-        .accessibilityHidden(true)
-    }
-}
-
 #if DEBUG
 #Preview("Disconnect email") {
-    ProfileV3DisconnectEmailView(onBack: {}, onDisconnect: {}, onStop: {})
-}
-
-#Preview("Disconnect email · running") {
-    ProfileV3DisconnectEmailView(isDisconnecting: true, onBack: {}, onDisconnect: {}, onStop: {})
+    ProfileV3DisconnectEmailView(onBack: {}, onDisconnect: {})
 }
 
 #Preview("Disconnect email · server copy") {
     ProfileV3DisconnectEmailView(
         confirm: ProfileV3Fixtures.disconnectConfirm(.gmail),
         onBack: {},
-        onDisconnect: {},
-        onStop: {}
+        onDisconnect: {}
     )
 }
 
@@ -297,8 +202,7 @@ private struct ProfileV3DisconnectProgressPanel: View {
     ProfileV3DisconnectEmailView(
         confirm: ProfileV3Fixtures.disconnectConfirm(.gmail, isConsentRequired: false),
         onBack: {},
-        onDisconnect: {},
-        onStop: {}
+        onDisconnect: {}
     )
 }
 #endif

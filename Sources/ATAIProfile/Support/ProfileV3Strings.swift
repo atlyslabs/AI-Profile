@@ -57,6 +57,9 @@ enum ProfileV3Strings {
     static var selectPlaceholder: String { ProfileV3L10n.moAiprofileGeneralUiButtonSelect }
     static var coupons: String { ProfileV3L10n.moAiprofileLoyaltyProgramsLabelCoupons }
     static var noCoupons: String { ProfileV3L10n.moAiprofileLoyaltyEmptyStateNoCoupons }
+    static var gloveBoxCopy: String { ProfileV3L10n.moAiprofileGloveboxButtonCopy }
+    static var gloveBoxCopied: String { ProfileV3L10n.moAiprofileGloveboxButtonCopied }
+    static func gloveBoxDated(_ date: String) -> String { ProfileV3L10n.moAiprofileGloveboxLabelDated(date) }
     static func couponUsed(_ amount: String) -> String { ProfileV3L10n.moAiprofileLoyaltyCouponUsedAmount(amount) }
     static var loyaltyProgrammes: String { ProfileV3L10n.moAiprofileLoyaltyProgramsLabelTitle }
     static var termsOfService: String { ProfileV3L10n.moAiprofileAccountSettingsLabelTermsOfService }
@@ -67,9 +70,6 @@ enum ProfileV3Strings {
     static var kycAlmostThere: String { ProfileV3L10n.moAiprofileGeneralUiLabelAlmostThere }
     static var kycStepsDone: String { " " + ProfileV3L10n.moAiprofileGeneralUiLabelStepsDone }
     static func kycStepFraction(done: Int, total: Int) -> String { ProfileV3L10n.moAiprofileGeneralLabelKycStepFraction(done, total) }
-    static func worldPass(brand: String?) -> String {
-        ProfileV3L10n.moAiprofileLoyaltyProgramsLabelWorldpassBranded(brand ?? "").trimmingCharacters(in: .whitespaces)
-    }
     static var holdToExplore: String { ProfileV3L10n.moAiprofileGeneralButtonHoldToExplore }
     static var flights: String { ProfileV3L10n.moAiprofileProfileStatLabelFlights }
     static var distance: String { ProfileV3L10n.moAiprofileProfileStatLabelDistance }

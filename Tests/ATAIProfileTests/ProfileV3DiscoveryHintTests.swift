@@ -89,10 +89,8 @@ struct ProfileV3DiscoveryHintTests {
 
     @Test func theWorldPassHeaderNamesTheServersBrand() throws {
         let board = try Self.board()
-        #expect(board.mainProfile?.pass.brand == "ayl")
+        #expect(board.mainProfile?.pass.brand == "ayl worldpass")
         #expect(board.profiles.first { !$0.isMain }?.pass.brand == nil)
-        #expect(ProfileV3Strings.worldPass(brand: "ayl") == "ayl worldpass")
-        #expect(ProfileV3Strings.worldPass(brand: nil) == "worldpass")
     }
 
     @Test func labelsTheServerLeavesOutStayEmpty() throws {
@@ -123,7 +121,7 @@ struct ProfileV3DiscoveryHintTests {
     private static func board() throws -> ProfileV3Board {
         let json = #"""
         {"profiles":[
-          {"profile_id":"main","is_main":true,"worldpass_card":{"worldpass_label":" ayl ","kyc_state":{"state":"active","status_label":"KYC active"}}},
+          {"profile_id":"main","is_main":true,"worldpass_card":{"worldpass_label":" ayl worldpass ","kyc_state":{"state":"active","status_label":"KYC active"}}},
           {"profile_id":"co","is_main":false}
         ]}
         """#

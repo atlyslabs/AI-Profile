@@ -111,10 +111,9 @@ extension ProfileV3Theme.Sizes {
         static let consentTop: CGFloat = 32
         static let consentSpacing: CGFloat = 8
         static let consentBox: CGFloat = 24
-        static let scrollBottom: CGFloat = 180
+        static let scrollBottom: CGFloat = 16
         static let backTop: CGFloat = 10
         static let footerSpacing: CGFloat = 16
-        static let footerBottom: CGFloat = 34
     }
 
     enum Passport {
@@ -159,8 +158,7 @@ extension ProfileV3Theme.Sizes {
     }
 
     enum Progress {
-        static let panelRadius: CGFloat = 44
-        static let panelTop: CGFloat = 67
+        static let linkTop = 67 - ProfileV3Theme.Sizes.sheetGrabberTop - ProfileV3Theme.Sizes.sheetGrabberHeight
         static let titleTop: CGFloat = 31
         static let bodyTop: CGFloat = 12
         static let bodyWidth: CGFloat = 271
@@ -233,11 +231,9 @@ extension ProfileV3Theme.Motion {
     static let connectorDeckDimGap: Double = 0.2
     static let disconnectEnterRise: CGFloat = 24
     static let consentReveal: Animation = .easeInOut(duration: 0.34)
-    static let progressScrim: Animation = .easeInOut(duration: 0.35)
     static let progressPanel: Animation = .easeInOut(duration: 0.5)
     static let progressBreath: Animation = .easeInOut(duration: 0.8)
     static let progressBreathLow: Double = 0.45
-    static let progressScrimOpacity: Double = 0.4
 }
 
 extension ProfileV3Theme.Shadow {

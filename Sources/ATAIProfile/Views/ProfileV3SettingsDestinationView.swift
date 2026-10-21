@@ -175,8 +175,7 @@ struct ProfileV3DisconnectEmailHost: View {
             confirm: model.pendingConfirm,
             isDisconnecting: model.isDisconnecting,
             onBack: onClose,
-            onDisconnect: model.confirmDisconnect,
-            onStop: model.stopDisconnecting
+            onDisconnect: model.confirmDisconnect
         )
     }
 }

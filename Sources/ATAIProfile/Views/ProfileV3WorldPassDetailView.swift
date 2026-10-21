@@ -48,14 +48,10 @@ struct ProfileV3WorldPassDetailView: View {
                     .animation(nil, value: showsChrome)
                 VStack(spacing: ProfileV3Theme.Space.s16) {
                     Text(pass.holderName)
-                        .typoGraphy(.H7InterMedium16)
+                        .typoGraphy(.B1InterMedium14)
                         .foregroundStyle(Color(at: .pureWhite))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, ProfileV3Theme.Sizes.Detail.statsHorizontal)
-                    ProfileV3PassNumber(
-                        number: pass.memberNumber,
-                        maxWidth: ProfileV3Theme.Sizes.worldPassNumberMaxWidth
-                    )
                     visitedCountries(flagCodes)
                 }
                 .opacity(showsChrome ? 1 : 0)
