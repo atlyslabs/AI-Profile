@@ -21,6 +21,8 @@ let package = Package(
         .package(url: "https://github.com/marmelroy/PhoneNumberKit.git", from: "3.6.0"),
         .package(url: "https://github.com/kean/Nuke.git", from: "12.0.0"),
         .package(url: "https://github.com/Moya/Moya.git", from: "14.0.0"),
+        // Already in the graph through ATLogger; named here so views can mark themselves for session replay.
+        .package(url: "https://github.com/PostHog/posthog-ios.git", from: "3.71.0"),
     ],
     targets: [
         .target(
@@ -32,6 +34,7 @@ let package = Package(
                 .product(name: "ATAuthKit", package: "ATAuthKit"),
                 .product(name: "DittoRuntimeStrings", package: "ditto-migrate-toolkit"),
                 .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
+                .product(name: "PostHog", package: "posthog-ios"),
                 .product(name: "Nuke", package: "Nuke"),
             ],
             resources: [

@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3PassportCard: View {
@@ -156,6 +157,7 @@ struct ProfileV3PassportCard: View {
     @ViewBuilder
     private func fields(for passport: ProfileV3Passport) -> some View {
         labelled(ProfileV3Strings.passportNumber, value: passport.number)
+            .postHogMask()
         HStack(alignment: .top, spacing: ProfileV3Theme.Sizes.Passport.dateSpacing) {
             labelled(ProfileV3Strings.passportIssueDate, value: passport.issuedOn)
             labelled(ProfileV3Strings.passportExpiryDate, value: passport.expiresOn)

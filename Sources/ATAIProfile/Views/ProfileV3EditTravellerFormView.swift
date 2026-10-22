@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3EditTravellerFormView: View {
@@ -115,6 +116,7 @@ struct ProfileV3EditTravellerFormView: View {
                 error: passportError,
                 onFocusChange: { track(.passport, isFocused: $0) }
             )
+            .postHogMask()
             .id(Field.passport)
         }
     }
