@@ -1,0 +1,25 @@
+Sources/ATAIProfile/Components/ProfileV3OptionCard.swift
+  s_108bebbb5e715c::t_e4a468c9cd834d 22
+Sources/ATAIProfile/Components/ProfileV3OptionCardGrid.swift
+  s_108bebbb5e715c::t_833295abd9a2ee 10-20,25-30
+Sources/ATAIProfile/Data/DTOs/ProfileV3AgentDTO.swift
+  s_108bebbb5e715c::t_9f21ffa8456f67 310-311,313,315-316,323-348,350-351,353-354
+Tests/ATAIProfileTests/ProfileV3AgentBoxTests.swift
+  s_108bebbb5e715c::t_a09b46ff391eee 258-280
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "64beece533039a1c4b5f4658c2cf1049a1e2b71a",
+  "prompts": {},
+  "sessions": {
+    "s_108bebbb5e715c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "0863aba6-22d6-452b-a14d-34a0045e30e8",
+        "model": "grok-4.7"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
