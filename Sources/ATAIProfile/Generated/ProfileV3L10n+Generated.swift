@@ -206,6 +206,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGeneralErrorRefreshFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-error-refresh-failed", fallback: "Couldn't refresh your profile. Try again in a moment.") }
   internal static var moAiprofileGeneralErrorSaveFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-error-save-failed", fallback: "Couldn't save your changes. Try again.") }
   internal static var moAiprofileGeneralErrorSubtitleInternetIssue: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-error-subtitle-internet-issue", fallback: "Seems like there was an issue with your internet") }
+  internal static var moAiprofileGeneralErrorSubtitlePageLoadFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-error-subtitle-page-load-failed", fallback: "We couldn’t load this page. Let’s give it another shot") }
+  internal static var moAiprofileGeneralErrorTitleQuickHiccup: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-error-title-quick-hiccup", fallback: "Just a quick hiccup") }
   internal static var moAiprofileGeneralErrorTitleSomethingWentWrong: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-error-title-something-went-wrong", fallback: "oops something went wrong") }
   internal static func moAiprofileGeneralFormatBulleted(_ p1: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-format-bulleted", String(describing: p1), fallback: "•  %1$@")

@@ -2077,6 +2077,30 @@
         }
       }
     },
+    "mo-aiprofile-general-error-subtitle-page-load-failed": {
+      "comment": "Error state body when a page fails to load, above the Retry button.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We couldn’t load this page. Let’s give it another shot"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-general-error-title-quick-hiccup": {
+      "comment": "Error state title when a page fails to load.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Just a quick hiccup"
+          }
+        }
+      }
+    },
     "mo-aiprofile-general-error-title-something-went-wrong": {
       "comment": "Generic error title.",
       "extractionState": "manual",

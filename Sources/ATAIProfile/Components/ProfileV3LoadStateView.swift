@@ -2,8 +2,14 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3LoadStateView: View {
+    enum FailureStyle {
+        case statusPanel
+        case errorState
+    }
+
     let phase: ProfileV3LoadPhase
     var loadingLabel = ProfileV3Strings.loading
+    var failureStyle = FailureStyle.statusPanel
     let retry: () -> Void
 
     var body: some View {
@@ -18,16 +24,26 @@ struct ProfileV3LoadStateView: View {
             ProfileV3Spinner(accessibilityLabel: loadingLabel)
                 .transition(.opacity)
         case .failed:
+            failure
+                .profileV3FeedbackOnAppear(.error)
+                .transition(.opacity)
+        case .loaded:
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    private var failure: some View {
+        switch failureStyle {
+        case .statusPanel:
             ProfileV3StatusPanel(
                 title: ProfileV3Strings.loadFailedTitle,
                 subtitle: ProfileV3Strings.loadFailedSubtitle,
                 actionTitle: ProfileV3Strings.retry,
                 action: retry
             )
-            .profileV3FeedbackOnAppear(.error)
-            .transition(.opacity)
-        case .loaded:
-            EmptyView()
+        case .errorState:
+            ProfileV3ErrorState(action: retry)
         }
     }
 }
@@ -40,6 +56,11 @@ struct ProfileV3LoadStateView: View {
 
 #Preview("Load state · failed") {
     ProfileV3LoadStateView(phase: .failed, retry: {})
+        .background(Color(at: .pureWhite))
+}
+
+#Preview("Load state · error state") {
+    ProfileV3LoadStateView(phase: .failed, failureStyle: .errorState, retry: {})
         .background(Color(at: .pureWhite))
 }
 #endif

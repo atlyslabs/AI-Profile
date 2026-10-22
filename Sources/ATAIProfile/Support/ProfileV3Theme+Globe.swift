@@ -2,7 +2,6 @@ import SwiftUI
 
 extension ProfileV3Theme {
     enum Globe {
-        static let frameInterval: TimeInterval = 1.0 / 24
         static let landDensity = ProfileV3Globe.Density(
             samples: 4000,
             keep: 0.5,

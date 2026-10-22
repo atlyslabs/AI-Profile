@@ -5,205 +5,458 @@ struct ProfileV3GloveBoxView: View {
     @ObservedObject var viewModel: ProfileV3GloveBoxViewModel
     let onBack: () -> Void
 
-    private typealias Layout = ProfileV3Theme.GloveBox.Layout
+    @State private var sheetPresenter = ProfileV3GloveBoxSheetPresenter()
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            page
-                .blur(radius: viewModel.openEmail == nil ? 0 : Layout.dimBlur)
-                .allowsHitTesting(viewModel.openEmail == nil)
-                .accessibilityHidden(viewModel.openEmail != nil)
-            if let email = viewModel.openEmail {
-                ProfileV3Theme.GloveBox.Palette.dim
-                    .ignoresSafeArea()
-                    .onTapGesture(perform: viewModel.closeEmail)
-                    .transition(.opacity)
-                ProfileV3GloveBoxEmailDetail(
-                    email: email,
-                    onBack: viewModel.closeEmail,
-                    onFollowUp: viewModel.tapFollowUp
-                )
-                .transition(.move(edge: .bottom))
+        page
+            .blur(radius: viewModel.sheets.isEmpty ? 0 : ProfileV3Theme.GloveBox.Layout.dimBlur)
+            .accessibilityHidden(!viewModel.sheets.isEmpty)
+            .background(Color(at: .pureWhite).ignoresSafeArea())
+            .sensoryFeedback(.success, trigger: viewModel.copies)
+            .onChange(of: viewModel.sheets.isEmpty) { _, _ in
+                sheetPresenter.update(for: viewModel)
             }
-        }
+            .onDisappear {
+                sheetPresenter.dismiss()
+            }
     }
 
+    @ViewBuilder
     private var page: some View {
-        VStack(spacing: 0) {
-            ProfileV3BackTagHeader(title: viewModel.gloveBox.title, top: Layout.headerTop, onBack: onBack)
-            switch viewModel.gloveBox.stage {
-            case .intro(let intro):
-                ProfileV3GloveBoxIntroCard(intro: intro, onAction: viewModel.tapIntroAction)
-                    .id(intro)
-                    .padding(.horizontal, Layout.cardMargin)
-                    .padding(.top, Layout.cardTop)
-                    .padding(.bottom, Layout.cardMinBottomGap)
-                    .frame(maxHeight: .infinity, alignment: .top)
-                    .transition(.opacity)
-            case .inbox(let inbox):
-                ProfileV3GloveBoxInboxView(
-                    inbox: inbox,
-                    isCopied: viewModel.isCopied,
-                    copies: viewModel.copies,
-                    onCopy: viewModel.copyAddress,
-                    onOpen: viewModel.open
-                )
+        switch viewModel.gloveBox.stage {
+        case .intro(let intro):
+            ProfileV3GloveBoxIntroView(
+                title: viewModel.gloveBox.title,
+                intro: intro,
+                onBack: onBack,
+                onAction: viewModel.tapIntroAction
+            )
+            .id(intro)
+            .transition(.opacity)
+        case .home(let home):
+            ProfileV3GloveBoxHomeView(title: viewModel.gloveBox.title, home: home, viewModel: viewModel, onBack: onBack)
                 .transition(.opacity)
-            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(background.ignoresSafeArea())
-    }
-
-    private var background: Color {
-        if case .inbox = viewModel.gloveBox.stage { return ProfileV3Theme.GloveBox.Palette.inboxBackground }
-        return Color(at: .pureWhite)
     }
 }
 
-struct ProfileV3GloveBoxIntroCard: View {
+struct ProfileV3GloveBoxHeader: View {
+    var title: String?
+    var titleOpacity: Double = 1
+    let onBack: () -> Void
+
+    var body: some View {
+        ZStack {
+            if let title {
+                ProfileV3TagLabel(text: title)
+                    .opacity(titleOpacity)
+                    .accessibilityHidden(titleOpacity == 0)
+            }
+            HStack {
+                ProfileV3CircleIconButton.back(action: onBack)
+                Spacer()
+            }
+        }
+        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+        .padding(.top, ProfileV3Theme.GloveBox.Layout.headerTop)
+    }
+}
+
+struct ProfileV3GloveBoxIntroView: View {
+    let title: String
     let intro: ProfileV3GloveBoxIntro
+    var animatesTitle = true
+    let onBack: () -> Void
     let onAction: () -> Void
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var entranceStart = Date()
-    @State private var isEntranceDone: Bool
+    private typealias Layout = ProfileV3Theme.GloveBox.Layout
 
-    init(intro: ProfileV3GloveBoxIntro, animatesEntrance: Bool = true, onAction: @escaping () -> Void) {
+    var body: some View {
+        VStack(spacing: 0) {
+            ProfileV3GloveBoxHeader(onBack: onBack)
+            GeometryReader { proxy in
+                ScrollView(showsIndicators: false) {
+                    ProfileV3GloveBoxIntroContent(
+                        title: title,
+                        intro: intro,
+                        scale: Layout.cabinetScale(for: proxy.size.width),
+                        animatesTitle: animatesTitle
+                    )
+                }
+                .scrollBounceBehavior(.basedOnSize)
+            }
+            if !intro.actionTitle.isEmpty {
+                ProfileV3GloveBoxActionButton(title: intro.actionTitle, action: onAction)
+                    .padding(.horizontal, Layout.actionInset)
+                    .padding(.bottom, Layout.actionBottom)
+            }
+        }
+    }
+}
+
+struct ProfileV3GloveBoxIntroContent: View {
+    let title: String
+    let intro: ProfileV3GloveBoxIntro
+    let scale: CGFloat
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var appearedAt = Date()
+    @State private var isTitleSettled: Bool
+
+    init(title: String, intro: ProfileV3GloveBoxIntro, scale: CGFloat, animatesTitle: Bool = true) {
+        self.title = title
         self.intro = intro
-        self.onAction = onAction
-        _isEntranceDone = State(initialValue: !animatesEntrance)
+        self.scale = scale
+        _isTitleSettled = State(initialValue: !animatesTitle || intro.status != .warmingUp)
     }
 
     private typealias Layout = ProfileV3Theme.GloveBox.Layout
-    private typealias Motion = ProfileV3Theme.GloveBox.Motion.Intro
+    private typealias Motion = ProfileV3Theme.GloveBox.Motion
 
     var body: some View {
-        TimelineView(.animation(paused: isEntranceDone || reduceMotion)) { context in
-            content(at: elapsed(at: context.date))
+        ZStack(alignment: .top) {
+            ProfileV3GloveBoxCabinet(title: title, status: intro.status, statusLabel: intro.statusLabel, scale: scale)
+            copy
+                .padding(.top, Layout.introTitleTop * scale)
         }
+        .frame(maxWidth: .infinity)
+        .padding(.top, Layout.introCabinetTop)
+        .padding(.bottom, Layout.introBottom)
         .task {
-            guard !isEntranceDone else { return }
+            guard !isTitleSettled else { return }
             if !reduceMotion {
-                try? await Task.sleep(for: .seconds(Motion.delay + Motion.duration))
+                try? await Task.sleep(for: .seconds(Motion.titleDuration))
             }
-            isEntranceDone = true
+            isTitleSettled = true
         }
     }
 
-    private func elapsed(at date: Date) -> Double {
-        isEntranceDone || reduceMotion ? .infinity : date.timeIntervalSince(entranceStart) - Motion.delay
-    }
-
-    private func content(at time: Double) -> some View {
-        ZStack {
-            stack(showing: .card, at: time)
-                .background(card(at: time))
-                .opacity(Motion.fade.value(at: time))
-                .scaleEffect(Motion.cardScale.value(at: time))
-                .offset(x: Motion.cardX.value(at: time), y: Motion.cardY.value(at: time))
-            stack(showing: .copy, at: time)
-        }
-    }
-
-    private enum Part {
-        case card
-        case copy
-    }
-
-    private func stack(showing part: Part, at time: Double) -> some View {
-        let showsCopy = part == .copy
-        return VStack(spacing: 0) {
-            artwork
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                .opacity(showsCopy ? 0 : 1)
+    private var copy: some View {
+        VStack(spacing: Layout.introSubtitleGap) {
             if !intro.title.isEmpty {
-                Text(intro.title)
-                    .typoGraphy(.H3DentonMedium28)
-                    .foregroundStyle(Color(at: .pureBlack))
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: Layout.titleWidth)
-                    .introRise(showsCopy, at: time)
-                    .padding(.top, Layout.titleTop)
+                TimelineView(.animation(paused: isTitleSettled || reduceMotion)) { context in
+                    let time = isTitleSettled || reduceMotion ? .infinity : context.date.timeIntervalSince(appearedAt)
+                    Text(intro.title)
+                        .typoGraphy(.H3DentonMedium28)
+                        .foregroundStyle(Color(at: .pureBlack))
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: Layout.introTitleWidth(intro.status))
+                        .opacity(Motion.titleFade.value(at: time))
+                        .offset(y: Motion.titleRise.value(at: time))
+                }
+                .accessibilityAddTraits(.isHeader)
             }
             if !intro.subtitle.isEmpty {
                 Text(intro.subtitle)
                     .typoGraphy(.B2InterMedium12)
                     .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.GloveBox.Palette.aboutOpacity))
                     .multilineTextAlignment(.center)
-                    .frame(maxWidth: Layout.subtitleWidth)
-                    .introRise(showsCopy, at: time)
-                    .padding(.top, Layout.subtitleTop)
-            }
-            if !intro.actionTitle.isEmpty {
-                ProfileV3GloveBoxActionButton(title: intro.actionTitle, action: onAction)
-                    .padding(.horizontal, Layout.actionInset)
-                    .introRise(showsCopy, at: time)
-                    .padding(.top, Layout.actionTop)
+                    .frame(maxWidth: Layout.introSubtitleWidth)
             }
         }
-        .padding(.bottom, Layout.cardBottom)
-        .frame(maxWidth: .infinity, maxHeight: Layout.cardMaxHeight)
-        .allowsHitTesting(showsCopy)
-        .accessibilityHidden(!showsCopy)
+        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
     }
+}
 
-    private var artwork: some View {
-        ZStack {
-            Circle()
-                .fill(ProfileV3Theme.GloveBox.glowGradient)
-                .opacity(ProfileV3Theme.GloveBox.Palette.glowOpacity)
-                .frame(width: Layout.glow, height: Layout.glow)
-                .blur(radius: Layout.glowBlur)
-                .offset(y: Layout.glowOffsetY)
-            ProfileV3GloveBoxArt.envelope.image
-                .resizable()
-                .scaledToFit()
-                .frame(width: Layout.envelope, height: Layout.envelope)
+struct ProfileV3GloveBoxHomeView: View {
+    let title: String
+    let home: ProfileV3GloveBoxHome
+    @ObservedObject var viewModel: ProfileV3GloveBoxViewModel
+    var revealsSheet = true
+    let onBack: () -> Void
+
+    @State private var headerPin = ProfileV3HeaderPin()
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ProfileV3GloveBoxHeader(title: title, titleOpacity: headerPin.progress, onBack: onBack)
+            GeometryReader { proxy in
+                ScrollView(showsIndicators: false) {
+                    ProfileV3GloveBoxHomeContent(
+                        title: title,
+                        home: home,
+                        viewModel: viewModel,
+                        scale: ProfileV3Theme.GloveBox.Layout.cabinetScale(for: proxy.size.width),
+                        revealsSheet: revealsSheet
+                    )
+                    .profileV3HeaderFadeAnchor(headerPin)
+                }
+                .profileV3HeaderFade(headerPin)
+            }
         }
-        .accessibilityHidden(true)
+    }
+}
+
+struct ProfileV3GloveBoxHomeContent: View {
+    let title: String
+    let home: ProfileV3GloveBoxHome
+    @ObservedObject var viewModel: ProfileV3GloveBoxViewModel
+    let scale: CGFloat
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var appearedAt = Date()
+    @State private var isRevealDone: Bool
+
+    init(
+        title: String,
+        home: ProfileV3GloveBoxHome,
+        viewModel: ProfileV3GloveBoxViewModel,
+        scale: CGFloat,
+        revealsSheet: Bool = true
+    ) {
+        self.title = title
+        self.home = home
+        self.viewModel = viewModel
+        self.scale = scale
+        _isRevealDone = State(initialValue: !revealsSheet)
     }
 
-    private func card(at time: Double) -> some View {
-        let shape = RoundedRectangle(cornerRadius: Layout.cardRadius, style: .continuous)
-        return shape
+    private typealias Layout = ProfileV3Theme.GloveBox.Layout
+    private typealias Motion = ProfileV3Theme.GloveBox.Motion
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ProfileV3GloveBoxCabinet(title: title, scale: scale)
+                .padding(.top, Layout.homeCabinetTop)
+            TimelineView(.animation(paused: isRevealDone || reduceMotion)) { context in
+                sheet(at: isRevealDone || reduceMotion ? .infinity : context.date.timeIntervalSince(appearedAt))
+            }
+            .padding(.top, (Layout.homeSheetTop - Layout.cabinet.height) * scale)
+        }
+        .frame(maxWidth: .infinity)
+        .task {
+            guard !isRevealDone else { return }
+            if !reduceMotion {
+                try? await Task.sleep(for: .seconds(Motion.sheet.end))
+            }
+            isRevealDone = true
+        }
+    }
+
+    private func sheet(at time: Double) -> some View {
+        VStack(spacing: Layout.sectionSpacing) {
+            ProfileV3GloveBoxEmailSectionView(
+                section: home.email,
+                isCopied: viewModel.copied == .address,
+                onCopy: { viewModel.copy(.address) },
+                onOpen: { viewModel.open(.email($0)) },
+                onViewAll: { viewModel.openList(.emails) }
+            )
+            ProfileV3GloveBoxPhoneSectionView(
+                section: home.phone,
+                isCopied: viewModel.copied == .number,
+                onCopy: { viewModel.copy(.number) },
+                onOpen: { viewModel.open(.call($0)) },
+                onViewAll: { viewModel.openList(.calls) }
+            )
+            ProfileV3GloveBoxCardSectionView(
+                section: home.card,
+                showsNotice: viewModel.showsCardNotice,
+                onTapCard: viewModel.showCardNotice,
+                onCloseNotice: viewModel.hideCardNotice,
+                onSelectOption: viewModel.selectPayOption,
+                onAddCard: viewModel.tapAddCard,
+                onOpen: { viewModel.open(.transaction($0)) },
+                onViewAll: { viewModel.openList(.transactions) }
+            )
+        }
+        .padding(Layout.sheetPadding)
+        .frame(maxWidth: .infinity)
+        .background(
+            UnevenRoundedRectangle(
+                topLeadingRadius: Layout.sheetRadius,
+                topTrailingRadius: Layout.sheetRadius,
+                style: .continuous
+            )
             .fill(Color(at: .pureWhite))
-            .overlay(shape.fill(ProfileV3Theme.GloveBox.cardShading))
-            .overlay { shimmer(at: time).clipShape(shape) }
             .shadow(
-                color: ProfileV3Theme.GloveBox.Palette.cardHighlight,
-                radius: Layout.cardShadowRadius,
-                x: Layout.cardHighlightOffset.width,
-                y: Layout.cardHighlightOffset.height
+                color: ProfileV3Theme.GloveBox.Palette.sheetShadow,
+                radius: Layout.sheetShadowRadius,
+                y: Layout.sheetShadowY
             )
-            .shadow(
-                color: ProfileV3Theme.GloveBox.Palette.cardShadow,
-                radius: Layout.cardShadowRadius,
-                x: Layout.cardShadowOffset.width,
-                y: Layout.cardShadowOffset.height
+        )
+        .opacity(Motion.sheet.progress(at: time))
+        .offset(y: Motion.sheet.offset(at: time))
+    }
+}
+
+struct ProfileV3GloveBoxSectionCard<Content: View>: View {
+    let icon: Image
+    let title: String
+    var badge: ProfileV3GloveBoxBadge?
+    var viewAllTitle: String?
+    var onViewAll: () -> Void = {}
+    @ViewBuilder let content: Content
+
+    private typealias Layout = ProfileV3Theme.GloveBox.Layout
+    private typealias Palette = ProfileV3Theme.GloveBox.Palette
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: Layout.sectionRadius, style: .continuous)
+        VStack(alignment: .leading, spacing: 0) {
+            header
+            content
+            if let viewAllTitle, !viewAllTitle.isEmpty {
+                ProfileV3GloveBoxViewAll(title: viewAllTitle, action: onViewAll)
+                    .padding(.top, Layout.viewAllTop)
+            }
+        }
+        .padding(.top, Layout.sectionTop)
+        .padding(.leading, Layout.sectionLeading)
+        .padding(.trailing, Layout.sectionTrailing)
+        .padding(.bottom, viewAllTitle?.isEmpty == false ? Layout.viewAllBottom : Layout.sectionBottom)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(shape.fill(ProfileV3Theme.GloveBox.sectionFill))
+        .overlay(shape.strokeBorder(Palette.sectionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+        .shadow(color: Palette.sectionShadow, radius: Layout.sectionShadowRadius, y: Layout.sectionShadowY)
+    }
+
+    private var header: some View {
+        HStack(spacing: Layout.sectionIconGap) {
+            icon
+                .profileV3Icon(Layout.sectionIcon)
+                .foregroundStyle(Palette.dialIcon)
+            Text(title)
+                .typoGraphy(.T1InterBold11)
+                .textCase(.uppercase)
+                .foregroundStyle(Color(at: .pureBlack).opacity(Palette.sectionTitleOpacity))
+            Spacer(minLength: ProfileV3Theme.Space.s8)
+            if let badge {
+                ProfileV3GloveBoxBadgeView(badge: badge)
+            }
+        }
+        .frame(minHeight: Layout.badgeHeight)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+    }
+}
+
+struct ProfileV3GloveBoxEmailSectionView: View {
+    let section: ProfileV3GloveBoxEmailSection
+    let isCopied: Bool
+    let onCopy: () -> Void
+    let onOpen: (ProfileV3GloveBoxEmail) -> Void
+    let onViewAll: () -> Void
+
+    private typealias Layout = ProfileV3Theme.GloveBox.Layout
+    private typealias Palette = ProfileV3Theme.GloveBox.Palette
+
+    var body: some View {
+        ProfileV3GloveBoxSectionCard(
+            icon: ATIcon.SwiftUIImage.mail,
+            title: section.title,
+            badge: section.badge,
+            viewAllTitle: section.viewAllTitle,
+            onViewAll: onViewAll
+        ) {
+            ProfileV3GloveBoxCopyValue(value: section.address, isCopied: isCopied, onCopy: onCopy)
+                .padding(.top, Layout.sectionValueTop)
+            if !section.about.isEmpty {
+                Text(section.about)
+                    .typoGraphy(.B2InterMedium12)
+                    .foregroundStyle(Color(at: .pureBlack).opacity(Palette.aboutOpacity))
+                    .frame(maxWidth: Layout.sectionAboutWidth, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, Layout.sectionAboutTop)
+            }
+            if let forwardingAddress = section.forwardingAddress, !section.forwardingLabel.isEmpty {
+                Text("\(Text(section.forwardingLabel).foregroundStyle(Color(at: .pureBlack).opacity(Palette.forwardingLabelOpacity))) \(Text(forwardingAddress).foregroundStyle(Color(at: .pureBlack)))")
+                    .typoGraphy(.B2InterMedium12)
+                    .opacity(Palette.forwardingOpacity)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, Layout.forwardingTop)
+            }
+            let emails = Array(section.emails.prefix(Layout.emailPreviewLimit))
+            if !emails.isEmpty {
+                ProfileV3GloveBoxPreviewCard(sampleLabel: section.sampleLabel) {
+                    VStack(alignment: .leading, spacing: Layout.rowSpacing) {
+                        ForEach(Array(emails.enumerated()), id: \.element.id) { index, email in
+                            if index > 0 {
+                                ProfileV3GloveBoxRowDivider(inset: Layout.logo + Layout.rowGap)
+                            }
+                            ProfileV3GloveBoxEmailRow(email: email) { onOpen(email) }
+                        }
+                    }
+                }
+                .padding(.top, Layout.previewTop)
+            }
+        }
+    }
+}
+
+struct ProfileV3GloveBoxPhoneSectionView: View {
+    let section: ProfileV3GloveBoxPhoneSection
+    let isCopied: Bool
+    let onCopy: () -> Void
+    let onOpen: (ProfileV3GloveBoxCall) -> Void
+    let onViewAll: () -> Void
+
+    private typealias Layout = ProfileV3Theme.GloveBox.Layout
+    private typealias Palette = ProfileV3Theme.GloveBox.Palette
+
+    var body: some View {
+        ProfileV3GloveBoxSectionCard(
+            icon: ATIcon.SwiftUIImage.call,
+            title: section.title,
+            badge: section.badge,
+            viewAllTitle: section.viewAllTitle,
+            onViewAll: onViewAll
+        ) {
+            ProfileV3GloveBoxCopyValue(
+                value: section.number.value,
+                countryCode: section.number.countryCode,
+                isCopyable: section.number.isCopyable,
+                isCopied: isCopied,
+                spacing: Layout.copyGap,
+                onCopy: onCopy
             )
+            .padding(.top, Layout.sectionValueTop)
+            if let headline = section.headline {
+                Text("\(faded(headline.lead))\(Text(headline.emphasis).foregroundStyle(Color(at: .pureBlack)))\(faded(headline.trail))")
+                    .typoGraphy(.H7InterMedium16)
+                    .frame(maxWidth: Layout.headlineWidth, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, Layout.headlineTop)
+                about
+                    .padding(.top, Layout.leadTop)
+            } else {
+                about
+                    .padding(.top, Layout.phoneAboutTop)
+            }
+            if let call = section.calls.first {
+                ProfileV3GloveBoxPreviewCard(sampleLabel: section.sampleLabel) {
+                    ProfileV3GloveBoxCallRow(call: call, pillWidth: Layout.audioPreviewWidth) { onOpen(call) }
+                }
+                .padding(.top, Layout.previewTop)
+            }
+        }
     }
 
     @ViewBuilder
-    private func shimmer(at time: Double) -> some View {
-        let opacity = Motion.shimmerOpacity.value(at: time)
-        if opacity > 0 {
-            GeometryReader { proxy in
-                Rectangle()
-                    .fill(ProfileV3Theme.GloveBox.shimmerGradient)
-                    .offset(x: proxy.size.width * (Motion.shimmerStart + Motion.shimmerTravel.value(at: time)))
-            }
-            .opacity(opacity)
-            .allowsHitTesting(false)
+    private var about: some View {
+        if !section.about.isEmpty {
+            Text(section.about)
+                .typoGraphy(.B2InterMedium12)
+                .foregroundStyle(Color(at: .pureBlack).opacity(Palette.aboutOpacity))
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
-}
 
-private typealias IntroMotion = ProfileV3Theme.GloveBox.Motion.Intro
-
-private extension View {
-    func introRise(_ isShown: Bool, at time: Double) -> some View {
-        opacity(isShown ? IntroMotion.fade.value(at: time) : 0)
-            .offset(y: IntroMotion.rise.value(at: time))
+    private func faded(_ text: String) -> Text {
+        Text(text).foregroundStyle(Color(at: .pureBlack).opacity(Palette.aboutOpacity))
     }
 }
+
+#if DEBUG
+#Preview("Glove box · locked") {
+    ProfileV3GloveBoxView(
+        viewModel: ProfileV3GloveBoxViewModel(gloveBox: ProfileV3GloveBoxFixtures.Start.unlock.gloveBox)
+    ) {}
+}
+
+#Preview("Glove box · home") {
+    ProfileV3GloveBoxView(
+        viewModel: ProfileV3GloveBoxViewModel(gloveBox: ProfileV3GloveBoxFixtures.Start.home.gloveBox)
+    ) {}
+}
+#endif

@@ -13,6 +13,7 @@ struct ProfileV3HubView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.profileV3Globe) private var globeRenderer
     @Environment(\.profileV3FloatingBarClearance) private var floatingBarClearance
+    @Environment(\.profileV3PausesAnimations) private var pausesAnimations
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -21,6 +22,7 @@ struct ProfileV3HubView: View {
                 ProfileV3LoadStateView(
                     phase: viewModel.phase.loadPhase,
                     loadingLabel: ProfileV3Strings.loadingHome,
+                    failureStyle: .errorState,
                     retry: viewModel.retryLoad
                 )
                 .profileV3EntryReveal(stage.showsChrome)
@@ -115,6 +117,15 @@ struct ProfileV3HubView: View {
             || viewModel.pastTrips != nil
     }
 
+    private var hidesHub: Bool {
+        stage.isDetailSettled
+            || benefitPresenter.isPresenting
+            || couponPresenter.isPresenting
+            || viewModel.showsAllBenefits
+            || viewModel.showsAllCoupons
+            || viewModel.pastTrips != nil
+    }
+
     private func closeCover() {
         cover.didDismiss()
         viewModel.overlaysDidClose()
@@ -148,6 +159,7 @@ struct ProfileV3HubView: View {
                 || benefitPresenter.isPresenting
                 || couponPresenter.isPresenting
         )
+        .environment(\.profileV3PausesAnimations, pausesAnimations || hidesHub)
     }
 
     private var scrollOffset: Binding<CGFloat> {

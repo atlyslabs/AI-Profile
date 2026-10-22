@@ -76,7 +76,23 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     var title: String {
-        menu?.title ?? ""
+        menu?.title ?? ProfileV3Strings.settings
+    }
+
+    var failedMenuRows: [ProfileV3SettingsRowItem] {
+        [
+            ProfileV3SettingsRowItem(
+                key: "logout",
+                label: ProfileV3Strings.logout,
+                directive: ProfileV3Directive(go: "logout_confirm")
+            ),
+            ProfileV3SettingsRowItem(
+                key: "delete_account",
+                label: ProfileV3Strings.deleteAccount,
+                directive: ProfileV3Directive(go: "delete_account"),
+                isDestructive: true
+            )
+        ]
     }
 
     func loadMenuIfNeeded() {

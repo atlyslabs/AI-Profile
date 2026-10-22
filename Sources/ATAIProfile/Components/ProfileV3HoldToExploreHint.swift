@@ -5,35 +5,36 @@ struct ProfileV3HoldToExploreHint: View {
     var progress: CGFloat = 0
     var showsPill = true
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var isNudged = false
+    @Environment(\.profileV3PausesAnimations) private var isPaused
+    @State private var appearedAt: Date?
 
     private var clampedProgress: CGFloat { min(max(progress, 0), 1) }
     private var isFilling: Bool { clampedProgress > 0 }
+    private var nudges: Bool { showsPill && !reduceMotion && !isFilling }
 
     var body: some View {
         VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s16) {
             if showsPill {
                 pill
             }
-            joystick
-                .padding(.leading, showsPill ? ProfileV3Theme.Space.s24 : 0)
-                .offset(nudge)
-        }
-        .onAppear {
-            guard showsPill, !reduceMotion else { return }
-            withAnimation(ProfileV3Theme.Motion.hintNudge) {
-                isNudged = true
+            SwiftUI.TimelineView(.profileV3Ambient(paused: !nudges || isPaused)) { context in
+                joystick
+                    .padding(.leading, showsPill ? ProfileV3Theme.Space.s24 : 0)
+                    .offset(nudge(at: context.date))
             }
         }
-        .onDisappear {
-            isNudged = false
+        .onAppear {
+            appearedAt = .now
         }
         .allowsHitTesting(false)
     }
 
-    private var nudge: CGSize {
-        guard isNudged, !isFilling else { return .zero }
-        return CGSize(width: ProfileV3Theme.Space.s8, height: -ProfileV3Theme.Space.s4)
+    private func nudge(at date: Date) -> CGSize {
+        guard nudges, let appearedAt else { return .zero }
+        let swing = ProfileV3Theme.Motion.hintNudgeSeconds
+        let elapsed = max(date.timeIntervalSince(appearedAt), 0).truncatingRemainder(dividingBy: 2 * swing)
+        let reach = UnitCurve.easeInOut.value(at: elapsed < swing ? elapsed / swing : 2 - elapsed / swing)
+        return CGSize(width: ProfileV3Theme.Space.s8 * reach, height: -ProfileV3Theme.Space.s4 * reach)
     }
 
     private var pill: some View {

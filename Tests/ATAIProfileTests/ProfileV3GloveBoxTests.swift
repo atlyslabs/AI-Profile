@@ -6,79 +6,154 @@ import Testing
 @Suite("Glove box")
 struct ProfileV3GloveBoxTests {
     private typealias Motion = ProfileV3Theme.GloveBox.Motion
+    private typealias Fixtures = ProfileV3GloveBoxFixtures
 
-    @Test func theAddressPopsInThenRisesIntoPlace() {
-        #expect(Motion.addressOpacity.value(at: 0) == 0)
-        #expect(Motion.addressScale.value(at: 0) == 1.26)
-        #expect(abs(Motion.addressY.value(at: 0.7) - 272.5) < 0.001)
-        #expect(Motion.addressY.value(at: 1.48) == 0)
-        #expect(Motion.addressScale.value(at: .infinity) == 1)
-        #expect(Motion.addressX.value(at: .infinity) == 0)
-        #expect(Motion.addressOpacity.value(at: .infinity) == 1)
+    @Test func theWarmingGlowBreathesThroughItsKeyframesAndLoops() {
+        let glow = Motion.glowRadius
+        #expect(glow.value(at: 0) == 100)
+        #expect(glow.value(at: 1.5) == 88)
+        #expect(glow.value(at: 3) == 96)
+        #expect(glow.value(at: 4.5) == 85)
+        #expect(glow.value(at: Motion.glowLoop) == 100)
+        #expect(glow.value(at: 0.75) < 100)
+        #expect(glow.value(at: 0.75) > 88)
     }
 
-    @Test func revealsFadeUpInOrderAndRest() {
-        #expect(Motion.copy.progress(at: Motion.copy.start) == 0)
-        #expect(Motion.copy.offset(at: 0) == 7)
-        #expect(Motion.copy.progress(at: Motion.copy.end) == 1)
-        #expect(Motion.sheet.offset(at: .infinity) == 0)
-        #expect(Motion.row(2).start > Motion.row(1).start)
-        #expect(Motion.row(1).start > Motion.firstRow.start)
-        #expect(Motion.blobX.value(at: .infinity) == 0)
-        #expect(Motion.blobY.value(at: .infinity) == 0)
+    @Test func theWarmingTitleFadesAndRisesInOnce() {
+        #expect(Motion.titleFade.value(at: 0) == 0)
+        #expect(Motion.titleRise.value(at: 0) == 16)
+        #expect(Motion.titleFade.value(at: 0.65) == 1)
+        #expect(Motion.titleRise.value(at: Motion.titleDuration) == 0)
+        #expect(Motion.titleFade.value(at: .infinity) == 1)
+        #expect(Motion.titleRise.value(at: .infinity) == 0)
     }
 
-    @Test func theIntroCardRisesInAndTheShimmerSweepsOnce() {
-        let intro = Motion.Intro.self
-        #expect(intro.fade.value(at: -intro.delay) == 0)
-        #expect(intro.cardY.value(at: -intro.delay) == 21.97)
-        #expect(intro.fade.value(at: 0) == 0)
-        #expect(intro.rise.value(at: 0) == 16)
-        #expect(intro.cardScale.value(at: 0) == 0.98)
-        #expect(intro.cardX.value(at: 0) == 3.8)
-        #expect(intro.cardY.value(at: 0) == 21.97)
-        #expect(intro.fade.value(at: 0.3) > 0.5)
-        #expect(intro.cardY.value(at: 0.8) == 0)
-        #expect(intro.cardScale.value(at: 0.8) == 1)
-        #expect(intro.rise.value(at: 0.8) == 0)
-        #expect(intro.shimmerOpacity.value(at: 0.3) == 0)
-        #expect(intro.shimmerOpacity.value(at: 0.8) == 0.65)
-        #expect(intro.shimmerStart + intro.shimmerTravel.value(at: 1.36) > 1)
-        #expect(intro.shimmerOpacity.value(at: 1.5) == 0)
-        #expect(intro.fade.value(at: .infinity) == 1)
+    @Test func theHomeSheetAndListRowsSettleInOrder() {
+        #expect(Motion.sheet.offset(at: 0) == 464)
+        #expect(Motion.sheet.progress(at: Motion.sheet.start) == 0)
+        #expect(Motion.sheet.progress(at: .infinity) == 1)
+        #expect(Motion.row(1).start > Motion.row(0).start)
+        #expect(Motion.row(0).offset(at: 0) == 16)
+        #expect(Motion.listDuration(rows: 3) == Motion.row(2).end)
+        #expect(Motion.listDuration(rows: 0) == Motion.row(0).end)
     }
 
     @Test func theIntroButtonReportsItsAction() {
-        let viewModel = ProfileV3GloveBoxViewModel(gloveBox: ProfileV3GloveBoxFixtures.Start.unlock.gloveBox)
+        let viewModel = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.unlock.gloveBox)
         var actions: [ProfileV3GloveBoxIntro.Action] = []
         viewModel.onIntroAction = { actions.append($0) }
         viewModel.tapIntroAction()
-        viewModel.show(.intro(ProfileV3GloveBoxFixtures.activateNow))
+        viewModel.show(.intro(Fixtures.warmingUp))
+        viewModel.tapIntroAction()
+        viewModel.show(.home(Fixtures.home))
         viewModel.tapIntroAction()
         #expect(actions == [.completeKYC, .activate])
     }
 
-    @Test func copyingMarksTheAddressCopiedOnlyOnTheInbox() {
-        let intro = ProfileV3GloveBoxViewModel(gloveBox: ProfileV3GloveBoxFixtures.Start.unlock.gloveBox)
-        intro.copyAddress()
-        #expect(!intro.isCopied)
+    @Test func copyingNeedsTheHomeAndACopyableValue() {
+        let intro = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.unlock.gloveBox)
+        intro.copy(.address)
+        #expect(intro.copied == nil)
         #expect(intro.copies == 0)
-        let inbox = ProfileV3GloveBoxViewModel(gloveBox: ProfileV3GloveBoxFixtures.Start.inbox.gloveBox)
-        inbox.copyAddress()
-        #expect(inbox.isCopied)
-        #expect(inbox.copies == 1)
+
+        let sample = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.homeSample.gloveBox)
+        sample.copy(.number)
+        sample.copy(.tripNumber)
+        #expect(sample.copied == nil)
+        #expect(sample.copies == 0)
+
+        let home = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.home.gloveBox)
+        home.copy(.address)
+        #expect(home.copied == .address)
+        home.copy(.tripNumber)
+        #expect(home.copied == .tripNumber)
+        #expect(home.copies == 2)
     }
 
-    @Test func anEmailOpensAndClosesItsDetail() {
-        let viewModel = ProfileV3GloveBoxViewModel(gloveBox: ProfileV3GloveBoxFixtures.Start.inbox.gloveBox)
+    @Test func listsAndDetailsStackAndUnwind() {
+        let viewModel = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.home.gloveBox)
         var followUps: [String] = []
         viewModel.onFollowUp = { followUps.append($0.id) }
-        let email = ProfileV3GloveBoxFixtures.emails[0]
-        viewModel.open(email)
-        #expect(viewModel.openEmail == email)
+        let email = Fixtures.emails[0]
+
         viewModel.tapFollowUp()
-        viewModel.closeEmail()
-        #expect(viewModel.openEmail == nil)
-        #expect(followUps == [email.id])
+        viewModel.openList(.emails)
+        viewModel.tapFollowUp()
+        viewModel.open(.email(email))
+        #expect(viewModel.sheets == [.list(.emails), .detail(.email(email))])
+        viewModel.tapFollowUp()
+        viewModel.back()
+        #expect(viewModel.sheets == [.list(.emails)])
+        viewModel.open(.call(Fixtures.calls[0]))
+        viewModel.dismissSheets()
+        #expect(viewModel.sheets.isEmpty)
+        #expect(followUps == ["email-\(email.id)"])
+    }
+
+    @Test func closingTheSheetWindowClearsTheStack() {
+        let viewModel = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.home.gloveBox)
+        viewModel.openList(.calls)
+        viewModel.open(.call(Fixtures.calls[0]))
+        viewModel.sheetsDidClose()
+        #expect(viewModel.sheets.isEmpty)
+        viewModel.openList(.emails)
+        #expect(viewModel.sheets == [.list(.emails)])
+    }
+
+    @Test func sheetsOnlyOpenOnTheHome() {
+        let viewModel = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.warmingUp.gloveBox)
+        viewModel.openList(.calls)
+        viewModel.open(.transaction(Fixtures.transactions[0]))
+        #expect(viewModel.sheets.isEmpty)
+    }
+
+    @Test func sampleEntriesCarryTheSampleLabel() {
+        let sample = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.homeSample.gloveBox)
+        #expect(sample.sampleLabel(for: .email(Fixtures.emails[0])) == "Sample")
+        #expect(sample.sampleLabel(for: .call(Fixtures.calls[0])) == "Sample")
+        #expect(sample.sampleLabel(for: .transaction(Fixtures.transactions[0])) == nil)
+
+        let home = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.home.gloveBox)
+        #expect(home.sampleLabel(for: .email(Fixtures.emails[0])) == nil)
+    }
+
+    @Test func choosingHowToPayAndLinkingACardUpdateTheCard() {
+        let viewModel = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.homeSample.gloveBox)
+        var addCardTaps = 0
+        viewModel.onAddCard = { addCardTaps += 1 }
+
+        viewModel.selectPayOption("link")
+        #expect(viewModel.home?.card.selectedPayOptionID == "link")
+        #expect(viewModel.home?.card.linkedCard == nil)
+        viewModel.tapAddCard()
+        viewModel.linkCard(Fixtures.hdfc)
+        #expect(viewModel.home?.card.linkedCard == Fixtures.hdfc)
+        #expect(addCardTaps == 1)
+    }
+
+    @Test func theCardNoticeShowsUntilClosedOrTheStageChanges() {
+        let viewModel = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.home.gloveBox)
+        viewModel.showCardNotice()
+        #expect(viewModel.showsCardNotice)
+        viewModel.hideCardNotice()
+        #expect(!viewModel.showsCardNotice)
+        viewModel.showCardNotice()
+        viewModel.openList(.transactions)
+        viewModel.show(.home(Fixtures.sampleHome))
+        #expect(!viewModel.showsCardNotice)
+        #expect(viewModel.sheets.isEmpty)
+    }
+
+    @Test func theSampleHomeShowsPreviewsWithoutViewAll() {
+        let sample = Fixtures.sampleHome
+        #expect(sample.email.emails.count == 2)
+        #expect(sample.email.viewAllTitle == nil)
+        #expect(sample.phone.calls.count == 1)
+        #expect(sample.phone.headline != nil)
+        #expect(sample.phone.number.isCopyable == false)
+        #expect(sample.phone.badge?.tone == .pending)
+        #expect(sample.card.transactions.isEmpty)
+        #expect(sample.card.linkedCard == nil)
+        #expect(Fixtures.home.card.viewAllTitle != nil)
     }
 }

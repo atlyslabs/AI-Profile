@@ -1,7 +1,7 @@
 {
   "images": [
     {
-      "filename": "profile_v3_glovebox_folder.svg",
+      "filename": "profile_v3_glovebox_ayl.svg",
       "idiom": "universal"
     }
   ],
@@ -10,6 +10,7 @@
     "version": 1
   },
   "properties": {
-    "preserves-vector-representation": true
+    "preserves-vector-representation": true,
+    "template-rendering-intent": "template"
   }
 }

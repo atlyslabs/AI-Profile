@@ -99,11 +99,12 @@ struct ProfileV3GloveBoxDebugFlow: View {
         let viewModel = viewModel
         viewModel.onIntroAction = { [weak viewModel] action in
             switch action {
-            case .completeKYC: viewModel?.show(.intro(ProfileV3GloveBoxFixtures.activateNow))
-            case .activate: viewModel?.show(.inbox(ProfileV3GloveBoxFixtures.inbox))
+            case .completeKYC: viewModel?.show(.intro(ProfileV3GloveBoxFixtures.warmingUp))
+            case .activate: viewModel?.show(.home(ProfileV3GloveBoxFixtures.sampleHome))
             }
         }
-        viewModel.onFollowUp = { [weak viewModel] _ in viewModel?.closeEmail() }
+        viewModel.onFollowUp = { [weak viewModel] _ in viewModel?.dismissSheets() }
+        viewModel.onAddCard = { [weak viewModel] in viewModel?.linkCard(ProfileV3GloveBoxFixtures.hdfc) }
     }
 }
 
@@ -119,11 +120,11 @@ struct ProfileV3GloveBoxDebugFlow: View {
     ProfileV3GloveBoxDebugFlow(start: .unlock) {}
 }
 
-#Preview("Glove box · inbox") {
-    ProfileV3GloveBoxDebugFlow(start: .inbox) {}
+#Preview("Glove box · active") {
+    ProfileV3GloveBoxDebugFlow(start: .home) {}
 }
 
-#Preview("Glove box · empty") {
-    ProfileV3GloveBoxDebugFlow(start: .emptyInbox) {}
+#Preview("Glove box · sample") {
+    ProfileV3GloveBoxDebugFlow(start: .homeSample) {}
 }
 #endif
