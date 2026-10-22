@@ -71,10 +71,21 @@ struct ProfileV3GloveBoxEmailSection: Equatable {
     let about: String
     let forwardingLabel: String
     var forwardingAddress: String?
-    let emails: [ProfileV3GloveBoxEmail]
+    var forwardingPaused = false
+    var canPauseForwarding = false
+    var canSetForwardingAddress = false
+    var emails: [ProfileV3GloveBoxEmail]
     var sampleLabel: String?
     var viewAllTitle: String?
     let listTitle: String
+}
+
+struct ProfileV3GloveBoxAttachment: Identifiable, Equatable {
+    let index: Int
+    let filename: String
+    let contentType: String
+
+    var id: Int { index }
 }
 
 struct ProfileV3GloveBoxEmail: Identifiable, Equatable {
@@ -86,6 +97,7 @@ struct ProfileV3GloveBoxEmail: Identifiable, Equatable {
     var meta: ProfileV3GloveBoxMeta?
     var badge: String?
     var note: String?
+    var attachments: [ProfileV3GloveBoxAttachment] = []
     var followUpTitle: String?
 }
 
@@ -187,6 +199,22 @@ struct ProfileV3GloveBoxCardSection: Equatable {
     let emptyBody: String
     var viewAllTitle: String?
     let listTitle: String
+}
+
+struct ProfileV3GloveBoxAccount: Equatable, Sendable {
+    var address: String?
+    var previousAddresses: [String] = []
+    var forwardingEmail: String?
+    var forwardingPaused = false
+    var pendingEmail: String?
+    var eligible = false
+
+    var hasAddress: Bool { address?.isEmpty == false }
+}
+
+struct ProfileV3GloveBoxInboxPage: Equatable, Sendable {
+    var emails: [ProfileV3GloveBoxEmail]
+    var nextCursor: String?
 }
 
 struct ProfileV3GloveBoxTransaction: Identifiable, Equatable {

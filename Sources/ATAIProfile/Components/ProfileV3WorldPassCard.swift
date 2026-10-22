@@ -20,6 +20,13 @@ struct ProfileV3WorldPassCard: View {
                     pose: globePose
                 )
                 .frame(width: ProfileV3Theme.Sizes.worldPassGlobe, height: ProfileV3Theme.Sizes.worldPassGlobe)
+                .overlay {
+                    ProfileV3GlobeRim()
+                        .frame(
+                            width: ProfileV3Theme.Sizes.worldPassGlobeSphere,
+                            height: ProfileV3Theme.Sizes.worldPassGlobeSphere
+                        )
+                }
                 .background {
                     ProfileV3GlobeOrbits()
                         .frame(

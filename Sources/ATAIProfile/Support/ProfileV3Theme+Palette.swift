@@ -152,6 +152,7 @@ extension ProfileV3Theme {
         static let globeInterior = Color(hex: "A8C7E6")
         static let globeLandTint = Color(hex: "8CB3D1").opacity(0.035)
         static let globeOrbit = Color(at: .pureWhite)
+        static let globeRim = Color(hex: "8EACC3")
         static let globeOcean = Color(hex: "07090A")
         static let globeShade = Color(at: .pureBlack)
         static let globeMarkerRing = Color(hex: "FBFBFC")

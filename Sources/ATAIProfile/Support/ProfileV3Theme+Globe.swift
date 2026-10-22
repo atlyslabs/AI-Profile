@@ -39,6 +39,29 @@ extension ProfileV3Theme {
             edgeGlow: 3
         )
 
+        static let rimWidth: CGFloat = 5
+        static let rimGlowWidth: CGFloat = 10
+        static let rimGlowBlur: CGFloat = 5
+        static let rimGlowOpacity = 0.5
+        static let rimMaskOutset: CGFloat = 30
+        static let rimGradient = AngularGradient(
+            stops: [
+                .init(color: Palette.globeRim, location: 0),
+                .init(color: Palette.globeRim.opacity(0.3), location: 0.04),
+                .init(color: Palette.globeRim.opacity(0), location: 0.07),
+                .init(color: Palette.globeRim.opacity(0), location: 0.3),
+                .init(color: Palette.globeRim.opacity(0.3), location: 0.34),
+                .init(color: Palette.globeRim.opacity(0.28), location: 0.42),
+                .init(color: Palette.globeRim.opacity(0.68), location: 0.5),
+                .init(color: Palette.globeRim.opacity(0.55), location: 0.6),
+                .init(color: Palette.globeRim.opacity(0.15), location: 0.75),
+                .init(color: Palette.globeRim.opacity(0.35), location: 0.84),
+                .init(color: Palette.globeRim.opacity(0.3), location: 0.92),
+                .init(color: Palette.globeRim, location: 1)
+            ],
+            center: .center
+        )
+
         static let restLongitude = 17.0
         static let restPitch = 0.44
         static let pitchRange = -0.6 ... 0.9

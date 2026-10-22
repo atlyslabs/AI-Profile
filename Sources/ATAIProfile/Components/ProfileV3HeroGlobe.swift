@@ -69,6 +69,9 @@ struct ProfileV3HeroGlobe: View, Animatable {
                     draw(in: context, sphere: sphere, yaw: yaw, pitch: pitch, blend: blend)
                 }
             }
+            ProfileV3GlobeRim()
+                .frame(width: sphere.radius * 2, height: sphere.radius * 2)
+                .position(sphere.centre)
         }
         .task {
             await globe.prepare(Globe.cardAppearance)

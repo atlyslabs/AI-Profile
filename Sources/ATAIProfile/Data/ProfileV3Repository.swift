@@ -117,6 +117,16 @@ protocol ProfileV3SettingsRepository: ProfileV3AppAccessRepository {
     func savePermission(_ optionID: String, in sectionID: String) async throws
 }
 
+protocol ProfileV3GloveBoxRepository: Sendable {
+    func loadGloveBoxCard() async throws -> ProfileV3GloveBoxAccount
+    func createGloveBoxAddress() async throws -> ProfileV3GloveBoxAccount
+    func setGloveBoxForwardingPaused(_ paused: Bool) async throws -> ProfileV3GloveBoxAccount
+    func addGloveBoxForwardingAddress(_ email: String) async throws -> ProfileV3GloveBoxAccount
+    func loadGloveBoxMessages(cursor: String?) async throws -> ProfileV3GloveBoxInboxPage
+    func loadGloveBoxMessage(id: String) async throws -> ProfileV3GloveBoxEmail
+    func loadGloveBoxAttachment(messageID: String, index: Int) async throws -> Data
+}
+
 protocol ProfileV3PastTripsRepository: Sendable {
     func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen
     func loadAddTrip(profileID: String) async throws -> ProfileV3AddTripScreen

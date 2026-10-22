@@ -255,6 +255,29 @@ struct ProfileV3AgentBoxTests {
         #expect(mapped.form.household == nil)
     }
 
+    @Test func aNinthMealOptionStaysOnTheCardGrid() throws {
+        let mapped = try Self.flow(fields: #"""
+        [{"key":"airline_meal","label":"PREFERRED AIRLINE MEAL","input":"single_select",
+          "options":[
+            {"value":"AVML","label":"AVML","sub":"vegetarian (asian)"},
+            {"value":"VGML","label":"VGML","sub":"vegan, no animal products"},
+            {"value":"VJML","label":"VJML","sub":"jain - no root veggies"},
+            {"value":"MOML","label":"MOML","sub":"halal/muslim meal"},
+            {"value":"KSML","label":"KSML","sub":"kosher, sealed on board"},
+            {"value":"GFML","label":"GFML","sub":"gluten free"},
+            {"value":"SFML","label":"SFML","sub":"seafood"},
+            {"value":"DBML","label":"DBML","sub":"diabetic-friendly"},
+            {"code":"HNML","label":"HNML","sub":"hindu meal"}
+          ]}]
+        """#)
+        guard case .cards(let field) = mapped.form.sections.first?.control else {
+            Issue.record("expected meal cards")
+            return
+        }
+        #expect(field.options.map(\.code) == ["AVML", "VGML", "VJML", "MOML", "KSML", "GFML", "SFML", "DBML", "HNML"])
+        #expect(field.options.last?.detail == "hindu meal")
+    }
+
     @Test func singleSelectPreselectsAPlainStringValue() throws {
         let mapped = try Self.flow(fields: #"""
         [{"key":"organ_donor","input":"single_select","value":"yes",

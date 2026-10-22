@@ -94,7 +94,7 @@ struct ProfileV3SettingsView: View {
             ProfileV3SettingsRowList(rows: menu.rows, account: viewModel.account, onSelect: viewModel.tap)
                 .padding(.top, Layout.rowsTop)
             #if DEBUG
-            ProfileV3SettingsDebugSection()
+            ProfileV3SettingsDebugSection(gloveBoxRepository: viewModel.gloveBoxRepository)
                 .padding(.top, Layout.rowsTop)
             #endif
         }
@@ -115,7 +115,7 @@ struct ProfileV3SettingsView: View {
             ProfileV3SettingsRowList(rows: viewModel.failedMenuRows, account: viewModel.account, onSelect: viewModel.tap)
                 .padding(.top, ProfileV3Theme.Sizes.ErrorState.rowsTop)
             #if DEBUG
-            ProfileV3SettingsDebugSection()
+            ProfileV3SettingsDebugSection(gloveBoxRepository: viewModel.gloveBoxRepository)
                 .padding(.top, Layout.rowsTop)
             #endif
         }

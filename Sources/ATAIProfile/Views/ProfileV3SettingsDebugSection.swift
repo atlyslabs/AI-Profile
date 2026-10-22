@@ -3,8 +3,10 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3SettingsDebugSection: View {
+    var gloveBoxRepository: (any ProfileV3GloveBoxRepository)?
     @State private var scenario = ProfileV3DebugKYCScenario.current
     @State private var gloveBoxStart: ProfileV3GloveBoxFixtures.Start?
+    @State private var showsLiveGloveBox = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s16) {
@@ -30,9 +32,33 @@ struct ProfileV3SettingsDebugSection: View {
             Text("Opens the Glove box flow with sample data. Nothing is sent to the server.")
                 .typoGraphy(.B2InterMedium12)
                 .foregroundStyle(Color(at: .neutralGrey400))
+            if gloveBoxRepository != nil {
+                Button {
+                    showsLiveGloveBox = true
+                } label: {
+                    VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s4) {
+                        Text("Live")
+                            .typoGraphy(.H7InterMedium16)
+                            .foregroundStyle(Color(at: .pureBlack))
+                        Text("Loads your Glove box email from the server")
+                            .typoGraphy(.B2InterMedium12)
+                            .foregroundStyle(Color(at: .neutralGrey400))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, ProfileV3Theme.Sizes.cardContentPadding)
+                    .padding(.vertical, ProfileV3Theme.Space.s14)
+                    .profileV3SettingsCard()
+                }
+                .buttonStyle(.profileV3Pressable(.selection))
+            }
         }
         .fullScreenCover(item: $gloveBoxStart) { start in
             ProfileV3GloveBoxDebugFlow(start: start) { gloveBoxStart = nil }
+        }
+        .fullScreenCover(isPresented: $showsLiveGloveBox) {
+            if let gloveBoxRepository {
+                ProfileV3GloveBoxLiveFlow(repository: gloveBoxRepository) { showsLiveGloveBox = false }
+            }
         }
     }
 

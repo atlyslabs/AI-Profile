@@ -1,6 +1,21 @@
 import ATUIKit
 import SwiftUI
 
+struct ProfileV3GloveBoxLiveFlow: View {
+    let onClose: () -> Void
+
+    @StateObject private var viewModel: ProfileV3GloveBoxViewModel
+
+    init(repository: any ProfileV3GloveBoxRepository, onClose: @escaping () -> Void) {
+        self.onClose = onClose
+        _viewModel = StateObject(wrappedValue: ProfileV3GloveBoxViewModel(repository: repository))
+    }
+
+    var body: some View {
+        ProfileV3GloveBoxView(viewModel: viewModel, onBack: onClose)
+    }
+}
+
 struct ProfileV3GloveBoxView: View {
     @ObservedObject var viewModel: ProfileV3GloveBoxViewModel
     let onBack: () -> Void
@@ -8,7 +23,13 @@ struct ProfileV3GloveBoxView: View {
     @State private var sheetPresenter = ProfileV3GloveBoxSheetPresenter()
 
     var body: some View {
-        page
+        Group {
+            if viewModel.isResolvingScreen {
+                resolving
+            } else {
+                page
+            }
+        }
             .blur(radius: viewModel.sheets.isEmpty ? 0 : ProfileV3Theme.GloveBox.Layout.dimBlur)
             .accessibilityHidden(!viewModel.sheets.isEmpty)
             .background(Color(at: .pureWhite).ignoresSafeArea())
@@ -19,6 +40,13 @@ struct ProfileV3GloveBoxView: View {
             .onDisappear {
                 sheetPresenter.dismiss()
             }
+    }
+
+    private var resolving: some View {
+        ZStack(alignment: .top) {
+            ProfileV3LoadStateView(phase: .loading, retry: {})
+            ProfileV3GloveBoxHeader(onBack: onBack)
+        }
     }
 
     @ViewBuilder
@@ -240,7 +268,12 @@ struct ProfileV3GloveBoxHomeContent: View {
                 isCopied: viewModel.copied == .address,
                 onCopy: { viewModel.copy(.address) },
                 onOpen: { viewModel.open(.email($0)) },
-                onViewAll: { viewModel.openList(.emails) }
+                onViewAll: { viewModel.openList(.emails) },
+                forwardingDraft: $viewModel.forwardingDraft,
+                isUpdatingForwarding: viewModel.isUpdatingForwarding,
+                forwardingError: viewModel.forwardingError,
+                onToggleForwarding: viewModel.toggleForwarding,
+                onSendForwarding: viewModel.sendForwardingAddress
             )
             ProfileV3GloveBoxPhoneSectionView(
                 section: home.phone,
@@ -337,6 +370,11 @@ struct ProfileV3GloveBoxEmailSectionView: View {
     let onCopy: () -> Void
     let onOpen: (ProfileV3GloveBoxEmail) -> Void
     let onViewAll: () -> Void
+    var forwardingDraft: Binding<String> = .constant("")
+    var isUpdatingForwarding = false
+    var forwardingError: String?
+    var onToggleForwarding: () -> Void = {}
+    var onSendForwarding: () -> Void = {}
 
     private typealias Layout = ProfileV3Theme.GloveBox.Layout
     private typealias Palette = ProfileV3Theme.GloveBox.Palette
@@ -360,11 +398,43 @@ struct ProfileV3GloveBoxEmailSectionView: View {
                     .padding(.top, Layout.sectionAboutTop)
             }
             if let forwardingAddress = section.forwardingAddress, !section.forwardingLabel.isEmpty {
-                Text("\(Text(section.forwardingLabel).foregroundStyle(Color(at: .pureBlack).opacity(Palette.forwardingLabelOpacity))) \(Text(forwardingAddress).foregroundStyle(Color(at: .pureBlack)))")
-                    .typoGraphy(.B2InterMedium12)
-                    .opacity(Palette.forwardingOpacity)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, Layout.forwardingTop)
+                HStack(alignment: .firstTextBaseline, spacing: Layout.valueSpacing) {
+                    Text("\(Text(section.forwardingLabel).foregroundStyle(Color(at: .pureBlack).opacity(Palette.forwardingLabelOpacity))) \(Text(forwardingAddress).foregroundStyle(Color(at: .pureBlack)))")
+                        .typoGraphy(.B2InterMedium12)
+                        .opacity(Palette.forwardingOpacity)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if section.canPauseForwarding {
+                        forwardingAction(
+                            section.forwardingPaused ? ProfileV3GloveBoxCopy.resume : ProfileV3GloveBoxCopy.pause,
+                            isEnabled: !isUpdatingForwarding,
+                            action: onToggleForwarding
+                        )
+                    }
+                }
+                .padding(.top, Layout.forwardingTop)
+            }
+            if section.canSetForwardingAddress {
+                HStack(alignment: .firstTextBaseline, spacing: Layout.valueSpacing) {
+                    TextField(ProfileV3GloveBoxCopy.forwarding, text: forwardingDraft)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.emailAddress)
+                        .textContentType(.emailAddress)
+                        .autocorrectionDisabled()
+                        .typoGraphy(.B2InterMedium12)
+                        .foregroundStyle(Color(at: .pureBlack))
+                    forwardingAction(
+                        ProfileV3GloveBoxCopy.sendLink,
+                        isEnabled: !isUpdatingForwarding && !forwardingDraft.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                        action: onSendForwarding
+                    )
+                }
+                .padding(.top, Layout.forwardingTop)
+            }
+            if let forwardingError, !forwardingError.isEmpty {
+                Text(forwardingError)
+                    .typoGraphy(.T1InterBold11)
+                    .foregroundStyle(ProfileV3Theme.Palette.error)
+                    .padding(.top, ProfileV3Theme.Space.s8)
             }
             let emails = Array(section.emails.prefix(Layout.emailPreviewLimit))
             if !emails.isEmpty {
@@ -381,6 +451,17 @@ struct ProfileV3GloveBoxEmailSectionView: View {
                 .padding(.top, Layout.previewTop)
             }
         }
+    }
+
+    private func forwardingAction(_ title: String, isEnabled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .typoGraphy(.B2InterMedium12)
+                .foregroundStyle(Palette.control)
+                .opacity(isEnabled ? 1 : ProfileV3Theme.Motion.disabledOpacity)
+        }
+        .buttonStyle(.profileV3Pressable(.selection))
+        .disabled(!isEnabled)
     }
 }
 

@@ -32,6 +32,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     @ObservationIgnored private let repository: any ProfileV3SettingsRepository
+    @ObservationIgnored let gloveBoxRepository: (any ProfileV3GloveBoxRepository)?
     @ObservationIgnored private let board: (any ProfileV3BoardRepository)?
     @ObservationIgnored private var menuTask: Task<Void, Never>?
     @ObservationIgnored private var presentTask: Task<Void, Never>?
@@ -45,6 +46,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         profileName: String? = nil
     ) {
         self.repository = repository
+        gloveBoxRepository = repository as? any ProfileV3GloveBoxRepository
         self.board = board
         monogram = Self.monogram(from: deps.currentFirstName())
             ?? Self.monogram(from: profileName)

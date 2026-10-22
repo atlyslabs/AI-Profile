@@ -38,6 +38,63 @@ struct ProfileV3GloveBoxTests {
         #expect(Motion.listDuration(rows: 0) == Motion.row(0).end)
     }
 
+    @Test func anEmptyAddressStaysEligibleAndAnInboxMapsTheMessage() throws {
+        let empty = try JSONDecoder().decode(ProfileV3GloveBoxCardDTO.self, from: Data(#"{"address":null,"eligible":true}"#.utf8))
+        let account = ProfileV3GloveBoxMapper.account(empty)
+        #expect(account.hasAddress == false)
+        #expect(account.eligible)
+
+        let card = try JSONDecoder().decode(
+            ProfileV3GloveBoxCardDTO.self,
+            from: Data(#"""
+            {"address":"sarvajit.4821@ayl.email","previous_addresses":[],
+             "forwarding":null,"forwarding_pending":{"email":"me@example.org","expires_at":"2026-10-23T10:49:28Z"},
+             "custom_address_available":true}
+            """#.utf8)
+        )
+        let pending = ProfileV3GloveBoxMapper.account(card)
+        let section = ProfileV3GloveBoxMapper.section(account: pending, emails: [], hasMore: false)
+        #expect(section.address == "sarvajit.4821@ayl.email")
+        #expect(section.forwardingLabel == ProfileV3GloveBoxCopy.waitingToConfirm)
+        #expect(section.forwardingAddress == "me@example.org")
+
+        let page = try JSONDecoder().decode(
+            ProfileV3GloveBoxMessagesDTO.self,
+            from: Data(#"""
+            {"items":[{"id":"8f2c1e4a-1111-4111-8111-111111111111","from_name":"IndiGo",
+              "sender_domain":"goindigo.in","subject":"Your booking is confirmed",
+              "received_at":"2026-10-16T08:30:00Z","to_address":"sarvajit.4821@ayl.email",
+              "to_previous_address":true,"status":"failed","has_attachments":false}],
+             "next_cursor":"cursor"}
+            """#.utf8)
+        )
+        let email = try #require(ProfileV3GloveBoxMapper.page(page).emails.first)
+        #expect(email.sender == "IndiGo")
+        #expect(email.summary == "Your booking is confirmed")
+        #expect(email.attention == ProfileV3GloveBoxCopy.failed)
+        #expect(email.meta?.label == ProfileV3GloveBoxCopy.oldAddress)
+        #expect(email.meta?.dateLabel == "16 Oct, 2026")
+        #expect(ProfileV3GloveBoxMapper.page(page).nextCursor == "cursor")
+
+        let detail = ProfileV3GloveBoxMapper.detail(
+            ProfileV3GloveBoxMessageDTO(
+                id: email.id,
+                fromName: "IndiGo",
+                subject: "Your booking is confirmed",
+                receivedAt: "2026-10-16T08:30:00Z",
+                toPreviousAddress: true,
+                status: "failed",
+                html: "<p>Hello<br>there</p>",
+                text: nil,
+                attachments: [ProfileV3GloveBoxAttachmentDTO(filename: "ticket.pdf", contentType: "application/pdf", size: 10, url: "/gateway/jaqen/v1/messages/id/attachments/1")]
+            ),
+            listItem: email
+        )
+        #expect(detail.note == "Hello\nthere")
+        #expect(detail.attachments.map(\.filename) == ["ticket.pdf"])
+        #expect(detail.attachments.map(\.index) == [1])
+    }
+
     @Test func theIntroButtonReportsItsAction() {
         let viewModel = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.unlock.gloveBox)
         var actions: [ProfileV3GloveBoxIntro.Action] = []

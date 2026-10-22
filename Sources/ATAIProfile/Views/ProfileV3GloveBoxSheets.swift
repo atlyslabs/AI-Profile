@@ -40,8 +40,14 @@ struct ProfileV3GloveBoxSheet: View {
                 entry: entry,
                 sampleLabel: viewModel.sampleLabel(for: entry),
                 bottomInset: bottomInset,
+                openingAttachmentID: viewModel.openingAttachmentID,
                 onBack: viewModel.back,
-                onFollowUp: viewModel.tapFollowUp
+                onFollowUp: viewModel.tapFollowUp,
+                onOpenAttachment: { attachment in
+                    if case .email(let email) = entry {
+                        viewModel.openAttachment(attachment, messageID: email.id)
+                    }
+                }
             )
         }
     }
@@ -198,8 +204,10 @@ struct ProfileV3GloveBoxDetailSheet: View {
     let entry: ProfileV3GloveBoxViewModel.Entry
     var sampleLabel: String?
     var bottomInset: CGFloat = 0
+    var openingAttachmentID: String?
     let onBack: () -> Void
     let onFollowUp: () -> Void
+    var onOpenAttachment: (ProfileV3GloveBoxAttachment) -> Void = { _ in }
 
     private typealias Layout = ProfileV3Theme.GloveBox.Layout
     private typealias Palette = ProfileV3Theme.GloveBox.Palette
@@ -223,6 +231,27 @@ struct ProfileV3GloveBoxDetailSheet: View {
                             .frame(maxWidth: Layout.detailNoteWidth, alignment: .leading)
                         Spacer(minLength: 0)
                         ProfileV3AtlysOrb(ring: .still, metrics: .insight)
+                    }
+                    .padding(.top, Layout.detailNoteTop)
+                }
+                if case .email(let email) = entry, !email.attachments.isEmpty {
+                    VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s12) {
+                        ForEach(email.attachments) { attachment in
+                            Button { onOpenAttachment(attachment) } label: {
+                                HStack(spacing: ProfileV3Theme.Space.s8) {
+                                    Text(attachment.filename)
+                                        .typoGraphy(.B1InterMedium14)
+                                        .foregroundStyle(ProfileV3Theme.Palette.accessAction)
+                                        .lineLimit(1)
+                                    if openingAttachmentID == "\(email.id)-\(attachment.index)" {
+                                        ProgressView()
+                                            .controlSize(.small)
+                                    }
+                                }
+                            }
+                            .buttonStyle(.profileV3Pressable)
+                            .disabled(openingAttachmentID != nil)
+                        }
                     }
                     .padding(.top, Layout.detailNoteTop)
                 }

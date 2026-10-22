@@ -118,6 +118,7 @@ enum ProfileV3Theme {
         static let worldPassHeight: CGFloat = 350
         static let worldPassSpacing: CGFloat = 41
         static let worldPassGlobe: CGFloat = 152
+        static let worldPassGlobeSphere = worldPassGlobe * ProfileV3Theme.Globe.cardSphereRatio * 2
         static let worldPassGlobeOffsetY: CGFloat = -30.5
         static let worldPassGlobeOrbits: CGFloat = 280
         static let worldPassDividerWidth: CGFloat = 212
