@@ -307,19 +307,51 @@ struct ProfileV3AgentOptionDTO: Decodable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case value
+        case code
+        case optionID = "id"
         case label
+        case name
         case sub
+        case detail
+        case description
         case selected
         case imageURL = "image_url"
         case countable
         case count
     }
 
-    var id: String? {
-        guard let raw = value?.stringValue?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty else {
-            return nil
+    init(from decoder: Decoder) throws {
+        if let code = try? decoder.singleValueContainer().decode(String.self) {
+            value = .string(code)
+            label = code
+            sub = nil
+            selected = nil
+            imageURL = nil
+            countable = nil
+            count = nil
+            return
         }
-        return raw
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        value = try container.decodeIfPresent(ProfileV3ScalarDTO.self, forKey: .value)
+            ?? container.decodeIfPresent(ProfileV3ScalarDTO.self, forKey: .code)
+            ?? container.decodeIfPresent(ProfileV3ScalarDTO.self, forKey: .optionID)
+        label = try container.decodeIfPresent(String.self, forKey: .label)
+            ?? container.decodeIfPresent(String.self, forKey: .name)
+        sub = try container.decodeIfPresent(String.self, forKey: .sub)
+            ?? container.decodeIfPresent(String.self, forKey: .detail)
+            ?? container.decodeIfPresent(String.self, forKey: .description)
+        selected = try container.decodeIfPresent(Bool.self, forKey: .selected)
+        imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL)
+        countable = try container.decodeIfPresent(Bool.self, forKey: .countable)
+        count = try container.decodeIfPresent(ProfileV3ScalarDTO.self, forKey: .count)
+    }
+
+    var id: String? {
+        if let raw = value?.stringValue?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty {
+            return raw
+        }
+        let named = (label ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        return named.isEmpty ? nil : named
     }
 
     var detail: String? {

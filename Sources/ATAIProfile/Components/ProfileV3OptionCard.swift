@@ -19,7 +19,7 @@ struct ProfileV3OptionCard: View {
             .multilineTextAlignment(.center)
             .padding(.horizontal, ProfileV3Theme.Space.s16)
             .padding(.vertical, ProfileV3Theme.Space.s12)
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .profileV3Chrome(
                 shape,
                 border: Color(at: .pureBlack),
