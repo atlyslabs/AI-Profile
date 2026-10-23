@@ -6,18 +6,30 @@ struct ProfileV3PersonaRadar: View {
     let range: ClosedRange<Int>
     let score: (ProfileV3TravelPersona.Trait) -> Int
     var highlightedID: String?
-    var isEditable = true
+    var coach: ProfileV3PersonaCoach?
+    var canEdit: (ProfileV3TravelPersona.Trait) -> Bool = { _ in true }
     var onTap: (String) -> Void = { _ in }
-    var onDoubleTap: (String) -> Void = { _ in }
-    var onDrag: (String, Int) -> Void = { _, _ in }
+    var onOpen: (String) -> Void = { _ in }
+    var onDragStart: (String) -> Void = { _ in }
+    var onDragEnd: (String, Int) -> Void = { _, _ in }
     var onAdjust: (String, Int) -> Void = { _, _ in }
+    var onCoachTap: () -> Void = {}
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var hasEntered = false
+    @State private var drag: Drag?
+    @GestureState private var isDragging = false
 
     private typealias Persona = ProfileV3Theme.Sizes.Persona
+    private typealias Trait = ProfileV3TravelPersona.Trait
     private static let space = "profileV3.persona.radar"
     private static let accessibilityStep = 5
+
+    private struct Drag: Equatable {
+        let id: String
+        let origin: CGFloat
+        var radius: CGFloat
+    }
 
     var body: some View {
         GeometryReader { proxy in
@@ -32,6 +44,8 @@ struct ProfileV3PersonaRadar: View {
                 ForEach(Array(traits.enumerated()), id: \.element.id) { index, trait in
                     handle(trait, index: index, centre: centre)
                 }
+                coachLayer(in: proxy.size, centre: centre)
+                    .animation(ProfileV3Theme.Motion.hintAppear, value: visibleCoach)
             }
             .coordinateSpace(.named(Self.space))
         }
@@ -44,6 +58,15 @@ struct ProfileV3PersonaRadar: View {
                 withAnimation(ProfileV3Theme.Motion.personaEntrance) { hasEntered = true }
             }
         }
+        .onChange(of: isDragging) { _, isDragging in
+            guard !isDragging, let drag else { return }
+            self.drag = nil
+            onDragEnd(drag.id, value(for: drag.radius))
+        }
+    }
+
+    private var visibleCoach: ProfileV3PersonaCoach? {
+        hasEntered && drag == nil ? coach : nil
     }
 
     private func axis(_ index: Int) -> CGVector {
@@ -58,17 +81,24 @@ struct ProfileV3PersonaRadar: View {
         return Persona.radarInnerRadius + (Persona.radarRadius - Persona.radarInnerRadius) * fraction
     }
 
+    private func value(for radius: CGFloat) -> Int {
+        let fraction = (radius - Persona.radarInnerRadius) / (Persona.radarRadius - Persona.radarInnerRadius)
+        return range.lowerBound + Int((fraction * CGFloat(range.upperBound - range.lowerBound)).rounded())
+    }
+
+    private func displayRadius(_ trait: Trait) -> CGFloat {
+        guard let drag, drag.id == trait.id else { return radius(for: score(trait)) }
+        return drag.radius
+    }
+
+    private func displayScore(_ trait: Trait) -> Int {
+        guard let drag, drag.id == trait.id else { return score(trait) }
+        return value(for: drag.radius)
+    }
+
     private func point(_ index: Int, radius: CGFloat, centre: CGPoint) -> CGPoint {
         let axis = axis(index)
         return CGPoint(x: centre.x + axis.dx * radius, y: centre.y + axis.dy * radius)
-    }
-
-    private func value(at location: CGPoint, index: Int, centre: CGPoint) -> Int {
-        let axis = axis(index)
-        let along = (location.x - centre.x) * axis.dx + (location.y - centre.y) * axis.dy
-        let clamped = min(max(along, Persona.radarInnerRadius), Persona.radarRadius)
-        let fraction = (clamped - Persona.radarInnerRadius) / (Persona.radarRadius - Persona.radarInnerRadius)
-        return range.lowerBound + Int((fraction * CGFloat(range.upperBound - range.lowerBound)).rounded())
     }
 
     private func grid(rings: Range<Int>, spokes: Bool, centre: CGPoint) -> some View {
@@ -110,7 +140,7 @@ struct ProfileV3PersonaRadar: View {
             guard traits.count > 2 else { return }
             var path = Path()
             for (index, trait) in traits.enumerated() {
-                let corner = point(index, radius: radius(for: score(trait)), centre: centre)
+                let corner = point(index, radius: displayRadius(trait), centre: centre)
                 index == 0 ? path.move(to: corner) : path.addLine(to: corner)
             }
             path.closeSubpath()
@@ -122,21 +152,20 @@ struct ProfileV3PersonaRadar: View {
         .accessibilityHidden(true)
     }
 
-    private func label(_ trait: ProfileV3TravelPersona.Trait, index: Int, centre: CGPoint) -> some View {
+    private func label(_ trait: Trait, index: Int, centre: CGPoint) -> some View {
         let axis = axis(index)
         let horizontal: HorizontalAlignment = axis.dx > 0.2 ? .leading : (axis.dx < -0.2 ? .trailing : .center)
         let vertical: VerticalAlignment = axis.dy < -0.5 ? .bottom : (axis.dy > 0.5 ? .top : .center)
         let textAlignment: TextAlignment = horizontal == .leading ? .leading : (horizontal == .trailing ? .trailing : .center)
-        let isHighlighted = highlightedID == trait.id
         return Color.clear
             .frame(width: 0, height: 0)
             .overlay(alignment: Alignment(horizontal: horizontal, vertical: vertical)) {
                 VStack(alignment: horizontal, spacing: Persona.labelSpacing) {
                     Text(trait.name)
                         .typoGraphy(.B2InterMedium12)
-                    Text("\(score(trait))")
+                    Text("\(displayScore(trait))")
                         .typoGraphy(.B1InterMedium14)
-                        .opacity(isHighlighted ? 1 : ProfileV3Theme.Opacity.personaScore)
+                        .opacity(ProfileV3Theme.Opacity.personaScore)
                         .contentTransition(.numericText())
                 }
                 .foregroundStyle(ProfileV3Theme.Palette.personaLabel)
@@ -144,7 +173,6 @@ struct ProfileV3PersonaRadar: View {
                 .frame(width: Persona.labelWidth, alignment: Alignment(horizontal: horizontal, vertical: .center))
                 .fixedSize(horizontal: false, vertical: true)
                 .contentShape(Rectangle())
-                .onTapGesture(count: 2) { onDoubleTap(trait.id) }
                 .onTapGesture { onTap(trait.id) }
                 .opacity(hasEntered ? 1 : 0)
                 .animation(labelEntrance(index), value: hasEntered)
@@ -153,35 +181,25 @@ struct ProfileV3PersonaRadar: View {
             .position(point(index, radius: Persona.radarRadius + Persona.labelGap, centre: centre))
     }
 
-    private func handle(_ trait: ProfileV3TravelPersona.Trait, index: Int, centre: CGPoint) -> some View {
+    private func handle(_ trait: Trait, index: Int, centre: CGPoint) -> some View {
         let isHighlighted = highlightedID == trait.id
-        let value = score(trait)
+        let isEditable = canEdit(trait)
         return ZStack {
-            Circle()
-                .fill(Color(at: .pureWhite))
-                .frame(width: Persona.handle, height: Persona.handle)
-            Circle()
-                .strokeBorder(
-                    isHighlighted ? AnyShapeStyle(Color(at: .neutralGrey800)) : AnyShapeStyle(ProfileV3Theme.personaHandleRim),
-                    lineWidth: ProfileV3Theme.Stroke.hairline
-                )
-                .frame(width: Persona.handleWithRim, height: Persona.handleWithRim)
+            if isHighlighted {
+                ProfileV3PersonaRipple()
+                    .transition(.opacity)
+            }
+            knob(diameter: isHighlighted ? Persona.handleHighlighted : Persona.handle)
+                .scaleEffect(hasEntered ? 1 : Persona.handleEntranceScale)
+                .opacity(hasEntered ? 1 : 0)
         }
-        .shadow(
-            color: ProfileV3Theme.Palette.personaHandleShadow,
-            radius: ProfileV3Theme.Shadow.personaHandleRadius,
-            y: ProfileV3Theme.Shadow.personaHandleY
-        )
-        .scaleEffect(isHighlighted ? Persona.handleHighlightScale : 1)
-        .scaleEffect(hasEntered ? 1 : Persona.handleEntranceScale)
-        .opacity(hasEntered ? 1 : 0)
-        .animation(ProfileV3Theme.Motion.selection, value: isHighlighted)
+        .animation(ProfileV3Theme.Motion.personaKnob, value: isHighlighted)
         .frame(width: Persona.handleHitTarget, height: Persona.handleHitTarget)
         .contentShape(Circle())
-        .gesture(handleGesture(trait, index: index, centre: centre))
+        .gesture(handleGesture(trait, index: index, isEditable: isEditable))
         .accessibilityElement()
         .accessibilityLabel(trait.name)
-        .accessibilityValue("\(value)")
+        .accessibilityValue("\(displayScore(trait))")
         .accessibilityAddTraits(isHighlighted ? .isSelected : [])
         .modifier(ProfileV3PersonaAdjustable(isEnabled: isEditable) { direction in
             switch direction {
@@ -190,17 +208,75 @@ struct ProfileV3PersonaRadar: View {
             @unknown default: break
             }
         })
-        .accessibilityAction(.default) { onDoubleTap(trait.id) }
-        .position(point(index, radius: radius(for: value), centre: centre))
+        .accessibilityAction(.default) { onOpen(trait.id) }
+        .position(point(index, radius: displayRadius(trait), centre: centre))
     }
 
-    private func handleGesture(_ trait: ProfileV3TravelPersona.Trait, index: Int, centre: CGPoint) -> AnyGesture<Void> {
-        let taps = TapGesture(count: 2).onEnded { onDoubleTap(trait.id) }
-            .exclusively(before: TapGesture().onEnded { onTap(trait.id) })
-        guard isEditable else { return AnyGesture(taps.map { _ in }) }
+    private func knob(diameter: CGFloat) -> some View {
+        let rim = diameter + 2 * ProfileV3Theme.Stroke.hairline
+        return ZStack {
+            Circle()
+                .fill(Color(at: .pureWhite))
+                .frame(width: diameter, height: diameter)
+            Circle()
+                .strokeBorder(ProfileV3Theme.personaHandleRim, lineWidth: ProfileV3Theme.Stroke.hairline)
+                .frame(width: rim, height: rim)
+        }
+        .shadow(
+            color: ProfileV3Theme.Palette.personaHandleShadow,
+            radius: ProfileV3Theme.Shadow.personaHandleRadius,
+            y: ProfileV3Theme.Shadow.personaHandleY
+        )
+    }
+
+    private func handleGesture(_ trait: Trait, index: Int, isEditable: Bool) -> AnyGesture<Void> {
+        let tap = TapGesture().onEnded { onTap(trait.id) }
+        guard isEditable else { return AnyGesture(tap) }
         let drag = DragGesture(minimumDistance: Persona.dragMinimumDistance, coordinateSpace: .named(Self.space))
-            .onChanged { drag in onDrag(trait.id, value(at: drag.location, index: index, centre: centre)) }
-        return AnyGesture(drag.exclusively(before: taps).map { _ in })
+            .updating($isDragging) { _, isDragging, _ in isDragging = true }
+            .onChanged { value in move(trait, index: index, by: value.translation) }
+        return AnyGesture(drag.exclusively(before: tap).map { _ in })
+    }
+
+    private func move(_ trait: Trait, index: Int, by translation: CGSize) {
+        if let drag, drag.id != trait.id { return }
+        let origin = drag?.origin ?? radius(for: score(trait))
+        if drag == nil { onDragStart(trait.id) }
+        let axis = axis(index)
+        let along = origin + translation.width * axis.dx + translation.height * axis.dy
+        drag = Drag(id: trait.id, origin: origin, radius: min(max(along, Persona.radarInnerRadius), Persona.radarRadius))
+    }
+
+    @ViewBuilder
+    private func coachLayer(in size: CGSize, centre: CGPoint) -> some View {
+        ZStack {
+            if let coach = visibleCoach, let index = traits.firstIndex(where: { $0.id == coach.traitID }) {
+                let knob = point(index, radius: displayRadius(traits[index]), centre: centre)
+                let tip = CGPoint(x: knob.x, y: knob.y + Persona.Coach.tipGap)
+                let edge = Persona.Coach.width / 2 + Persona.Coach.edgeInset
+                let x = min(max(knob.x, edge), max(size.width - edge, edge))
+                Color.clear
+                    .frame(width: 0, height: 0)
+                    .overlay(alignment: .top) {
+                        ProfileV3PersonaCoachBubble(
+                            text: coach.step == .drag ? ProfileV3Strings.personaCoachDrag : ProfileV3Strings.personaCoachTap,
+                            step: coach.index,
+                            steps: coach.steps.count,
+                            pointerOffset: knob.x - x,
+                            action: onCoachTap
+                        )
+                        .offset(x: x - knob.x)
+                    }
+                    .position(tip)
+                    .transition(coachTransition(from: tip, in: size))
+            }
+        }
+    }
+
+    private func coachTransition(from tip: CGPoint, in size: CGSize) -> AnyTransition {
+        guard !reduceMotion, size.width > 0, size.height > 0 else { return .opacity }
+        let anchor = UnitPoint(x: tip.x / size.width, y: tip.y / size.height)
+        return .scale(scale: Persona.Coach.enterScale, anchor: anchor).combined(with: .opacity)
     }
 
     private func labelEntrance(_ index: Int) -> Animation? {
@@ -230,5 +306,19 @@ private struct ProfileV3PersonaAdjustable: ViewModifier {
     return ProfileV3PersonaRadar(traits: persona.traits, range: persona.range, score: \.score, highlightedID: "planning")
         .padding(ProfileV3Theme.Space.s30)
         .background(ProfileV3BoxGradientCard(gradient: ProfileV3Theme.personaCardGradient, cornerRadius: ProfileV3Theme.Sizes.Persona.cardRadius))
+}
+
+#Preview("Persona radar · first-run tips") {
+    let persona = ProfileV3PersonaFixtures.persona(ProfileV3PersonaStore(), profileID: nil)
+    let coach = ProfileV3PersonaCoach(traits: persona.traits, isEditable: true)
+    return ProfileV3PersonaRadar(
+        traits: persona.traits,
+        range: persona.range,
+        score: \.score,
+        highlightedID: coach?.traitID,
+        coach: coach
+    )
+    .padding(ProfileV3Theme.Space.s30)
+    .background(ProfileV3BoxGradientCard(gradient: ProfileV3Theme.personaCardGradient, cornerRadius: ProfileV3Theme.Sizes.Persona.cardRadius))
 }
 #endif

@@ -8,6 +8,8 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
     @Published private(set) var drafts: [String: Int] = [:]
     @Published private(set) var savePhase: ProfileV3SavePhase = .idle
     @Published private(set) var saveError: String?
+    @Published private(set) var draggingTraitID: String?
+    @Published private(set) var coach: ProfileV3PersonaCoach?
     @Published var trait: ProfileV3PersonaTraitViewModel?
 
     let isEditable: Bool
@@ -15,6 +17,7 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
 
     private let profileID: String?
     private let repository: any ProfileV3PersonaRepository
+    private let hints: ProfileV3HubHints
     private var loadTask: Task<Void, Never>?
     private var saveTask: Task<Void, Never>?
 
@@ -22,18 +25,26 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
         profileID: String?,
         repository: any ProfileV3PersonaRepository,
         isEditable: Bool = ProfileV3FeatureFlags.isPersonaEditingEnabled,
+        hints: ProfileV3HubHints = ProfileV3HubHints(),
         onClose: @escaping () -> Void = {}
     ) {
         self.profileID = profileID
         self.repository = repository
         self.isEditable = isEditable
+        self.hints = hints
         self.onClose = onClose
     }
 
     var hasChanges: Bool { !drafts.isEmpty }
 
+    var isDragging: Bool { draggingTraitID != nil }
+
     var showsSaveBar: Bool {
         isEditable && (hasChanges || savePhase != .idle)
+    }
+
+    func canEdit(_ trait: ProfileV3TravelPersona.Trait) -> Bool {
+        isEditable && savePhase == .idle && trait.submit != nil
     }
 
     func load() {
@@ -53,8 +64,39 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
         drafts[trait.id] ?? trait.score
     }
 
-    func highlight(_ traitID: String) {
-        highlightedTraitID = highlightedTraitID == traitID ? nil : traitID
+    func tap(_ traitID: String) {
+        guard highlightedTraitID == traitID else {
+            highlightedTraitID = traitID
+            if coach?.traitID != traitID { coach = nil }
+            return
+        }
+        open(traitID)
+    }
+
+    func beginDrag(_ traitID: String) {
+        guard let trait = content?.traits.first(where: { $0.id == traitID }), canEdit(trait) else { return }
+        draggingTraitID = traitID
+        if highlightedTraitID != traitID { highlightedTraitID = traitID }
+        if coach?.traitID != traitID { coach = nil }
+    }
+
+    func endDrag(_ traitID: String, score: Int) {
+        guard draggingTraitID == traitID else { return }
+        draggingTraitID = nil
+        preview(traitID, score: score)
+        if coach?.traitID == traitID, coach?.step == .drag { advanceCoach() }
+    }
+
+    func startCoach() {
+        guard coach == nil, trait == nil, highlightedTraitID == nil, !isDragging, !hints.hasSeenPersonaCoach, let content,
+              let coach = ProfileV3PersonaCoach(traits: content.traits, isEditable: isEditable) else { return }
+        hints.hasSeenPersonaCoach = true
+        highlightedTraitID = coach.traitID
+        self.coach = coach
+    }
+
+    func advanceCoach() {
+        coach = coach?.advanced()
     }
 
     func preview(_ traitID: String, score: Int) {
@@ -123,6 +165,7 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
             onChanged: { [weak self] in self?.load() }
         )
         viewModel.load()
+        coach = nil
         trait = viewModel
     }
 

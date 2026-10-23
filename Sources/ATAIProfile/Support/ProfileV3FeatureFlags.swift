@@ -9,7 +9,7 @@ enum ProfileV3FeatureFlags {
     static let isITRDisconnectEnabled = false
     static let isAgentSourcesPillEnabled = false
     static let isProgrammeScanLoaderEnabled = false
-    static let isPersonaEditingEnabled = false
+    static let isPersonaEditingEnabled = true
     static let isAppAccessEnabled = false
     static let isVaultRecentSignInCheckEnabled = false
     static let isGlobeEnabled = true

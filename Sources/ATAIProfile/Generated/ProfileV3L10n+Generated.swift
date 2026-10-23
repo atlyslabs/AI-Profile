@@ -100,6 +100,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsErrorDisconnectFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-disconnect-failed", fallback: "Couldn't disconnect. Please try again.") }
   internal static var moAiprofileAgentsHintConnectedApps: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-hint-connected-apps", fallback: "Find your connected apps here") }
   internal static var moAiprofileAgentsHintDisconnectConnector: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-hint-disconnect-connector", fallback: "Drag icon to disconnect") }
+  internal static var moAiprofileAgentsHintPersonaDrag: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-hint-persona-drag", fallback: "Drag the circle to edit values") }
+  internal static var moAiprofileAgentsHintPersonaTap: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-hint-persona-tap", fallback: "Tap to see how score is calculated") }
   internal static var moAiprofileAgentsLabelAppAccess: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-app-access", fallback: "App access") }
   internal static var moAiprofileAgentsLabelBuildUnderstanding: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-build-understanding", fallback: "Our agents build an understanding of") }
   internal static var moAiprofileAgentsLabelCredentialStore: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-credential-store", fallback: "Secure credential store") }

@@ -19,11 +19,32 @@ extension ProfileV3Theme.Sizes {
         static let labelWidth: CGFloat = 72
         static let labelSpacing = ProfileV3Theme.Space.s4
         static let handle: CGFloat = 15
-        static let handleWithRim = handle + 2 * ProfileV3Theme.Stroke.hairline
+        static let handleHighlighted: CGFloat = 21
         static let handleHitTarget: CGFloat = 44
-        static let handleHighlightScale: CGFloat = 1.3
         static let handleEntranceScale: CGFloat = 0.5
         static let dragMinimumDistance: CGFloat = 3
+        static let rippleStart = handleHighlighted
+        static let rippleInner: CGFloat = 35
+        static let rippleOuter: CGFloat = 53
+        static let rippleEnd: CGFloat = 57
+        static let rippleRings = 2
+
+        enum Coach {
+            static let width: CGFloat = 131
+            static let pointer: CGFloat = 4.913
+            static let notch: CGFloat = 9.0554
+            static let radius: CGFloat = 12
+            static let textWidth: CGFloat = 107
+            static let textTop: CGFloat = 12
+            static let dotsTop: CGFloat = 10
+            static let bottom: CGFloat = 9
+            static let dot = CGSize(width: 8, height: 2)
+            static let dotSpacing: CGFloat = 2
+            static let tipGap: CGFloat = 23.3
+            static let edgeInset: CGFloat = 12
+            static let enterScale: CGFloat = 0.8
+            static let targetMinimumRise = 0.3
+        }
 
         static let detailTop: CGFloat = 28
         static let detailCardHeight: CGFloat = 328
@@ -85,6 +106,9 @@ extension ProfileV3Theme.Opacity {
     static let personaScaleTrack: Double = 0.2
     static let personaConnector: Double = 0.2
     static let personaIgnored: Double = 0.4
+    static let personaRippleInner: Double = 0.1
+    static let personaRippleOuter: Double = 0.05
+    static let personaCoachDot: Double = 0.2
 }
 
 extension ProfileV3Theme.Shadow {
@@ -97,6 +121,9 @@ extension ProfileV3Theme.Motion {
     static let personaLabelEntrance = Animation.timingCurve(0.4, 0, 0.2, 1, duration: 0.55)
     static let personaLabelDelay: Double = 0.95
     static let personaLabelStagger: Double = 0.07
+    static let personaKnob: Animation = .spring(response: 0.32, dampingFraction: 0.72)
+    static let personaRippleSeconds: Double = 2
+    static let personaCoachDelayMilliseconds = 2300
 }
 
 extension ProfileV3Theme {
@@ -130,6 +157,12 @@ extension ProfileV3Theme {
         colors: [Palette.personaHandleRimTop, Palette.personaHandleRimBottom],
         startPoint: .top,
         endPoint: .bottom
+    )
+
+    static let personaCoachGradient = LinearGradient(
+        colors: [Palette.appHintStart, Palette.appHintEnd],
+        startPoint: UnitPoint(x: 0.519, y: 0.085),
+        endPoint: UnitPoint(x: 0.943, y: 1.3)
     )
 
     static let personaScaleFill = LinearGradient(

@@ -13,9 +13,3 @@ struct ProfileV3AmbientSchedule: TimelineSchedule {
         }
     }
 }
-
-extension TimelineSchedule where Self == ProfileV3AmbientSchedule {
-    static func profileV3Ambient(paused: Bool = false) -> ProfileV3AmbientSchedule {
-        ProfileV3AmbientSchedule(isPaused: paused)
-    }
-}

@@ -973,6 +973,30 @@
         }
       }
     },
+    "mo-aiprofile-agents-hint-persona-drag": {
+      "comment": "First-run tooltip under a knob on the travel persona radar, saying the knob can be dragged to change the trait's score.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag the circle to edit values"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-hint-persona-tap": {
+      "comment": "Second first-run tooltip under a knob on the travel persona radar, saying a tap opens how the trait's score was calculated.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to see how score is calculated"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-label-app-access": {
       "comment": "Label for app integration management settings.",
       "extractionState": "manual",

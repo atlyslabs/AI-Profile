@@ -32,6 +32,8 @@ extension ProfileV3Strings {
     static var credentialDelete: String { ProfileV3L10n.moAiprofileAgentsButtonDeleteCredentials }
     static var credentialDeleteConfirm: String { ProfileV3L10n.moAiprofileAgentsConfirmationDeleteCredentials }
     static var personaUpdated: String { ProfileV3L10n.moAiprofileAgentsToastPersonaUpdated }
+    static var personaCoachDrag: String { ProfileV3L10n.moAiprofileAgentsHintPersonaDrag }
+    static var personaCoachTap: String { ProfileV3L10n.moAiprofileAgentsHintPersonaTap }
     static var personaProcessing: String { ProfileV3L10n.moAiprofileAgentsStatusPersonaProcessing }
     static var disconnectApp: String { ProfileV3L10n.moAiprofileAgentsButtonDisconnectApp }
     static var editConnector: String { ProfileV3L10n.moAiprofileGeneralButtonEdit }

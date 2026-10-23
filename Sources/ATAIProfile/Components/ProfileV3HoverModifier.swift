@@ -10,7 +10,7 @@ private struct ProfileV3HoverModifier: ViewModifier {
     private var isHovering: Bool { isActive && !reduceMotion }
 
     func body(content: Content) -> some View {
-        SwiftUI.TimelineView(.profileV3Ambient(paused: !isHovering || isPaused)) { context in
+        SwiftUI.TimelineView(ProfileV3AmbientSchedule(isPaused: !isHovering || isPaused)) { context in
             hovering(content, wave: isHovering ? wave(at: context.date) : nil)
         }
         .onChange(of: isHovering, initial: true) { _, hovering in
