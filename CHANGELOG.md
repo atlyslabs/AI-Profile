@@ -5,6 +5,14 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ## Unreleased
 
+## 1.0.9 — 2026-10-23
+
+### Added
+
+- Glove Box: delivery status, attention and sender logos on each message, a banner when forwarding
+  blocks delivery, and attachments as chips; the persona sheet waits behind the processing dial
+  (first tagged as 1.0.8, which was cut off master; 1.0.9 carries it).
+
 ### Changed
 
 - Analytics: the five events on the fe_ayl_ migration sheet drop their `b2c_` / `b2c_ai_` prefix
