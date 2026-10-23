@@ -15,6 +15,7 @@ struct ProfileV3TravelPersonaView: View {
                 }
                 .toolbar(.hidden, for: .navigationBar)
         }
+        .interactiveDismissDisabled(viewModel.isDragging)
         .onDisappear(perform: viewModel.cancel)
     }
 
@@ -45,6 +46,7 @@ struct ProfileV3TravelPersonaView: View {
                         .profileV3ScrollOffsetAnchor(headerOffset)
                 }
                 .profileV3ScrollOffset(headerOffset)
+                .scrollDisabled(viewModel.isDragging)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
                     .padding(.top, ProfileV3AgentSheetHeader.height(showsOrb: false))
@@ -117,6 +119,14 @@ struct ProfileV3TravelPersonaContent: View {
                 .padding(.top, ProfileV3Theme.Space.s50)
         }
         .padding(.bottom, viewModel.isEditable ? Persona.bottom + Persona.saveBarClearance : Persona.bottom)
+        .task {
+            do {
+                try await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.personaCoachDelayMilliseconds))
+            } catch {
+                return
+            }
+            viewModel.startCoach()
+        }
     }
 
     @ViewBuilder
@@ -148,11 +158,14 @@ struct ProfileV3TravelPersonaContent: View {
                 range: persona.range,
                 score: viewModel.score(of:),
                 highlightedID: viewModel.highlightedTraitID,
-                isEditable: viewModel.isEditable,
-                onTap: viewModel.highlight,
-                onDoubleTap: viewModel.open,
-                onDrag: viewModel.preview,
-                onAdjust: viewModel.adjust
+                coach: viewModel.coach,
+                canEdit: viewModel.canEdit,
+                onTap: viewModel.tap,
+                onOpen: viewModel.open,
+                onDragStart: viewModel.beginDrag,
+                onDragEnd: viewModel.endDrag,
+                onAdjust: viewModel.adjust,
+                onCoachTap: viewModel.advanceCoach
             )
             .padding(.top, persona.profileTitle.isEmpty ? Persona.cardTitleTop : Persona.radarTop)
         }

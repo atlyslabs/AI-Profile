@@ -87,7 +87,7 @@ struct ProfileV3GloveBoxCabinet: View {
         case .locked:
             glowShape(radius: Motion.glowRadius.start, color: Palette.lockedGlow)
         case .warmingUp:
-            TimelineView(.profileV3Ambient(paused: reduceMotion || isPaused)) { timeline in
+            TimelineView(ProfileV3AmbientSchedule(isPaused: reduceMotion || isPaused)) { timeline in
                 glowShape(radius: glowRadius(at: timeline.date), color: Palette.warmingGlow)
             }
         case nil:
