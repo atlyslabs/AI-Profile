@@ -90,7 +90,7 @@ enum ProfileV3GloveBoxFixtures {
             sender: "Marriot Dubai",
             summary: "free upgrade available",
             logoURL: marriottLogo,
-            attention: "Needs attention",
+            attention: ProfileV3GloveBoxEmail.Attention(title: "Needs attention"),
             meta: ProfileV3GloveBoxMeta(glyphs: [.done], label: "Added to trip", dateLabel: dated),
             note: "Your stay qualifies for a free room upgrade. Want me to accept it?",
             followUpTitle: followUp

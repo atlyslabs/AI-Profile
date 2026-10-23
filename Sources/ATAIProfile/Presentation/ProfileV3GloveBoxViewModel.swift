@@ -332,11 +332,12 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     private func append(_ page: ProfileV3GloveBoxInboxPage) {
         guard let account, case .home(var home) = gloveBox.stage else { return }
         let known = Set(home.email.emails.map(\.id))
-        home.email.emails.append(contentsOf: page.emails.filter { known.contains($0.id) == false })
         nextCursor = page.nextCursor
-        home.email.viewAllTitle = home.email.emails.count > 3 || page.nextCursor != nil
-            ? ProfileV3GloveBoxCopy.viewAll
-            : nil
+        home.email = ProfileV3GloveBoxMapper.section(
+            account: account,
+            emails: home.email.emails + page.emails.filter { known.contains($0.id) == false },
+            hasMore: page.nextCursor != nil
+        )
         gloveBox.stage = .home(home)
     }
 
@@ -344,7 +345,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
         guard let repository else { return }
         loadTask = Task { [weak self] in
             guard let self else { return }
-            guard let detailed = try? await repository.loadGloveBoxMessage(id: email.id) else { return }
+            guard let detailed = try? await repository.loadGloveBoxMessage(email) else { return }
             guard !Task.isCancelled else { return }
             replace(detailed)
         }
@@ -363,7 +364,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     private func replaceNoteError(_ message: String, messageID: String) {
         guard case .home(var home) = gloveBox.stage,
               let index = home.email.emails.firstIndex(where: { $0.id == messageID }) else { return }
-        home.email.emails[index].attention = message
+        home.email.emails[index].attention = ProfileV3GloveBoxEmail.Attention(title: message)
         let email = home.email.emails[index]
         gloveBox.stage = .home(home)
         sheets = sheets.map { sheet in

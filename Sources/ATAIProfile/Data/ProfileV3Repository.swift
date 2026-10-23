@@ -123,7 +123,7 @@ protocol ProfileV3GloveBoxRepository: Sendable {
     func setGloveBoxForwardingPaused(_ paused: Bool) async throws -> ProfileV3GloveBoxAccount
     func addGloveBoxForwardingAddress(_ email: String) async throws -> ProfileV3GloveBoxAccount
     func loadGloveBoxMessages(cursor: String?) async throws -> ProfileV3GloveBoxInboxPage
-    func loadGloveBoxMessage(id: String) async throws -> ProfileV3GloveBoxEmail
+    func loadGloveBoxMessage(_ listed: ProfileV3GloveBoxEmail) async throws -> ProfileV3GloveBoxEmail
     func loadGloveBoxAttachment(messageID: String, index: Int) async throws -> Data
 }
 

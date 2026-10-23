@@ -275,23 +275,27 @@ struct ProfileV3GloveBoxHomeContent: View {
                 onToggleForwarding: viewModel.toggleForwarding,
                 onSendForwarding: viewModel.sendForwardingAddress
             )
-            ProfileV3GloveBoxPhoneSectionView(
-                section: home.phone,
-                isCopied: viewModel.copied == .number,
-                onCopy: { viewModel.copy(.number) },
-                onOpen: { viewModel.open(.call($0)) },
-                onViewAll: { viewModel.openList(.calls) }
-            )
-            ProfileV3GloveBoxCardSectionView(
-                section: home.card,
-                showsNotice: viewModel.showsCardNotice,
-                onTapCard: viewModel.showCardNotice,
-                onCloseNotice: viewModel.hideCardNotice,
-                onSelectOption: viewModel.selectPayOption,
-                onAddCard: viewModel.tapAddCard,
-                onOpen: { viewModel.open(.transaction($0)) },
-                onViewAll: { viewModel.openList(.transactions) }
-            )
+            if ProfileV3FeatureFlags.isGloveBoxPhoneNumberEnabled {
+                ProfileV3GloveBoxPhoneSectionView(
+                    section: home.phone,
+                    isCopied: viewModel.copied == .number,
+                    onCopy: { viewModel.copy(.number) },
+                    onOpen: { viewModel.open(.call($0)) },
+                    onViewAll: { viewModel.openList(.calls) }
+                )
+            }
+            if ProfileV3FeatureFlags.isGloveBoxVirtualCardEnabled {
+                ProfileV3GloveBoxCardSectionView(
+                    section: home.card,
+                    showsNotice: viewModel.showsCardNotice,
+                    onTapCard: viewModel.showCardNotice,
+                    onCloseNotice: viewModel.hideCardNotice,
+                    onSelectOption: viewModel.selectPayOption,
+                    onAddCard: viewModel.tapAddCard,
+                    onOpen: { viewModel.open(.transaction($0)) },
+                    onViewAll: { viewModel.openList(.transactions) }
+                )
+            }
         }
         .padding(Layout.sheetPadding)
         .frame(maxWidth: .infinity)
@@ -436,6 +440,10 @@ struct ProfileV3GloveBoxEmailSectionView: View {
                     .foregroundStyle(ProfileV3Theme.Palette.error)
                     .padding(.top, ProfileV3Theme.Space.s8)
             }
+            if let notice = section.forwardingNotice {
+                forwardingNotice(notice)
+                    .padding(.top, Layout.forwardingNoticeTop)
+            }
             let emails = Array(section.emails.prefix(Layout.emailPreviewLimit))
             if !emails.isEmpty {
                 ProfileV3GloveBoxPreviewCard(sampleLabel: section.sampleLabel) {
@@ -451,6 +459,24 @@ struct ProfileV3GloveBoxEmailSectionView: View {
                 .padding(.top, Layout.previewTop)
             }
         }
+    }
+
+    private func forwardingNotice(_ notice: String) -> some View {
+        let shape = RoundedRectangle(cornerRadius: Layout.forwardingNoticeRadius, style: .continuous)
+        return HStack(alignment: .top, spacing: Layout.valueSpacing) {
+            ATIcon.SwiftUIImage.infoOutline
+                .profileV3Icon(Layout.forwardingNoticeIcon)
+                .foregroundStyle(Palette.icon.opacity(Palette.metaIconOpacity))
+            Text(notice)
+                .typoGraphy(.B2InterMedium12)
+                .foregroundStyle(Color(at: .pureBlack).opacity(Palette.attentionOpacity))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(Layout.forwardingNoticePadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(shape.fill(Palette.preview))
+        .overlay(shape.strokeBorder(Palette.sectionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+        .accessibilityElement(children: .combine)
     }
 
     private func forwardingAction(_ title: String, isEnabled: Bool, action: @escaping () -> Void) -> some View {

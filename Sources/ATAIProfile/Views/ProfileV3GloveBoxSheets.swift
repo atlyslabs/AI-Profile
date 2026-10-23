@@ -224,36 +224,26 @@ struct ProfileV3GloveBoxDetailSheet: View {
                 ProfileV3DashedDivider()
                     .padding(.top, Layout.detailDividerTop)
                 if let note, !note.isEmpty {
-                    HStack(alignment: .top, spacing: ProfileV3Theme.Space.s16) {
-                        Text(note)
-                            .typoGraphy(.H7InterMedium16)
-                            .foregroundStyle(Color(at: .pureBlack))
-                            .frame(maxWidth: Layout.detailNoteWidth, alignment: .leading)
-                        Spacer(minLength: 0)
+                    ProfileV3FlowingText(
+                        text: note,
+                        trailingExclusion: CGSize(
+                            width: ProfileV3AtlysOrb.Metrics.insight.ringOuter + Layout.detailNoteOrbGap,
+                            height: ProfileV3AtlysOrb.Metrics.insight.ringOuter
+                        ),
+                        besideWidth: Layout.detailNoteWidth
+                    )
+                    .overlay(alignment: .topTrailing) {
                         ProfileV3AtlysOrb(ring: .still, metrics: .insight)
                     }
                     .padding(.top, Layout.detailNoteTop)
                 }
                 if case .email(let email) = entry, !email.attachments.isEmpty {
-                    VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s12) {
+                    ProfileV3FlowLayout(horizontalSpacing: Layout.attachmentSpacing, verticalSpacing: Layout.attachmentRowSpacing) {
                         ForEach(email.attachments) { attachment in
-                            Button { onOpenAttachment(attachment) } label: {
-                                HStack(spacing: ProfileV3Theme.Space.s8) {
-                                    Text(attachment.filename)
-                                        .typoGraphy(.B1InterMedium14)
-                                        .foregroundStyle(ProfileV3Theme.Palette.accessAction)
-                                        .lineLimit(1)
-                                    if openingAttachmentID == "\(email.id)-\(attachment.index)" {
-                                        ProgressView()
-                                            .controlSize(.small)
-                                    }
-                                }
-                            }
-                            .buttonStyle(.profileV3Pressable)
-                            .disabled(openingAttachmentID != nil)
+                            attachmentChip(attachment, isOpening: openingAttachmentID == "\(email.id)-\(attachment.index)")
                         }
                     }
-                    .padding(.top, Layout.detailNoteTop)
+                    .padding(.top, note?.isEmpty == false ? Layout.detailAttachmentsTop : Layout.detailNoteTop)
                 }
             }
             .padding(.horizontal, Layout.detailInset)
@@ -266,6 +256,36 @@ struct ProfileV3GloveBoxDetailSheet: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func attachmentChip(_ attachment: ProfileV3GloveBoxAttachment, isOpening: Bool) -> some View {
+        let shape = RoundedRectangle(cornerRadius: Layout.attachmentRadius, style: .continuous)
+        return Button { onOpenAttachment(attachment) } label: {
+            HStack(spacing: Layout.attachmentIconGap) {
+                ZStack {
+                    if isOpening {
+                        ProgressView()
+                            .controlSize(.mini)
+                    } else {
+                        (attachment.isImage ? ATIcon.SwiftUIImage.image : ATIcon.SwiftUIImage.attachFile)
+                            .profileV3Icon(Layout.attachmentIcon)
+                    }
+                }
+                .frame(width: Layout.attachmentIcon, height: Layout.attachmentIcon)
+                Text(attachment.filename)
+                    .typoGraphy(.B2InterSemibold12)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
+            .foregroundStyle(Color(at: .neutralGrey700))
+            .padding(Layout.attachmentPadding)
+            .background(shape.fill(Palette.preview))
+            .overlay(shape.strokeBorder(Palette.sectionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+            .contentShape(shape)
+        }
+        .buttonStyle(.profileV3Pressable)
+        .disabled(openingAttachmentID != nil)
+        .accessibilityLabel(attachment.filename)
     }
 
     private var header: some View {
@@ -305,10 +325,19 @@ struct ProfileV3GloveBoxDetailSheet: View {
     private var status: some View {
         switch entry {
         case .email(let email):
-            if email.attention?.isEmpty == false || email.meta != nil {
+            if email.attention != nil || email.meta != nil {
                 VStack(alignment: .leading, spacing: Layout.rowTextSpacing) {
-                    if let attention = email.attention, !attention.isEmpty {
-                        ProfileV3GloveBoxAttention(label: attention)
+                    if let attention = email.attention {
+                        VStack(alignment: .leading, spacing: Layout.rowTitleSpacing) {
+                            ProfileV3GloveBoxAttention(label: attention.title)
+                            if let detail = attention.detail {
+                                Text(detail)
+                                    .typoGraphy(.B2InterMedium12)
+                                    .foregroundStyle(Color(at: .pureBlack).opacity(Palette.attentionOpacity))
+                                    .frame(maxWidth: Layout.rowTextWidth, alignment: .leading)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
                     }
                     if let meta = email.meta {
                         ProfileV3GloveBoxMetaLine(meta: meta)
@@ -332,7 +361,7 @@ struct ProfileV3GloveBoxDetailSheet: View {
     private var trailingTop: some View {
         switch entry {
         case .email(let email):
-            ProfileV3GloveBoxLogo(url: email.logoURL)
+            ProfileV3GloveBoxLogo(url: email.logoURL, initials: email.initials)
         case .call(let call):
             ProfileV3GloveBoxLogo(url: call.logoURL)
         case .transaction(let transaction):

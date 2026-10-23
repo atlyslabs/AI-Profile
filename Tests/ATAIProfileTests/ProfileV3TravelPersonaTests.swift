@@ -300,6 +300,40 @@ struct ProfileV3TravelPersonaTests {
         #expect(ProfileV3PersonaRipple.ring(0, at: period * 0.999).opacity < 0.01)
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func theLoaderHoldsTheResponseUntilALoopEnds() async throws {
+        let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: PersonaRepositoryStub(), isEditable: true)
+        viewModel.load()
+        #expect(viewModel.isDecoding)
+        viewModel.finishDecodingLoop()
+        #expect(viewModel.isDecoding)
+
+        while viewModel.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(viewModel.isDecoding)
+        viewModel.finishDecodingLoop()
+        #expect(!viewModel.isDecoding)
+
+        viewModel.load()
+        #expect(!viewModel.isDecoding)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func aFailedLoadWaitsForTheLoopAndARetryDecodesAgain() async throws {
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(loadError: ProfileV3RepositoryError.unavailable),
+            isEditable: true
+        )
+        viewModel.load()
+        while viewModel.phase != .failed { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(viewModel.isDecoding)
+        viewModel.finishDecodingLoop()
+        #expect(!viewModel.isDecoding)
+
+        viewModel.load()
+        #expect(viewModel.isDecoding)
+    }
+
     private static let board = [
         ("adventure", 56), ("new_places", 85), ("outdoors", 47), ("social", 56), ("nightlife", 60),
         ("pace", 50), ("local", 32), ("culture", 95), ("comfort", 50), ("planning", 90)
@@ -329,9 +363,11 @@ private final class PersonaRepositoryStub: ProfileV3PersonaRepository, @unchecke
     private var scores: [String: Int]
     private var _submitted: [Submission] = []
     private let submitError: Error?
+    private let loadError: Error?
 
-    init(submitError: Error? = nil, scores: [(String, Int)] = [("adventure", 50)]) {
+    init(submitError: Error? = nil, scores: [(String, Int)] = [("adventure", 50)], loadError: Error? = nil) {
         self.submitError = submitError
+        self.loadError = loadError
         order = scores.map(\.0)
         self.scores = Dictionary(uniqueKeysWithValues: scores)
     }
@@ -343,6 +379,7 @@ private final class PersonaRepositoryStub: ProfileV3PersonaRepository, @unchecke
     }
 
     func loadTravelPersona(profileID: String?) async throws -> ProfileV3TravelPersona {
+        if let loadError { throw loadError }
         let scores = lock.withLock { self.scores }
         return ProfileV3TravelPersona(
             title: "Travel persona",
