@@ -1,0 +1,81 @@
+CLAUDE.md
+  s_c482717a7a4db6::t_f68d96820b4d42 64
+  s_5cbfcb66d234e5::t_8c6b09f7a5202a 642-644
+  s_c482717a7a4db6::t_6388c816633e43 671
+  s_c482717a7a4db6::t_fc438f8a0eb9e3 641
+  s_c482717a7a4db6::t_add2f846e4df89 34
+  s_5cbfcb66d234e5::t_70e8a4d7f0e86c 136
+  s_c482717a7a4db6::t_de48e50fae351f 645-651
+  s_5cbfcb66d234e5::t_4cc56204530a32 21
+  s_c482717a7a4db6::t_27057aeadc4213 665
+Sources/ATAIProfile/Components/ProfileV3HoldToExploreHint.swift
+  s_5cbfcb66d234e5::t_f4153f4d1d00f0 20
+Sources/ATAIProfile/Components/ProfileV3AddPastTripsPill.swift
+  s_5cbfcb66d234e5::t_eab0fe2a4d7753 52
+Sources/ATAIProfile/Components/ProfileV3GloveBoxCabinet.swift
+  s_5cbfcb66d234e5::t_c17eea5cca7a20 90
+Sources/ATAIProfile/Components/ProfileV3InteractiveGlobe.swift
+  s_5cbfcb66d234e5::t_f3897141089dbe 30
+Sources/ATAIProfile/Components/ProfileV3HoverModifier.swift
+  s_5cbfcb66d234e5::t_b1770c10fbcbff 13
+Sources/ATAIProfile/Components/ProfileV3CardGlobe.swift
+  s_5cbfcb66d234e5::t_69f7925c0789fa 30
+Sources/ATAIProfile/Components/ProfileV3PersonaCoachBubble.swift
+  s_9f6a8e768dcac7::t_d8cb3c5377252a 1-114
+Sources/ATAIProfile/Components/ProfileV3PersonaRadar.swift
+  s_9f6a8e768dcac7::t_e6205b420cfa1c 9-10,12-14,16,20-21,24,28-33,47-48,61-69,84-91,94-99,101,143,155,166,168,184,186,188-194,196,199,202,211-229,232-234,236-279,310-323
+Sources/ATAIProfile/Components/ProfileV3PersonaRipple.swift
+  s_9f6a8e768dcac7::t_ad34b4c72f64de 1-71
+Sources/ATAIProfile/Data/ProfileV3HubHints.swift
+  s_9f6a8e768dcac7::t_a00a8d2d5d10b1 51-55,62
+Sources/ATAIProfile/Generated/ProfileV3L10n+Generated.swift
+  s_9f6a8e768dcac7::t_0f46516717ddbc 103-104
+Sources/ATAIProfile/Presentation/ProfileV3PersonaCoach.swift
+  s_9f6a8e768dcac7::t_c5f1806200ec15 1-46
+Sources/ATAIProfile/Presentation/ProfileV3TravelPersonaViewModel.swift
+  s_9f6a8e768dcac7::t_bdbbe73c4efc3d 11-12,20,28,34,40-41,46-49,67-99,168
+Sources/ATAIProfile/Resources/ProfileV3Localizable.xcstrings
+  s_9f6a8e768dcac7::t_42a3e6f585ecac 976-999
+Sources/ATAIProfile/Support/ProfileV3FeatureFlags.swift
+  s_9f6a8e768dcac7::t_5c45fe3644fa04 12
+Sources/ATAIProfile/Support/ProfileV3SettingsStrings.swift
+  s_9f6a8e768dcac7::t_3cfc1cd0dc78fb 35-36
+Sources/ATAIProfile/Support/ProfileV3Theme+Persona.swift
+  s_9f6a8e768dcac7::t_b1bf306092452f 22,26-47,109-111,124-126,162-167
+Sources/ATAIProfile/Views/ProfileV3TravelPersonaView.swift
+  s_9f6a8e768dcac7::t_ad090ff7e002cf 18,49,122-129,161-168
+Tests/ATAIProfileTests/ProfileV3TravelPersonaTests.swift
+  s_9f6a8e768dcac7::t_82884ddbca9cad 170-318,328-329,333,335-336,346,350,354,356-359,362,366,378
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "89bcda197e252653de02152b77cba64357ea61a3",
+  "prompts": {},
+  "sessions": {
+    "s_5cbfcb66d234e5": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "e6443cee-c7aa-4a5d-8ca7-861ccd09fa08",
+        "model": "grok-4.7"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_9f6a8e768dcac7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12965eae-c634-4029-8616-6735faaef3fd",
+        "model": "unknown"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
