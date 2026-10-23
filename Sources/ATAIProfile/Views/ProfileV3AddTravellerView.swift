@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3AddTravellerView: View {
@@ -111,6 +112,7 @@ struct ProfileV3AddTravellerView: View {
             error: field.key == ProfileV3AddTravellerField.passportNumberKey ? passportError : nil,
             onFocusChange: { track(field.key, $0) }
         )
+        .postHogMask(field.key == ProfileV3AddTravellerField.passportNumberKey)
         .id(field.key)
     }
 

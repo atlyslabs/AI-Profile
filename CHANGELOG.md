@@ -3,6 +3,16 @@
 All notable changes to ATAIProfile. Versions are git tags on `master`; hosts depend on them with
 `.package(url: "https://github.com/atlyslabs/AI-Profile.git", from: "<version>")`.
 
+## Unreleased
+
+### Changed
+
+- Analytics: the five events on the fe_ayl_ migration sheet drop their `b2c_` / `b2c_ai_` prefix
+  (`account_deletion_reason_submitted`, `kyc_screen_seen`, `complete_kyc_clicked`,
+  `kyc_decision_on_gmail_connector`, `kyc_onboarding_completed`); the host adds its own prefix
+  (`fe_ayl_` in Ayl). The `b2c_ai_profile_*` and `b2c_gmail_connector_*` events drop their prefix by the
+  same rule (`b2c_ai_profile_logout` → `profile_logout`).
+
 ## 1.0.1 — 2026-10-20
 
 ### Added

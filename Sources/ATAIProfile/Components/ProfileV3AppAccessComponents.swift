@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3AppLogo: View {
@@ -72,6 +73,8 @@ struct ProfileV3CredentialField<Accessory: View>: View {
         .foregroundStyle(Color(at: .pureBlack))
         .keyboardType(keyboard)
         .textContentType(contentType)
+        // A password stays out of session replay, revealed or not.
+        .postHogMask(isSecure || contentType == .password || contentType == .newPassword)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
         .focused($isFocused)

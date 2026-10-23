@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3GloveBoxCardSectionView: View {
@@ -331,6 +332,8 @@ struct ProfileV3GloveBoxVirtualCard: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(card.holder)
         .accessibilityValue(card.lastFour)
+        // Card details stay out of session replay.
+        .postHogMask()
     }
 
     private var art: some View {
