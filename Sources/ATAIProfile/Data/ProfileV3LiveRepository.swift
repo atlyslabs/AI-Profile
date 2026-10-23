@@ -663,20 +663,8 @@ extension ProfileV3LiveRepository: ProfileV3GloveBoxRepository {
         try await gloveBox.messages(cursor: cursor)
     }
 
-    func loadGloveBoxMessage(id: String) async throws -> ProfileV3GloveBoxEmail {
-        let dto = try await gloveBox.message(id: id)
-        let listed = ProfileV3GloveBoxMapper.email(
-            ProfileV3GloveBoxMessageItemDTO(
-                id: dto.id,
-                fromName: dto.fromName,
-                senderDomain: nil,
-                subject: dto.subject,
-                receivedAt: dto.receivedAt,
-                toPreviousAddress: dto.toPreviousAddress,
-                status: dto.status
-            )
-        )
-        return ProfileV3GloveBoxMapper.detail(dto, listItem: listed)
+    func loadGloveBoxMessage(_ listed: ProfileV3GloveBoxEmail) async throws -> ProfileV3GloveBoxEmail {
+        ProfileV3GloveBoxMapper.detail(try await gloveBox.message(id: listed.id), listItem: listed)
     }
 
     func loadGloveBoxAttachment(messageID: String, index: Int) async throws -> Data {

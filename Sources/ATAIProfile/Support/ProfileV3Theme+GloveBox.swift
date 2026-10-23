@@ -113,6 +113,10 @@ extension ProfileV3Theme {
             static let sectionAboutTop: CGFloat = 16
             static let sectionAboutWidth: CGFloat = 303
             static let forwardingTop: CGFloat = 18
+            static let forwardingNoticeTop: CGFloat = 16
+            static let forwardingNoticePadding = EdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 14)
+            static let forwardingNoticeRadius: CGFloat = 16
+            static let forwardingNoticeIcon: CGFloat = 14
             static let previewTop: CGFloat = 27
             static let phoneAboutTop: CGFloat = 20
             static let headlineTop: CGFloat = 16
@@ -264,6 +268,14 @@ extension ProfileV3Theme {
             static let detailDividerTop: CGFloat = 37
             static let detailNoteTop: CGFloat = 43
             static let detailNoteWidth: CGFloat = 260
+            static let detailNoteOrbGap: CGFloat = 16
+            static let detailAttachmentsTop: CGFloat = 41
+            static let attachmentPadding = EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 16)
+            static let attachmentRadius: CGFloat = 20
+            static let attachmentIcon: CGFloat = 20
+            static let attachmentIconGap: CGFloat = 4
+            static let attachmentSpacing: CGFloat = 16
+            static let attachmentRowSpacing: CGFloat = 12
             static let detailCTATop: CGFloat = 48
             static let detailEmptyBottom: CGFloat = 120
 

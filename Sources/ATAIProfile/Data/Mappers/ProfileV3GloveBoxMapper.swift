@@ -18,9 +18,13 @@ enum ProfileV3GloveBoxCopy {
     static let tryAgain = "Try again"
     static let unavailable = "Glove box couldn't be opened."
     static let oldAddress = "Sent to an old address"
-    static let processing = "Processing"
-    static let stored = "Stored"
-    static let failed = "Couldn't forward"
+    static let sentToInbox = "Sent to your inbox"
+    static let handledForYou = "Handled for you"
+    static let inTheThread = "You’re in the thread"
+    static let needsAttention = "Needs attention"
+    static let notForwardedPaused = "Forwarding is paused, so new emails stay here until you resume it."
+    static let notForwardedPending = "Confirm your forwarding email and new emails will reach your inbox."
+    static let notForwardedNoAddress = "Add a forwarding email and new emails will reach your inbox."
     static let phoneTitle = "Phone number"
     static let phoneAbout = "Agent answers every call, day or night. It handles the simple ones and puts urgent ones through to you."
     static let phoneHeadlineLead = "You get a "
@@ -60,26 +64,38 @@ enum ProfileV3GloveBoxMapper {
     }
 
     static func email(_ dto: ProfileV3GloveBoxMessageItemDTO) -> ProfileV3GloveBoxEmail {
-        let received = dto.receivedAt.flatMap(date)
+        let status = delivery(dto.status)
         return ProfileV3GloveBoxEmail(
             id: dto.id,
             sender: text(dto.fromName) ?? text(dto.senderDomain) ?? "",
             summary: text(dto.subject) ?? "",
-            attention: dto.status == "failed" ? ProfileV3GloveBoxCopy.failed : nil,
-            meta: meta(previousAddress: dto.toPreviousAddress == true, received: received),
-            badge: badge(for: dto.status)
+            logoURL: logoURL(dto.senderLogoURL),
+            attention: attention(dto.attention),
+            delivery: status,
+            meta: meta(
+                delivery: status,
+                action: text(dto.action),
+                previousAddress: dto.toPreviousAddress == true,
+                received: dto.receivedAt.flatMap(date)
+            )
         )
     }
 
     static func detail(_ dto: ProfileV3GloveBoxMessageDTO, listItem: ProfileV3GloveBoxEmail) -> ProfileV3GloveBoxEmail {
-        ProfileV3GloveBoxEmail(
+        let status = listItem.delivery ?? delivery(dto.status)
+        return ProfileV3GloveBoxEmail(
             id: listItem.id,
             sender: text(dto.fromName) ?? listItem.sender,
             summary: text(dto.subject) ?? listItem.summary,
-            logoURL: listItem.logoURL,
-            attention: dto.status == "failed" ? ProfileV3GloveBoxCopy.failed : nil,
-            meta: listItem.meta ?? meta(previousAddress: dto.toPreviousAddress == true, received: dto.receivedAt.flatMap(date)),
-            badge: badge(for: dto.status),
+            logoURL: listItem.logoURL ?? logoURL(dto.senderLogoURL),
+            attention: listItem.attention ?? attention(dto.attention),
+            delivery: status,
+            meta: listItem.meta ?? meta(
+                delivery: status,
+                action: text(dto.action),
+                previousAddress: dto.toPreviousAddress == true,
+                received: dto.receivedAt.flatMap(date)
+            ),
             note: note(text: dto.text, html: dto.html),
             attachments: (dto.attachments ?? []).enumerated().compactMap { offset, attachment in
                 guard let filename = cleaned(attachment.filename) else { return nil }
@@ -112,6 +128,7 @@ enum ProfileV3GloveBoxMapper {
             forwardingPaused: account.forwardingPaused,
             canPauseForwarding: account.forwardingEmail != nil,
             canSetForwardingAddress: account.forwardingEmail == nil,
+            forwardingNotice: forwardingNotice(account: account, emails: emails),
             emails: emails,
             viewAllTitle: emails.count > 3 || hasMore ? ProfileV3GloveBoxCopy.viewAll : nil,
             listTitle: ProfileV3GloveBoxCopy.listTitle
@@ -158,24 +175,59 @@ enum ProfileV3GloveBoxMapper {
         return ("", nil)
     }
 
-    private static func meta(previousAddress: Bool, received: Date?) -> ProfileV3GloveBoxMeta? {
-        let dateLabel = received.map(label)
-        guard previousAddress || dateLabel != nil else { return nil }
-        return ProfileV3GloveBoxMeta(
-            glyphs: previousAddress ? [.mail] : [],
-            label: previousAddress ? ProfileV3GloveBoxCopy.oldAddress : "",
-            dateLabel: dateLabel
-        )
+    private static func forwardingNotice(account: ProfileV3GloveBoxAccount, emails: [ProfileV3GloveBoxEmail]) -> String? {
+        guard emails.contains(where: { $0.delivery == .notForwarded }) else { return nil }
+        if account.forwardingPaused { return ProfileV3GloveBoxCopy.notForwardedPaused }
+        guard account.forwardingEmail == nil else { return nil }
+        return account.pendingEmail == nil ? ProfileV3GloveBoxCopy.notForwardedNoAddress : ProfileV3GloveBoxCopy.notForwardedPending
     }
 
-    private static func badge(for status: String?) -> String? {
-        switch status {
-        case "processing": return ProfileV3GloveBoxCopy.processing
-        case "paused": return ProfileV3GloveBoxCopy.paused
-        case "stored": return ProfileV3GloveBoxCopy.stored
-        case "failed": return ProfileV3GloveBoxCopy.failed
+    private static func meta(
+        delivery: ProfileV3GloveBoxEmail.Delivery?,
+        action: String?,
+        previousAddress: Bool,
+        received: Date?
+    ) -> ProfileV3GloveBoxMeta? {
+        var glyphs: [ProfileV3GloveBoxGlyph] = []
+        if let delivery, delivery != .notForwarded { glyphs.append(.tick) }
+        if previousAddress { glyphs.append(.mail) }
+        let title = action ?? (previousAddress ? ProfileV3GloveBoxCopy.oldAddress : deliveryLabel(delivery)) ?? ""
+        let dateLabel = received.map(label)
+        guard !glyphs.isEmpty || !title.isEmpty || dateLabel != nil else { return nil }
+        return ProfileV3GloveBoxMeta(glyphs: glyphs, label: title, dateLabel: dateLabel)
+    }
+
+    private static func delivery(_ status: String?) -> ProfileV3GloveBoxEmail.Delivery? {
+        switch status?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "forwarded": return .forwarded
+        case "handled": return .handled
+        case "added_to_thread": return .addedToThread
+        case "not_forwarded": return .notForwarded
         default: return nil
         }
+    }
+
+    private static func deliveryLabel(_ delivery: ProfileV3GloveBoxEmail.Delivery?) -> String? {
+        switch delivery {
+        case .forwarded: return ProfileV3GloveBoxCopy.sentToInbox
+        case .handled: return ProfileV3GloveBoxCopy.handledForYou
+        case .addedToThread: return ProfileV3GloveBoxCopy.inTheThread
+        case .notForwarded, nil: return nil
+        }
+    }
+
+    private static func attention(_ dto: ProfileV3GloveBoxAttentionDTO?) -> ProfileV3GloveBoxEmail.Attention? {
+        guard let dto else { return nil }
+        let title = text(dto.title)
+        let detail = text(dto.detail)
+        guard title != nil || detail != nil || text(dto.type) != nil else { return nil }
+        return ProfileV3GloveBoxEmail.Attention(title: title ?? ProfileV3GloveBoxCopy.needsAttention, detail: detail)
+    }
+
+    private static func logoURL(_ raw: String?) -> URL? {
+        guard let raw = text(raw), let url = URL(string: raw),
+              let scheme = url.scheme?.lowercased(), scheme == "https" || scheme == "http" else { return nil }
+        return url
     }
 
     private static func note(text: String?, html: String?) -> String? {

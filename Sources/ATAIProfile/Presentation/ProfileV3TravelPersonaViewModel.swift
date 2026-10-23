@@ -10,6 +10,7 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
     @Published private(set) var saveError: String?
     @Published private(set) var draggingTraitID: String?
     @Published private(set) var coach: ProfileV3PersonaCoach?
+    @Published private(set) var isDecoding = false
     @Published var trait: ProfileV3PersonaTraitViewModel?
 
     let isEditable: Bool
@@ -48,6 +49,7 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
     }
 
     func load() {
+        if content == nil { isDecoding = true }
         let repository = repository
         let profileID = profileID
         ProfileV3PhasedLoad.start(
@@ -58,6 +60,11 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
             fetch: { try await repository.loadTravelPersona(profileID: profileID) },
             apply: { $0.content = $1 }
         )
+    }
+
+    func finishDecodingLoop() {
+        guard isDecoding, phase != .loading else { return }
+        isDecoding = false
     }
 
     func score(of trait: ProfileV3TravelPersona.Trait) -> Int {

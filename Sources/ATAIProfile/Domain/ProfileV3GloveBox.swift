@@ -56,6 +56,7 @@ enum ProfileV3GloveBoxGlyph: Equatable {
     case seen
     case calendar
     case done
+    case tick
 }
 
 struct ProfileV3GloveBoxMeta: Equatable {
@@ -74,6 +75,7 @@ struct ProfileV3GloveBoxEmailSection: Equatable {
     var forwardingPaused = false
     var canPauseForwarding = false
     var canSetForwardingAddress = false
+    var forwardingNotice: String?
     var emails: [ProfileV3GloveBoxEmail]
     var sampleLabel: String?
     var viewAllTitle: String?
@@ -86,19 +88,45 @@ struct ProfileV3GloveBoxAttachment: Identifiable, Equatable {
     let contentType: String
 
     var id: Int { index }
+    var isImage: Bool { contentType.lowercased().hasPrefix("image/") }
 }
 
 struct ProfileV3GloveBoxEmail: Identifiable, Equatable {
+    enum Delivery: Equatable {
+        case forwarded
+        case handled
+        case addedToThread
+        case notForwarded
+    }
+
+    struct Attention: Equatable {
+        let title: String
+        var detail: String?
+    }
+
     let id: String
     let sender: String
     let summary: String
     var logoURL: URL?
-    var attention: String?
+    var attention: Attention?
+    var delivery: Delivery?
     var meta: ProfileV3GloveBoxMeta?
     var badge: String?
     var note: String?
     var attachments: [ProfileV3GloveBoxAttachment] = []
     var followUpTitle: String?
+
+    var initials: String {
+        let name = sender.trimmingCharacters(in: .whitespacesAndNewlines)
+        let words: [Substring]
+        if name.contains(" ") {
+            words = name.split { !$0.isLetter && !$0.isNumber }
+        } else {
+            let host = name.split(separator: "@").last ?? Substring(name)
+            words = Array(host.split(separator: ".").prefix(1))
+        }
+        return String(words.prefix(2).compactMap { $0.first { $0.isLetter || $0.isNumber } }).uppercased()
+    }
 }
 
 struct ProfileV3GloveBoxPhoneSection: Equatable {

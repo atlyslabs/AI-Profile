@@ -40,19 +40,28 @@ struct ProfileV3TravelPersonaView: View {
 
     private var content: some View {
         ZStack(alignment: .top) {
-            if let persona = viewModel.content {
+            if viewModel.isDecoding {
+                ProfileV3TravelPersonaLoader(
+                    isWaiting: viewModel.phase == .loading,
+                    onLoopFinished: viewModel.finishDecodingLoop
+                )
+                .transition(.opacity)
+            } else if let persona = viewModel.content {
                 ScrollView(showsIndicators: false) {
                     ProfileV3TravelPersonaContent(persona: persona, viewModel: viewModel)
                         .profileV3ScrollOffsetAnchor(headerOffset)
                 }
                 .profileV3ScrollOffset(headerOffset)
                 .scrollDisabled(viewModel.isDragging)
+                .transition(.opacity)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
                     .padding(.top, ProfileV3AgentSheetHeader.height(showsOrb: false))
+                    .transition(.opacity)
             }
             ProfileV3AgentStickyHeader(tag: viewModel.content?.title ?? "", pin: headerPin, onBack: viewModel.close)
         }
+        .animation(ProfileV3Theme.Motion.contentSwitch, value: viewModel.isDecoding)
         .overlay(alignment: .bottom) {
             if viewModel.showsSaveBar {
                 ProfileV3PersonaSaveBar(viewModel: viewModel)
@@ -61,6 +70,45 @@ struct ProfileV3TravelPersonaView: View {
         }
         .animation(ProfileV3Theme.Motion.saveState, value: viewModel.showsSaveBar)
         .background(Color(at: .pureWhite))
+    }
+}
+
+private struct ProfileV3TravelPersonaLoader: View {
+    let isWaiting: Bool
+    let onLoopFinished: () -> Void
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private typealias Agent = ProfileV3Theme.Sizes.Agent
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                ProfileV3AvatarOrb(imageURL: ProfileV3PlaceholderArt.agentPersonal.url, size: Agent.orbLarge)
+                    .padding(.top, Agent.orbTop)
+                ProfileV3PersonaProcessingCard(
+                    title: ProfileV3Strings.personaLoaderTitle,
+                    traits: ProfileV3Strings.personaLoaderTraits
+                )
+                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                .padding(.top, ProfileV3Theme.Space.s50)
+            }
+            .padding(.bottom, ProfileV3Theme.Sizes.Persona.bottom)
+        }
+        .task {
+            guard !reduceMotion else { return }
+            while !Task.isCancelled {
+                do {
+                    try await Task.sleep(for: .seconds(ProfileV3Theme.Motion.personaProcessingLoop))
+                } catch {
+                    return
+                }
+                onLoopFinished()
+            }
+        }
+        .onChange(of: isWaiting, initial: true) { _, isWaiting in
+            if reduceMotion, !isWaiting { onLoopFinished() }
+        }
     }
 }
 

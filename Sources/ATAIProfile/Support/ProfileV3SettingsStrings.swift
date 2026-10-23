@@ -35,6 +35,21 @@ extension ProfileV3Strings {
     static var personaCoachDrag: String { ProfileV3L10n.moAiprofileAgentsHintPersonaDrag }
     static var personaCoachTap: String { ProfileV3L10n.moAiprofileAgentsHintPersonaTap }
     static var personaProcessing: String { ProfileV3L10n.moAiprofileAgentsStatusPersonaProcessing }
+    static var personaLoaderTitle: String { ProfileV3L10n.moAiprofileAgentsTitleTravellerProfile }
+    static var personaLoaderTraits: [String] {
+        [
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaAdventure,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaNewPlaces,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaOutdoors,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaSocial,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaNightlife,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaPace,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaLocal,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaCultureHistory,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaComfort,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaPlanning,
+        ]
+    }
     static var disconnectApp: String { ProfileV3L10n.moAiprofileAgentsButtonDisconnectApp }
     static var editConnector: String { ProfileV3L10n.moAiprofileGeneralButtonEdit }
     static var showPassword: String { ProfileV3L10n.moAiprofileGeneralAccessibilityShowPassword }

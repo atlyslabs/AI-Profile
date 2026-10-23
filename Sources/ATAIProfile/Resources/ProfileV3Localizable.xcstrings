@@ -1069,6 +1069,126 @@
         }
       }
     },
+    "mo-aiprofile-agents-label-persona-adventure": {
+      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adventure"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-persona-comfort": {
+      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comfort"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-persona-culture-history": {
+      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Culture & History"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-persona-local": {
+      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-persona-new-places": {
+      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New places"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-persona-nightlife": {
+      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nightlife"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-persona-outdoors": {
+      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outdoors"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-persona-pace": {
+      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pace"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-persona-planning": {
+      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planning"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-persona-social": {
+      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Social"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-label-preference-slider": {
       "comment": "Label for an agent preference slider setting.",
       "extractionState": "manual",
@@ -1233,6 +1353,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Connectors"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-traveller-profile": {
+      "comment": "Card title on the travel persona loading dial, shown before the server's profile title arrives.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Traveller profile"
           }
         }
       }
