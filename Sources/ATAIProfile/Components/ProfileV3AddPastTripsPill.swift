@@ -22,17 +22,20 @@ struct ProfileV3AddPastTripsPill: View {
             .padding(.leading, Sizes.leading)
             .padding(.trailing, Sizes.trailing)
             .frame(height: ProfileV3Theme.Control.tapTarget)
-            .background(Capsule().fill(ProfileV3Theme.detailPillGradient))
+            .background(
+                Capsule()
+                    .fill(ProfileV3Theme.detailPillGradient)
+                    .shadow(
+                        color: ProfileV3Theme.Palette.shadow,
+                        radius: ProfileV3Theme.Shadow.cardRadius,
+                        y: ProfileV3Theme.Shadow.chipY
+                    )
+            )
             .background {
                 if !reduceMotion {
                     ProfileV3PulseRings()
                 }
             }
-            .shadow(
-                color: ProfileV3Theme.Palette.shadow,
-                radius: ProfileV3Theme.Shadow.cardRadius,
-                y: ProfileV3Theme.Shadow.chipY
-            )
         }
         .buttonStyle(.profileV3Pressable(.selection))
         .accessibilityLabel(title)
@@ -46,7 +49,7 @@ private struct ProfileV3PulseRings: View {
     @Environment(\.profileV3PausesAnimations) private var isPaused
 
     var body: some View {
-        SwiftUI.TimelineView(.animation(paused: isPaused)) { context in
+        SwiftUI.TimelineView(.profileV3Ambient(paused: isPaused)) { context in
             let elapsed = context.date.timeIntervalSinceReferenceDate
             ZStack {
                 ForEach((0..<Sizes.ringCount).reversed(), id: \.self) { index in

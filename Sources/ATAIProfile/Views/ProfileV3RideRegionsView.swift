@@ -5,6 +5,7 @@ struct ProfileV3RideRegionsView: View {
     @ObservedObject var viewModel: ProfileV3RideRegionsViewModel
 
     @State private var measured = Measured()
+    @State private var headerPin = ProfileV3HeaderPin()
 
     private struct Measured: Equatable {
         var content: CGFloat = 0
@@ -18,7 +19,9 @@ struct ProfileV3RideRegionsView: View {
                 ScrollView(showsIndicators: false) {
                     ProfileV3RideRegionsContent(content: content)
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.content = $0 }
+                        .profileV3HeaderFadeAnchor(headerPin)
                 }
+                .profileV3HeaderFade(headerPin)
                 .scrollBounceBehavior(.basedOnSize)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)

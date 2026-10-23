@@ -32,6 +32,10 @@ struct ProfileV3SettingsView: View {
                     if let menu = viewModel.menu, viewModel.menuPhase == .loaded {
                         panel(menu)
                             .padding(.top, Layout.cardsTop)
+                    } else if viewModel.menuPhase == .failed {
+                        failedPanel
+                            .padding(.top, ProfileV3Theme.Sizes.ErrorState.cardTop)
+                            .transition(.opacity)
                     } else {
                         ProfileV3LoadStateView(phase: viewModel.menuPhase, retry: viewModel.loadMenu)
                             .frame(height: Layout.loadStateHeight)
@@ -87,10 +91,31 @@ struct ProfileV3SettingsView: View {
                         .padding(.top, ProfileV3Theme.Sizes.CredentialStore.cardTop)
                 }
             }
-            ProfileV3SettingsRowList(menu: menu, account: viewModel.account, onSelect: viewModel.tap)
+            ProfileV3SettingsRowList(rows: menu.rows, account: viewModel.account, onSelect: viewModel.tap)
                 .padding(.top, Layout.rowsTop)
             #if DEBUG
-            ProfileV3SettingsDebugSection()
+            ProfileV3SettingsDebugSection(gloveBoxRepository: viewModel.gloveBoxRepository)
+                .padding(.top, Layout.rowsTop)
+            #endif
+        }
+    }
+
+    private var failedPanel: some View {
+        let shape = RoundedRectangle(cornerRadius: ProfileV3Theme.Sizes.ErrorState.cardRadius, style: .continuous)
+        return VStack(alignment: .leading, spacing: 0) {
+            ProfileV3ErrorState(action: viewModel.loadMenu)
+                .padding(.top, ProfileV3Theme.Sizes.ErrorState.cardContentDrop)
+                .frame(maxWidth: .infinity)
+                .frame(height: ProfileV3Theme.Sizes.ErrorState.cardHeight)
+                .background(shape.fill(Color(at: .backgroundLightTheme)))
+                .overlay(
+                    shape.strokeBorder(ProfileV3Theme.Palette.errorStateCardBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
+                )
+                .profileV3FeedbackOnAppear(.error)
+            ProfileV3SettingsRowList(rows: viewModel.failedMenuRows, account: viewModel.account, onSelect: viewModel.tap)
+                .padding(.top, ProfileV3Theme.Sizes.ErrorState.rowsTop)
+            #if DEBUG
+            ProfileV3SettingsDebugSection(gloveBoxRepository: viewModel.gloveBoxRepository)
                 .padding(.top, Layout.rowsTop)
             #endif
         }
@@ -334,18 +359,19 @@ private struct ProfileV3SettingsAccessCard: View {
 }
 
 private struct ProfileV3SettingsRowList: View {
-    let menu: ProfileV3SettingsMenu
+    let rows: [ProfileV3SettingsRowItem]
     @ObservedObject var account: ProfileV3AccountSettingsModel
     let onSelect: (ProfileV3SettingsRowItem) -> Void
 
     var body: some View {
+        let dangerRows = rows.filter(\.isDanger)
         VStack(alignment: .leading, spacing: ProfileV3Theme.Sizes.SettingsPage.rowSpacing) {
-            ForEach(menu.listRows) { row in
+            ForEach(rows.filter { !$0.isDanger }) { row in
                 ProfileV3SettingsRow(icon: row.icon, title: row.label) { onSelect(row) }
             }
-            if !menu.dangerRows.isEmpty {
+            if !dangerRows.isEmpty {
                 ProfileV3DashedDivider()
-                ForEach(menu.dangerRows) { row in
+                ForEach(dangerRows) { row in
                     dangerRow(row)
                 }
             }
@@ -426,7 +452,7 @@ private struct ProfileV3CitizenshipLockLayer: View {
 }
 
 #Preview("Settings · citizenship locked") {
-    ProfileV3SettingsView(viewModel: .preview(deps: .preview(passportCitizenship: .india)))
+    ProfileV3SettingsView(viewModel: .preview(repository: ProfileV3MockRepository(settingsCitizenship: "IN")))
 }
 
 #Preview("Settings · deletion requested") {

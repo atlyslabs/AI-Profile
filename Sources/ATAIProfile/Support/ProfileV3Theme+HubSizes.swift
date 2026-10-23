@@ -155,6 +155,7 @@ extension ProfileV3Theme.Sizes {
         static let shadowOffsetX: CGFloat = -41.5
         static let shadowOffsetY: CGFloat = 7.5
         static let shadowBlur: CGFloat = 7
+        static let renderSpill: CGFloat = 48
         static let topSpacing: CGFloat = 24
         static let contentGap = ProfileV3Theme.Space.s22
         static var slot: CGFloat { Podium.topSpacing + Podium.height }

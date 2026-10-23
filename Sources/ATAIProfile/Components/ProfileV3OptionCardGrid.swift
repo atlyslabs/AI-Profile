@@ -6,18 +6,26 @@ struct ProfileV3OptionCardGrid: View {
     let selection: Set<String>
     let onToggle: (String) -> Void
 
-    private static let columns = [
-        GridItem(.flexible(), spacing: ProfileV3Theme.Space.s16),
-        GridItem(.flexible(), spacing: ProfileV3Theme.Space.s16)
-    ]
-
     var body: some View {
-        LazyVGrid(columns: Self.columns, spacing: ProfileV3Theme.Space.s20) {
-            ForEach(options) { option in
-                ProfileV3OptionCard(option: option, isSelected: selection.contains(option.id)) {
-                    onToggle(option.id)
+        Grid(horizontalSpacing: ProfileV3Theme.Space.s16, verticalSpacing: ProfileV3Theme.Space.s20) {
+            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                GridRow {
+                    ForEach(row) { option in
+                        ProfileV3OptionCard(option: option, isSelected: selection.contains(option.id)) {
+                            onToggle(option.id)
+                        }
+                    }
+                    if row.count == 1 {
+                        Color.clear.gridCellUnsizedAxes(.vertical)
+                    }
                 }
             }
+        }
+    }
+
+    private var rows: [[ProfileV3CardOption]] {
+        stride(from: 0, to: options.count, by: 2).map { start in
+            Array(options[start..<min(start + 2, options.count)])
         }
     }
 }

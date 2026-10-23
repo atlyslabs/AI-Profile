@@ -10,6 +10,8 @@ struct ProfileV3PreviousPassportsView: View {
     let onBack: () -> Void
     var onRetry: () -> Void = {}
 
+    @State private var headerPin = ProfileV3HeaderPin()
+
     var body: some View {
         VStack(spacing: 0) {
             header
@@ -51,7 +53,9 @@ struct ProfileV3PreviousPassportsView: View {
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, ProfileV3Theme.Sizes.Passport.listTop)
             .padding(.bottom, ProfileV3Theme.Sizes.Passport.listBottom)
+            .profileV3HeaderFadeAnchor(headerPin)
         }
+        .profileV3HeaderFade(headerPin, color: ProfileV3Theme.Palette.background)
         .scrollBounceBehavior(.basedOnSize)
     }
 

@@ -14,7 +14,8 @@ enum ProfileV3SettingsMapper: ProfileV3DTOReading {
             accountsRows: (dto.accountsCenter?.rows ?? []).compactMap(row),
             rows: dto.rows.compactMap(row),
             accountsBadgeURL: remoteURL(dto.accountsCenter?.badge?.imageURL),
-            concierge: concierge(dto.concierge)
+            concierge: concierge(dto.concierge),
+            citizenshipCode: text(dto.citizenshipCountryCode)?.uppercased()
         )
     }
 

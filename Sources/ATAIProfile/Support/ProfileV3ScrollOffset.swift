@@ -1,3 +1,4 @@
+import ATUIKit
 import Observation
 import SwiftUI
 
@@ -54,8 +55,39 @@ extension View {
     func profileV3ScrollOffsetAnchor(_ offset: Binding<CGFloat>) -> some View {
         modifier(ProfileV3ScrollOffsetAnchor(offset: offset))
     }
+
+    func profileV3HeaderFade(
+        _ pin: ProfileV3HeaderPin,
+        gap: CGFloat = ProfileV3Theme.Sizes.headerFadeGap,
+        color: Color = Color(at: .pureWhite)
+    ) -> some View {
+        profileV3ScrollOffset(pin.offsetBinding)
+            .overlay(alignment: .top) { ProfileV3HeaderFade(pin: pin, gap: gap, color: color) }
+    }
+
+    func profileV3HeaderFadeAnchor(_ pin: ProfileV3HeaderPin) -> some View {
+        profileV3ScrollOffsetAnchor(pin.offsetBinding)
+    }
 }
 
+struct ProfileV3HeaderFade: View {
+    let pin: ProfileV3HeaderPin
+    var gap: CGFloat = 0
+    var color = Color(at: .pureWhite)
+
+    var body: some View {
+        VStack(spacing: 0) {
+            color
+                .frame(height: gap)
+            LinearGradient(colors: [color, color.opacity(0)], startPoint: .top, endPoint: .bottom)
+                .frame(height: ProfileV3Theme.Sizes.SettingsPage.headerFade)
+        }
+        .opacity(pin.progress)
+        .allowsHitTesting(false)
+    }
+}
+
+@MainActor
 @Observable
 final class ProfileV3HeaderPin {
     @ObservationIgnored var offset: CGFloat = 0 {
@@ -63,6 +95,10 @@ final class ProfileV3HeaderPin {
     }
 
     private(set) var progress: CGFloat = 0
+
+    var offsetBinding: Binding<CGFloat> {
+        Binding(get: { self.offset }, set: { self.offset = $0 })
+    }
 
     private func update() {
         let progress = min(max(offset / ProfileV3Theme.Sizes.headerRevealDistance, 0), 1)

@@ -77,6 +77,7 @@ protocol ProfileV3ConnectorsRouting: AnyObject {
     func dismissDisconnectEmail()
     func presentDisconnectProgress()
     func dismissDisconnectProgress()
+    func connectorDidDisconnect(_ connector: ProfileV3ConnectorKey)
 }
 
 @MainActor

@@ -7,6 +7,8 @@ struct ProfileV3TermsView: View {
     var onRetry: () -> Void = {}
     let onBack: () -> Void
 
+    @State private var headerPin = ProfileV3HeaderPin()
+
     var body: some View {
         VStack(spacing: 0) {
             header
@@ -16,7 +18,9 @@ struct ProfileV3TermsView: View {
                         .padding(.horizontal, ProfileV3Theme.Sizes.Terms.horizontalMargin)
                         .padding(.top, ProfileV3Theme.Sizes.Terms.contentTop)
                         .padding(.bottom, ProfileV3Theme.Sizes.Terms.contentBottom)
+                        .profileV3HeaderFadeAnchor(headerPin)
                 }
+                .profileV3HeaderFade(headerPin)
                 .scrollBounceBehavior(.basedOnSize)
             } else {
                 ProfileV3LoadStateView(phase: phase, retry: onRetry)

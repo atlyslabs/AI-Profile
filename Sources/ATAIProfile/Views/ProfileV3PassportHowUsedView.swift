@@ -7,6 +7,7 @@ struct ProfileV3PassportHowUsedView: View {
     var onHeightChange: ((CGFloat) -> Void)?
 
     @State private var measured = Measured()
+    @State private var headerPin = ProfileV3HeaderPin()
 
     private typealias HowUsed = ProfileV3Theme.Sizes.HowUsed
 
@@ -26,7 +27,9 @@ struct ProfileV3PassportHowUsedView: View {
                 ScrollView(showsIndicators: false) {
                     loaded(content)
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.content = $0 }
+                        .profileV3HeaderFadeAnchor(headerPin)
                 }
+                .profileV3HeaderFade(headerPin)
                 .scrollBounceBehavior(.basedOnSize)
                 .safeAreaInset(edge: .bottom) {
                     footer(content)

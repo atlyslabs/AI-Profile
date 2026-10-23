@@ -2,6 +2,7 @@ import SwiftUI
 
 extension ProfileV3Theme {
     enum Motion {
+        static let ambientFrameInterval: TimeInterval = 1.0 / 24
         static let passportGlowOpacity: Double = 0.5
         static let passportStripOpacity: Double = 0.2
         static let passportGuillocheOpacity: Double = 0.05
@@ -12,7 +13,7 @@ extension ProfileV3Theme {
         static let selection: Animation = .easeInOut(duration: 0.2)
         static let expand: Animation = .easeInOut(duration: 0.25)
         static let hero: Animation = .spring(response: 0.5, dampingFraction: 0.86)
-        static let hintNudge: Animation = .easeInOut(duration: 1.2).repeatForever(autoreverses: true)
+        static let hintNudgeSeconds: Double = 1.2
         static let holdDuration: TimeInterval = 0.6
         static let heroSettleMilliseconds = 550
         static let frameDelayMilliseconds = 16

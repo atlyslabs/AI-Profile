@@ -33,12 +33,11 @@ struct ProfileV3EditTravellersView: View {
                             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: {
                                 listHeight = $0
                             }
-                            .profileV3ScrollOffsetAnchor(headerOffset)
+                            .profileV3HeaderFadeAnchor(headerPin)
                     }
                     .scrollBounceBehavior(.basedOnSize)
-                    .profileV3ScrollOffset(headerOffset)
+                    .profileV3HeaderFade(headerPin, gap: 0)
                     .frame(maxHeight: listHeight > 0 ? listHeight : nil)
-                    .overlay(alignment: .top) { ProfileV3EditTravellersHeaderFade(pin: headerPin) }
                     .onChange(of: listHeight) { revealToast(proxy) }
                     .onChange(of: toast) { revealToast(proxy) }
                 }
@@ -50,10 +49,6 @@ struct ProfileV3EditTravellersView: View {
         .frame(maxWidth: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())
         .safeAreaInset(edge: .bottom) { addBar }
-    }
-
-    private var headerOffset: Binding<CGFloat> {
-        Binding(get: { headerPin.offset }, set: { headerPin.offset = $0 })
     }
 
     private func revealToast(_ proxy: ScrollViewProxy) {
@@ -82,17 +77,6 @@ struct ProfileV3EditTravellersView: View {
     private var addBar: some View {
         ProfileV3ContinueButton(title: ProfileV3Strings.addTravellerPill, action: onAdd)
             .profileV3CTABar()
-    }
-}
-
-private struct ProfileV3EditTravellersHeaderFade: View {
-    let pin: ProfileV3HeaderPin
-
-    var body: some View {
-        ProfileV3Theme.whiteToClearFade
-            .frame(height: ProfileV3Theme.Sizes.SettingsPage.headerFade)
-            .opacity(pin.progress)
-            .allowsHitTesting(false)
     }
 }
 

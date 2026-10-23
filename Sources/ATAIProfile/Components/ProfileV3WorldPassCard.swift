@@ -12,21 +12,30 @@ struct ProfileV3WorldPassCard: View {
     var body: some View {
         ZStack {
             Color(at: .pureBlack)
-            ProfileV3CardGlobe(
-                isAnimating: animatesGlobe,
-                facingLongitude: ProfileV3Theme.Globe.cardLongitude,
-                appearance: ProfileV3Theme.Globe.cardAppearance,
-                pose: globePose
-            )
-            .frame(width: ProfileV3Theme.Sizes.worldPassGlobe, height: ProfileV3Theme.Sizes.worldPassGlobe)
-            .background {
-                ProfileV3GlobeOrbits()
-                    .frame(
-                        width: ProfileV3Theme.Sizes.worldPassGlobeOrbits,
-                        height: ProfileV3Theme.Sizes.worldPassGlobeOrbits
-                    )
+            if ProfileV3FeatureFlags.isGlobeEnabled {
+                ProfileV3CardGlobe(
+                    isAnimating: animatesGlobe,
+                    facingLongitude: ProfileV3Theme.Globe.cardLongitude,
+                    appearance: ProfileV3Theme.Globe.cardAppearance,
+                    pose: globePose
+                )
+                .frame(width: ProfileV3Theme.Sizes.worldPassGlobe, height: ProfileV3Theme.Sizes.worldPassGlobe)
+                .overlay {
+                    ProfileV3GlobeRim()
+                        .frame(
+                            width: ProfileV3Theme.Sizes.worldPassGlobeSphere,
+                            height: ProfileV3Theme.Sizes.worldPassGlobeSphere
+                        )
+                }
+                .background {
+                    ProfileV3GlobeOrbits()
+                        .frame(
+                            width: ProfileV3Theme.Sizes.worldPassGlobeOrbits,
+                            height: ProfileV3Theme.Sizes.worldPassGlobeOrbits
+                        )
+                }
+                .offset(y: ProfileV3Theme.Sizes.worldPassGlobeOffsetY)
             }
-            .offset(y: ProfileV3Theme.Sizes.worldPassGlobeOffsetY)
             ProfileV3Theme.Palette.worldPassWash
             if pass.resolvedKYCGlowTone != .hidden {
                 ProfileV3KYCGlow(

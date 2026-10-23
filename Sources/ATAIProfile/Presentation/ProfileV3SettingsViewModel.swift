@@ -32,6 +32,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     @ObservationIgnored private let repository: any ProfileV3SettingsRepository
+    @ObservationIgnored let gloveBoxRepository: (any ProfileV3GloveBoxRepository)?
     @ObservationIgnored private let board: (any ProfileV3BoardRepository)?
     @ObservationIgnored private var menuTask: Task<Void, Never>?
     @ObservationIgnored private var presentTask: Task<Void, Never>?
@@ -41,11 +42,14 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         deps: ProfileV3SettingsDependencies,
         repository: any ProfileV3SettingsRepository,
         board: (any ProfileV3BoardRepository)? = nil,
-        profileID: String? = nil
+        profileID: String? = nil,
+        profileName: String? = nil
     ) {
         self.repository = repository
+        gloveBoxRepository = repository as? any ProfileV3GloveBoxRepository
         self.board = board
         monogram = Self.monogram(from: deps.currentFirstName())
+            ?? Self.monogram(from: profileName)
             ?? Self.monogram(from: board?.cachedBoard()?.mainProfile?.name)
         let fields = ProfileV3ProfileFieldsModel(deps: deps, repository: repository, profileID: profileID)
         self.fields = fields
@@ -74,7 +78,23 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     var title: String {
-        menu?.title ?? ""
+        menu?.title ?? ProfileV3Strings.settings
+    }
+
+    var failedMenuRows: [ProfileV3SettingsRowItem] {
+        [
+            ProfileV3SettingsRowItem(
+                key: "logout",
+                label: ProfileV3Strings.logout,
+                directive: ProfileV3Directive(go: "logout_confirm")
+            ),
+            ProfileV3SettingsRowItem(
+                key: "delete_account",
+                label: ProfileV3Strings.deleteAccount,
+                directive: ProfileV3Directive(go: "delete_account"),
+                isDestructive: true
+            )
+        ]
     }
 
     func loadMenuIfNeeded() {
@@ -111,11 +131,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
                 if menu.rows.contains(where: { $0.route == .permissions }) {
                     model.permissions.preload()
                 }
-                if menu.accountsRows.contains(where: {
-                    $0.route == .editField(ProfileV3ProfileField.citizenship.rawValue)
-                }) {
-                    model.fields.preloadCitizenshipIcon()
-                }
+                model.fields.applyCitizenship(code: menu.citizenshipCode)
             }
         )
     }

@@ -31,7 +31,20 @@ struct ProfileV3EditField: Equatable {
     }
 
     var selectedValue: String? {
-        options.first(where: \.isSelected)?.value ?? options.first { $0.value == currentCode }?.value
+        options.first(where: \.isSelected)?.value ?? option(matching: currentCode)?.value
+    }
+
+    func selectedValue(fallingBackTo value: String?) -> String? {
+        selectedValue ?? option(matching: value)?.value
+    }
+
+    func option(matching value: String?) -> Option? {
+        guard let key = value.map(Self.matchKey), !key.isEmpty else { return nil }
+        return options.first { Self.matchKey($0.value) == key } ?? options.first { Self.matchKey($0.title) == key }
+    }
+
+    static func matchKey(_ text: String) -> String {
+        text.lowercased().filter { $0.isLetter || $0.isNumber }
     }
 }
 

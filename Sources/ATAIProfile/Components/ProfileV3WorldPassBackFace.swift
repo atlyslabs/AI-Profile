@@ -154,8 +154,9 @@ struct ProfileV3WorldPassBackFace: View {
             : ProfileV3Theme.Sizes.BackFace.stackTops
         let visible = Array(pass.programmes.suffix(widths.count))
         let emptySlots = widths.count - visible.count
+        let firstSlot = ProfileV3FeatureFlags.isEmptyProgrammeSlotEnabled ? 0 : emptySlots
         return ZStack(alignment: .top) {
-            ForEach(0..<widths.count, id: \.self) { slot in
+            ForEach(firstSlot..<widths.count, id: \.self) { slot in
                 Group {
                     if slot < emptySlots {
                         emptySlot(width: widths[slot], isBack: slot == 0)

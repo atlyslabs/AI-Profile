@@ -22,7 +22,7 @@ struct ProfileV3WorldPassDetailView: View {
                 Color.clear
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .overlay {
-                        if showsChrome {
+                        if showsChrome, ProfileV3FeatureFlags.isGlobeEnabled {
                             ProfileV3InteractiveGlobe(
                                 visitedCountryCodes: flagCodes,
                                 isAnimating: isGlobeAnimating,

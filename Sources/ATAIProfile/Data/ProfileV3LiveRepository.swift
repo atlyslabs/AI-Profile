@@ -7,6 +7,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     private let account: any ProfileV3AccountHost
     private let agentResiduals = ProfileV3AgentResidualStore()
     private let vault: ProfileV3VaultClient
+    private let gloveBox: ProfileV3GloveBoxClient
 
     init(
         client: ProfileV3NetworkClient,
@@ -19,6 +20,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         self.session = session
         self.account = account
         vault = ProfileV3VaultClient(client: client, session: session)
+        gloveBox = ProfileV3GloveBoxClient(client: client)
     }
 
     func loadBoard() async throws -> ProfileV3Board {
@@ -637,5 +639,47 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
             try await client.perform(.submit(body: body))
         }
         await store.invalidate()
+    }
+}
+
+extension ProfileV3LiveRepository: ProfileV3GloveBoxRepository {
+    func loadGloveBoxCard() async throws -> ProfileV3GloveBoxAccount {
+        try await gloveBox.card()
+    }
+
+    func createGloveBoxAddress() async throws -> ProfileV3GloveBoxAccount {
+        try await gloveBox.create()
+    }
+
+    func setGloveBoxForwardingPaused(_ paused: Bool) async throws -> ProfileV3GloveBoxAccount {
+        try await gloveBox.setPaused(paused)
+    }
+
+    func addGloveBoxForwardingAddress(_ email: String) async throws -> ProfileV3GloveBoxAccount {
+        try await gloveBox.addForwardingAddress(email)
+    }
+
+    func loadGloveBoxMessages(cursor: String?) async throws -> ProfileV3GloveBoxInboxPage {
+        try await gloveBox.messages(cursor: cursor)
+    }
+
+    func loadGloveBoxMessage(id: String) async throws -> ProfileV3GloveBoxEmail {
+        let dto = try await gloveBox.message(id: id)
+        let listed = ProfileV3GloveBoxMapper.email(
+            ProfileV3GloveBoxMessageItemDTO(
+                id: dto.id,
+                fromName: dto.fromName,
+                senderDomain: nil,
+                subject: dto.subject,
+                receivedAt: dto.receivedAt,
+                toPreviousAddress: dto.toPreviousAddress,
+                status: dto.status
+            )
+        )
+        return ProfileV3GloveBoxMapper.detail(dto, listItem: listed)
+    }
+
+    func loadGloveBoxAttachment(messageID: String, index: Int) async throws -> Data {
+        try await gloveBox.attachment(messageID: messageID, index: index)
     }
 }

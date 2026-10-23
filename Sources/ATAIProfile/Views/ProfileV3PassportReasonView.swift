@@ -7,6 +7,8 @@ struct ProfileV3PassportReasonView: View {
     let onBack: () -> Void
     var onHowUsed: (() -> Void)?
 
+    @State private var headerPin = ProfileV3HeaderPin()
+
     private var screen: ProfileV3PassportReasonScreen { viewModel.screen }
 
     var body: some View {
@@ -30,7 +32,9 @@ struct ProfileV3PassportReasonView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.bottom, ProfileV3Theme.Sizes.Passport.listBottom)
+                .profileV3HeaderFadeAnchor(headerPin)
             }
+            .profileV3HeaderFade(headerPin, color: ProfileV3Theme.Palette.background)
             .scrollBounceBehavior(.basedOnSize)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

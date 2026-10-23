@@ -27,7 +27,7 @@ struct ProfileV3InteractiveGlobe: View {
 
     var body: some View {
         let landReady = isLandReady
-        SwiftUI.TimelineView(.animation(paused: !isRunning || isPaused)) { timeline in
+        SwiftUI.TimelineView(.profileV3Ambient(paused: !isRunning || isPaused)) { timeline in
             Canvas { context, size in
                 frameClock.date = timeline.date
                 _ = landReady
@@ -35,6 +35,7 @@ struct ProfileV3InteractiveGlobe: View {
             }
         }
         .background { orbits }
+        .overlay { rim }
         .contentShape(Rectangle())
         .gesture(drag)
         .onGeometryChange(for: CGRect.self) { $0.frame(in: .named(ProfileV3HeroSpace.name)) } action: { frame in
@@ -88,6 +89,13 @@ struct ProfileV3InteractiveGlobe: View {
             .frame(width: sphere.radius * 4, height: sphere.radius * 4)
             .position(sphere.centre)
             .allowsHitTesting(false)
+    }
+
+    private var rim: some View {
+        let sphere = sphere(in: size)
+        return ProfileV3GlobeRim()
+            .frame(width: sphere.radius * 2, height: sphere.radius * 2)
+            .position(sphere.centre)
     }
 
     private var drag: some Gesture {

@@ -140,6 +140,8 @@ enum ProfileV3Strings {
     static var somethingWentWrong: String { ProfileV3L10n.moAiprofileGeneralErrorMessageGeneral }
     static var disconnectFailed: String { ProfileV3L10n.moAiprofileAgentsErrorDisconnectFailed }
     static var loadFailedSubtitle: String { ProfileV3L10n.moAiprofileGeneralErrorSubtitleInternetIssue }
+    static var errorStateTitle: String { ProfileV3L10n.moAiprofileGeneralErrorTitleQuickHiccup }
+    static var errorStateSubtitle: String { ProfileV3L10n.moAiprofileGeneralErrorSubtitlePageLoadFailed }
     static var loadFailed: String { ProfileV3L10n.moAiprofileGeneralErrorLoadFailed }
     static var saveFailed: String { ProfileV3L10n.moAiprofileGeneralErrorSaveFailed }
     static var redeemFailed: String { ProfileV3L10n.moAiprofileLoyaltyErrorRedeemFailed }

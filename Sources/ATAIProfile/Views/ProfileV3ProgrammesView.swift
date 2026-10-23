@@ -16,6 +16,7 @@ struct ProfileV3ProgrammesView: View {
     @State private var hoveredDropTargets: Set<ProfileV3ProgrammeDropTarget> = []
     @State private var isDemoSwapped = false
     @State private var demoTileHeights: [String: CGFloat] = [:]
+    @State private var headerPin = ProfileV3HeaderPin()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var tileWidth: CGFloat {
@@ -29,6 +30,8 @@ struct ProfileV3ProgrammesView: View {
     var body: some View {
         ZStack(alignment: .top) {
             content
+            ProfileV3HeaderFade(pin: headerPin)
+                .padding(.top, ProfileV3Theme.Sizes.topBarBackdropHeight)
             header
         }
         .overlay(alignment: .bottom) { bottomBar }
@@ -94,7 +97,9 @@ struct ProfileV3ProgrammesView: View {
                 }
             }
             .padding(.bottom, ProfileV3Theme.Sizes.Programmes.bottomFade)
+            .profileV3HeaderFadeAnchor(headerPin)
         }
+        .profileV3ScrollOffset(headerPin.offsetBinding)
     }
 
     private var header: some View {

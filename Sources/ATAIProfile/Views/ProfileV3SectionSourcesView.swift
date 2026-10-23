@@ -8,6 +8,8 @@ struct ProfileV3SectionSourcesView: View {
 
     private typealias Sources = ProfileV3Theme.Sizes.Sources
 
+    @State private var headerPin = ProfileV3HeaderPin()
+
     private var section: ProfileV3FormSection {
         form.form.sections.first { $0.id == viewModel.section.id } ?? viewModel.section
     }
@@ -18,7 +20,9 @@ struct ProfileV3SectionSourcesView: View {
             if let content = viewModel.content {
                 ScrollView(showsIndicators: false) {
                     loaded(content)
+                        .profileV3HeaderFadeAnchor(headerPin)
                 }
+                .profileV3HeaderFade(headerPin)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
             }

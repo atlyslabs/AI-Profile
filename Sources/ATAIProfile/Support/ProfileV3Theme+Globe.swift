@@ -2,6 +2,12 @@ import SwiftUI
 
 extension ProfileV3Theme {
     enum Globe {
+        static let landDensity = ProfileV3Globe.Density(
+            samples: 4000,
+            keep: 0.5,
+            minLatitude: -60,
+            land: .coastlines(spacing: 2)
+        )
         static let cardLongitude = 15.0
         static let cardPitch = 0.32
         static let cardSpinSpeed = 0.35
@@ -14,7 +20,7 @@ extension ProfileV3Theme {
             strayOpacity: 0.55,
             interiorOpacity: 0.22,
             landTint: Palette.globeLandTint,
-            density: ProfileV3Globe.Density(samples: 40000, keep: 0.8, minLatitude: -60, land: .coastlines(spacing: 1)),
+            density: landDensity,
             dotScale: 0.005,
             depthFade: 0.25,
             edgeGlow: 1.5
@@ -27,10 +33,33 @@ extension ProfileV3Theme {
             strayOpacity: 0.6,
             interiorOpacity: 0.5,
             landTint: nil,
-            density: ProfileV3Globe.Density(samples: 60000, keep: 0.5, minLatitude: -60, land: .coastlines(spacing: 0.9)),
+            density: landDensity,
             dotScale: 0.005,
             depthFade: 0.25,
             edgeGlow: 3
+        )
+
+        static let rimWidth: CGFloat = 5
+        static let rimGlowWidth: CGFloat = 10
+        static let rimGlowBlur: CGFloat = 5
+        static let rimGlowOpacity = 0.5
+        static let rimMaskOutset: CGFloat = 30
+        static let rimGradient = AngularGradient(
+            stops: [
+                .init(color: Palette.globeRim, location: 0),
+                .init(color: Palette.globeRim.opacity(0.3), location: 0.04),
+                .init(color: Palette.globeRim.opacity(0), location: 0.07),
+                .init(color: Palette.globeRim.opacity(0), location: 0.3),
+                .init(color: Palette.globeRim.opacity(0.3), location: 0.34),
+                .init(color: Palette.globeRim.opacity(0.28), location: 0.42),
+                .init(color: Palette.globeRim.opacity(0.68), location: 0.5),
+                .init(color: Palette.globeRim.opacity(0.55), location: 0.6),
+                .init(color: Palette.globeRim.opacity(0.15), location: 0.75),
+                .init(color: Palette.globeRim.opacity(0.35), location: 0.84),
+                .init(color: Palette.globeRim.opacity(0.3), location: 0.92),
+                .init(color: Palette.globeRim, location: 1)
+            ],
+            center: .center
         )
 
         static let restLongitude = 17.0

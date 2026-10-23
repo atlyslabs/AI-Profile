@@ -123,9 +123,18 @@ enum ProfileV3PersonaArt: String {
 }
 
 enum ProfileV3GloveBoxArt: String {
-    case envelope = "profile_v3_glovebox_envelope"
     case attention = "profile_v3_glovebox_attention"
-    case folder = "profile_v3_glovebox_folder"
+    case bolt = "profile_v3_glovebox_bolt"
+    case closeSmall = "profile_v3_glovebox_close_small"
+    case glow = "profile_v3_glovebox_glow"
+    case aylMark = "profile_v3_glovebox_ayl"
+    case cardGlobe = "profile_v3_glovebox_card_globe"
+    case cardDigits = "profile_v3_glovebox_card_digits"
+    case cardExpiry = "profile_v3_glovebox_card_expiry"
+    case cardCVC = "profile_v3_glovebox_card_cvc"
+    case noticeGlow = "profile_v3_glovebox_notice_glow"
+    case addCardGlow = "profile_v3_glovebox_add_card_glow"
+    case emptyCard = "profile_v3_glovebox_empty_card"
 
     var image: Image { Image(rawValue, bundle: .module) }
 }

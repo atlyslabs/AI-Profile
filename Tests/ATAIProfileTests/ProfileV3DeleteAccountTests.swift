@@ -71,7 +71,6 @@ struct ProfileV3DeleteAccountTests {
             currentFirstName: { nil },
             currentResidence: { .india },
             currentCitizenship: { .india },
-            passportCitizenship: { nil },
             currentCurrencyCountry: { .india },
             currentContact: { ProfileV3Fixtures.contactDetails },
             saveResidence: { _ in true },

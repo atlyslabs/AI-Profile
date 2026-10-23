@@ -4,7 +4,6 @@ struct ProfileV3SettingsDependencies {
     let currentFirstName: () -> String?
     let currentResidence: () -> ProfileV3Country?
     let currentCitizenship: () -> ProfileV3Country?
-    let passportCitizenship: () -> ProfileV3Country?
     let currentCurrencyCountry: () -> ProfileV3Country?
     let currentContact: () -> ProfileV3ContactDetails
     let saveResidence: (ProfileV3Country) -> Bool

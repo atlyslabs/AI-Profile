@@ -56,12 +56,20 @@ enum ProfileV3API {
     case vaultDeleteDevice(id: String)
     case vaultRevealChallenge(id: String, body: Data)
     case vaultReveal(id: String, body: Data)
+    case gloveBoxMe
+    case gloveBoxCreate
+    case gloveBoxForwarding(body: Data)
+    case gloveBoxForwardingAddress(body: Data)
+    case gloveBoxMessages(limit: Int, cursor: String?)
+    case gloveBoxMessage(id: String)
+    case gloveBoxAttachment(messageID: String, index: Int)
 }
 
 extension ProfileV3API: ATCoreTargetType {
     private static let boardBasePath = "/api/gmail-connector/kyc/v2/board"
     private static let captureBasePath = "/api/gmail-connector/kyc/v1"
     private static let vaultBasePath = "/api/fort-knox/v1"
+    private static let gloveBoxBasePath = "/gateway/jaqen/v1"
 
     var baseURL: URL {
         URL(string: "https://profile.atlys.invalid")!
@@ -169,14 +177,29 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.vaultBasePath + "/credentials/\(id)/reveal/challenge"
         case .vaultReveal(let id, _):
             return Self.vaultBasePath + "/credentials/\(id)/reveal"
+        case .gloveBoxMe, .gloveBoxCreate:
+            return Self.gloveBoxBasePath + "/me"
+        case .gloveBoxForwarding:
+            return Self.gloveBoxBasePath + "/forwarding"
+        case .gloveBoxForwardingAddress:
+            return Self.gloveBoxBasePath + "/forwarding-address"
+        case .gloveBoxMessages:
+            return Self.gloveBoxBasePath + "/messages"
+        case .gloveBoxMessage(let id):
+            return Self.gloveBoxBasePath + "/messages/\(id)"
+        case .gloveBoxAttachment(let messageID, let index):
+            return Self.gloveBoxBasePath + "/messages/\(messageID)/attachments/\(index)"
         }
     }
 
     var method: Moya.Method {
         switch self {
         case .passportScan, .submit, .slackAlert, .captureStart, .captureAnswer, .coTraveller,
-             .vaultCreateCredential, .vaultCredentialAction, .vaultRegisterDevice, .vaultRevealChallenge, .vaultReveal:
+             .vaultCreateCredential, .vaultCredentialAction, .vaultRegisterDevice, .vaultRevealChallenge, .vaultReveal,
+             .gloveBoxCreate, .gloveBoxForwardingAddress:
             return .post
+        case .gloveBoxForwarding:
+            return .put
         case .editProfile, .vaultUpdateCredential:
             return .patch
         case .vaultDeleteCredential, .vaultDeleteDevice:
@@ -210,6 +233,10 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.query(("locale", locale))
         case .vaultCredential(_, let includeUsername):
             return includeUsername ? Self.query(("include_username", "true")) : .requestPlain
+        case .gloveBoxMessages(let limit, let cursor):
+            return Self.query(("limit", String(limit)), ("cursor", cursor))
+        case .gloveBoxForwarding(let body), .gloveBoxForwardingAddress(let body):
+            return .requestData(body)
         case .vaultCreateCredential(let body),
              .vaultUpdateCredential(_, let body),
              .vaultRegisterDevice(let body),

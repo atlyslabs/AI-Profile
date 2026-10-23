@@ -48,7 +48,7 @@ struct ProfileV3PassportScanResult: Equatable {
     var field: ProfileV3PassportField?
     var backRequired: Bool?
 
-    var needsBack: Bool { backRequired != false }
+    var needsBack: Bool { backRequired == true }
 }
 
 public enum ProfileV3PassportSide: String, CaseIterable, Sendable {
