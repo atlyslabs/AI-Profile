@@ -1,0 +1,61 @@
+Sources/ATAIProfile/Presentation/ProfileV3AgentFormViewModel.swift
+  s_9f6a8e768dcac7::t_87bd1b286bcd1e 438
+  s_9f6a8e768dcac7::t_babdc1f730702c 44,46
+  s_9f6a8e768dcac7::t_b734d5a6f4e8e0 470,477,480-481
+  s_9f6a8e768dcac7::t_497d842fda8fb6 516-528,531
+Tests/ATAIProfileTests/ProfileV3AgentBoxTests.swift
+  s_9f6a8e768dcac7::t_fdcb6208cd9f50 177-246
+Sources/ATAIProfile/Support/ProfileV3Theme+AgentSizes.swift
+  s_9f6a8e768dcac7::t_aff7443bd18674 93-99
+Sources/ATAIProfile/Support/ProfileV3Theme+Palette.swift
+  s_9f6a8e768dcac7::t_c90a65f3030eb7 15
+Sources/ATAIProfile/Support/ProfileV3Theme+SettingsPage.swift
+  s_9f6a8e768dcac7::t_0b7fb5e5147b10 96,98-99
+Sources/ATAIProfile/Views/ProfileV3InformationAccessView.swift
+  s_9f6a8e768dcac7::t_044224ed163d68 151
+  s_9f6a8e768dcac7::t_32e2091d0e702e 263-265,270-277
+  s_9f6a8e768dcac7::t_b627c601e032be 175
+  s_9f6a8e768dcac7::t_ea143746bc6a78 278-280
+CLAUDE.md
+  s_9f6a8e768dcac7::t_7de20dd42be17b 34
+  s_c482717a7a4db6::t_8b6087793e1820 49
+  s_c482717a7a4db6::t_12c0c981c64603 137
+  s_c482717a7a4db6::t_0bd927945ab89e 21
+  s_9f6a8e768dcac7::t_fa79e2efb948c8 681-686
+  s_9f6a8e768dcac7::t_4df8f15d2cda46 687-695
+  s_9f6a8e768dcac7::t_a07d22d1ee0600 65
+  s_c482717a7a4db6::t_d36bdbe16155bc 696-699
+  s_c482717a7a4db6::t_b21606c65a6f29 713
+  s_c482717a7a4db6::t_938e6490e628e6 47
+  s_c482717a7a4db6::t_884adddc29fc67 736
+Sources/ATAIProfile/Components/ProfileV3ExpandableCard.swift
+  s_9f6a8e768dcac7::t_3828e65631804d 101-104,106
+Sources/ATAIProfile/Components/ProfileV3ProgrammePickerCard.swift
+  s_9f6a8e768dcac7::t_f78c5011ee5c18 8-9,11-28,36,39,41
+Sources/ATAIProfile/Views/ProfileV3AddProgrammeView.swift
+  s_9f6a8e768dcac7::t_9f0a19b630a217 266,317,330,338
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1b0e85272bc25c12de37ef7016c333c72317844d",
+  "prompts": {},
+  "sessions": {
+    "s_9f6a8e768dcac7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12965eae-c634-4029-8616-6735faaef3fd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
