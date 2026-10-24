@@ -93,7 +93,10 @@ extension ProfileV3Theme.Sizes {
         static let chipSpacing = ProfileV3Theme.Space.s16
         static let chipLogo = ProfileV3Theme.Icon.xl
         static let chipPadding: CGFloat = 2
+        static let chipTrailing = ProfileV3Theme.Space.s8
         static let chipGap = ProfileV3Theme.Space.s8
+        static let cardShadowRadius: CGFloat = 15
+        static let cardShadowY: CGFloat = 4
         static let loadStateHeight: CGFloat = 200
         static let bottom: CGFloat = 40
         static let comingSoonArtTop: CGFloat = 120

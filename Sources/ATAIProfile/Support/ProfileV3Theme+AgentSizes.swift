@@ -90,6 +90,13 @@ extension ProfileV3Theme.Sizes {
         static let cardSideScale: CGFloat = 170 / 190
         static let cardSpacing: CGFloat = 20
         static let cardNamePadding: CGFloat = 20
+        static let nameTop: CGFloat = 20
+        static let nameWidth: CGFloat = 142
+        static let nameLines = 2
+        static let nameHeight: CGFloat = 38
+        static let sideNameOpacity: Double = 0.4
+        static let sideNameLift = cardHeight / 2 * (1 - cardSideScale)
+        static let carouselHeight = cardHeight + nameTop + nameHeight
     }
 
     enum Save {

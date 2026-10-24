@@ -41,8 +41,9 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     private var historyTask: Task<Void, Never>?
     private var passportScanTask: Task<Void, Never>?
     private var ridePickerTask: Task<Void, Never>?
+    private var refreshTask: Task<Void, Never>?
     private var pendingPassportScan: ProfileV3Directive?
-    private let savedValues: ProfileV3AgentFormValues
+    private var savedValues: ProfileV3AgentFormValues
 
     init(
         form: ProfileV3AgentForm,
@@ -434,9 +435,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         let finished = householdApply?.phase == .saved
         if finished { saveTask?.cancel() }
         householdApply = nil
-        if finished {
-            finish()
-        } else if saveState == .failed {
+        if finished || saveState == .failed {
             saveState = .idle
         }
     }
@@ -468,15 +467,18 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
                 ProfileV3Analytics.agentFormSaved(agentKey: agentKey, changedSections: changedSections)
                 onSaved()
                 guard !Task.isCancelled else { return }
+                savedValues = ProfileV3AgentFormValues(snapshot)
                 if var session = householdApply {
                     session.phase = .saved
                     session.doneLabel = doneLabel?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
                     householdApply = session
                 }
                 self.saveState = .saved
+                refresh()
                 try await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds))
                 guard !Task.isCancelled else { return }
-                finish()
+                householdApply = nil
+                self.saveState = .idle
             } catch is CancellationError {
                 return
             } catch {
@@ -511,8 +513,22 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         finish()
     }
 
+    private func refresh() {
+        refreshTask?.cancel()
+        let repository = repository
+        let agentID = form.agentID
+        let profileID = profileID
+        refreshTask = Task { [weak self] in
+            guard case .preferences(let fresh)? = try? await repository.loadAgentFlow(agentID: agentID, profileID: profileID),
+                  let self, !Task.isCancelled, ProfileV3AgentFormValues(form) == savedValues else { return }
+            form = fresh
+            savedValues = ProfileV3AgentFormValues(fresh)
+        }
+    }
+
     func cancelPendingWork() {
         saveTask?.cancel()
+        refreshTask?.cancel()
         passportScanTask?.cancel()
         passportScanTask = nil
         ridePickerTask?.cancel()

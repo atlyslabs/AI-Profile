@@ -174,6 +174,76 @@ struct ProfileV3AgentBoxTests {
         #expect(events.isEmpty)
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func savingKeepsTheAgentOpenAndClearsTheSaveBar() async throws {
+        var events: [String] = []
+        let viewModel = ProfileV3AgentFormViewModel(
+            form: ProfileV3AgentFixtures.flight,
+            avatarURL: nil,
+            repository: ProfileV3MockRepository(delay: .zero),
+            onSaved: { events.append("saved") },
+            onFinish: { events.append("closed") }
+        )
+        let change = try #require(viewModel.form.sections.lazy.compactMap { section -> (section: String, option: String)? in
+            guard case .chips(let field) = section.control,
+                  let option = field.allOptions.first(where: { !field.selection.contains($0.id) }) else { return nil }
+            return (section.id, option.id)
+        }.first)
+        viewModel.toggleOption(change.option, in: change.section)
+        #expect(viewModel.showsSaveBar)
+
+        viewModel.save()
+        while viewModel.saveState == .saving || viewModel.saveState == .idle { await Task.yield() }
+        #expect(viewModel.saveState == .saved)
+        while viewModel.saveState == .saved { try await Task.sleep(for: .milliseconds(50)) }
+        #expect(viewModel.saveState == .idle)
+        #expect(!viewModel.showsSaveBar)
+        #expect(events == ["saved"])
+
+        viewModel.tapBack()
+        #expect(events == ["saved", "closed"])
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func applyingToTheHouseholdClosesOnlyItsSheet() async throws {
+        var form = ProfileV3AgentFixtures.flight
+        form.household = ProfileV3HouseholdPrompt(
+            eyebrow: "",
+            iconURL: nil,
+            title: "Apply to",
+            travellers: [ProfileV3HouseholdPrompt.Traveller(id: "main", name: "Me", passNumber: "", isSelected: true)],
+            confirmLabel: "Apply"
+        )
+        var events: [String] = []
+        func makeViewModel() -> ProfileV3AgentFormViewModel {
+            ProfileV3AgentFormViewModel(
+                form: form,
+                avatarURL: nil,
+                repository: ProfileV3MockRepository(delay: .zero),
+                onSaved: { events.append("saved") },
+                onFinish: { events.append("closed") }
+            )
+        }
+
+        let waited = makeViewModel()
+        waited.save()
+        waited.confirmHousehold()
+        while waited.householdApply?.phase != .saved { await Task.yield() }
+        while waited.householdApply != nil { try await Task.sleep(for: .milliseconds(50)) }
+        #expect(waited.saveState == .idle)
+        #expect(events == ["saved"])
+
+        events = []
+        let closed = makeViewModel()
+        closed.save()
+        closed.confirmHousehold()
+        while closed.householdApply?.phase != .saved { await Task.yield() }
+        closed.closeHousehold()
+        #expect(closed.householdApply == nil)
+        #expect(closed.saveState == .idle)
+        #expect(events == ["saved"])
+    }
+
     @Test func imperialHeightReadsAsFeetAndInchesAndSavesTheInchValue() throws {
         let mapped = try Self.flow(fields: #"""
         [{"key":"height_cm","label":"HEIGHT","input":"slider","unit":"in","display":"ft_in","min":47,"max":87,"value":71}]
