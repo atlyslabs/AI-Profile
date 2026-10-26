@@ -83,7 +83,8 @@ extension ProfileV3Theme.Sizes {
         static let pillHorizontal = ProfileV3Theme.Space.s10
         static let pillVertical: CGFloat = 5
         static let bottom = ProfileV3Theme.Space.s50
-        static let saveBarClearance = ProfileV3Theme.Sizes.Save.buttonHeight + ProfileV3Theme.Sizes.Save.barBottom
+        static let toastBottom = ProfileV3Theme.Space.s24
+        static let toastClearance = ProfileV3Theme.Control.large + toastBottom
     }
 }
 
@@ -131,6 +132,7 @@ extension ProfileV3Theme.Motion {
     static let personaKnob: Animation = .spring(response: 0.32, dampingFraction: 0.72)
     static let personaRippleSeconds: Double = 2
     static let personaCoachDelayMilliseconds = 2300
+    static let personaAdjustSaveMilliseconds = 800
 }
 
 extension ProfileV3Theme {

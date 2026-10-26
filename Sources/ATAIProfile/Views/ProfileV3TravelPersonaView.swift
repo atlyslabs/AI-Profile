@@ -64,12 +64,14 @@ struct ProfileV3TravelPersonaView: View {
         }
         .animation(ProfileV3Theme.Motion.contentSwitch, value: viewModel.isDecoding)
         .overlay(alignment: .bottom) {
-            if viewModel.showsSaveBar {
-                ProfileV3PersonaSaveBar(viewModel: viewModel)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            if let notice = viewModel.notice {
+                ProfileV3Toast(message: notice.message, isError: notice.isError)
+                    .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                    .padding(.bottom, ProfileV3Theme.Sizes.Persona.toastBottom)
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
             }
         }
-        .animation(ProfileV3Theme.Motion.saveState, value: viewModel.showsSaveBar)
+        .animation(ProfileV3Theme.Motion.expand, value: viewModel.notice)
         .background(Color(at: .pureWhite))
     }
 }
@@ -164,33 +166,6 @@ private struct ProfileV3TravelPersonaHeader: View {
     }
 }
 
-private struct ProfileV3PersonaSaveBar: View {
-    @ObservedObject var viewModel: ProfileV3TravelPersonaViewModel
-
-    var body: some View {
-        ZStack(alignment: .bottom) {
-            ProfileV3SaveBarFade()
-            VStack(spacing: ProfileV3Theme.Space.s12) {
-                if let error = viewModel.saveError {
-                    Text(error)
-                        .typoGraphy(.T1InterBold11)
-                        .foregroundStyle(ProfileV3Theme.Palette.error)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                }
-                ProfileV3SaveButton(
-                    phase: viewModel.savePhase,
-                    title: ProfileV3Strings.saveChanges,
-                    savedTitle: ProfileV3Strings.personaUpdated,
-                    action: viewModel.save
-                )
-            }
-            .animation(ProfileV3Theme.Motion.saveState, value: viewModel.saveError)
-            .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
-        }
-    }
-}
-
 struct ProfileV3TravelPersonaContent: View {
     let persona: ProfileV3TravelPersona
     @ObservedObject var viewModel: ProfileV3TravelPersonaViewModel
@@ -204,7 +179,7 @@ struct ProfileV3TravelPersonaContent: View {
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.top, Persona.cardTop)
         }
-        .padding(.bottom, viewModel.isEditable ? Persona.bottom + Persona.saveBarClearance : Persona.bottom)
+        .padding(.bottom, viewModel.isEditable ? Persona.bottom + Persona.toastClearance : Persona.bottom)
         .task {
             do {
                 try await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.personaCoachDelayMilliseconds))

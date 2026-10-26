@@ -84,60 +84,95 @@ struct ProfileV3TravelPersonaTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func draggingOnlyDraftsAndTheSaveButtonSubmits() async throws {
+    func releasingADragSavesThatTraitAtOnce() async throws {
         let repository = PersonaRepositoryStub()
         let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
-        viewModel.load()
-        while viewModel.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+        try await loaded(viewModel)
 
-        viewModel.preview("adventure", score: 130)
-        #expect(viewModel.drafts["adventure"] == 100)
         viewModel.preview("adventure", score: 64)
-        #expect(viewModel.showsSaveBar)
+        #expect(viewModel.drafts["adventure"] == 64)
         #expect(repository.submitted.isEmpty)
-        #expect(viewModel.score(of: try #require(viewModel.content?.traits.first)) == 64)
 
-        viewModel.save()
-        #expect(viewModel.savePhase == .saving)
-        while viewModel.savePhase != .saved { try await Task.sleep(for: .milliseconds(10)) }
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 130)
+        #expect(viewModel.drafts["adventure"] == 100)
+        #expect(viewModel.score(of: try #require(viewModel.content?.traits.first)) == 100)
+        while viewModel.notice == nil { try await Task.sleep(for: .milliseconds(10)) }
 
-        #expect(repository.submitted.map(\.score) == [64])
-        #expect(viewModel.content?.traits.first?.score == 64)
+        #expect(viewModel.notice == .saved)
+        #expect(viewModel.notice?.message == ProfileV3Strings.personaUpdated)
+        #expect(repository.submitted.map(\.score) == [100])
+        #expect(viewModel.content?.traits.first?.score == 100)
         #expect(viewModel.drafts.isEmpty)
-        #expect(viewModel.saveError == nil)
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func aRefusedSaveKeepsTheDraftAndSaysWhy() async throws {
+    func aRefusedSaveSnapsBackAndSaysWhy() async throws {
         let repository = PersonaRepositoryStub(submitError: ProfileV3Error.notImplemented(action: "set_persona_score"))
         let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
-        viewModel.load()
-        while viewModel.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+        try await loaded(viewModel)
 
-        viewModel.preview("adventure", score: 80)
-        viewModel.save()
-        while viewModel.saveError == nil { try await Task.sleep(for: .milliseconds(10)) }
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 80)
+        while viewModel.notice == nil { try await Task.sleep(for: .milliseconds(10)) }
 
-        #expect(viewModel.savePhase == .idle)
-        #expect(viewModel.saveError == ProfileV3Strings.actionUnavailable)
-        #expect(viewModel.drafts["adventure"] == 80)
+        #expect(viewModel.notice == .failed(ProfileV3Strings.actionUnavailable))
+        #expect(viewModel.notice?.isError == true)
+        #expect(viewModel.drafts.isEmpty)
         #expect(viewModel.content?.traits.first?.score == 50)
-        #expect(viewModel.showsSaveBar)
     }
 
-    @Test func draggingBackToTheSavedScoreLeavesNothingToSave() async throws {
+    @Test(.timeLimit(.minutes(1)))
+    func aDragReleasedDuringASaveIsSavedNext() async throws {
+        let repository = PersonaRepositoryStub(scores: Self.board, submitDelay: .milliseconds(200))
+        let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
+        try await loaded(viewModel)
+
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 70)
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(viewModel.canEdit(try #require(viewModel.content?.traits.first(where: { $0.id == "planning" }))))
+        viewModel.beginDrag("planning")
+        viewModel.endDrag("planning", score: 40)
+        while repository.submitted.count < 2 || !viewModel.drafts.isEmpty {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        #expect(repository.submitted.map(\.score) == [70, 40])
+        #expect(viewModel.content?.traits.first(where: { $0.id == "adventure" })?.score == 70)
+        #expect(viewModel.content?.traits.first(where: { $0.id == "planning" })?.score == 40)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func voiceOverStepsSaveOnceTheyStop() async throws {
         let repository = PersonaRepositoryStub()
         let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
-        viewModel.load()
-        while viewModel.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+        try await loaded(viewModel)
+
+        viewModel.adjust("adventure", by: 5)
+        viewModel.adjust("adventure", by: 5)
+        #expect(viewModel.drafts["adventure"] == 60)
+        try await Task.sleep(for: .milliseconds(200))
+        #expect(repository.submitted.isEmpty)
+        while viewModel.notice == nil { try await Task.sleep(for: .milliseconds(10)) }
+
+        #expect(repository.submitted.map(\.score) == [60])
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func draggingBackToTheSavedScoreSavesNothing() async throws {
+        let repository = PersonaRepositoryStub()
+        let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
+        try await loaded(viewModel)
 
         viewModel.preview("adventure", score: 64)
-        viewModel.preview("adventure", score: 50)
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 50)
         #expect(viewModel.drafts.isEmpty)
-        #expect(!viewModel.showsSaveBar)
-        viewModel.save()
-        #expect(viewModel.savePhase == .idle)
+        try await Task.sleep(for: .milliseconds(100))
+
         #expect(repository.submitted.isEmpty)
+        #expect(viewModel.notice == nil)
     }
 
     @Test func theClientConfigBlocksEveryEdit() async throws {
@@ -152,10 +187,11 @@ struct ProfileV3TravelPersonaTests {
 
         viewModel.preview("adventure", score: 80)
         viewModel.adjust("adventure", by: 5)
-        viewModel.save()
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 80)
         #expect(viewModel.drafts.isEmpty)
-        #expect(!viewModel.showsSaveBar)
-        #expect(viewModel.savePhase == .idle)
+        #expect(!viewModel.isDragging)
+        #expect(viewModel.notice == nil)
 
         viewModel.open("adventure")
         let trait = try #require(viewModel.trait)
@@ -214,7 +250,6 @@ struct ProfileV3TravelPersonaTests {
         #expect(!viewModel.isDragging)
         #expect(viewModel.drafts["planning"] == 70)
         #expect(viewModel.coach?.step == .tap)
-        #expect(viewModel.showsSaveBar)
 
         viewModel.tap("planning")
         #expect(viewModel.trait != nil)
@@ -364,10 +399,17 @@ private final class PersonaRepositoryStub: ProfileV3PersonaRepository, @unchecke
     private var _submitted: [Submission] = []
     private let submitError: Error?
     private let loadError: Error?
+    private let submitDelay: Duration
 
-    init(submitError: Error? = nil, scores: [(String, Int)] = [("adventure", 50)], loadError: Error? = nil) {
+    init(
+        submitError: Error? = nil,
+        scores: [(String, Int)] = [("adventure", 50)],
+        loadError: Error? = nil,
+        submitDelay: Duration = .zero
+    ) {
         self.submitError = submitError
         self.loadError = loadError
+        self.submitDelay = submitDelay
         order = scores.map(\.0)
         self.scores = Dictionary(uniqueKeysWithValues: scores)
     }
@@ -409,6 +451,7 @@ private final class PersonaRepositoryStub: ProfileV3PersonaRepository, @unchecke
     }
 
     func submitPersonaAction(_ action: ProfileV3BoardAction, score: Int?) async throws {
+        if submitDelay > .zero { try await Task.sleep(for: submitDelay) }
         if let submitError { throw submitError }
         lock.withLock {
             _submitted.append(Submission(action: action, score: score))
