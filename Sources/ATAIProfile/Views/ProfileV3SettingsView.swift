@@ -62,8 +62,14 @@ struct ProfileV3SettingsView: View {
         .onAppear {
             viewModel.loadMenuIfNeeded()
             viewModel.loadMonogramIfNeeded()
+            viewModel.loadGloveBoxStatusIfNeeded()
         }
         .profileV3CredentialStore(viewModel.credentialStore)
+        .fullScreenCover(isPresented: $viewModel.isGloveBoxPresented, onDismiss: viewModel.gloveBoxDidClose) {
+            if let repository = viewModel.gloveBoxRepository {
+                ProfileV3GloveBoxLiveFlow(repository: repository) { viewModel.isGloveBoxPresented = false }
+            }
+        }
     }
 
     private var headerOffset: Binding<CGFloat> {
@@ -73,6 +79,13 @@ struct ProfileV3SettingsView: View {
     private func panel(_ menu: ProfileV3SettingsMenu) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: Layout.cardSpacing) {
+                if viewModel.hasGloveBox {
+                    ProfileV3SettingsGloveBoxCard(
+                        showsActivate: viewModel.showsGloveBoxActivate,
+                        action: viewModel.tapGloveBox
+                    )
+                    .animation(ProfileV3Theme.Motion.contentSwitch, value: viewModel.showsGloveBoxActivate)
+                }
                 ProfileV3SettingsAccountsCard(
                     menu: menu,
                     fields: viewModel.fields,
@@ -94,7 +107,7 @@ struct ProfileV3SettingsView: View {
             ProfileV3SettingsRowList(rows: menu.rows, account: viewModel.account, onSelect: viewModel.tap)
                 .padding(.top, Layout.rowsTop)
             #if DEBUG
-            ProfileV3SettingsDebugSection(gloveBoxRepository: viewModel.gloveBoxRepository)
+            ProfileV3SettingsDebugSection()
                 .padding(.top, Layout.rowsTop)
             #endif
         }
@@ -115,7 +128,7 @@ struct ProfileV3SettingsView: View {
             ProfileV3SettingsRowList(rows: viewModel.failedMenuRows, account: viewModel.account, onSelect: viewModel.tap)
                 .padding(.top, ProfileV3Theme.Sizes.ErrorState.rowsTop)
             #if DEBUG
-            ProfileV3SettingsDebugSection(gloveBoxRepository: viewModel.gloveBoxRepository)
+            ProfileV3SettingsDebugSection()
                 .padding(.top, Layout.rowsTop)
             #endif
         }

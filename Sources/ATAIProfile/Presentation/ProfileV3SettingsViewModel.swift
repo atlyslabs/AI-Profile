@@ -19,6 +19,8 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     let account: ProfileV3AccountSettingsModel
     let permissions: ProfileV3PermissionsSettingsModel
     private(set) var monogram: String?
+    var isGloveBoxPresented = false
+    private(set) var gloveBoxHasAddress: Bool?
     @ObservationIgnored var sheetHeights: [ProfileV3SettingsDestination: CGFloat] = [:]
 
     @ObservationIgnored weak var router: (any ProfileV3SettingsRouter)? {
@@ -37,6 +39,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     @ObservationIgnored private var menuTask: Task<Void, Never>?
     @ObservationIgnored private var presentTask: Task<Void, Never>?
     @ObservationIgnored private var monogramTask: Task<Void, Never>?
+    @ObservationIgnored private var gloveBoxTask: Task<Void, Never>?
 
     init(
         deps: ProfileV3SettingsDependencies,
@@ -110,6 +113,36 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
             monogramTask = nil
             if monogram == nil {
                 monogram = Self.monogram(from: name)
+            }
+        }
+    }
+
+    var hasGloveBox: Bool { gloveBoxRepository != nil }
+    var showsGloveBoxActivate: Bool { gloveBoxHasAddress == false }
+
+    func loadGloveBoxStatusIfNeeded() {
+        guard gloveBoxHasAddress == nil, gloveBoxTask == nil else { return }
+        loadGloveBoxStatus()
+    }
+
+    func tapGloveBox() {
+        ProfileV3Analytics.settingsRowClicked(rowKey: "glove_box")
+        isGloveBoxPresented = true
+    }
+
+    func gloveBoxDidClose() {
+        loadGloveBoxStatus()
+    }
+
+    private func loadGloveBoxStatus() {
+        guard let gloveBoxRepository else { return }
+        gloveBoxTask?.cancel()
+        gloveBoxTask = Task { [weak self] in
+            let account = try? await gloveBoxRepository.loadGloveBoxCard()
+            guard let self, !Task.isCancelled else { return }
+            gloveBoxTask = nil
+            if let account {
+                gloveBoxHasAddress = account.hasAddress
             }
         }
     }
@@ -203,6 +236,8 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         presentTask?.cancel()
         monogramTask?.cancel()
         monogramTask = nil
+        gloveBoxTask?.cancel()
+        gloveBoxTask = nil
         fields.cancelReads()
         connectors.cancelReads()
         appAccess.cancelReads()

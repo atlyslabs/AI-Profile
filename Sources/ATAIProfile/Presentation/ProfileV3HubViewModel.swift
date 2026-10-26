@@ -515,7 +515,7 @@ final class ProfileV3HubViewModel: ObservableObject {
     func tapOpenProgrammes(_ pass: ProfileV3WorldPass) {
         if case .unsupported = pass.programmesDirective?.route() { return }
         ProfileV3Analytics.cta(pass.programmesDirective, origin: .programmes)
-        guard gatesKYC(pass.programmesDirective, fallback: !pass.kycStatus.isComplete) else {
+        guard gatesKYC(pass.programmesDirective, fallback: false) else {
             router?.openProgrammes(for: pass, passes: home?.worldPasses ?? [pass])
             return
         }

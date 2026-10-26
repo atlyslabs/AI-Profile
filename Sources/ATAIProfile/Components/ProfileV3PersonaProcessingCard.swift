@@ -30,7 +30,6 @@ struct ProfileV3PersonaProcessingCard: View {
         }
         .padding(.bottom, Layout.bottom)
         .frame(maxWidth: .infinity)
-        .background(ProfileV3BoxGradientCard(gradient: ProfileV3Theme.personaCardGradient, cornerRadius: Persona.cardRadius))
     }
 }
 

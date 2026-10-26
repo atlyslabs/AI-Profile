@@ -35,7 +35,7 @@ struct ProfileV3FormSectionView: View {
                     onTrailingTap: passportField?.hasHistory == true ? onViewPreviousPassports : nil
                 )
                 if let source = section.source(selectedTab: selectedTabID), let onOpenSources {
-                    ProfileV3SectionSourcesRow(iconURL: source.iconURL, action: onOpenSources)
+                    ProfileV3SectionSourcesRow(source: source, action: onOpenSources)
                 }
                 if showsNoteAsSubtitle, let note = section.note {
                     Text(Self.attributed(note))

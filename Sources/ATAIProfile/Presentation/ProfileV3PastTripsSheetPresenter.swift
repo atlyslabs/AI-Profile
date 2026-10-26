@@ -31,7 +31,7 @@ final class ProfileV3PastTripsSheetPresenter {
         case .add:
             guard let editor = viewModel.editor else { return }
             presentFloating(onDismiss: onDismiss) {
-                ProfileV3AddPastTripSheet(viewModel: editor)
+                ProfileV3AddPastTripSheet(viewModel: editor) { [weak viewModel] in viewModel?.dismissSheet() }
             }
         case .actions:
             let trip = viewModel.actionsTrip

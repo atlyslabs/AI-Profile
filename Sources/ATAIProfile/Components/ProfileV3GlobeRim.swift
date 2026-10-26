@@ -5,6 +5,12 @@ struct ProfileV3GlobeRim: View {
     private typealias Globe = ProfileV3Theme.Globe
 
     var body: some View {
+        if ProfileV3FeatureFlags.isGlobeRimEnabled {
+            rim
+        }
+    }
+
+    private var rim: some View {
         ZStack {
             Circle()
                 .strokeBorder(Globe.rimGradient, lineWidth: Globe.rimGlowWidth)

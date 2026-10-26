@@ -3,6 +3,7 @@ import SwiftUI
 
 struct ProfileV3AddPastTripSheet: View {
     @ObservedObject var viewModel: ProfileV3AddPastTripViewModel
+    let onClose: () -> Void
     @Environment(\.atBottomSheetMaxHeight) private var maxHeight
 
     private typealias Sizes = ProfileV3Theme.Sizes.TripSheet
@@ -20,6 +21,11 @@ struct ProfileV3AddPastTripSheet: View {
             header
         }
         .frame(height: min(viewModel.step == .country ? Sizes.countryHeight : Sizes.durationHeight, maxHeight))
+        .overlay(alignment: .topTrailing) {
+            ProfileV3CircleIconButton.close(size: Sizes.closeButton, action: onClose)
+                .padding(.top, Sizes.closeTop)
+                .padding(.trailing, Sizes.closeTrailing)
+        }
         .disabled(viewModel.isSubmitting)
         .sensoryFeedback(.error, trigger: viewModel.errorMessage) { _, message in message != nil }
     }

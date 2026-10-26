@@ -5,6 +5,21 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ## Unreleased
 
+### Strings
+
+- The Ditto project `ai-profile` matches the client again. It drops the 68 keys whose copy now comes
+  from the server, adds the 44 keys earlier releases listed as "to add in Ditto", and spells
+  "traveler" like the catalogue. The library folder `profilev3strings` mirrors the project.
+- Ten keys are renamed from `traveller` to `traveler`, for example
+  `mo-aiprofile-account-settings-button-add-traveler`, and the persona loader title reads
+  "Traveler profile".
+- Glove Box copy, credential store messages, the Face ID prompt reasons and the household "Confirm"
+  fallback were hard-coded; they are now 57 Ditto keys (`mo-aiprofile-glovebox-*`,
+  `mo-aiprofile-agents-error-vault-*`, `mo-aiprofile-agents-prompt-face-id-*`,
+  `mo-aiprofile-agents-button-household-confirm`), so they can change through runtime overrides.
+- `ProfileV3Localizable.xcstrings` and `ProfileV3L10n+Generated.swift` are rebuilt from Ditto (366 keys).
+  The persona loader caption and the page-load error subtitle now use a straight apostrophe.
+
 ## 1.0.9 — 2026-10-23
 
 ### Added

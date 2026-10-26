@@ -38,21 +38,22 @@ enum ProfileV3Strings {
     static var countryOfResidence: String { ProfileV3L10n.moAiprofileAccountSettingsLabelCountryOfResidence }
     static var citizenship: String { ProfileV3L10n.moAiprofileAccountSettingsLabelCitizenship }
     static var citizenshipFromPassport: String { ProfileV3L10n.moAiprofileAccountSettingsLabelCitizenshipFromPassport }
-    static var editTraveller: String { ProfileV3L10n.moAiprofileAccountSettingsButtonEditTraveller }
-    static var editTravellers: String { ProfileV3L10n.moAiprofileAccountSettingsButtonEditTravellers }
-    static var addTravellerPill: String { ProfileV3L10n.moAiprofileAccountSettingsButtonAddTraveller }
+    static var editTraveller: String { ProfileV3L10n.moAiprofileAccountSettingsButtonEditTraveler }
+    static var editTravellers: String { ProfileV3L10n.moAiprofileAccountSettingsButtonEditTravelers }
+    static var addTravellerPill: String { ProfileV3L10n.moAiprofileAccountSettingsButtonAddTraveler }
     static var householdTitle: String { ProfileV3L10n.moAiprofileAccountSettingsLabelBuildHousehold }
     static var householdSubtitle: String { ProfileV3L10n.moAiprofileAccountSettingsLabelHouseholdSubtitle }
+    static var householdConfirm: String { ProfileV3L10n.moAiprofileAgentsButtonHouseholdConfirm }
     static var travellerFallbackName: String { ProfileV3L10n.moAiprofileAccountSettingsLabelDefaultName }
     static var firstNameLabel: String { ProfileV3L10n.moAiprofileAccountSettingsInputFirstName }
     static var lastNameLabel: String { ProfileV3L10n.moAiprofileAccountSettingsInputLastName }
     static var firstNamePlaceholder: String { ProfileV3L10n.moAiprofileAccountSettingsPlaceholderFirstName }
     static var lastNamePlaceholder: String { ProfileV3L10n.moAiprofileAccountSettingsPlaceholderLastName }
-    static var removeTraveller: String { ProfileV3L10n.moAiprofileAccountSettingsButtonRemoveTraveller }
-    static func travellerDeleted(_ name: String) -> String { ProfileV3L10n.moAiprofileAccountSuccessDeletedTraveller(name) }
-    static func travellerAdded(_ name: String) -> String { ProfileV3L10n.moAiprofileAccountSuccessAddedTraveller(name) }
-    static var travellerDeleteFailed: String { ProfileV3L10n.moAiprofileAccountErrorTravellerDeleteFailed }
-    static var travellerAddFailed: String { ProfileV3L10n.moAiprofileAccountErrorTravellerAddFailed }
+    static var removeTraveller: String { ProfileV3L10n.moAiprofileAccountSettingsButtonRemoveTraveler }
+    static func travellerDeleted(_ name: String) -> String { ProfileV3L10n.moAiprofileAccountSuccessDeletedTraveler(name) }
+    static func travellerAdded(_ name: String) -> String { ProfileV3L10n.moAiprofileAccountSuccessAddedTraveler(name) }
+    static var travellerDeleteFailed: String { ProfileV3L10n.moAiprofileAccountErrorTravelerDeleteFailed }
+    static var travellerAddFailed: String { ProfileV3L10n.moAiprofileAccountErrorTravelerAddFailed }
     static var passportInUse: String { ProfileV3L10n.moAiprofileTravelDocumentsErrorDuplicatePassport }
     static var selectPlaceholder: String { ProfileV3L10n.moAiprofileGeneralUiButtonSelect }
     static var coupons: String { ProfileV3L10n.moAiprofileLoyaltyProgramsLabelCoupons }
@@ -76,7 +77,7 @@ enum ProfileV3Strings {
     static var countries: String { ProfileV3L10n.moAiprofileProfileStatLabelCountries }
     static var airports: String { ProfileV3L10n.moAiprofileProfileStatLabelAirports }
     static var airlines: String { ProfileV3L10n.moAiprofileProfileStatLabelAirlines }
-    static var addTraveller: String { ProfileV3L10n.moAiprofileDocumentsButtonAddTraveller }
+    static var addTraveller: String { ProfileV3L10n.moAiprofileDocumentsButtonAddTraveler }
     static var redeem: String { ProfileV3L10n.moAiprofileLoyaltyButtonRedeem }
     static var flightCashbackTerms: String { ProfileV3L10n.moAiprofileLoyaltyTextCashbackOfferLead }
     static var programmesConnected: String { ProfileV3L10n.moAiprofileLoyaltyLabelProgramsConnected }

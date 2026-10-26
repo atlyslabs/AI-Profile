@@ -133,8 +133,8 @@
         }
       }
     },
-    "mo-aiprofile-account-error-traveller-add-failed": {
-      "comment": "Error when adding a household traveller fails.",
+    "mo-aiprofile-account-error-traveler-add-failed": {
+      "comment": "Error when adding a household traveler fails.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -145,8 +145,8 @@
         }
       }
     },
-    "mo-aiprofile-account-error-traveller-delete-failed": {
-      "comment": "Error when removing a household traveller fails.",
+    "mo-aiprofile-account-error-traveler-delete-failed": {
+      "comment": "Error when removing a household traveler fails.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -277,8 +277,8 @@
         }
       }
     },
-    "mo-aiprofile-account-settings-button-add-traveller": {
-      "comment": "Button to add a new traveller profile.",
+    "mo-aiprofile-account-settings-button-add-traveler": {
+      "comment": "Button to add a new traveler profile.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -289,8 +289,8 @@
         }
       }
     },
-    "mo-aiprofile-account-settings-button-edit-traveller": {
-      "comment": "Action button to edit a single traveller's details.",
+    "mo-aiprofile-account-settings-button-edit-traveler": {
+      "comment": "Action button to edit a single traveler's details.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -301,8 +301,8 @@
         }
       }
     },
-    "mo-aiprofile-account-settings-button-edit-travellers": {
-      "comment": "Action button to edit a list of travellers.",
+    "mo-aiprofile-account-settings-button-edit-travelers": {
+      "comment": "Action button to edit a list of travelers.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -325,8 +325,8 @@
         }
       }
     },
-    "mo-aiprofile-account-settings-button-remove-traveller": {
-      "comment": "Action button to remove a traveller from the household.",
+    "mo-aiprofile-account-settings-button-remove-traveler": {
+      "comment": "Action button to remove a traveler from the household.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -422,7 +422,7 @@
       }
     },
     "mo-aiprofile-account-settings-label-default-name": {
-      "comment": "Fallback display name for a traveller.",
+      "comment": "Fallback display name for a traveler.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -589,7 +589,7 @@
         }
       }
     },
-    "mo-aiprofile-account-success-added-traveller": {
+    "mo-aiprofile-account-success-added-traveler": {
       "comment": "Confirmation message for added user profiles.",
       "extractionState": "manual",
       "localizations": {
@@ -613,7 +613,7 @@
         }
       }
     },
-    "mo-aiprofile-account-success-deleted-traveller": {
+    "mo-aiprofile-account-success-deleted-traveler": {
       "comment": "Confirmation message for deleted user profiles.",
       "extractionState": "manual",
       "localizations": {
@@ -758,7 +758,7 @@
       }
     },
     "mo-aiprofile-agents-button-add-credentials": {
-      "comment": "Link on an app row that opens the add credentials sheet.",
+      "comment": "App access row button that adds credentials for a pending app.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -770,7 +770,7 @@
       }
     },
     "mo-aiprofile-agents-button-add-new-password": {
-      "comment": "Button on the App access page that opens the add new password sheet.",
+      "comment": "Floating App access button that adds a new password.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -782,7 +782,7 @@
       }
     },
     "mo-aiprofile-agents-button-add-stored-credentials": {
-      "comment": "Button on the Secure credential store sheet that opens the add new password sheet.",
+      "comment": "Credential store sheet button that starts adding a saved login.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -806,7 +806,7 @@
       }
     },
     "mo-aiprofile-agents-button-delete-credentials": {
-      "comment": "Row on a saved password sheet that deletes the saved login. Copy as designed.",
+      "comment": "Saved login row that deletes the stored credentials.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -818,7 +818,7 @@
       }
     },
     "mo-aiprofile-agents-button-disconnect-app": {
-      "comment": "Button that disconnects an app from the connectors panel.",
+      "comment": "Connectors deck action that disconnects a connected app.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -829,8 +829,20 @@
         }
       }
     },
+    "mo-aiprofile-agents-button-household-confirm": {
+      "comment": "Household apply sheet confirm button, used when the server sends no label.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-button-other-website": {
-      "comment": "Last row of the website picker in the Secure credential store. Opens the add new password sheet without a known site.",
+      "comment": "Website picker row for a site that isn't listed.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -842,7 +854,7 @@
       }
     },
     "mo-aiprofile-agents-confirmation-delete-credentials": {
-      "comment": "Title of the confirmation before a saved password is deleted. The website address shows under it.",
+      "comment": "Confirmation title before deleting a saved login.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -866,7 +878,7 @@
       }
     },
     "mo-aiprofile-agents-description-credential-store": {
-      "comment": "Subtitle on the Secure credential store card in settings.",
+      "comment": "Settings card subtitle for the secure credential store.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -878,7 +890,7 @@
       }
     },
     "mo-aiprofile-agents-description-credential-store-sheet": {
-      "comment": "Description under the title of the Secure credential store sheet.",
+      "comment": "Credential store sheet subtitle.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -890,7 +902,7 @@
       }
     },
     "mo-aiprofile-agents-description-credentials-use": {
-      "comment": "Note under the credential fields explaining how Atlys uses them.",
+      "comment": "Note on the credentials sheet about how the saved credentials are used.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -949,8 +961,68 @@
         }
       }
     },
+    "mo-aiprofile-agents-error-vault-confirm-its-you": {
+      "comment": "Error under the password when showing it needs a recent sign-in.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For your security, sign in to Atlys again, then show the password within 10 minutes."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-error-vault-otp-unsupported": {
+      "comment": "Saved login status when the site needs a one-time code.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This site asks for a one-time code. Not supported yet."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-error-vault-reveal-needs-phone": {
+      "comment": "Error when this device can't show a saved password.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing a password needs Face ID on an iPhone."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-error-vault-site-unreachable": {
+      "comment": "Saved login status when the site couldn't be reached.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't reach the site. Try again later."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-error-vault-wrong-password": {
+      "comment": "Saved login status when the site rejected the password.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wrong username or password. Update it."
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-hint-connected-apps": {
-      "comment": "Tooltip under the Connected link on the App access page, pointing to where connected apps live.",
+      "comment": "Hint bubble pointing at the Connected button on App access.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -974,7 +1046,7 @@
       }
     },
     "mo-aiprofile-agents-hint-persona-drag": {
-      "comment": "First-run tooltip under a knob on the travel persona radar, saying the knob can be dragged to change the trait's score.",
+      "comment": "Travel persona radar tip: drag a knob to change its score.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -985,8 +1057,20 @@
         }
       }
     },
+    "mo-aiprofile-agents-hint-persona-edit": {
+      "comment": "Travel persona radar hint under the chart: drag a knob to edit its score, tap it to see how the score was found.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold and drag circles to edit. Tap on them to know more"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-hint-persona-tap": {
-      "comment": "Second first-run tooltip under a knob on the travel persona radar, saying a tap opens how the trait's score was calculated.",
+      "comment": "Travel persona radar tip: tap a knob to see how its score was calculated.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1022,7 +1106,7 @@
       }
     },
     "mo-aiprofile-agents-label-credential-store": {
-      "comment": "Title of the settings card and the sheet that hold the user's saved website passwords.",
+      "comment": "Settings card title for the secure credential store.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1058,7 +1142,7 @@
       }
     },
     "mo-aiprofile-agents-label-password": {
-      "comment": "Field label for the password.",
+      "comment": "Credentials form field label for the password.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1070,7 +1154,7 @@
       }
     },
     "mo-aiprofile-agents-label-persona-adventure": {
-      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "comment": "Travel persona loader: trait label on the processing dial.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1082,7 +1166,7 @@
       }
     },
     "mo-aiprofile-agents-label-persona-comfort": {
-      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "comment": "Travel persona loader: trait label on the processing dial.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1094,7 +1178,7 @@
       }
     },
     "mo-aiprofile-agents-label-persona-culture-history": {
-      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "comment": "Travel persona loader: trait label on the processing dial.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1106,7 +1190,7 @@
       }
     },
     "mo-aiprofile-agents-label-persona-local": {
-      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "comment": "Travel persona loader: trait label on the processing dial.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1118,7 +1202,7 @@
       }
     },
     "mo-aiprofile-agents-label-persona-new-places": {
-      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "comment": "Travel persona loader: trait label on the processing dial.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1130,7 +1214,7 @@
       }
     },
     "mo-aiprofile-agents-label-persona-nightlife": {
-      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "comment": "Travel persona loader: trait label on the processing dial.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1142,7 +1226,7 @@
       }
     },
     "mo-aiprofile-agents-label-persona-outdoors": {
-      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "comment": "Travel persona loader: trait label on the processing dial.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1154,7 +1238,7 @@
       }
     },
     "mo-aiprofile-agents-label-persona-pace": {
-      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "comment": "Travel persona loader: trait label on the processing dial.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1166,7 +1250,7 @@
       }
     },
     "mo-aiprofile-agents-label-persona-planning": {
-      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "comment": "Travel persona loader: trait label on the processing dial.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1178,7 +1262,7 @@
       }
     },
     "mo-aiprofile-agents-label-persona-social": {
-      "comment": "Trait name on the travel persona loading dial, shown before the server's traits arrive.",
+      "comment": "Travel persona loader: trait label on the processing dial.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1214,7 +1298,7 @@
       }
     },
     "mo-aiprofile-agents-label-username-email": {
-      "comment": "Field label for the username or email address.",
+      "comment": "Credentials form field label for the username or email address.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1226,7 +1310,7 @@
       }
     },
     "mo-aiprofile-agents-label-website": {
-      "comment": "Field label for the website address.",
+      "comment": "Credentials form field label for the website.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1245,6 +1329,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "Data stays secure while your agent learns"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-prompt-face-id-show-password": {
+      "comment": "Face ID prompt reason when showing a saved password.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show password"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-prompt-face-id-unlock-vault": {
+      "comment": "Face ID prompt reason when opening the credential store.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock your saved passwords"
           }
         }
       }
@@ -1274,7 +1382,7 @@
       }
     },
     "mo-aiprofile-agents-status-auto-connected": {
-      "comment": "Status label on an app that Atlys connected automatically.",
+      "comment": "Status on an app that connected automatically.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1298,13 +1406,13 @@
       }
     },
     "mo-aiprofile-agents-status-persona-processing": {
-      "comment": "Shown under the loading dial on the Traveller profile card while the travel persona is still being worked out.",
+      "comment": "Travel persona loader caption under the processing dial.",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Decoding your travel choices, won’t take long..."
+            "value": "Decoding your travel choices, won't take long..."
           }
         }
       }
@@ -1322,7 +1430,7 @@
       }
     },
     "mo-aiprofile-agents-title-add-credentials": {
-      "comment": "Title of the sheet where the user adds credentials for an app.",
+      "comment": "Title of the website picker shown before adding credentials.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1334,7 +1442,7 @@
       }
     },
     "mo-aiprofile-agents-title-add-new-password": {
-      "comment": "Title of the sheet where the user adds a password for a website.",
+      "comment": "Title of the add new password sheet.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1357,20 +1465,20 @@
         }
       }
     },
-    "mo-aiprofile-agents-title-traveller-profile": {
-      "comment": "Card title on the travel persona loading dial, shown before the server's profile title arrives.",
+    "mo-aiprofile-agents-title-traveler-profile": {
+      "comment": "Travel persona loader card title.",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Traveller profile"
+            "value": "Traveler profile"
           }
         }
       }
     },
     "mo-aiprofile-agents-toast-credentials-updated": {
-      "comment": "Confirmation shown after edited credentials are saved.",
+      "comment": "Toast after saving edited credentials.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1382,7 +1490,7 @@
       }
     },
     "mo-aiprofile-agents-toast-password-added": {
-      "comment": "Confirmation shown after new credentials are saved.",
+      "comment": "Toast after adding a password.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1394,7 +1502,7 @@
       }
     },
     "mo-aiprofile-agents-toast-persona-updated": {
-      "comment": "Confirmation on the travel persona save button after changed trait scores are saved.",
+      "comment": "Toast after saving travel persona changes.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1417,8 +1525,8 @@
         }
       }
     },
-    "mo-aiprofile-documents-button-add-traveller": {
-      "comment": "Action button to add a traveller to a profile or document.",
+    "mo-aiprofile-documents-button-add-traveler": {
+      "comment": "Action button to add a traveler to a profile or document.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1802,7 +1910,7 @@
       }
     },
     "mo-aiprofile-general-accessibility-open-website": {
-      "comment": "Accessibility label for the button that opens the entered website.",
+      "comment": "Accessibility label for the button that opens the website.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1814,7 +1922,7 @@
       }
     },
     "mo-aiprofile-general-accessibility-show-password": {
-      "comment": "Accessibility label for the button that reveals the password.",
+      "comment": "Accessibility label for the button that shows the password.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -2234,13 +2342,13 @@
       }
     },
     "mo-aiprofile-general-error-subtitle-page-load-failed": {
-      "comment": "Error state body when a page fails to load, above the Retry button.",
+      "comment": "Error state subtitle when a page fails to load.",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "We couldn’t load this page. Let’s give it another shot"
+            "value": "We couldn't load this page. Let's give it another shot"
           }
         }
       }
@@ -2569,8 +2677,56 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-badge-active": {
+      "comment": "Email section badge while forwarding is on.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-badge-active-on-trip": {
+      "comment": "Phone number section badge.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active on trip"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-badge-paused": {
+      "comment": "Email section badge while forwarding is paused.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paused"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-button-add-card": {
+      "comment": "Virtual card section button that adds a card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add card"
+          }
+        }
+      }
+    },
     "mo-aiprofile-glovebox-button-copied": {
-      "comment": "The Glove box copy button right after the address was copied.",
+      "comment": "Glove box copy button right after copying.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -2582,7 +2738,7 @@
       }
     },
     "mo-aiprofile-glovebox-button-copy": {
-      "comment": "Button under the Glove box travel inbox address that copies the address.",
+      "comment": "Glove box button that copies the address or number.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -2593,14 +2749,578 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-button-pause": {
+      "comment": "Button that pauses email forwarding.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-button-resume": {
+      "comment": "Button that resumes email forwarding.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-button-send-link": {
+      "comment": "Button that sends the forwarding confirmation link.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send link"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-button-view-all": {
+      "comment": "Opens the full list of a glove box section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View all"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-description-activate": {
+      "comment": "Glove box intro subtitle.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A travel email that works for you. Your real one stays private."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-description-email-about": {
+      "comment": "About text in the glove box email section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follow up, reply, and coordinate with hotels and airlines. Your real inbox stays private."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-description-how-you-pay": {
+      "comment": "Virtual card section text under How you pay.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When the assistant books or buys for you. Change it anytime."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-description-phone-about": {
+      "comment": "About text in the glove box phone number section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agent answers every call, day or night. It handles the simple ones and puts urgent ones through to you."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-description-settings-card": {
+      "comment": "Settings glove box card description. The line break follows the design.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Built for your agent. Get your\nown email, number and virtual card"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-empty-state-no-transactions": {
+      "comment": "Virtual card section empty state title.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No transactions yet..."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-empty-state-no-transactions-body": {
+      "comment": "Virtual card section empty state body.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Once your agent starts handling your travel, confirmations and updates will land here."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-error-account-required": {
+      "comment": "Glove box error for a guest session.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glove box needs an Atlys account."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-error-email-not-sent": {
+      "comment": "Glove box error when the forwarding confirmation email fails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The confirmation email didn't send. Try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-error-forwarding-exists": {
+      "comment": "Glove box error when forwarding is already set up.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forwarding is already on."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-error-invalid-email": {
+      "comment": "Glove box error for an invalid forwarding email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That email address can't be used."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-error-no-address": {
+      "comment": "Glove box error when there is no glove box address yet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set up your Glove box email first."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-error-not-found": {
+      "comment": "Glove box error when an email can't be found.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That email isn't available."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-error-rate-limited": {
+      "comment": "Glove box error when the user is rate limited.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Too many tries. Wait and try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-error-sign-in-again": {
+      "comment": "Glove box error when the session has expired.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in again to open Glove box."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-error-unavailable": {
+      "comment": "Glove box error when the screen can't load.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glove box couldn't be opened."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-headline-new-number-emphasis": {
+      "comment": "Phone number headline, emphasised middle part, drawn in black.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "new number"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-headline-new-number-lead": {
+      "comment": "Phone number headline, first part. Joined with a space to the emphasis.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You get a"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-headline-new-number-trail": {
+      "comment": "Phone number headline, last part. Joined with a space after the emphasis.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "every time you travel"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-cvc": {
+      "comment": "Virtual card label for the CVC.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CVC"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-expires": {
+      "comment": "Virtual card label for the expiry date.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expires"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-name": {
+      "comment": "Virtual card label for the card holder's name.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        }
+      }
+    },
     "mo-aiprofile-glovebox-label-dated": {
-      "comment": "Date after the status on a Glove box email row, e.g. \"·  25 Jun, 2026\". %1$@ is the date the server sends.",
+      "comment": "Separator and date after a glove box email's status line.",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "·  %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-emails-forwarded-to": {
+      "comment": "Label before the forwarding address. Also the forwarding email field placeholder.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emails forwarded to"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-virtual-email": {
+      "comment": "Settings glove box card subtitle.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your virtual email"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-waiting-to-confirm": {
+      "comment": "Label before a forwarding address that still needs confirming.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waiting for you to confirm"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-notice-card-protected": {
+      "comment": "Notice shown when the virtual card is tapped.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card details are protected"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-notice-card-secure": {
+      "comment": "Virtual card section note under Add card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your card details are securely stored and used only when needed to manage your bookings."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-notice-forwarding-missing": {
+      "comment": "Email section notice when no forwarding email is set.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a forwarding email and new emails will reach your inbox."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-notice-forwarding-paused": {
+      "comment": "Email section notice when emails weren't forwarded because forwarding is paused.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forwarding is paused, so new emails stay here until you resume it."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-notice-forwarding-pending": {
+      "comment": "Email section notice when the forwarding email isn't confirmed yet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm your forwarding email and new emails will reach your inbox."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-status-handled-for-you": {
+      "comment": "Email row status: the agent handled it.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Handled for you"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-status-in-the-thread": {
+      "comment": "Email row status: the user was added to the thread.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're in the thread"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-status-sent-to-inbox": {
+      "comment": "Email row status: forwarded to the user's inbox.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sent to your inbox"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-status-sent-to-old-address": {
+      "comment": "Email row status: the email went to a previous glove box address.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sent to an old address"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-activate": {
+      "comment": "Glove box intro title while it warms up.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activate your Glove box"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-calls-list": {
+      "comment": "Title of the glove box calls list sheet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glove box  ·  Calls"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-email": {
+      "comment": "Title of the glove box email section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-email-list": {
+      "comment": "Title of the glove box email list sheet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glove box  ·  Email"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-glove-box": {
+      "comment": "Glove box screen title.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glove box"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-how-you-pay": {
+      "comment": "Virtual card section heading for the payment options.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How you pay"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-phone-number": {
+      "comment": "Title of the glove box phone number section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phone number"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-transactions-list": {
+      "comment": "Title of the glove box transactions list sheet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glove box  ·  Transactions"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-virtual-card": {
+      "comment": "Title of the glove box virtual card section.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Virtual card"
           }
         }
       }
@@ -2810,7 +3530,7 @@
       }
     },
     "mo-aiprofile-loyalty-empty-state-no-coupons": {
-      "comment": "Empty state on the coupons list when the traveler has no coupons.",
+      "comment": "Empty state when the coupons list has no coupons.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -2918,7 +3638,7 @@
       }
     },
     "mo-aiprofile-loyalty-error-pass-switch-failed": {
-      "comment": "Error when switching to another traveller's World Pass fails.",
+      "comment": "Error when switching to another traveler's World Pass fails.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -3674,7 +4394,7 @@
       }
     },
     "mo-aiprofile-travel-documents-error-duplicate-passport": {
-      "comment": "Validation error shown when a passport is already registered to another traveller.",
+      "comment": "Validation error shown when a passport is already registered to another traveler.",
       "extractionState": "manual",
       "localizations": {
         "en": {

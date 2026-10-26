@@ -136,14 +136,14 @@ struct ProfileV3VaultAlreadySaved: Error, Equatable {
 }
 
 enum ProfileV3VaultStrings {
-    static let wrongPassword = "Wrong username or password. Update it."
-    static let otpUnsupported = "This site asks for a one-time code. Not supported yet."
-    static let siteUnreachable = "Couldn't reach the site. Try again later."
-    static let showPassword = "Show password"
-    static let unlockVault = "Unlock your saved passwords"
+    static var wrongPassword: String { ProfileV3L10n.moAiprofileAgentsErrorVaultWrongPassword }
+    static var otpUnsupported: String { ProfileV3L10n.moAiprofileAgentsErrorVaultOtpUnsupported }
+    static var siteUnreachable: String { ProfileV3L10n.moAiprofileAgentsErrorVaultSiteUnreachable }
+    static var showPassword: String { ProfileV3L10n.moAiprofileAgentsPromptFaceIdShowPassword }
+    static var unlockVault: String { ProfileV3L10n.moAiprofileAgentsPromptFaceIdUnlockVault }
     static let passwordHidden = "••••••••"
-    static let confirmItsYou = "For your security, sign in to Atlys again, then show the password within 10 minutes."
-    static let revealNeedsPhone = "Showing a password needs Face ID on an iPhone."
+    static var confirmItsYou: String { ProfileV3L10n.moAiprofileAgentsErrorVaultConfirmItsYou }
+    static var revealNeedsPhone: String { ProfileV3L10n.moAiprofileAgentsErrorVaultRevealNeedsPhone }
 }
 
 extension ProfileV3VaultAttention {

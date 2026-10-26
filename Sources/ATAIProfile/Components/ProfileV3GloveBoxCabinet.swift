@@ -59,25 +59,9 @@ struct ProfileV3GloveBoxCabinet: View {
     @ViewBuilder
     private var pill: some View {
         if let status, !statusLabel.isEmpty {
-            HStack(spacing: Layout.pillSpacing) {
-                if status == .locked {
-                    ProfileV3GloveBoxArt.bolt.image
-                        .profileV3Icon(Layout.pillIcon)
-                        .foregroundStyle(Palette.pillIcon)
-                        .accessibilityHidden(true)
-                }
-                Text(statusLabel)
-                    .typoGraphy(.T1InterBold11)
-                    .textCase(.uppercase)
-                    .foregroundStyle(Color(at: .pureWhite))
-            }
-            .padding(.leading, status == .locked ? Layout.pillIconLeading : Layout.pillInset)
-            .padding(.trailing, Layout.pillInset)
-            .frame(height: Layout.pillHeight)
-            .background(Capsule().fill(ProfileV3Theme.GloveBox.pillGradient))
-            .overlay(Capsule().strokeBorder(Color(at: .pureBlack), lineWidth: ProfileV3Theme.Stroke.hairline))
-            .frame(width: Layout.box.width)
-            .offset(y: Layout.pillTop)
+            ProfileV3GloveBoxPill(label: statusLabel, showsBolt: status == .locked)
+                .frame(width: Layout.box.width)
+                .offset(y: Layout.pillTop)
         }
     }
 
@@ -211,50 +195,7 @@ struct ProfileV3GloveBoxCabinet: View {
                 x: Layout.box.width / 2 + CGFloat(index - 1) * (Layout.dial + Layout.dialSpacing),
                 y: Layout.dialCentreY + contentShift
             )
-            let disc = CGRect(x: centre.x - Layout.dial / 2, y: centre.y - Layout.dial / 2, width: Layout.dial, height: Layout.dial)
-            let shadow = disc.offsetBy(dx: 0, dy: Layout.dialShadowDrop)
-            context.fill(
-                Path(ellipseIn: shadow),
-                with: .linearGradient(
-                    Gradient(colors: [Palette.dialLight, Palette.dialShadow]),
-                    startPoint: CGPoint(x: shadow.minX, y: shadow.midY),
-                    endPoint: CGPoint(x: shadow.maxX, y: shadow.midY)
-                )
-            )
-            context.fill(Path(ellipseIn: disc), with: verticalGradient([Palette.dialLight, Palette.dialBase], in: disc))
-            for step in 0..<Layout.dialDotCount {
-                let angle = Double(step) / Double(Layout.dialDotCount) * 2 * .pi
-                let dot = CGPoint(
-                    x: centre.x + Layout.dialDotRadius * sin(angle),
-                    y: centre.y - Layout.dialDotRadius * cos(angle)
-                )
-                context.fill(
-                    Path(ellipseIn: CGRect(
-                        x: dot.x - Layout.dialDot / 2,
-                        y: dot.y - Layout.dialDot / 2,
-                        width: Layout.dialDot,
-                        height: Layout.dialDot
-                    )),
-                    with: .color(Palette.dialDot)
-                )
-            }
-            context.fill(
-                Path(ellipseIn: CGRect(
-                    x: centre.x - Layout.dialFace / 2,
-                    y: centre.y - Layout.dialFace / 2,
-                    width: Layout.dialFace,
-                    height: Layout.dialFace
-                )),
-                with: .color(Palette.dialFace)
-            )
-            var glyph = context.resolve(icon.renderingMode(.template))
-            glyph.shading = .color(Palette.dialIcon)
-            context.draw(glyph, in: CGRect(
-                x: centre.x - Layout.dialIcon / 2,
-                y: centre.y - Layout.dialIcon / 2,
-                width: Layout.dialIcon,
-                height: Layout.dialIcon
-            ))
+            ProfileV3GloveBoxDial.draw(icon, centre: centre, in: context)
         }
     }
 

@@ -34,8 +34,9 @@ extension ProfileV3Strings {
     static var personaUpdated: String { ProfileV3L10n.moAiprofileAgentsToastPersonaUpdated }
     static var personaCoachDrag: String { ProfileV3L10n.moAiprofileAgentsHintPersonaDrag }
     static var personaCoachTap: String { ProfileV3L10n.moAiprofileAgentsHintPersonaTap }
+    static var personaEditHint: String { ProfileV3L10n.moAiprofileAgentsHintPersonaEdit }
     static var personaProcessing: String { ProfileV3L10n.moAiprofileAgentsStatusPersonaProcessing }
-    static var personaLoaderTitle: String { ProfileV3L10n.moAiprofileAgentsTitleTravellerProfile }
+    static var personaLoaderTitle: String { ProfileV3L10n.moAiprofileAgentsTitleTravelerProfile }
     static var personaLoaderTraits: [String] {
         [
             ProfileV3L10n.moAiprofileAgentsLabelPersonaAdventure,

@@ -9,6 +9,13 @@ extension ProfileV3Theme.Sizes {
         static let radarTop = ProfileV3Theme.Space.s40
         static let radarHeight: CGFloat = 314
         static let cardBottom: CGFloat = 69
+        static let cardTop: CGFloat = 34
+        static let subtitleWidth: CGFloat = 244
+        static let loadingTitleHeight: CGFloat = 50
+        static let loadingSubtitleHeight: CGFloat = 32
+        static let hintTop: CGFloat = 28
+        static let hintWidth: CGFloat = 240
+        static let hintBottom: CGFloat = 9
         static let radarRadius: CGFloat = 105.6
         static let radarInnerRadius: CGFloat = 10
         static let ringCount = 5
@@ -163,6 +170,16 @@ extension ProfileV3Theme {
         colors: [Palette.appHintStart, Palette.appHintEnd],
         startPoint: UnitPoint(x: 0.519, y: 0.085),
         endPoint: UnitPoint(x: 0.943, y: 1.3)
+    )
+
+    static let personaHintGradient = LinearGradient(
+        stops: [
+            .init(color: Palette.personaShimmerEdge, location: 0.054),
+            .init(color: Palette.personaHintMid, location: 0.462),
+            .init(color: Palette.personaShimmerEdge, location: 0.946)
+        ],
+        startPoint: UnitPoint(x: 0.19, y: -1.579),
+        endPoint: UnitPoint(x: 0.81, y: 2.579)
     )
 
     static let personaScaleFill = LinearGradient(

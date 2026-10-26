@@ -134,7 +134,7 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             iconURL: remoteURL(dto.icon),
             title: title,
             travellers: travellers,
-            confirmLabel: text(dto.confirm?.label) ?? "Confirm"
+            confirmLabel: text(dto.confirm?.label) ?? ProfileV3Strings.householdConfirm
         )
     }
 
@@ -286,8 +286,13 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
     private static func source(from field: ProfileV3AgentFieldDTO, agentType: String?) -> ProfileV3SectionSource? {
         guard let dto = field.source, let next = dto.next, next.go == preferenceSourcesRoute,
               let agentType = text(next.agentType) ?? agentType else { return nil }
+        let icons = dto.icons.compactMap { icon in
+            (remoteURL(icon.imageURL) ?? remoteURL(icon.key)).map { ProfileV3SourceIcon(url: $0) }
+        }
         return ProfileV3SectionSource(
-            iconURL: remoteURL(dto.icon),
+            icons: icons.isEmpty ? [ProfileV3SourceIcon(url: remoteURL(dto.icon))] : icons,
+            count: dto.count?.intValue.flatMap { $0 > 0 ? $0 : nil },
+            label: text(dto.label),
             agentType: agentType,
             fieldKey: text(next.fieldKey) ?? field.key
         )

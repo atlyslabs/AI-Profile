@@ -1,32 +1,35 @@
 #if DEBUG
 import Foundation
 
+final class ProfileV3GloveBoxStore: @unchecked Sendable {
+    private let lock = NSLock()
+    private var account: ProfileV3GloveBoxAccount
+
+    init(account: ProfileV3GloveBoxAccount = ProfileV3GloveBoxAccount(eligible: true)) {
+        self.account = account
+    }
+
+    func snapshot() -> ProfileV3GloveBoxAccount {
+        lock.lock()
+        defer { lock.unlock() }
+        return account
+    }
+
+    @discardableResult
+    func update(_ change: (inout ProfileV3GloveBoxAccount) -> Void) -> ProfileV3GloveBoxAccount {
+        lock.lock()
+        defer { lock.unlock() }
+        change(&account)
+        return account
+    }
+}
+
 enum ProfileV3GloveBoxFixtures {
-    enum Start: String, CaseIterable, Identifiable {
+    enum Start {
         case unlock
         case warmingUp
         case home
         case homeSample
-
-        var id: String { rawValue }
-
-        var title: String {
-            switch self {
-            case .unlock: return "Unlock"
-            case .warmingUp: return "Warming up"
-            case .home: return "Active"
-            case .homeSample: return "Active, nothing yet"
-            }
-        }
-
-        var detail: String {
-            switch self {
-            case .unlock: return "Complete KYC to unlock the email, number and card"
-            case .warmingUp: return "KYC done, the glove box is getting ready"
-            case .home: return "Email, number and card with recent activity"
-            case .homeSample: return "Number waits for a trip, sample activity shown"
-            }
-        }
 
         var gloveBox: ProfileV3GloveBox {
             ProfileV3GloveBox(title: ProfileV3GloveBoxFixtures.title, stage: stage)

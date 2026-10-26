@@ -40,6 +40,7 @@ extension ProfileV3Theme.Palette {
     static let personaLoaderShadow = Color(hex: "B4B4B4")
     static let personaShimmerEdge = Color(hex: "C2C2C2")
     static let personaShimmerMid = Color(hex: "E0E0E0")
+    static let personaHintMid = Color(hex: "838383")
 }
 
 extension ProfileV3Theme.Opacity {

@@ -167,6 +167,35 @@ struct ProfileV3PastTripsTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
+    func closingTheAddSheetAddsNothing() async throws {
+        let repository = TripsRepositoryStub()
+        var changes = 0
+        let viewModel = ProfileV3PastTripsViewModel(
+            pass: ProfileV3Fixtures.worldPass,
+            repository: repository,
+            startsAdding: false,
+            onChange: { changes += 1 },
+            onClose: {}
+        )
+        viewModel.start()
+        try await waitUntil { viewModel.phase == .loaded }
+
+        viewModel.tapAdd()
+        let editor = try #require(viewModel.editor)
+        try await waitUntil { editor.screen != nil }
+        editor.select(ProfileV3Country(code: "MU", name: "Mauritius"))
+        #expect(viewModel.sheet == .add)
+
+        viewModel.dismissSheet()
+        #expect(viewModel.sheet == nil)
+        #expect(repository.added.isEmpty)
+        #expect(changes == 0)
+
+        viewModel.tapAdd()
+        #expect(viewModel.sheet == .add)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
     func editOpensAtTheDurationAndSendsTheTripsOwnSubmit() async throws {
         let repository = TripsRepositoryStub()
         let viewModel = ProfileV3PastTripsViewModel(

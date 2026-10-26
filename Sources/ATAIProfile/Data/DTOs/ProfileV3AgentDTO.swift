@@ -456,7 +456,20 @@ enum ProfileV3AgentValueDTO: Decodable, Equatable {
 
 struct ProfileV3FieldSourceDTO: Decodable, Equatable {
     let icon: String?
+    let count: ProfileV3ScalarDTO?
+    let label: String?
     let next: ProfileV3DirectiveDTO?
+    private let rawIcons: [ProfileV3LossyDTO<ProfileV3AgentSourceDTO>]?
+
+    var icons: [ProfileV3AgentSourceDTO] { rawIcons?.compactMap(\.value) ?? [] }
+
+    enum CodingKeys: String, CodingKey {
+        case icon
+        case count
+        case label
+        case next
+        case rawIcons = "icons"
+    }
 }
 
 struct ProfileV3PreferenceSourcesDTO: Decodable, Equatable {

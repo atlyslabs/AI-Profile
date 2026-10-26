@@ -1,45 +1,60 @@
 import Foundation
 
 enum ProfileV3GloveBoxCopy {
-    static let title = "Glove box"
-    static let about = "Follow up, reply, and coordinate with hotels and airlines. Your real inbox stays private."
-    static let forwarding = "Emails forwarded to"
-    static let waitingToConfirm = "Waiting for you to confirm"
-    static let pause = "Pause"
-    static let resume = "Resume"
-    static let sendLink = "Send link"
-    static let active = "Active"
-    static let paused = "Paused"
-    static let viewAll = "View all"
-    static let listTitle = "Glove box  ·  Email"
-    static let activateTitle = "Activate your Glove box"
-    static let activateSubtitle = "A travel email that works for you. Your real one stays private."
-    static let activateButton = "Activate"
-    static let tryAgain = "Try again"
-    static let unavailable = "Glove box couldn't be opened."
-    static let oldAddress = "Sent to an old address"
-    static let sentToInbox = "Sent to your inbox"
-    static let handledForYou = "Handled for you"
-    static let inTheThread = "You’re in the thread"
-    static let needsAttention = "Needs attention"
-    static let notForwardedPaused = "Forwarding is paused, so new emails stay here until you resume it."
-    static let notForwardedPending = "Confirm your forwarding email and new emails will reach your inbox."
-    static let notForwardedNoAddress = "Add a forwarding email and new emails will reach your inbox."
-    static let phoneTitle = "Phone number"
-    static let phoneAbout = "Agent answers every call, day or night. It handles the simple ones and puts urgent ones through to you."
-    static let phoneHeadlineLead = "You get a "
-    static let phoneHeadlineEmphasis = "new number"
-    static let phoneHeadlineTrail = " every time you travel"
-    static let phoneListTitle = "Glove box  ·  Calls"
-    static let cardTitle = "Virtual card"
-    static let cardProtected = "Card details are protected"
-    static let cardPayTitle = "How you pay"
-    static let cardPayBody = "When the assistant books or buys for you. Change it anytime."
-    static let cardEmptyTitle = "No transactions yet..."
-    static let cardEmptyBody = "Once your agent starts handling your travel, confirmations and updates will land here."
-    static let cardListTitle = "Glove box  ·  Transactions"
-    static let cardAdd = "Add card"
-    static let cardSecure = "Your card details are securely stored and used only when needed to manage your bookings."
+    static var title: String { ProfileV3L10n.moAiprofileGloveboxTitleGloveBox }
+    static var settingsSubtitle: String { ProfileV3L10n.moAiprofileGloveboxLabelVirtualEmail }
+    static var settingsDescription: String { ProfileV3L10n.moAiprofileGloveboxDescriptionSettingsCard }
+    static var emailTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleEmail }
+    static var about: String { ProfileV3L10n.moAiprofileGloveboxDescriptionEmailAbout }
+    static var forwarding: String { ProfileV3L10n.moAiprofileGloveboxLabelEmailsForwardedTo }
+    static var waitingToConfirm: String { ProfileV3L10n.moAiprofileGloveboxLabelWaitingToConfirm }
+    static var pause: String { ProfileV3L10n.moAiprofileGloveboxButtonPause }
+    static var resume: String { ProfileV3L10n.moAiprofileGloveboxButtonResume }
+    static var sendLink: String { ProfileV3L10n.moAiprofileGloveboxButtonSendLink }
+    static var active: String { ProfileV3L10n.moAiprofileGloveboxBadgeActive }
+    static var paused: String { ProfileV3L10n.moAiprofileGloveboxBadgePaused }
+    static var viewAll: String { ProfileV3L10n.moAiprofileGloveboxButtonViewAll }
+    static var listTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleEmailList }
+    static var activateTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleActivate }
+    static var activateSubtitle: String { ProfileV3L10n.moAiprofileGloveboxDescriptionActivate }
+    static var activateButton: String { ProfileV3Strings.activate }
+    static var tryAgain: String { ProfileV3L10n.moAiprofileGeneralButtonTryAgain }
+    static var unavailable: String { ProfileV3L10n.moAiprofileGloveboxErrorUnavailable }
+    static var signInAgain: String { ProfileV3L10n.moAiprofileGloveboxErrorSignInAgain }
+    static var accountRequired: String { ProfileV3L10n.moAiprofileGloveboxErrorAccountRequired }
+    static var noAddress: String { ProfileV3L10n.moAiprofileGloveboxErrorNoAddress }
+    static var invalidEmail: String { ProfileV3L10n.moAiprofileGloveboxErrorInvalidEmail }
+    static var forwardingExists: String { ProfileV3L10n.moAiprofileGloveboxErrorForwardingExists }
+    static var rateLimited: String { ProfileV3L10n.moAiprofileGloveboxErrorRateLimited }
+    static var emailNotSent: String { ProfileV3L10n.moAiprofileGloveboxErrorEmailNotSent }
+    static var emailNotFound: String { ProfileV3L10n.moAiprofileGloveboxErrorNotFound }
+    static var oldAddress: String { ProfileV3L10n.moAiprofileGloveboxStatusSentToOldAddress }
+    static var sentToInbox: String { ProfileV3L10n.moAiprofileGloveboxStatusSentToInbox }
+    static var handledForYou: String { ProfileV3L10n.moAiprofileGloveboxStatusHandledForYou }
+    static var inTheThread: String { ProfileV3L10n.moAiprofileGloveboxStatusInTheThread }
+    static var needsAttention: String { ProfileV3L10n.moAiprofileAccountStatusNeedsAttention }
+    static var notForwardedPaused: String { ProfileV3L10n.moAiprofileGloveboxNoticeForwardingPaused }
+    static var notForwardedPending: String { ProfileV3L10n.moAiprofileGloveboxNoticeForwardingPending }
+    static var notForwardedNoAddress: String { ProfileV3L10n.moAiprofileGloveboxNoticeForwardingMissing }
+    static var phoneTitle: String { ProfileV3L10n.moAiprofileGloveboxTitlePhoneNumber }
+    static var phoneBadge: String { ProfileV3L10n.moAiprofileGloveboxBadgeActiveOnTrip }
+    static var phoneAbout: String { ProfileV3L10n.moAiprofileGloveboxDescriptionPhoneAbout }
+    static var phoneHeadlineLead: String { ProfileV3L10n.moAiprofileGloveboxHeadlineNewNumberLead + " " }
+    static var phoneHeadlineEmphasis: String { ProfileV3L10n.moAiprofileGloveboxHeadlineNewNumberEmphasis }
+    static var phoneHeadlineTrail: String { " " + ProfileV3L10n.moAiprofileGloveboxHeadlineNewNumberTrail }
+    static var phoneListTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleCallsList }
+    static var cardTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleVirtualCard }
+    static var cardProtected: String { ProfileV3L10n.moAiprofileGloveboxNoticeCardProtected }
+    static var cardExpires: String { ProfileV3L10n.moAiprofileGloveboxLabelCardExpires }
+    static var cardCVC: String { ProfileV3L10n.moAiprofileGloveboxLabelCardCvc }
+    static var cardName: String { ProfileV3L10n.moAiprofileGloveboxLabelCardName }
+    static var cardPayTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleHowYouPay }
+    static var cardPayBody: String { ProfileV3L10n.moAiprofileGloveboxDescriptionHowYouPay }
+    static var cardEmptyTitle: String { ProfileV3L10n.moAiprofileGloveboxEmptyStateNoTransactions }
+    static var cardEmptyBody: String { ProfileV3L10n.moAiprofileGloveboxEmptyStateNoTransactionsBody }
+    static var cardListTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleTransactionsList }
+    static var cardAdd: String { ProfileV3L10n.moAiprofileGloveboxButtonAddCard }
+    static var cardSecure: String { ProfileV3L10n.moAiprofileGloveboxNoticeCardSecure }
 }
 
 enum ProfileV3GloveBoxMapper {
@@ -116,7 +131,7 @@ enum ProfileV3GloveBoxMapper {
     ) -> ProfileV3GloveBoxEmailSection {
         let forwarding = forwardingLine(account)
         return ProfileV3GloveBoxEmailSection(
-            title: "Email",
+            title: ProfileV3GloveBoxCopy.emailTitle,
             badge: ProfileV3GloveBoxBadge(
                 label: account.forwardingPaused ? ProfileV3GloveBoxCopy.paused : ProfileV3GloveBoxCopy.active,
                 tone: account.forwardingPaused ? .pending : .live
@@ -143,21 +158,21 @@ enum ProfileV3GloveBoxMapper {
         let raw = ProfileV3Error.message(for: error, fallback: ProfileV3GloveBoxCopy.unavailable)
         switch raw {
         case "unauthenticated", "invalid_token":
-            return "Sign in again to open Glove box."
+            return ProfileV3GloveBoxCopy.signInAgain
         case "account_required":
-            return "Glove box needs an Atlys account."
+            return ProfileV3GloveBoxCopy.accountRequired
         case "no_address":
-            return "Set up your Glove box email first."
+            return ProfileV3GloveBoxCopy.noAddress
         case "invalid_email":
-            return "That email address can't be used."
+            return ProfileV3GloveBoxCopy.invalidEmail
         case "forwarding_exists":
-            return "Forwarding is already on."
+            return ProfileV3GloveBoxCopy.forwardingExists
         case "rate_limited":
-            return "Too many tries. Wait and try again."
+            return ProfileV3GloveBoxCopy.rateLimited
         case "email_not_sent":
-            return "The confirmation email didn't send. Try again."
+            return ProfileV3GloveBoxCopy.emailNotSent
         case "not_found":
-            return "That email isn't available."
+            return ProfileV3GloveBoxCopy.emailNotFound
         case "invalid_request":
             return ProfileV3Strings.somethingWentWrong
         default:
@@ -270,40 +285,44 @@ enum ProfileV3GloveBoxMapper {
         return formatter.string(from: date)
     }
 
-    private static let phone = ProfileV3GloveBoxPhoneSection(
-        title: ProfileV3GloveBoxCopy.phoneTitle,
-        badge: ProfileV3GloveBoxBadge(label: "Active on trip", tone: .pending),
-        number: ProfileV3GloveBoxNumber(value: "+1 847-757-XXXX"),
-        headline: ProfileV3GloveBoxPhoneSection.Headline(
-            lead: ProfileV3GloveBoxCopy.phoneHeadlineLead,
-            emphasis: ProfileV3GloveBoxCopy.phoneHeadlineEmphasis,
-            trail: ProfileV3GloveBoxCopy.phoneHeadlineTrail
-        ),
-        about: ProfileV3GloveBoxCopy.phoneAbout,
-        calls: [],
-        listTitle: ProfileV3GloveBoxCopy.phoneListTitle
-    )
+    private static var phone: ProfileV3GloveBoxPhoneSection {
+        ProfileV3GloveBoxPhoneSection(
+            title: ProfileV3GloveBoxCopy.phoneTitle,
+            badge: ProfileV3GloveBoxBadge(label: ProfileV3GloveBoxCopy.phoneBadge, tone: .pending),
+            number: ProfileV3GloveBoxNumber(value: "+1 847-757-XXXX"),
+            headline: ProfileV3GloveBoxPhoneSection.Headline(
+                lead: ProfileV3GloveBoxCopy.phoneHeadlineLead,
+                emphasis: ProfileV3GloveBoxCopy.phoneHeadlineEmphasis,
+                trail: ProfileV3GloveBoxCopy.phoneHeadlineTrail
+            ),
+            about: ProfileV3GloveBoxCopy.phoneAbout,
+            calls: [],
+            listTitle: ProfileV3GloveBoxCopy.phoneListTitle
+        )
+    }
 
-    private static let card = ProfileV3GloveBoxCardSection(
-        title: ProfileV3GloveBoxCopy.cardTitle,
-        card: ProfileV3GloveBoxCardSection.Card(
-            lastFour: "",
-            holder: "",
-            expiryLabel: "Expires",
-            cvcLabel: "CVC",
-            nameLabel: "Name"
-        ),
-        protectedNotice: ProfileV3GloveBoxCopy.cardProtected,
-        stats: [],
-        facts: [],
-        payTitle: ProfileV3GloveBoxCopy.cardPayTitle,
-        payBody: ProfileV3GloveBoxCopy.cardPayBody,
-        payOptions: [],
-        addCardTitle: ProfileV3GloveBoxCopy.cardAdd,
-        secureNote: ProfileV3GloveBoxCopy.cardSecure,
-        transactions: [],
-        emptyTitle: ProfileV3GloveBoxCopy.cardEmptyTitle,
-        emptyBody: ProfileV3GloveBoxCopy.cardEmptyBody,
-        listTitle: ProfileV3GloveBoxCopy.cardListTitle
-    )
+    private static var card: ProfileV3GloveBoxCardSection {
+        ProfileV3GloveBoxCardSection(
+            title: ProfileV3GloveBoxCopy.cardTitle,
+            card: ProfileV3GloveBoxCardSection.Card(
+                lastFour: "",
+                holder: "",
+                expiryLabel: ProfileV3GloveBoxCopy.cardExpires,
+                cvcLabel: ProfileV3GloveBoxCopy.cardCVC,
+                nameLabel: ProfileV3GloveBoxCopy.cardName
+            ),
+            protectedNotice: ProfileV3GloveBoxCopy.cardProtected,
+            stats: [],
+            facts: [],
+            payTitle: ProfileV3GloveBoxCopy.cardPayTitle,
+            payBody: ProfileV3GloveBoxCopy.cardPayBody,
+            payOptions: [],
+            addCardTitle: ProfileV3GloveBoxCopy.cardAdd,
+            secureNote: ProfileV3GloveBoxCopy.cardSecure,
+            transactions: [],
+            emptyTitle: ProfileV3GloveBoxCopy.cardEmptyTitle,
+            emptyBody: ProfileV3GloveBoxCopy.cardEmptyBody,
+            listTitle: ProfileV3GloveBoxCopy.cardListTitle
+        )
+    }
 }
