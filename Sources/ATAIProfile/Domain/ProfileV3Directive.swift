@@ -26,6 +26,9 @@ struct ProfileV3Directive: Equatable {
     var fieldKey: String?
     var reason: String?
     var steps: [String] = []
+    var trait: String?
+    var page: Int?
+    var prompt: String?
 }
 
 enum ProfileV3Route: Equatable {
@@ -56,10 +59,17 @@ enum ProfileV3Route: Equatable {
     case worldPassAbout
     case logout
     case deleteAccount
+    case deleteAccountConfirm
     case passportUpdate(profileID: String?)
     case passportReason
     case passportHowUsed
     case ridePicker(agentType: String, profileID: String?)
+    case rideRegions
+    case travelPersona(profileID: String?)
+    case personaTrait(trait: String, profileID: String?, page: Int)
+    case pastTrips(profileID: String?)
+    case addTrip(profileID: String?)
+    case aiChat(prompt: String)
     case unsupported(String)
 }
 
@@ -69,6 +79,11 @@ extension ProfileV3Directive {
         switch go {
         case "settings":
             return .settings
+        case "ai_chat":
+            guard let prompt = prompt?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty else {
+                return .unsupported(go)
+            }
+            return .aiChat(prompt: prompt)
         case "edit_field":
             return field.map(ProfileV3Route.editField) ?? .unsupported(go)
         case "connectors":
@@ -125,8 +140,10 @@ extension ProfileV3Directive {
             return .worldPassAbout
         case "logout", "logout_confirm":
             return .logout
-        case "delete_account", "delete_confirm":
+        case "delete_account":
             return .deleteAccount
+        case "delete_confirm":
+            return .deleteAccountConfirm
         case ProfileV3PassportRoute.update:
             return .passportUpdate(profileID: profileID)
         case ProfileV3PassportRoute.reason:
@@ -135,6 +152,16 @@ extension ProfileV3Directive {
             return .passportHowUsed
         case "ride_picker":
             return agentType.map { ProfileV3Route.ridePicker(agentType: $0, profileID: profile) } ?? .unsupported(go)
+        case "ride_regions":
+            return .rideRegions
+        case "travel_persona":
+            return .travelPersona(profileID: profile)
+        case "persona_trait":
+            return trait.map { .personaTrait(trait: $0, profileID: profile, page: max(page ?? 1, 1)) } ?? .unsupported(go)
+        case "past_trips":
+            return .pastTrips(profileID: profile)
+        case "add_trip":
+            return .addTrip(profileID: profile)
         default:
             return .unsupported(go)
         }

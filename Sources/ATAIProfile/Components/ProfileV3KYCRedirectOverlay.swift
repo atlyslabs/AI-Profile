@@ -21,8 +21,10 @@ struct ProfileV3KYCRedirectOverlay<Centre: View>: View {
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(width: ProfileV3Theme.Sizes.AddProgramme.kycCopyWidth)
-            ProfileV3GradientStatusText(text: status)
-                .padding(.top, copyToStatus)
+            if !status.isEmpty {
+                ProfileV3GradientStatusText(text: status)
+                    .padding(.top, copyToStatus)
+            }
             Spacer(minLength: 0)
                 .frame(height: bottomSpace)
         }

@@ -7,6 +7,8 @@ struct ProfileV3TermsView: View {
     var onRetry: () -> Void = {}
     let onBack: () -> Void
 
+    @State private var headerPin = ProfileV3HeaderPin()
+
     var body: some View {
         VStack(spacing: 0) {
             header
@@ -16,7 +18,9 @@ struct ProfileV3TermsView: View {
                         .padding(.horizontal, ProfileV3Theme.Sizes.Terms.horizontalMargin)
                         .padding(.top, ProfileV3Theme.Sizes.Terms.contentTop)
                         .padding(.bottom, ProfileV3Theme.Sizes.Terms.contentBottom)
+                        .profileV3HeaderFadeAnchor(headerPin)
                 }
+                .profileV3HeaderFade(headerPin)
                 .scrollBounceBehavior(.basedOnSize)
             } else {
                 ProfileV3LoadStateView(phase: phase, retry: onRetry)
@@ -44,10 +48,12 @@ struct ProfileV3TermsView: View {
                 )
                 .padding(.top, ProfileV3Theme.Sizes.Terms.wordmarkTop)
                 .accessibilityHidden(true)
-            Text(terms?.title ?? ProfileV3Strings.termsTitle)
-                .typoGraphy(.H6InterSemibold18)
-                .foregroundStyle(Color(at: .pureBlack))
-                .padding(.top, ProfileV3Theme.Sizes.Terms.titleTop)
+            if let title = terms?.title.nonEmpty {
+                Text(title)
+                    .typoGraphy(.H6InterSemibold18)
+                    .foregroundStyle(Color(at: .pureBlack))
+                    .padding(.top, ProfileV3Theme.Sizes.Terms.titleTop)
+            }
             Rectangle()
                 .fill(Color(at: .borderLightLight200))
                 .frame(height: ProfileV3Theme.Stroke.hairline)

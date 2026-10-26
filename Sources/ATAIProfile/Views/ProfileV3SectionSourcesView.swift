@@ -8,6 +8,8 @@ struct ProfileV3SectionSourcesView: View {
 
     private typealias Sources = ProfileV3Theme.Sizes.Sources
 
+    @State private var headerPin = ProfileV3HeaderPin()
+
     private var section: ProfileV3FormSection {
         form.form.sections.first { $0.id == viewModel.section.id } ?? viewModel.section
     }
@@ -18,7 +20,9 @@ struct ProfileV3SectionSourcesView: View {
             if let content = viewModel.content {
                 ScrollView(showsIndicators: false) {
                     loaded(content)
+                        .profileV3HeaderFadeAnchor(headerPin)
                 }
+                .profileV3HeaderFade(headerPin)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
             }
@@ -154,7 +158,7 @@ struct ProfileV3SectionSourcesView: View {
     let section = ProfileV3AgentFixtures.flight.sections[0]
     let viewModel = ProfileV3PreferenceSourcesViewModel(
         section: section,
-        source: section.source ?? ProfileV3SectionSource(iconURL: nil, agentType: "flight", fieldKey: section.id),
+        source: section.source ?? ProfileV3SectionSource(icons: [], agentType: "flight", fieldKey: section.id),
         profileID: nil,
         repository: ProfileV3MockRepository()
     )

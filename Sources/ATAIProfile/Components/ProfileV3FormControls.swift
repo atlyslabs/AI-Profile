@@ -63,7 +63,7 @@ private struct ProfileV3FormControlsPreview: View {
             ProfileV3CheckboxRow(title: ProfileV3Strings.ratherNotSay, isOn: prefersNotToSay) {
                 prefersNotToSay.toggle()
             }
-            ProfileV3ToggleRow(title: ProfileV3Strings.openMedicalCardWhenLocked, isOn: $showsOnLockScreen)
+            ProfileV3ToggleRow(title: "Open medical card when phone is locked", isOn: $showsOnLockScreen)
         }
         .padding(ProfileV3Theme.Sizes.screenHorizontalMargin)
         .background(Color(at: .pureWhite))

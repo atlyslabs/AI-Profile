@@ -19,9 +19,11 @@ public enum ProfileV3EntryPoint {
 
     public static func presentAddTraveller(navCon: UINavigationController) {
         guard addTravellerPresenter == nil else { return }
+        let repository = environment.makeRepository()
         let presenter = ProfileV3SettingsSheetPresenter(
             navCon: navCon,
-            repository: environment.makeRepository(),
+            repository: repository,
+            board: repository,
             kyc: environment.kyc,
             account: environment.account,
             coupons: environment.coupons,
@@ -29,8 +31,10 @@ public enum ProfileV3EntryPoint {
             session: environment.session,
             client: environment.client,
             profileID: environment.boardStore.cachedBoard()?.mainProfile?.profileID,
+            profileName: nil,
             onConnectConnector: nil,
             onTravellersChanged: nil,
+            onConnectorsDisconnected: nil,
             onOpenProgrammes: nil,
             onFinish: { finished in
                 guard addTravellerPresenter === finished else { return }
@@ -110,6 +114,13 @@ public enum ProfileV3EntryPoint {
             residenceCode: residenceCode,
             onSaved: onSaved
         )
+    }
+
+    static func makeTravelPersona(
+        profileID: String?,
+        repository: any ProfileV3PersonaRepository
+    ) -> UIViewController {
+        ProfileV3TravelPersonaHostingController(profileID: profileID, repository: repository)
     }
 
     static func makeProgrammes(

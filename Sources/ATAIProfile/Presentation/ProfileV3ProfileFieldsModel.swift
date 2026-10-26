@@ -21,7 +21,6 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
     private let profileID: String?
     private let writes = ProfileV3WriteQueue()
     private var editFieldTask: Task<Void, Never>?
-    private var citizenshipIconTask: Task<Void, Never>?
     private var requestedField: ProfileV3ProfileField?
 
     init(deps: ProfileV3SettingsDependencies, repository: any ProfileV3SettingsRepository, profileID: String?) {
@@ -31,7 +30,6 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
         contactDetails = deps.currentContact()
         residence = deps.currentResidence()
         citizenship = deps.currentCitizenship()
-        passportCitizenship = deps.passportCitizenship()
         currencyCountry = deps.currentCurrencyCountry()
     }
 
@@ -61,13 +59,9 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
         loadEditField(requestedField)
     }
 
-    func preloadCitizenshipIcon() {
-        citizenshipIconTask?.cancel()
-        let repository = repository
-        citizenshipIconTask = Task { [weak self] in
-            guard let field = try? await repository.loadEditField(.citizenship), !Task.isCancelled else { return }
-            self?.citizenshipIconCode = field.currentCode?.uppercased().nonEmpty
-        }
+    func applyCitizenship(code: String?) {
+        passportCitizenship = code.map { ProfileV3Country(code: $0) ?? ProfileV3Country(code: $0, name: $0) }
+        citizenshipIconCode = code
     }
 
     func selectResidence(_ country: ProfileV3Country) {
@@ -128,7 +122,6 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
 
     func cancelReads() {
         editFieldTask?.cancel()
-        citizenshipIconTask?.cancel()
     }
 
     private func loadEditField(_ field: ProfileV3ProfileField) {

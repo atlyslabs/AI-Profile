@@ -31,19 +31,37 @@ struct ProfileV3ProgrammeTile: View {
         RoundedRectangle(cornerRadius: ProfileV3Theme.Radius.xxl, style: .continuous)
     }
 
+    private var cardAspect: CGFloat {
+        artAspect ?? programme.artAspect ?? ProfileV3Theme.Sizes.Programme.artAspectRatio
+    }
+
+    private var hasBottomRow: Bool {
+        guard !isFlipped else { return false }
+        switch pill {
+        case .none: return false
+        case .remove: return true
+        case .insight: return insightTitle != nil
+        }
+    }
+
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             face
             if !isFlipped {
-                bottomPill
-                    .padding(.leading, ProfileV3Theme.Space.s20)
-                    .padding(.bottom, ProfileV3Theme.Sizes.ProgrammeTile.pillBottom)
+                bottomRow
             }
         }
-        .frame(width: width, height: ProfileV3Theme.Sizes.ProgrammeTile.height)
+        .aspectRatio(cardAspect, contentMode: .fit)
+        .frame(width: width, height: width.map { $0 / cardAspect })
         .frame(maxWidth: width == nil ? .infinity : nil)
         .contentShape(shape)
         .contentShape(.dragPreview, shape)
+    }
+
+    private var bottomRow: some View {
+        bottomPill
+            .padding(.leading, ProfileV3Theme.Space.s20)
+            .padding(.bottom, ProfileV3Theme.Sizes.ProgrammeTile.pillBottom)
     }
 
     private var cardFace: some View {
@@ -84,13 +102,12 @@ struct ProfileV3ProgrammeTile: View {
             }
             copy
         }
-        .frame(height: ProfileV3Theme.Sizes.ProgrammeTile.height)
         .clipShape(shape)
     }
 
     private var copy: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .top, spacing: ProfileV3Theme.Space.s16) {
+            HStack(alignment: .center, spacing: ProfileV3Theme.Space.s16) {
                 if !hasArt || programme.isArtPlaceholder {
                     Text(programme.name)
                         .typoGraphy(.B2InterSemibold12)
@@ -98,33 +115,56 @@ struct ProfileV3ProgrammeTile: View {
                         .lineLimit(1)
                 }
                 Spacer(minLength: 0)
-                VStack(alignment: .trailing, spacing: ProfileV3Theme.Space.s6) {
-                    Text(pointsText)
-                        .typoGraphy(.H4InterSemibold24)
-                        .foregroundStyle(shade.primary)
-                    Text(ProfileV3Strings.points)
-                        .typoGraphy(.T1InterMedium11)
-                        .foregroundStyle(shade.secondary)
-                }
+                Text(ProfileV3Strings.points)
+                    .typoGraphy(.T1InterBold11)
+                    .textCase(.uppercase)
+                    .foregroundStyle(shade.label)
+                    .fixedSize()
             }
-            numberRow
-                .padding(.top, ProfileV3Theme.Space.s16)
+            HStack(alignment: .center, spacing: ProfileV3Theme.Space.s16) {
+                if hasNumber || programme.tier != nil {
+                    numberRow
+                }
+                Spacer(minLength: 0)
+                Text(pointsText)
+                    .typoGraphy(.H4InterSemibold24)
+                    .foregroundStyle(shade.primary)
+                    .fixedSize()
+            }
+            .padding(.top, ProfileV3Theme.Space.s6)
             if programme.expiryLabel != nil || programme.updatedLine != nil {
-                statusRow
-                    .padding(.top, ProfileV3Theme.Space.s10)
+                HStack(alignment: .firstTextBaseline, spacing: ProfileV3Theme.Space.s12) {
+                    if let expiry = programme.expiryLabel {
+                        Text(expiry)
+                            .typoGraphy(.T1InterMedium11)
+                            .foregroundStyle(shade.faint)
+                            .fixedSize()
+                    }
+                    Spacer(minLength: 0)
+                    if let updated = programme.updatedLine {
+                        Text(updated)
+                            .typoGraphy(.T1InterMedium11)
+                            .foregroundStyle(shade.secondary)
+                            .multilineTextAlignment(.trailing)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .padding(.top, ProfileV3Theme.Space.s6)
             }
             if let insight = insightText, showsInsight {
                 Text(insight)
                     .typoGraphy(.T1InterMedium11)
                     .foregroundStyle(shade.number)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: ProfileV3Theme.Sizes.ProgrammeTile.insightWidth, alignment: .leading)
-                    .padding(.top, ProfileV3Theme.Space.s28)
+                    .frame(maxWidth: ProfileV3Theme.Sizes.ProgrammeTile.insightWidth, alignment: .topLeading)
+                    .padding(.top, ProfileV3Theme.Space.s20)
+                    .layoutPriority(-1)
                     .transition(.opacity.combined(with: .offset(y: ProfileV3Theme.Motion.insightRevealOffset)))
             }
         }
         .padding(.top, ProfileV3Theme.Space.s24)
         .padding(.horizontal, textInset)
+        .padding(.bottom, hasBottomRow ? ProfileV3Theme.Sizes.ProgrammeTile.bottomRowReserve : ProfileV3Theme.Space.s20)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .shadow(
             color: hasArt ? shade.shadow : .clear,
             radius: ProfileV3Theme.Shadow.artTextRadius,
@@ -136,36 +176,21 @@ struct ProfileV3ProgrammeTile: View {
 
     private var shade: ProfileV3Theme.CardShade { .resolve(programme.textOverlay) }
 
-    private var hasNumber: Bool { !programme.displayNumber.isEmpty }
-
-    private var statusRow: some View {
-        HStack(alignment: .firstTextBaseline, spacing: ProfileV3Theme.Space.s12) {
-            if let expiry = programme.expiryLabel {
-                Text(expiry)
-                    .typoGraphy(.T1InterMedium11)
-                    .foregroundStyle(shade.faint)
-                    .fixedSize()
-            }
-            Spacer(minLength: 0)
-            if let updated = programme.updatedLine {
-                Text(updated)
-                    .typoGraphy(.T1InterMedium11)
-                    .foregroundStyle(shade.secondary)
-                    .multilineTextAlignment(.trailing)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-    }
+    private var hasNumber: Bool { programme.displayNumber != nil }
 
     private var numberRow: some View {
         HStack(spacing: 0) {
             if let tier = programme.tier {
                 tierLabel(tier)
             }
-            Text(programme.displayNumber)
-                .typoGraphy(.T1InterBold11)
-                .textCase(.uppercase)
-                .foregroundStyle(shade.number)
+            if let number = programme.displayNumber {
+                Text(number)
+                    .font(Font.Inter.get(size: ProfileV3Theme.Typography.programmeNumberSize, weight: .bold))
+                    .tracking(ProfileV3Theme.Typography.programmeNumberTracking)
+                    .textCase(.uppercase)
+                    .foregroundStyle(shade.number)
+                    .lineLimit(1)
+            }
             if let number = programme.membershipNumber {
                 Button { copy(number) } label: {
                     (isCopied ? ATIcon.SwiftUIImage.check : ATIcon.SwiftUIImage.contentCopy)
@@ -228,8 +253,7 @@ struct ProfileV3ProgrammeTile: View {
     }
 
     private var insightTitle: String? {
-        if let action = programme.insight?.actionTitle, !action.isEmpty { return action }
-        return programme.insightDirective == nil ? nil : ProfileV3Strings.viewInsight
+        hasInsight ? ProfileV3Strings.viewInsight : nil
     }
 
     @ViewBuilder
@@ -272,40 +296,25 @@ struct ProfileV3ProgrammeTile: View {
                 Text(programme.holderName ?? programme.name)
                     .typoGraphy(.H5InterSemibold20)
                     .foregroundStyle(Color(at: .pureWhite))
-                Text(programme.displayNumber)
-                    .typoGraphy(.T1InterBold11)
-                    .textCase(.uppercase)
-                    .foregroundStyle(ProfileV3Theme.Palette.programmeTileBackNumber)
+                if let number = programme.displayNumber {
+                    Text(number)
+                        .typoGraphy(.T1InterBold11)
+                        .textCase(.uppercase)
+                        .foregroundStyle(ProfileV3Theme.Palette.programmeTileBackNumber)
+                }
             }
         }
-        .frame(height: ProfileV3Theme.Sizes.ProgrammeTile.height)
         .clipShape(shape)
     }
 
     @ViewBuilder
     private var art: some View {
         if let url = programme.artURL {
-            GeometryReader { proxy in
-                let artWidth = renderedArtWidth(in: proxy.size)
-                ProfileV3RemoteImage(url: url, contentMode: .fill, placeholder: .clear) { image in
-                    guard image.size.height > 0 else { return }
-                    artAspect = image.size.width / image.size.height
-                }
-                .frame(width: artWidth, height: proxy.size.height)
-                .offset(x: artOffset(tileWidth: proxy.size.width, artWidth: artWidth))
+            ProfileV3RemoteImage(url: url, contentMode: .fill, placeholder: .clear) { image in
+                guard image.size.width > 0, image.size.height > 0 else { return }
+                artAspect = image.size.width / image.size.height
             }
         }
-    }
-
-    private func renderedArtWidth(in size: CGSize) -> CGFloat {
-        let aspect: CGFloat = artAspect ?? ProfileV3Theme.Sizes.Programme.artAspectRatio
-        let heightDriven: CGFloat = size.height * aspect
-        return max(size.width, heightDriven)
-    }
-
-    private func artOffset(tileWidth: CGFloat, artWidth: CGFloat) -> CGFloat {
-        let logoOnTextColumn: CGFloat = textInset - artWidth * ProfileV3Theme.Sizes.Programme.artLogoInset
-        return min(0, max(tileWidth - artWidth, logoOnTextColumn))
     }
 
     private var glowColor: Color { ProfileV3Theme.Palette.programmeTileBackGlow }

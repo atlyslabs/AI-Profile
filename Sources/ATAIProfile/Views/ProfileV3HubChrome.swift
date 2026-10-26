@@ -159,8 +159,9 @@ struct ProfileV3HubPinnedBlock: View {
             passes: viewModel.home?.worldPasses ?? [],
             selectedID: selection,
             expandedID: stage.expandedPass?.id,
-            showsHint: viewModel.showsHoldHint && viewModel.home != nil && stage.isEntryComplete,
-            playsFlipDemo: viewModel.playsFlipDemo && viewModel.home != nil && stage.isEntryComplete,
+            showsHint: viewModel.showsHoldHint && viewModel.flipDemoPassID != viewModel.selectedPassID
+                && viewModel.home != nil && stage.isEntryComplete,
+            flipDemoPassID: viewModel.home != nil && stage.isEntryComplete ? viewModel.flipDemoPassID : nil,
             kycGlowPlays: viewModel.kycGlowPlays,
             collapseProgress: collapse,
             flipAffordancePassIDs: viewModel.kycAnnouncedPassIDs,
@@ -205,16 +206,16 @@ private struct ProfileV3HubPin: ViewModifier {
 struct ProfileV3HubPassOverlay: View {
     @ObservedObject var stage: ProfileV3HubStage
     let target: CGRect
-    var extraVisitedCodes: [String: [String]] = [:]
+    var latestPasses: [String: ProfileV3WorldPass] = [:]
     var isGlobeAnimating = true
     let onAddTraveller: () -> Void
-    var onPastTrips: ((ProfileV3WorldPass, Bool) -> Void)?
+    var onTrips: ((ProfileV3WorldPass, ProfileV3Directive) -> Void)?
 
     @State private var detailSphere: ProfileV3GlobeSphere?
 
     var body: some View {
         if let expanded = stage.expandedPass, let hero = stage.passHero {
-            let pass = expanded.mergingVisited(extraVisitedCodes[expanded.id] ?? [])
+            let pass = latestPasses[expanded.id] ?? expanded
             ZStack {
                 Button(action: stage.collapse) {
                     Rectangle()
@@ -226,7 +227,7 @@ struct ProfileV3HubPassOverlay: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel(ProfileV3Strings.close)
                 ProfileV3HeroRect(state: hero, fill: Color(at: .pureBlack))
-                if let heroGlobe = stage.heroGlobe, !stage.isDetailSettled {
+                if ProfileV3FeatureFlags.isGlobeEnabled, let heroGlobe = stage.heroGlobe, !stage.isDetailSettled {
                     ProfileV3HeroGlobe(
                         progress: hero.progress,
                         source: .card(in: stage.heroSource),
@@ -235,22 +236,25 @@ struct ProfileV3HubPassOverlay: View {
                         isAnimating: isGlobeAnimating
                     )
                     .clipShape(ProfileV3HeroClip(frame: hero.frame, cornerRadius: hero.cornerRadius))
-                    .transition(.opacity)
+                    .transition(.identity)
                 }
                 ProfileV3WorldPassDetailView(
                     pass: pass,
+                    showsChrome: stage.isDetailSettled,
                     isGlobeAnimating: isGlobeAnimating && stage.isDetailSettled && !stage.isGlobePaused,
                     globePose: stage.heroGlobe?.pose,
-                    onGlobeSphere: { detailSphere = $0 },
+                    onGlobeSphere: { sphere in
+                        guard sphere.radius > 1 else { return }
+                        detailSphere = sphere
+                    },
                     onAddTraveller: onAddTraveller,
-                    onPastTrips: onPastTrips.map { open in { open(expanded, $0) } }
+                    onTrips: onTrips.map { open in { open(pass, $0) } }
                 )
                     .frame(width: target.width, height: target.height)
                     .clipShape(
                         RoundedRectangle(cornerRadius: ProfileV3Theme.Sizes.Detail.cornerRadius, style: .continuous)
                     )
                     .position(x: target.midX, y: target.midY)
-                    .opacity(stage.isDetailSettled ? 1 : 0)
                     .allowsHitTesting(stage.isDetailSettled)
                 if stage.isDetailSettled {
                     VStack {

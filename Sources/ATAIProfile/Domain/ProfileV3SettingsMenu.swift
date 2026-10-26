@@ -24,6 +24,7 @@ struct ProfileV3SettingsMenu: Equatable {
     let rows: [ProfileV3SettingsRowItem]
     var accountsBadgeURL: URL?
     var concierge: ProfileV3Concierge?
+    var citizenshipCode: String?
 
     var accountRows: [ProfileV3SettingsRowItem] {
         accountsRows.filter { $0.route != .connectors }
@@ -36,4 +37,18 @@ struct ProfileV3SettingsMenu: Equatable {
     var dangerRows: [ProfileV3SettingsRowItem] {
         rows.filter(\.isDanger)
     }
+}
+
+struct ProfileV3DeleteAccountReason: Equatable {
+    let title: String
+    let subtitle: String
+    let placeholder: String
+    let submitLabel: String
+}
+
+struct ProfileV3DeleteAccountConfirm: Equatable {
+    let title: String
+    let warning: String
+    let proceedLabel: String
+    let cancelLabel: String
 }

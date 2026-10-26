@@ -7,6 +7,11 @@ enum ProfileV3API {
     case agent(type: ProfileV3AgentID, profileID: String?)
     case preferenceSources(agentType: String, fieldKey: String, profileID: String?)
     case ridePicker(agentType: String, profileID: String?)
+    case rideRegions
+    case travelPersona(profileID: String?)
+    case personaTrait(trait: String, profileID: String?, page: Int)
+    case pastTrips(profileID: String)
+    case addTrip(profileID: String)
     case passportUpdate(profileID: String?)
     case passportReason
     case passportHowUsed
@@ -27,6 +32,8 @@ enum ProfileV3API {
     case disconnectConfirm(connector: ProfileV3ConnectorKey)
     case editTravellers
     case permissions
+    case deleteAccount
+    case deleteAccountConfirm
     case deleteTravellerConfirm(profileID: String)
     case addTraveller
     case terms(locale: String?)
@@ -37,11 +44,32 @@ enum ProfileV3API {
     case captureState
     case captureAnswer(body: Data, contentType: String)
     case coTraveller(body: Data, contentType: String)
+    case vaultPublicKey
+    case vaultSites
+    case vaultCredentials
+    case vaultCredential(id: String, includeUsername: Bool)
+    case vaultCreateCredential(body: Data)
+    case vaultUpdateCredential(id: String, body: Data)
+    case vaultCredentialAction(id: String, action: String)
+    case vaultDeleteCredential(id: String)
+    case vaultRegisterDevice(body: Data)
+    case vaultDeleteDevice(id: String)
+    case vaultRevealChallenge(id: String, body: Data)
+    case vaultReveal(id: String, body: Data)
+    case gloveBoxMe
+    case gloveBoxCreate
+    case gloveBoxForwarding(body: Data)
+    case gloveBoxForwardingAddress(body: Data)
+    case gloveBoxMessages(limit: Int, cursor: String?)
+    case gloveBoxMessage(id: String)
+    case gloveBoxAttachment(messageID: String, index: Int)
 }
 
 extension ProfileV3API: ATCoreTargetType {
     private static let boardBasePath = "/api/gmail-connector/kyc/v2/board"
     private static let captureBasePath = "/api/gmail-connector/kyc/v1"
+    private static let vaultBasePath = "/api/fort-knox/v1"
+    private static let gloveBoxBasePath = "/gateway/jaqen/v1"
 
     var baseURL: URL {
         URL(string: "https://profile.atlys.invalid")!
@@ -57,6 +85,16 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.boardBasePath + "/agent/\(agentType)/sources/\(fieldKey)"
         case .ridePicker(let agentType, _):
             return Self.boardBasePath + "/agent/\(agentType)/ride"
+        case .rideRegions:
+            return Self.boardBasePath + "/agent/\(ProfileV3AgentID.airportLogistics.apiValue)/ride/regions"
+        case .travelPersona:
+            return Self.boardBasePath + "/travel_persona"
+        case .personaTrait(let trait, _, _):
+            return Self.boardBasePath + "/travel_persona/\(trait)"
+        case .pastTrips:
+            return Self.boardBasePath + "/past_trips"
+        case .addTrip:
+            return Self.boardBasePath + "/past_trips/add"
         case .passportUpdate:
             return Self.boardBasePath + "/passport/update"
         case .passportReason:
@@ -97,6 +135,10 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.boardBasePath + "/edit-traveler"
         case .permissions:
             return Self.boardBasePath + "/permissions"
+        case .deleteAccount:
+            return Self.boardBasePath + "/settings/delete-account"
+        case .deleteAccountConfirm:
+            return Self.boardBasePath + "/settings/delete-account/confirm"
         case .deleteTravellerConfirm(let profileID):
             return Self.boardBasePath + "/edit-traveler/delete/\(profileID)"
         case .addTraveller:
@@ -117,15 +159,51 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.captureBasePath + "/answer"
         case .coTraveller:
             return Self.captureBasePath + "/co-traveler"
+        case .vaultPublicKey:
+            return Self.vaultBasePath + "/public-key"
+        case .vaultSites:
+            return Self.vaultBasePath + "/sites"
+        case .vaultCredentials, .vaultCreateCredential:
+            return Self.vaultBasePath + "/credentials"
+        case .vaultCredential(let id, _), .vaultUpdateCredential(let id, _), .vaultDeleteCredential(let id):
+            return Self.vaultBasePath + "/credentials/\(id)"
+        case .vaultCredentialAction(let id, let action):
+            return Self.vaultBasePath + "/credentials/\(id)/\(action)"
+        case .vaultRegisterDevice:
+            return Self.vaultBasePath + "/devices"
+        case .vaultDeleteDevice(let id):
+            return Self.vaultBasePath + "/devices/\(id)"
+        case .vaultRevealChallenge(let id, _):
+            return Self.vaultBasePath + "/credentials/\(id)/reveal/challenge"
+        case .vaultReveal(let id, _):
+            return Self.vaultBasePath + "/credentials/\(id)/reveal"
+        case .gloveBoxMe, .gloveBoxCreate:
+            return Self.gloveBoxBasePath + "/me"
+        case .gloveBoxForwarding:
+            return Self.gloveBoxBasePath + "/forwarding"
+        case .gloveBoxForwardingAddress:
+            return Self.gloveBoxBasePath + "/forwarding-address"
+        case .gloveBoxMessages:
+            return Self.gloveBoxBasePath + "/messages"
+        case .gloveBoxMessage(let id):
+            return Self.gloveBoxBasePath + "/messages/\(id)"
+        case .gloveBoxAttachment(let messageID, let index):
+            return Self.gloveBoxBasePath + "/messages/\(messageID)/attachments/\(index)"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .passportScan, .submit, .slackAlert, .captureStart, .captureAnswer, .coTraveller:
+        case .passportScan, .submit, .slackAlert, .captureStart, .captureAnswer, .coTraveller,
+             .vaultCreateCredential, .vaultCredentialAction, .vaultRegisterDevice, .vaultRevealChallenge, .vaultReveal,
+             .gloveBoxCreate, .gloveBoxForwardingAddress:
             return .post
-        case .editProfile:
+        case .gloveBoxForwarding:
+            return .put
+        case .editProfile, .vaultUpdateCredential:
             return .patch
+        case .vaultDeleteCredential, .vaultDeleteDevice:
+            return .delete
         default:
             return .get
         }
@@ -140,7 +218,12 @@ extension ProfileV3API: ATCoreTargetType {
              .loyaltySources(_, let profileID),
              .benefits(let profileID),
              .preferenceSources(_, _, let profileID),
-             .editField(_, let profileID):
+             .editField(_, let profileID),
+             .travelPersona(let profileID):
+            return Self.query(("profile_id", profileID))
+        case .personaTrait(_, let profileID, let page):
+            return Self.query(("profile_id", profileID), ("page", String(page)))
+        case .pastTrips(let profileID), .addTrip(let profileID):
             return Self.query(("profile_id", profileID))
         case .loyaltyCatalogue(let query, let kind):
             return Self.query(("q", query?.nonEmpty), ("kind", kind?.nonEmpty))
@@ -148,6 +231,18 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.query(("program_name", programName), ("kind", kind))
         case .terms(let locale):
             return Self.query(("locale", locale))
+        case .vaultCredential(_, let includeUsername):
+            return includeUsername ? Self.query(("include_username", "true")) : .requestPlain
+        case .gloveBoxMessages(let limit, let cursor):
+            return Self.query(("limit", String(limit)), ("cursor", cursor))
+        case .gloveBoxForwarding(let body), .gloveBoxForwardingAddress(let body):
+            return .requestData(body)
+        case .vaultCreateCredential(let body),
+             .vaultUpdateCredential(_, let body),
+             .vaultRegisterDevice(let body),
+             .vaultRevealChallenge(_, let body),
+             .vaultReveal(_, let body):
+            return .requestData(body)
         case .passportScan(let body, _),
              .submit(let body),
              .slackAlert(let body),

@@ -15,6 +15,7 @@ struct ProfileV3CardGlobe: View {
     var pose: ProfileV3GlobePose?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.profileV3PausesAnimations) private var isPaused
     @Environment(\.profileV3Globe) private var globe
     @State private var isLandReady = false
     @State private var restingAngle: Double?
@@ -22,11 +23,11 @@ struct ProfileV3CardGlobe: View {
 
     private typealias Globe = ProfileV3Theme.Globe
 
-    private var animates: Bool { isAnimating && !reduceMotion }
+    private var animates: Bool { isAnimating && !reduceMotion && !isPaused }
 
     var body: some View {
         let landReady = isLandReady
-        SwiftUI.TimelineView(.animation(paused: !animates)) { timeline in
+        SwiftUI.TimelineView(ProfileV3AmbientSchedule(isPaused: !animates)) { timeline in
             let yaw = rotation(at: timeline.date)
             Canvas { context, size in
                 if let pose {

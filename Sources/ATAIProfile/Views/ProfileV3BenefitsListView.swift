@@ -29,24 +29,30 @@ struct ProfileV3BenefitsListView: View {
             onRetry: onRetry,
             onClose: onClose
         ) {
-            Text(resolvedTitle)
-                .font(Font.Inter.get(size: ProfileV3Theme.Typography.benefitsWordmarkSize, weight: .medium))
-                .tracking(ProfileV3Theme.Typography.benefitsWordmarkTracking)
-                .foregroundStyle(ProfileV3Theme.statusTextGradient)
-                .padding(.top, ProfileV3Theme.Space.s14)
-            Text(resolvedSubtitle)
-                .typoGraphy(.B2InterSemibold12)
-                .foregroundStyle(Color(at: .neutralGrey600))
-                .padding(.top, ProfileV3Theme.Space.s10)
-            Button(action: { onKnowMore?() }) {
-                Text(resolvedLearnMoreLabel)
-                    .typoGraphy(.B2InterSemibold12)
-                    .underline()
-                    .foregroundStyle(Color(at: .pureBlack))
+            if !title.isEmpty {
+                Text(title)
+                    .font(Font.Inter.get(size: ProfileV3Theme.Typography.benefitsWordmarkSize, weight: .medium))
+                    .tracking(ProfileV3Theme.Typography.benefitsWordmarkTracking)
+                    .foregroundStyle(ProfileV3Theme.statusTextGradient)
+                    .padding(.top, ProfileV3Theme.Space.s14)
             }
-            .buttonStyle(.plain)
-            .padding(.top, ProfileV3Theme.Space.s14)
-            .accessibilityLabel(resolvedLearnMoreLabel)
+            if !subtitle.isEmpty {
+                Text(subtitle)
+                    .typoGraphy(.B2InterSemibold12)
+                    .foregroundStyle(Color(at: .neutralGrey600))
+                    .padding(.top, ProfileV3Theme.Space.s10)
+            }
+            if !learnMoreLabel.isEmpty {
+                Button(action: { onKnowMore?() }) {
+                    Text(learnMoreLabel)
+                        .typoGraphy(.B2InterSemibold12)
+                        .underline()
+                        .foregroundStyle(Color(at: .pureBlack))
+                }
+                .buttonStyle(.plain)
+                .padding(.top, ProfileV3Theme.Space.s14)
+                .accessibilityLabel(learnMoreLabel)
+            }
         } rows: {
             ForEach(Array(benefits.enumerated()), id: \.element.id) { index, benefit in
                 ProfileV3BenefitCard(benefit: benefit, growsToFitText: true) {
@@ -81,9 +87,6 @@ struct ProfileV3BenefitsListView: View {
         presenter.open(benefit, onLocked: onActivateLocked)
     }
 
-    private var resolvedTitle: String { title.nonEmpty ?? ProfileV3Strings.worldPass }
-    private var resolvedSubtitle: String { subtitle.nonEmpty ?? ProfileV3Strings.benefitsTagline }
-    private var resolvedLearnMoreLabel: String { learnMoreLabel.nonEmpty ?? ProfileV3Strings.knowMore }
 }
 
 #if DEBUG

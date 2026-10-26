@@ -118,6 +118,7 @@ enum ProfileV3Theme {
         static let worldPassHeight: CGFloat = 350
         static let worldPassSpacing: CGFloat = 41
         static let worldPassGlobe: CGFloat = 152
+        static let worldPassGlobeSphere = worldPassGlobe * ProfileV3Theme.Globe.cardSphereRatio * 2
         static let worldPassGlobeOffsetY: CGFloat = -30.5
         static let worldPassGlobeOrbits: CGFloat = 280
         static let worldPassDividerWidth: CGFloat = 212
@@ -223,6 +224,8 @@ enum ProfileV3Theme {
         static let worldPassNumberMinScale: CGFloat = 0.5
         static let carNameSize: CGFloat = 20
         static let benefitsWordmarkSize: CGFloat = 22
+        static let programmeNumberSize: CGFloat = 13
+        static let programmeNumberTracking: CGFloat = 1.04
         static let benefitsWordmarkTracking: CGFloat = -0.88
     }
 
@@ -234,6 +237,7 @@ enum ProfileV3Theme {
         static let stagedTrack: Double = 0.2
         static let medicalSheen: Double = 0.2
         static let carSide: Double = 0.5
+        static let rideRegionsDivider: Double = 0.5
         static let baggageDetail: Double = 0.6
         static let backSlot: Double = 0.6
         static let stackSecondLayer: Double = 0.3

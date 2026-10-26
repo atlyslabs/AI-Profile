@@ -45,7 +45,7 @@ extension ProfileV3TagLabel {
     VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s16) {
         ProfileV3TagLabel(text: ProfileV3Strings.settings)
         ProfileV3TagLabel(text: "Airlines")
-        ProfileV3TagLabel.kyc(ProfileV3Strings.kycExpiredOn("23 Dec, 2027"))
+        ProfileV3TagLabel.kyc("KYC expired on 23 Dec, 2027")
     }
     .padding(ProfileV3Theme.Space.s32)
     .background(Color(at: .pureWhite))

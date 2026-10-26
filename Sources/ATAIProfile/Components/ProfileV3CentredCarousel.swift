@@ -11,7 +11,6 @@ struct ProfileV3CentredCarousel<SelectionID: Hashable, Content: View>: View {
 
     @State private var width: CGFloat = 0
     @State private var isPositioned = false
-    @State private var restoreTarget: SelectionID?
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -29,19 +28,12 @@ struct ProfileV3CentredCarousel<SelectionID: Hashable, Content: View>: View {
             .frame(height: height)
             .opacity(isPositioned ? 1 : 0)
             .offset(y: isPositioned ? 0 : revealOffset)
-            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { newWidth in
-                let isFirstLayout = width == 0 && newWidth > 0
-                width = newWidth
-                guard isFirstLayout else { return }
+            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
+            .task(id: width > 0) {
+                guard width > 0 else { return }
                 if let selection {
-                    restoreTarget = selection
-                } else {
-                    reveal()
+                    proxy.scrollTo(selection, anchor: .center)
                 }
-            }
-            .task(id: restoreTarget) {
-                guard let restoreTarget else { return }
-                proxy.scrollTo(restoreTarget, anchor: .center)
                 reveal()
             }
         }

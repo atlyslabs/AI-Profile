@@ -35,6 +35,7 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
     private var relationshipTask: Task<Void, Never>?
     private var relationshipLoadTask: Task<Void, Never>?
     private var relationshipTitles: [String: String] = [:]
+    private var initialRelationship: String?
     private var editingStoredMobile = ""
     private var editingStoredPassport = ""
     private var toastTask: Task<Void, Never>?
@@ -51,18 +52,22 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
 
     var rows: [ProfileV3TravellerRow] { screen?.travellers ?? [] }
 
+    private var editingRow: ProfileV3TravellerRow? {
+        rows.first { $0.id == editingTraveller.id }
+    }
+
     var editingRelationshipEntry: ProfileV3RelationshipEntry? {
-        rows.first { $0.id == editingTraveller.id }?.relationshipEntry
+        editingRow?.relationshipEntry
     }
 
     var editingRelationshipTitle: String? {
-        guard let value = rows.first(where: { $0.id == editingTraveller.id })?.relationship else { return nil }
-        return relationshipTitles[value] ?? ProfileV3RelationshipEntry.title(for: value)
+        guard let value = editingRow?.relationship else { return nil }
+        return relationshipTitles[ProfileV3EditField.matchKey(value)] ?? Self.humanised(value)
     }
 
     var canSaveRelationship: Bool {
         guard let relationshipSelection, !isSavingRelationship else { return false }
-        return relationshipSelection != relationshipField?.selectedValue
+        return relationshipSelection != initialRelationship
     }
 
     var isEditedPhoneValid: Bool {
@@ -125,6 +130,7 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
         guard let entry = editingRelationshipEntry, !isSavingRelationship else { return }
         relationshipField = nil
         relationshipSelection = nil
+        initialRelationship = nil
         navigator?.push(.travellerRelationship(entry.profileID))
         loadRelationship()
     }
@@ -181,10 +187,17 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
 
     private func applyRelationshipField(_ field: ProfileV3EditField) {
         relationshipField = field
-        relationshipSelection = field.selectedValue
+        initialRelationship = field.selectedValue(fallingBackTo: editingRow?.relationship)
+        relationshipSelection = initialRelationship
         for option in field.options {
-            relationshipTitles[option.value] = option.title
+            relationshipTitles[ProfileV3EditField.matchKey(option.value)] = option.title
         }
+    }
+
+    private static func humanised(_ value: String) -> String? {
+        let words = value.replacingOccurrences(of: "_", with: " ").trimmingCharacters(in: .whitespaces)
+        guard let first = words.first else { return nil }
+        return first.uppercased() + words.dropFirst()
     }
 
     func tapRemove() {

@@ -10,8 +10,10 @@ struct ProfileV3OptionPickerRow: View {
         Button(action: action) {
             HStack(spacing: 0) {
                 checkbox
-                logo
-                    .padding(.leading, ProfileV3Theme.Space.s14)
+                if let logoURL = option.logoURL {
+                    logo(logoURL)
+                        .padding(.leading, ProfileV3Theme.Space.s14)
+                }
                 Text(option.title)
                     .typoGraphy(.B1InterSemibold14)
                     .foregroundStyle(ProfileV3Theme.Palette.countryText)
@@ -39,8 +41,8 @@ struct ProfileV3OptionPickerRow: View {
             .frame(width: ProfileV3Theme.Sizes.Picker.checkbox, height: ProfileV3Theme.Sizes.Picker.checkbox)
     }
 
-    private var logo: some View {
-        ProfileV3RemoteImage(url: option.logoURL, contentMode: .fill, placeholder: Color(at: .neutralGrey100))
+    private func logo(_ url: URL) -> some View {
+        ProfileV3RemoteImage(url: url, contentMode: .fill, placeholder: Color(at: .neutralGrey100))
             .frame(width: ProfileV3Theme.Sizes.Picker.logo, height: ProfileV3Theme.Sizes.Picker.logo)
             .clipShape(Circle())
     }

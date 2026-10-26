@@ -54,6 +54,10 @@ extension ProfileV3Theme.Sizes {
         static let grabberHeight: CGFloat = 2
         static let grabberTop: CGFloat = 9
         static let titleTop: CGFloat = 40
+        static let titleLine: CGFloat = 14
+        static let closeButton = ProfileV3Theme.Control.regular
+        static let closeTop = titleTop + titleLine / 2 - closeButton / 2
+        static let closeTrailing = ProfileV3Theme.Space.s16
         static let indicatorTop: CGFloat = 13
         static let countryListTop: CGFloat = 80
         static let fadeHeight: CGFloat = 139

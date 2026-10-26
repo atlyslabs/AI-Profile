@@ -5,6 +5,8 @@ struct ProfileV3CountryList: View {
     @Binding var query: String
     let selection: ProfileV3Country?
     var pinned: ProfileV3Country?
+    var countries: [ProfileV3Country]?
+    var searchPlaceholder = ProfileV3Strings.search
     var trailing: ((ProfileV3Country) -> String?)?
     var searchText: ((ProfileV3Country) -> String?)?
     var focusesSearch = true
@@ -14,9 +16,14 @@ struct ProfileV3CountryList: View {
     @FocusState private var isSearchFocused: Bool
 
     var body: some View {
-        let items = ProfileV3CountrySearch.countries(matching: query, pinning: pinned, searchText: searchText)
+        let items = ProfileV3CountrySearch.countries(
+            matching: query,
+            pinning: pinned,
+            searchText: searchText,
+            in: countries
+        )
         VStack(spacing: 0) {
-            SettingsSearchField(placeholder: ProfileV3Strings.search, text: $query)
+            SettingsSearchField(placeholder: searchPlaceholder, text: $query)
                 .focused($isSearchFocused)
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.top, ProfileV3Theme.Space.s24)

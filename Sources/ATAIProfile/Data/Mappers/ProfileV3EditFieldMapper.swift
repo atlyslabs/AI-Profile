@@ -29,10 +29,10 @@ enum ProfileV3EditFieldMapper: ProfileV3DTOReading {
     }
 
     private static func option(_ dto: ProfileV3EditFieldOptionDTO) -> ProfileV3EditField.Option? {
-        guard let value = text(dto.value) else { return nil }
+        guard let value = text(dto.value), let title = text(dto.title) ?? text(dto.label) else { return nil }
         return ProfileV3EditField.Option(
             value: value,
-            title: text(dto.title) ?? text(dto.label) ?? ProfileV3RelationshipEntry.title(for: value),
+            title: title,
             isSelected: dto.selected ?? false
         )
     }

@@ -10,24 +10,28 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         case confirmDelete(String)
     }
 
-    @Published private(set) var trips: [ProfileV3PastTrip] = []
+    @Published private(set) var screen: ProfileV3PastTripsScreen?
     @Published private(set) var phase: ProfileV3LoadPhase = .loading
     @Published private(set) var sheet: Sheet?
     @Published private(set) var editor: ProfileV3AddPastTripViewModel?
     @Published private(set) var revealingTripID: String?
     @Published private(set) var isDeleting = false
     @Published private(set) var notice: String?
+    @Published private(set) var canRetryNotice = false
     @Published private(set) var completions = 0
 
     let pass: ProfileV3WorldPass
 
     private let repository: any ProfileV3PastTripsRepository
-    private let onChange: ([ProfileV3PastTrip]) -> Void
+    private let onChange: () -> Void
     private let onClose: () -> Void
     private var startsAdding: Bool
     private var hasStarted = false
     private var isSheetDetached = false
+    private var retryNotice: (() -> Void)?
+    private var addScreen: ProfileV3AddTripScreen?
     private var loadTask: Task<Void, Never>?
+    private var addScreenTask: Task<Void, Never>?
     private var addTask: Task<Void, Never>?
     private var deleteTask: Task<Void, Never>?
 
@@ -35,7 +39,7 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         pass: ProfileV3WorldPass,
         repository: any ProfileV3PastTripsRepository,
         startsAdding: Bool,
-        onChange: @escaping ([ProfileV3PastTrip]) -> Void,
+        onChange: @escaping () -> Void,
         onClose: @escaping () -> Void
     ) {
         self.pass = pass
@@ -45,11 +49,25 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         self.onClose = onClose
     }
 
+    var trips: [ProfileV3PastTrip] { screen?.trips ?? [] }
+
+    var title: String { screen?.title ?? "" }
+
+    var deleteConfirm: ProfileV3TripDeleteConfirm {
+        screen?.deleteConfirm ?? ProfileV3TripDeleteConfirm(title: "", confirmLabel: "", cancelLabel: "")
+    }
+
+    var actionsTrip: ProfileV3PastTrip? {
+        guard case .actions(let id) = sheet else { return nil }
+        return trips.first { $0.id == id }
+    }
+
     func start() {
         guard !hasStarted else { return }
         hasStarted = true
         ProfileV3Analytics.screen(.pastTrips)
         load()
+        preloadAddScreen()
         guard startsAdding else { return }
         startsAdding = false
         addTask = Task { [weak self] in
@@ -60,70 +78,62 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
     }
 
     func load() {
-        loadTask?.cancel()
-        if phase == .failed {
-            phase = .loading
-        }
-        let repository = repository
-        let profileID = pass.id
-        loadTask = Task { [weak self] in
-            do {
-                let trips = try await repository.loadPastTrips(profileID: profileID)
-                guard let self, !Task.isCancelled else { return }
-                self.trips = trips.newestFirst
-                phase = .loaded
-            } catch is CancellationError {
-                return
-            } catch {
-                guard let self, !Task.isCancelled else { return }
-                phase = .failed
-            }
-        }
+        reload(revealing: nil)
     }
 
     func tapAdd() {
         guard sheet == nil else { return }
-        editor = makeEditor(.add)
+        let editor = makeEditor(.add)
+        editor.load()
+        self.editor = editor
         present(.add)
     }
 
     func tapMore(_ trip: ProfileV3PastTrip) {
-        guard sheet == nil, revealingTripID == nil else { return }
+        guard sheet == nil, revealingTripID == nil, trip.edit != nil || trip.delete != nil else { return }
         present(.actions(trip.id))
     }
 
     func tapEdit() {
-        guard case .actions(let id) = sheet, let trip = trips.first(where: { $0.id == id }) else { return }
+        guard let trip = actionsTrip, trip.edit != nil else { return }
         editor = makeEditor(.edit(trip))
         present(.add)
     }
 
     func tapDelete() {
-        guard case .actions(let id) = sheet else { return }
-        present(.confirmDelete(id))
+        guard let trip = actionsTrip, trip.delete != nil else { return }
+        present(.confirmDelete(trip.id))
     }
 
     func confirmDelete() {
-        guard case .confirmDelete(let id) = sheet, !isDeleting else { return }
+        guard case .confirmDelete(let id) = sheet else { return }
+        delete(id)
+    }
+
+    private func delete(_ id: String) {
+        guard !isDeleting, let submit = trips.first(where: { $0.id == id })?.delete?.submit else { return }
         isDeleting = true
         let repository = repository
-        let profileID = pass.id
         deleteTask = Task { [weak self] in
             do {
-                try await repository.deletePastTrip(id: id, profileID: profileID)
+                try await repository.deletePastTrip(submit)
                 guard let self else { return }
                 isDeleting = false
                 present(nil)
                 withAnimation(ProfileV3Theme.Motion.pastTripsDelete) {
-                    self.trips.removeAll { $0.id == id }
+                    self.screen?.trips.removeAll { $0.id == id }
                 }
                 completions += 1
-                onChange(trips)
+                onChange()
+                reload(revealing: nil)
             } catch {
                 guard let self else { return }
                 isDeleting = false
                 present(nil)
-                notice = ProfileV3Strings.pastTripDeleteFailed
+                showNotice(
+                    ProfileV3Error.message(for: error, fallback: ProfileV3Strings.pastTripDeleteFailed),
+                    retry: ProfileV3Error.isRetryable(error) ? { [weak self] in self?.delete(id) } : nil
+                )
             }
         }
     }
@@ -149,6 +159,20 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
 
     func clearNotice() {
         notice = nil
+        retryNotice = nil
+        canRetryNotice = false
+    }
+
+    func retryAfterNotice() {
+        let retry = retryNotice
+        clearNotice()
+        retry?()
+    }
+
+    private func showNotice(_ message: String, retry: (() -> Void)? = nil) {
+        retryNotice = retry
+        canRetryNotice = retry != nil
+        notice = message
     }
 
     func didFinishReveal(_ id: String) {
@@ -157,12 +181,58 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
     }
 
     func close() {
-        [loadTask, addTask, deleteTask].forEach { $0?.cancel() }
+        [loadTask, addScreenTask, addTask, deleteTask].forEach { $0?.cancel() }
+        editor?.cancel()
         onClose()
     }
 
     private var isBusy: Bool {
         isDeleting || editor?.isSubmitting == true
+    }
+
+    private func reload(revealing draft: ProfileV3PastTripDraft?) {
+        loadTask?.cancel()
+        if screen == nil, phase == .failed {
+            phase = .loading
+        }
+        let repository = repository
+        let profileID = pass.id
+        loadTask = Task { [weak self] in
+            do {
+                let screen = try await repository.loadPastTrips(profileID: profileID)
+                guard let self, !Task.isCancelled else { return }
+                let revealed = draft.flatMap { draft in screen.trips.first { $0.matches(draft) } }
+                if let revealed {
+                    revealingTripID = revealed.id
+                    withAnimation(ProfileV3Theme.Motion.pastTripsEntrance) { self.screen = screen }
+                } else {
+                    self.screen = screen
+                }
+                phase = .loaded
+            } catch is CancellationError {
+                return
+            } catch {
+                guard let self, !Task.isCancelled else { return }
+                if self.screen == nil {
+                    phase = .failed
+                } else {
+                    showNotice(
+                        ProfileV3Error.message(for: error, fallback: ProfileV3Strings.loadFailed),
+                        retry: ProfileV3Error.isRetryable(error) ? { [weak self] in self?.reload(revealing: draft) } : nil
+                    )
+                }
+            }
+        }
+    }
+
+    private func preloadAddScreen() {
+        let repository = repository
+        let profileID = pass.id
+        addScreenTask = Task { [weak self] in
+            let screen = try? await repository.loadAddTrip(profileID: profileID)
+            guard let self, !Task.isCancelled, let screen else { return }
+            addScreen = screen
+        }
     }
 
     private func present(_ sheet: Sheet?) {
@@ -177,9 +247,11 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
             mode: mode,
             profileID: pass.id,
             existing: trips,
-            repository: repository
-        ) { [weak self] trip in
-            self?.saved(trip)
+            repository: repository,
+            screen: addScreen,
+            editDuration: screen?.duration
+        ) { [weak self] draft in
+            self?.saved(draft)
         } onFailed: { [weak self] in
             self?.saveFailed()
         }
@@ -188,16 +260,13 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
     private func saveFailed() {
         guard isSheetDetached else { return }
         present(nil)
-        notice = ProfileV3Strings.pastTripSaveFailed
+        showNotice(editor?.errorMessage ?? ProfileV3Strings.pastTripSaveFailed)
     }
 
-    private func saved(_ trip: ProfileV3PastTrip) {
+    private func saved(_ draft: ProfileV3PastTripDraft) {
         present(nil)
-        revealingTripID = trip.id
-        withAnimation(ProfileV3Theme.Motion.pastTripsEntrance) {
-            trips = (trips.filter { $0.id != trip.id } + [trip]).newestFirst
-        }
         completions += 1
-        onChange(trips)
+        onChange()
+        reload(revealing: draft)
     }
 }

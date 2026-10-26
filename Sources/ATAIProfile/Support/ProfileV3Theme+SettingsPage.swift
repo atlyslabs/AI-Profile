@@ -2,6 +2,7 @@ import SwiftUI
 
 extension ProfileV3Theme.Sizes {
     static let headerRevealDistance = ProfileV3Theme.Space.s24
+    static let headerFadeGap: CGFloat = 12
 
     enum SettingsPage {
         static let headerTop: CGFloat = 21
@@ -62,7 +63,10 @@ extension ProfileV3Theme.Sizes {
         static let shieldShadowRadius: CGFloat = 46
         static let shieldShadowY: CGFloat = 30.6
         static let shieldShadowPadding: CGFloat = 120
-        static let wordmark = CGSize(width: 48, height: 21.2)
+        static let check = CGSize(width: 54, height: 54)
+        static let checkOrigin = CGPoint(x: 14, y: 26)
+        static let wordmark = CGSize(width: 48.0943, height: 21.2238)
+        static let wordmarkOrigin = CGPoint(x: 19.16, y: 41.8)
         static let glow: CGFloat = 237
         static let glowBlur: CGFloat = 50
         static let glowCentreY: CGFloat = 151.5
@@ -91,6 +95,8 @@ extension ProfileV3Theme.Sizes {
         static let chipPadding: CGFloat = 2
         static let chipTrailing = ProfileV3Theme.Space.s8
         static let chipGap = ProfileV3Theme.Space.s8
+        static let cardShadowRadius: CGFloat = 15
+        static let cardShadowY: CGFloat = 4
         static let loadStateHeight: CGFloat = 200
         static let bottom: CGFloat = 40
         static let comingSoonArtTop: CGFloat = 120

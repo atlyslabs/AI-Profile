@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3AddTravellerView: View {
@@ -24,7 +25,7 @@ struct ProfileV3AddTravellerView: View {
         VStack(spacing: 0) {
             ProfileV3SheetChrome(
                 icon: ATIcon.SwiftUIImage.assignmentInd,
-                title: screen?.title ?? ProfileV3Strings.addTraveller,
+                title: screen?.title ?? "",
                 onBack: onBack,
                 onClose: onClose
             )
@@ -111,6 +112,7 @@ struct ProfileV3AddTravellerView: View {
             error: field.key == ProfileV3AddTravellerField.passportNumberKey ? passportError : nil,
             onFocusChange: { track(field.key, $0) }
         )
+        .postHogMask(field.key == ProfileV3AddTravellerField.passportNumberKey)
         .id(field.key)
     }
 
@@ -196,20 +198,8 @@ struct ProfileV3AddTravellerView: View {
     }
 
     private func label(for field: ProfileV3AddTravellerField) -> String {
-        let label: String
-        if !field.label.isEmpty {
-            label = field.label
-        } else {
-            switch field.key {
-            case ProfileV3AddTravellerField.firstNameKey: label = ProfileV3Strings.firstNameLabel
-            case ProfileV3AddTravellerField.lastNameKey: label = ProfileV3Strings.lastNameLabel
-            case ProfileV3AddTravellerField.mobileNumberKey: label = ProfileV3Strings.numberLabel
-            case ProfileV3AddTravellerField.passportNumberKey: label = ProfileV3Strings.passportNumber
-            case ProfileV3AddTravellerField.citizenshipKey: label = ProfileV3Strings.citizenship
-            default: label = ProfileV3Strings.fieldLabel(fromKey: field.key)
-            }
-        }
-        return field.isRequired ? ProfileV3Strings.requiredLabel(label) : label
+        guard !field.label.isEmpty else { return "" }
+        return field.isRequired ? ProfileV3Strings.requiredLabel(field.label) : field.label
     }
 
     private func placeholder(for field: ProfileV3AddTravellerField) -> String {
@@ -220,14 +210,17 @@ struct ProfileV3AddTravellerView: View {
         }
     }
 
+    @ViewBuilder
     private var confirmBar: some View {
-        ProfileV3ContinueButton(
-            title: screen?.submitLabel ?? ProfileV3Strings.addTraveller,
-            isLoading: isSaving,
-            isEnabled: canSubmit,
-            action: onConfirm
-        )
-        .profileV3CTABar()
+        if let submitLabel = screen?.submitLabel.nonEmpty {
+            ProfileV3ContinueButton(
+                title: submitLabel,
+                isLoading: isSaving,
+                isEnabled: canSubmit,
+                action: onConfirm
+            )
+            .profileV3CTABar()
+        }
     }
 }
 

@@ -13,6 +13,7 @@ protocol ProfileV3HubRouter: AnyObject {
     func openKYC()
     func openBenefitKYC(_ benefit: ProfileV3Benefit)
     func openAddTraveller()
+    func openTravelPersona(profileID: String?)
 }
 
 @MainActor
@@ -75,7 +76,6 @@ final class ProfileV3HubViewModel: ObservableObject {
     @Published private(set) var isFetchingBenefits = false
     @Published private(set) var showsAllCoupons = false
     @Published private(set) var pastTrips: ProfileV3PastTripsViewModel?
-    @Published private(set) var pastTripCodes: [String: [String]] = [:]
     @Published private(set) var photoCountryCodes: [String] = []
     @Published private(set) var couponsSheet = ProfileV3CouponsSheet.empty
     @Published private(set) var allCouponsPhase: ProfileV3LoadPhase = .loading
@@ -103,11 +103,10 @@ final class ProfileV3HubViewModel: ObservableObject {
     private var hasCountedHoldHint = false
     private var pendingKYCGlowPassIDs: Set<String> = []
     private var kycAnnounceTasks: [String: Task<Void, Never>] = [:]
-    private var pastTripCodesTasks: [String: Task<Void, Never>] = [:]
-    private var captureGeneration = 0
+    private var kycSyncGeneration = 0
     private var loadTask: Task<Void, Never>?
     private var refreshTask: Task<Void, Never>?
-    private var captureRefreshTask: Task<Void, Never>?
+    private var kycSyncTask: Task<Void, Never>?
     private var revalidateTask: Task<Void, Never>?
     private var benefitsTask: Task<Void, Never>?
     private var couponsTask: Task<Void, Never>?
@@ -123,7 +122,7 @@ final class ProfileV3HubViewModel: ObservableObject {
         self.hints = hints
         placeholderName = userFirstName?.nonEmpty?.lowercased()
         showsHoldHint = hints.isHoldHintDue
-        playsFlipDemo = !hints.hasSeenFlipDemo
+        playsFlipDemo = hints.isFlipDemoDue
         if let cached = repository.cachedBoard(), let profile = cached.mainProfile {
             board = cached
             selectedPassID = profile.pass.id
@@ -147,6 +146,14 @@ final class ProfileV3HubViewModel: ObservableObject {
 
     var mainProfileID: String? {
         board?.mainProfile?.profileID
+    }
+
+    var mainProfileName: String? {
+        board?.mainProfile?.name
+    }
+
+    var flipDemoPassID: String? {
+        playsFlipDemo ? mainProfileID : nil
     }
 
     var allBenefits: [ProfileV3Benefit] {
@@ -208,24 +215,34 @@ final class ProfileV3HubViewModel: ObservableObject {
     }
 
     func refreshAfterCapture(profileID: String, completedSteps: [String]) {
-        captureRefreshTask?.cancel()
-        captureGeneration += 1
-        let generation = captureGeneration
+        let cueBeforeCapture = kycGlowCue?.sequence
+        syncKYC(startsImmediately: false) { [weak self] board in
+            guard Self.reflects(board, completedSteps: completedSteps, profileID: profileID) else { return false }
+            if let self, kycGlowCue?.sequence == cueBeforeCapture {
+                kycStepCompletions += 1
+            }
+            return true
+        }
+    }
+
+    func refreshAfterDisconnecting(_ connectors: Set<ProfileV3ConnectorKey>) {
+        syncKYC(startsImmediately: true) { Self.reflects($0, disconnected: connectors) }
+    }
+
+    private func syncKYC(startsImmediately: Bool, until isSettled: @escaping (ProfileV3Board) -> Bool) {
+        kycSyncTask?.cancel()
+        kycSyncGeneration += 1
+        let generation = kycSyncGeneration
         isSyncingKYC = true
-        captureRefreshTask = Task { [weak self] in
+        kycSyncTask = Task { [weak self] in
             guard let self else { return }
             defer {
-                if captureGeneration == generation { isSyncingKYC = false }
+                if kycSyncGeneration == generation { isSyncingKYC = false }
             }
-            let cueBeforeCapture = kycGlowCue?.sequence
-            await ProfileV3Backoff.poll {
+            await ProfileV3Backoff.poll(startsImmediately: startsImmediately) {
                 guard let board = try? await self.repository.loadBoard(), !Task.isCancelled else { return false }
                 self.apply(board)
-                guard Self.reflects(board, completedSteps: completedSteps, profileID: profileID) else { return false }
-                if self.kycGlowCue?.sequence == cueBeforeCapture {
-                    self.kycStepCompletions += 1
-                }
-                return true
+                return isSettled(board)
             }
             guard !Task.isCancelled else { return }
             prefetchOffers()
@@ -241,10 +258,8 @@ final class ProfileV3HubViewModel: ObservableObject {
         loadTask?.cancel()
         benefitsTask?.cancel()
         couponsTask?.cancel()
-        captureRefreshTask?.cancel()
+        kycSyncTask?.cancel()
         revalidateTask?.cancel()
-        pastTripCodesTasks.values.forEach { $0.cancel() }
-        pastTripCodesTasks.removeAll()
         isFetchingBenefits = false
         isFetchingCoupons = false
         finishKYCAnnouncements()
@@ -449,7 +464,7 @@ final class ProfileV3HubViewModel: ObservableObject {
     func markFlipSeen() {
         guard playsFlipDemo else { return }
         playsFlipDemo = false
-        hints.hasSeenFlipDemo = true
+        hints.flipDemoShows += 1
     }
 
     // MARK: - Navigation
@@ -478,7 +493,15 @@ final class ProfileV3HubViewModel: ObservableObject {
             requiresKYC: requiresKYC
         )
         ProfileV3Analytics.cta(agent.next, origin: .agentCard)
-        router?.openAgent(agent, requiresKYC: false, profileID: selectedPassID)
+        switch agent.next?.route(fallbackProfileID: selectedPassID) {
+        case .agent(_, let profileID):
+            router?.openAgent(agent, requiresKYC: false, profileID: profileID ?? selectedPassID)
+        case .travelPersona(let profileID):
+            router?.openTravelPersona(profileID: profileID)
+        default:
+            guard agent.agentID != nil else { return }
+            router?.openAgent(agent, requiresKYC: false, profileID: selectedPassID)
+        }
     }
 
     func useInsight() {
@@ -495,7 +518,7 @@ final class ProfileV3HubViewModel: ObservableObject {
     func tapOpenProgrammes(_ pass: ProfileV3WorldPass) {
         if case .unsupported = pass.programmesDirective?.route() { return }
         ProfileV3Analytics.cta(pass.programmesDirective, origin: .programmes)
-        guard gatesKYC(pass.programmesDirective, fallback: !pass.kycStatus.isComplete) else {
+        guard gatesKYC(pass.programmesDirective, fallback: false) else {
             router?.openProgrammes(for: pass, passes: home?.worldPasses ?? [pass])
             return
         }
@@ -556,13 +579,37 @@ final class ProfileV3HubViewModel: ObservableObject {
 
     // MARK: - Past trips
 
+    var latestPasses: [String: ProfileV3WorldPass] {
+        let mainID = photoCountryCodes.isEmpty ? nil : mainProfileID
+        return Dictionary(
+            (home?.worldPasses ?? []).map { pass in
+                guard pass.id == mainID else { return (pass.id, pass) }
+                var merged = pass
+                merged.visitedCountryCodes += photoCountryCodes
+                return (pass.id, merged)
+            },
+            uniquingKeysWith: { first, _ in first }
+        )
+    }
+
+    func openTrips(_ pass: ProfileV3WorldPass, directive: ProfileV3Directive) {
+        switch directive.route(fallbackProfileID: pass.id) {
+        case .pastTrips:
+            openPastTrips(pass, startsAdding: false)
+        case .addTrip:
+            openPastTrips(pass, startsAdding: true)
+        default:
+            break
+        }
+    }
+
     func openPastTrips(_ pass: ProfileV3WorldPass, startsAdding: Bool) {
         guard pastTrips == nil else { return }
         let model = ProfileV3PastTripsViewModel(
             pass: pass,
             repository: repository,
             startsAdding: startsAdding,
-            onChange: { [weak self] trips in self?.pastTripsChanged(trips, for: pass) },
+            onChange: { [weak self] in self?.refreshAfterTripChange() },
             onClose: { [weak self] in self?.dismissPastTrips() }
         )
         withAnimation(ProfileV3Theme.Motion.entry) { pastTrips = model }
@@ -572,29 +619,11 @@ final class ProfileV3HubViewModel: ObservableObject {
         withAnimation(ProfileV3Theme.Motion.contentFade) { pastTrips = nil }
     }
 
-    func loadPastTripCodes(for pass: ProfileV3WorldPass) {
-        guard ProfileV3FeatureFlags.isPastTripsEnabled else { return }
-        let repository = repository
-        pastTripCodesTasks[pass.id]?.cancel()
-        pastTripCodesTasks[pass.id] = Task { [weak self] in
-            let trips = try? await repository.loadPastTrips(profileID: pass.id)
-            guard !Task.isCancelled, let self else { return }
-            pastTripCodesTasks[pass.id] = nil
-            guard let trips else { return }
-            pastTripCodes[pass.id] = trips.countryCodes
+    private func refreshAfterTripChange() {
+        refreshTask?.cancel()
+        refreshTask = Task { [weak self] in
+            await self?.refreshHome()
         }
-    }
-
-    var extraVisitedCodes: [String: [String]] {
-        guard !photoCountryCodes.isEmpty, let mainID = mainProfileID else { return pastTripCodes }
-        var codes = pastTripCodes
-        codes[mainID, default: []] += photoCountryCodes
-        return codes
-    }
-
-    private func pastTripsChanged(_ trips: [ProfileV3PastTrip], for pass: ProfileV3WorldPass) {
-        pastTripCodesTasks.removeValue(forKey: pass.id)?.cancel()
-        pastTripCodes[pass.id] = trips.countryCodes
     }
 
     func dismissAllBenefits() {
@@ -805,13 +834,13 @@ final class ProfileV3HubViewModel: ObservableObject {
 
     private static func passIDsNeedingKYCGlow(from old: ProfileV3Board?, to new: ProfileV3Board) -> Set<String> {
         guard let old else { return [] }
-        let wasComplete = Dictionary(
-            old.profiles.map { ($0.pass.id, $0.pass.kycStatus.isComplete) },
-            uniquingKeysWith: { first, _ in first }
-        )
+        let previous = Dictionary(old.profiles.map { ($0.pass.id, $0.pass) }, uniquingKeysWith: { first, _ in first })
         return Set(new.profiles.compactMap { profile -> String? in
-            guard let complete = wasComplete[profile.pass.id] else { return profile.pass.id }
-            return !complete && profile.pass.kycStatus.isComplete ? profile.pass.id : nil
+            let pass = profile.pass
+            guard let before = previous[pass.id] else { return pass.id }
+            let completed = !before.kycStatus.isComplete && pass.kycStatus.isComplete
+            let turnedNegative = before.resolvedKYCGlowTone != .negative && pass.resolvedKYCGlowTone == .negative
+            return completed || turnedNegative ? pass.id : nil
         })
     }
 
@@ -819,5 +848,9 @@ final class ProfileV3HubViewModel: ObservableObject {
         let profile = board.profiles.first { $0.profileID == profileID }
         guard let outstanding = profile?.pass.kycCapture?.steps else { return true }
         return !completedSteps.contains(where: outstanding.contains)
+    }
+
+    private static func reflects(_ board: ProfileV3Board, disconnected connectors: Set<ProfileV3ConnectorKey>) -> Bool {
+        !connectors.contains(.gmail) || board.mainProfile?.home.isGmailConnected != true
     }
 }

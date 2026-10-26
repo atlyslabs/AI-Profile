@@ -14,6 +14,8 @@ struct ProfileV3TravellerRelationshipView: View {
     let onSelect: (String) -> Void
     let onConfirm: () -> Void
 
+    @State private var headerPin = ProfileV3HeaderPin()
+
     var body: some View {
         VStack(spacing: 0) {
             ProfileV3SheetChrome(
@@ -55,18 +57,23 @@ struct ProfileV3TravellerRelationshipView: View {
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, ProfileV3Theme.Space.s32)
             .padding(.bottom, ProfileV3Theme.Sizes.settingsSheetBottom)
+            .profileV3HeaderFadeAnchor(headerPin)
         }
+        .profileV3HeaderFade(headerPin)
         .scrollBounceBehavior(.basedOnSize)
     }
 
+    @ViewBuilder
     private var confirmBar: some View {
-        ProfileV3ContinueButton(
-            title: field?.submitLabel?.nonEmpty ?? ProfileV3Strings.confirmEdit,
-            isLoading: isSaving,
-            isEnabled: canSave,
-            action: onConfirm
-        )
-        .profileV3CTABar()
+        if let submitLabel = field?.submitLabel?.nonEmpty {
+            ProfileV3ContinueButton(
+                title: submitLabel,
+                isLoading: isSaving,
+                isEnabled: canSave,
+                action: onConfirm
+            )
+            .profileV3CTABar()
+        }
     }
 }
 

@@ -23,6 +23,8 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     @Published private(set) var passportReason: ProfileV3PassportReasonViewModel?
     @Published var passportHowUsed: ProfileV3PassportHowUsedViewModel?
     @Published var airportPickup: ProfileV3AirportPickupViewModel?
+    @Published var rideRegions: ProfileV3RideRegionsViewModel?
+    @Published var householdApply: ProfileV3HouseholdApplySession?
     @Published private(set) var ridePicker: ProfileV3RidePicker?
     @Published private(set) var selectedTabs: [String: String] = [:]
 
@@ -35,11 +37,13 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     private let onFinish: () -> Void
     private let presentPassportScan: ((ProfileV3PassportScanRequest) -> Void)?
     private var saveTask: Task<Void, Never>?
+    private var didFinish = false
     private var historyTask: Task<Void, Never>?
     private var passportScanTask: Task<Void, Never>?
     private var ridePickerTask: Task<Void, Never>?
+    private var refreshTask: Task<Void, Never>?
     private var pendingPassportScan: ProfileV3Directive?
-    private let savedValues: ProfileV3AgentFormValues
+    private var savedValues: ProfileV3AgentFormValues
 
     init(
         form: ProfileV3AgentForm,
@@ -389,43 +393,147 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         sources = nil
     }
 
+    func openNoteLink(_ directive: ProfileV3Directive) {
+        guard rideRegions == nil, directive.route(fallbackProfileID: profileID) == .rideRegions else { return }
+        let regions = ProfileV3RideRegionsViewModel(repository: repository) { [weak self] in
+            self?.rideRegions = nil
+        }
+        regions.load()
+        rideRegions = regions
+    }
+
     func save() {
         guard saveState == .idle || saveState == .failed else { return }
+        if let household = form.household, householdApply == nil {
+            householdApply = ProfileV3HouseholdApplySession(prompt: household)
+            return
+        }
+        submit(profileIDs: nil)
+    }
+
+    func toggleHouseholdTraveller(_ id: String) {
+        guard var session = householdApply, session.phase == .choosing || session.phase == .failed else { return }
+        if session.selection.contains(id) {
+            session.selection.remove(id)
+        } else {
+            session.selection.insert(id)
+        }
+        session.phase = .choosing
+        session.errorMessage = nil
+        householdApply = session
+    }
+
+    func confirmHousehold() {
+        guard let session = householdApply, session.phase == .choosing || session.phase == .failed else { return }
+        let ids = session.prompt.travellers.map(\.id).filter { session.selection.contains($0) }
+        guard !ids.isEmpty else { return }
+        submit(profileIDs: ids)
+    }
+
+    func closeHousehold() {
+        guard householdApply?.phase != .saving else { return }
+        let finished = householdApply?.phase == .saved
+        if finished { saveTask?.cancel() }
+        householdApply = nil
+        if finished || saveState == .failed {
+            saveState = .idle
+        }
+    }
+
+    private func finish() {
+        guard !didFinish else { return }
+        didFinish = true
+        onFinish()
+    }
+
+    private func submit(profileIDs: [String]?) {
+        guard saveState == .idle || saveState == .failed else { return }
         saveState = .saving
+        if var session = householdApply {
+            session.phase = .saving
+            session.errorMessage = nil
+            householdApply = session
+        }
         saveTask = Task { [weak self] in
             guard let self else { return }
             let snapshot = form
             let changedSections = ProfileV3AgentFormValues(snapshot).changedKeys(from: savedValues)
             do {
-                try await repository.saveAgentForm(snapshot, profileID: profileID)
+                let doneLabel = try await repository.saveAgentForm(
+                    snapshot,
+                    profileID: profileID,
+                    profileIDs: profileIDs
+                )
                 ProfileV3Analytics.agentFormSaved(agentKey: agentKey, changedSections: changedSections)
                 onSaved()
                 guard !Task.isCancelled else { return }
+                savedValues = ProfileV3AgentFormValues(snapshot)
+                if var session = householdApply {
+                    session.phase = .saved
+                    session.doneLabel = doneLabel?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                    householdApply = session
+                }
                 self.saveState = .saved
+                refresh()
                 try await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds))
                 guard !Task.isCancelled else { return }
-                onFinish()
+                householdApply = nil
+                self.saveState = .idle
             } catch is CancellationError {
                 return
             } catch {
                 ProfileV3Analytics.agentFormSaveFailed(agentKey: agentKey, error: error)
                 guard !Task.isCancelled else { return }
-                self.saveState = .failed
+                if householdApply != nil {
+                    recordHouseholdFailure(error)
+                    self.saveState = .idle
+                } else {
+                    self.saveState = .failed
+                }
             }
         }
     }
 
+    private func recordHouseholdFailure(_ error: Error) {
+        guard var session = householdApply else { return }
+        session.phase = .failed
+        session.errorMessage = ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed)
+        if case ProfileV3Error.partialSave(_, let failed, let saved) = error {
+            if !failed.isEmpty {
+                session.selection = Set(failed)
+            } else if !saved.isEmpty {
+                session.selection.subtract(saved)
+            }
+        }
+        householdApply = session
+    }
+
     func tapBack() {
         saveTask?.cancel()
-        onFinish()
+        finish()
+    }
+
+    private func refresh() {
+        refreshTask?.cancel()
+        let repository = repository
+        let agentID = form.agentID
+        let profileID = profileID
+        refreshTask = Task { [weak self] in
+            guard case .preferences(let fresh)? = try? await repository.loadAgentFlow(agentID: agentID, profileID: profileID),
+                  let self, !Task.isCancelled, ProfileV3AgentFormValues(form) == savedValues else { return }
+            form = fresh
+            savedValues = ProfileV3AgentFormValues(fresh)
+        }
     }
 
     func cancelPendingWork() {
         saveTask?.cancel()
+        refreshTask?.cancel()
         passportScanTask?.cancel()
         passportScanTask = nil
         ridePickerTask?.cancel()
         airportPickup?.cancelPendingWork()
+        rideRegions?.cancel()
     }
 
     private func update(_ sectionID: String, _ mutate: (inout ProfileV3FormSection) -> Void) {
@@ -470,6 +578,32 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         } else {
             selection = [id]
         }
+    }
+}
+
+struct ProfileV3HouseholdApplySession: Identifiable, Equatable {
+    enum Phase: Equatable {
+        case choosing
+        case saving
+        case saved
+        case failed
+    }
+
+    let id = UUID()
+    var prompt: ProfileV3HouseholdPrompt
+    var selection: Set<String>
+    var phase: Phase
+    var doneLabel = ""
+    var errorMessage: String?
+
+    init(prompt: ProfileV3HouseholdPrompt) {
+        self.prompt = prompt
+        selection = Set(prompt.travellers.filter(\.isSelected).map(\.id))
+        phase = .choosing
+    }
+
+    var canConfirm: Bool {
+        !selection.isEmpty && (phase == .choosing || phase == .failed)
     }
 }
 

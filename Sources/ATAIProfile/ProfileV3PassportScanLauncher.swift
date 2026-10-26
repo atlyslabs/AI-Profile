@@ -4,7 +4,7 @@ import UIKit
 struct ProfileV3PassportScanRequest {
     let scan: ProfileV3PassportScan
     let avatarURL: URL?
-    let upload: (ProfileV3PassportSide, Data) async throws -> ProfileV3PassportField?
+    let upload: (ProfileV3PassportSide, Data) async throws -> ProfileV3PassportScanResult
     let onFinish: (_ field: ProfileV3PassportField?, _ completed: Bool) -> Void
 }
 
@@ -12,10 +12,11 @@ struct ProfileV3PassportScanRequest {
 final class ProfileV3PassportScanVerifier {
     private static let jpegQuality: CGFloat = 0.85
 
-    private let upload: (ProfileV3PassportSide, Data) async throws -> ProfileV3PassportField?
+    private let upload: (ProfileV3PassportSide, Data) async throws -> ProfileV3PassportScanResult
     private(set) var latestField: ProfileV3PassportField?
+    var onBackNotNeeded: (() -> Void)?
 
-    init(upload: @escaping (ProfileV3PassportSide, Data) async throws -> ProfileV3PassportField?) {
+    init(upload: @escaping (ProfileV3PassportSide, Data) async throws -> ProfileV3PassportScanResult) {
         self.upload = upload
     }
 
@@ -25,8 +26,9 @@ final class ProfileV3PassportScanVerifier {
             return .failed(message: ProfileV3Strings.passportUploadFailed)
         }
         do {
-            let field = try await upload(side, data)
-            if let field { latestField = field }
+            let result = try await upload(side, data)
+            if let field = result.field { latestField = field }
+            if side == .front, !result.needsBack { onBackNotNeeded?() }
             return .verified
         } catch ProfileV3Error.invalidRequest(let message) {
             return .rejected(reason: message ?? ProfileV3Strings.passportUnreadable)
@@ -57,6 +59,19 @@ enum ProfileV3PassportScanLauncher {
         onHowUsed: @escaping () -> Void
     ) {
         let verifier = ProfileV3PassportScanVerifier(upload: request.upload)
+        var hasFinished = false
+        let finish: (Bool) -> Void = { completed in
+            guard !hasFinished else { return }
+            hasFinished = true
+            request.onFinish(verifier.latestField, completed)
+        }
+        verifier.onBackNotNeeded = { [weak host] in
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.passportFrontOnlyFinishMilliseconds))
+                guard let flow = host?.presentedViewController else { return finish(true) }
+                flow.dismiss(animated: true) { finish(true) }
+            }
+        }
         var capture = ProfileV3IdentityCapture.Request(
             pieces: [.passportFront, .passportBack],
             flowTitle: ProfileV3Strings.newPassport,
@@ -73,7 +88,7 @@ enum ProfileV3PassportScanLauncher {
             capture.headerAccessory = AnyView(ProfileV3HowUsedPill(avatarURL: request.avatarURL, action: onHowUsed))
         }
         identityCapture.presentCapture(capture, from: host) { outcome in
-            request.onFinish(verifier.latestField, outcome == .completed)
+            finish(outcome == .completed)
         }
     }
 

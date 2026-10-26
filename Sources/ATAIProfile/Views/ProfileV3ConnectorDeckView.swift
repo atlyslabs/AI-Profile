@@ -7,6 +7,7 @@ struct ProfileV3ConnectorDeckView: View {
     let onBack: () -> Void
     let onEngage: ((ProfileV3ConnectorDeckEntry) -> Void)?
     let onDisconnect: ((ProfileV3ConnectorDeckEntry) -> Void)?
+    let onEdit: ((ProfileV3ConnectorDeckEntry) -> Void)?
 
     @State private var armedEntry: ProfileV3ConnectorDeckEntry?
     @State private var width: CGFloat = 0
@@ -17,13 +18,15 @@ struct ProfileV3ConnectorDeckView: View {
         initialArmedEntry: ProfileV3ConnectorDeckEntry? = nil,
         onBack: @escaping () -> Void,
         onEngage: ((ProfileV3ConnectorDeckEntry) -> Void)? = nil,
-        onDisconnect: ((ProfileV3ConnectorDeckEntry) -> Void)? = nil
+        onDisconnect: ((ProfileV3ConnectorDeckEntry) -> Void)? = nil,
+        onEdit: ((ProfileV3ConnectorDeckEntry) -> Void)? = nil
     ) {
         self.entries = entries
         self.confirm = confirm
         self.onBack = onBack
         self.onEngage = onEngage
         self.onDisconnect = onDisconnect
+        self.onEdit = onEdit
         _armedEntry = State(initialValue: initialArmedEntry)
     }
 
@@ -46,10 +49,11 @@ struct ProfileV3ConnectorDeckView: View {
                     ForEach(entries) { entry in
                         ProfileV3ConnectorDeckCard(
                             entry: entry,
-                            confirm: confirm,
+                            confirm: entry.isApp ? nil : confirm,
                             initiallyArmed: entry == armedEntry,
                             onEngaged: { onEngage?(entry) },
-                            onArmed: { armedEntry = entry }
+                            onArmed: { armedEntry = entry },
+                            onEdit: entry.isApp ? onEdit.map { edit in { edit(entry) } } : nil
                         )
                         .scaleEffect(canvasScale)
                         .frame(
@@ -75,9 +79,9 @@ struct ProfileV3ConnectorDeckView: View {
                 .ignoresSafeArea(edges: .bottom)
         }
         .overlay(alignment: .bottom) {
-            if let armedEntry {
+            if let armedEntry, let title = disconnectTitle(for: armedEntry) {
                 ProfileV3ContinueButton(
-                    title: confirm?.confirmTitle ?? ProfileV3Strings.disconnectEmail,
+                    title: title,
                     icon: ATIcon.SwiftUIImage.callSplit,
                     iconSize: ProfileV3Theme.Icon.lg,
                     tint: ProfileV3Theme.Palette.destructive
@@ -88,6 +92,10 @@ struct ProfileV3ConnectorDeckView: View {
             }
         }
         .animation(ProfileV3Theme.Motion.connectorDeckDim, value: armedEntry)
+    }
+
+    private func disconnectTitle(for entry: ProfileV3ConnectorDeckEntry) -> String? {
+        entry.isApp ? ProfileV3Strings.disconnectApp : confirm?.confirmTitle.nonEmpty
     }
 
     private var header: some View {

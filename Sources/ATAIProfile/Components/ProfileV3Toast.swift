@@ -3,12 +3,19 @@ import SwiftUI
 
 struct ProfileV3Toast: View {
     let message: String
+    var isError = false
+
+    private var accent: Color {
+        isError ? ProfileV3Theme.Palette.error : ProfileV3Theme.Palette.toastEnd
+    }
 
     var body: some View {
         HStack(spacing: ProfileV3Theme.Space.s12) {
             Text(message)
                 .typoGraphy(.B2InterSemibold12)
-                .foregroundStyle(ProfileV3Theme.toastTextGradient)
+                .foregroundStyle(
+                    isError ? AnyShapeStyle(Color(at: .neutralGrey800)) : AnyShapeStyle(ProfileV3Theme.toastTextGradient)
+                )
                 .multilineTextAlignment(.leading)
             Spacer(minLength: 0)
             badge
@@ -31,7 +38,7 @@ struct ProfileV3Toast: View {
         ZStack {
             Color(at: .pureWhite)
             RadialGradient(
-                colors: [ProfileV3Theme.Palette.toastEnd.opacity(ProfileV3Theme.Opacity.toastWash), .clear],
+                colors: [accent.opacity(ProfileV3Theme.Opacity.toastWash), .clear],
                 center: .trailing,
                 startRadius: 0,
                 endRadius: ProfileV3Theme.Sizes.toastGlowRadius
@@ -43,8 +50,8 @@ struct ProfileV3Toast: View {
     private var badge: some View {
         ZStack {
             Circle()
-                .fill(ProfileV3Theme.Palette.toastEnd)
-            ATIcon.SwiftUIImage.check
+                .fill(accent)
+            (isError ? ATIcon.SwiftUIImage.priorityHigh : ATIcon.SwiftUIImage.check)
                 .profileV3Icon(ProfileV3Theme.Icon.sm)
                 .foregroundStyle(Color(at: .pureWhite))
         }

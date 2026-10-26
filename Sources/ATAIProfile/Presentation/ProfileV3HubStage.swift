@@ -40,6 +40,7 @@ final class ProfileV3HubStage: ObservableObject {
     private(set) var heroSource: CGRect = .zero
     private var heroTask: Task<Void, Never>?
     private var isCollapsing = false
+    private var flight = 0
 
     var showsChrome: Bool { entryStage >= .podium }
     var showsCards: Bool { entryStage >= .cards }
@@ -104,9 +105,13 @@ final class ProfileV3HubStage: ObservableObject {
         renderer: any ProfileV3GlobeRendering
     ) {
         heroTask?.cancel()
+        flight += 1
+        let flight = flight
         isCollapsing = false
         isGlobePaused = false
-        Task { await ProfileV3InteractiveGlobe.prepare(using: renderer) }
+        if ProfileV3FeatureFlags.isGlobeEnabled {
+            Task { await ProfileV3InteractiveGlobe.prepare(using: renderer) }
+        }
         heroSource = source
         heroGlobe = ProfileV3HeroGlobeState(
             pose: pose,
@@ -121,19 +126,21 @@ final class ProfileV3HubStage: ObservableObject {
         expandedPass = pass
         heroTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.frameDelayMilliseconds))
-            guard !Task.isCancelled else { return }
+            guard !Task.isCancelled, let self, self.flight == flight else { return }
             withAnimation(ProfileV3Theme.Motion.hero) {
-                self?.passHero = ProfileV3HeroState(
+                self.passHero = ProfileV3HeroState(
                     frame: target,
                     cornerRadius: ProfileV3Theme.Sizes.Detail.cornerRadius,
                     backdropOpacity: 1,
                     progress: 1
                 )
-            }
-            try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.heroSettleMilliseconds))
-            guard !Task.isCancelled else { return }
-            withAnimation(ProfileV3Theme.Motion.contentFade) {
-                self?.isDetailSettled = true
+            } completion: { [weak self] in
+                Task { @MainActor in
+                    guard let self, self.flight == flight, !self.isCollapsing else { return }
+                    withAnimation(ProfileV3Theme.Motion.contentFade) {
+                        self.isDetailSettled = true
+                    }
+                }
             }
         }
     }
@@ -141,6 +148,7 @@ final class ProfileV3HubStage: ObservableObject {
     func collapse() {
         guard let expandedPass, !isCollapsing else { return }
         isCollapsing = true
+        flight += 1
         ProfileV3Analytics.passExpanded(passId: expandedPass.id, toState: .collapsed)
         heroTask?.cancel()
         if let pose = heroGlobe?.pose {
@@ -172,6 +180,7 @@ final class ProfileV3HubStage: ObservableObject {
     func suspend() {
         guard expandedPass != nil else { return }
         guard isDetailSettled else {
+            flight += 1
             heroTask?.cancel()
             isCollapsing = false
             expandedPass = nil

@@ -71,6 +71,7 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
         let presenter = ProfileV3SettingsSheetPresenter(
             navCon: navCon,
             repository: repository,
+            board: repository,
             kyc: environment.kyc,
             account: environment.account,
             coupons: environment.coupons,
@@ -78,9 +79,11 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
             session: environment.session,
             client: environment.client,
             profileID: profileID,
+            profileName: viewModel.mainProfileName,
             photoPlaces: environment.photoPlaces,
             onConnectConnector: { [weak self] step in self?.startConnectorCapture(step) },
             onTravellersChanged: { [weak viewModel] in viewModel?.requestRefresh() },
+            onConnectorsDisconnected: { [weak viewModel] in viewModel?.refreshAfterDisconnecting($0) },
             onOpenProgrammes: { [weak viewModel] in viewModel?.tapMainProgrammes() },
             onFinish: { [weak self] finished in
                 guard self?.settingsPresenter === finished else { return }
@@ -95,6 +98,10 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
         let route = directive?.route() ?? .worldPassAbout
         guard route == .worldPassAbout || route == .termsOfService else { return }
         presentOnTop(ProfileV3EntryPoint.makeTerms(repository: repository))
+    }
+
+    func openTravelPersona(profileID: String?) {
+        present(ProfileV3EntryPoint.makeTravelPersona(profileID: profileID, repository: repository), animated: true)
     }
 
     func openAgent(_ agent: ProfileV3Agent, requiresKYC: Bool, profileID: String?) {
@@ -154,11 +161,13 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
     }
 
     func openProgrammes(for pass: ProfileV3WorldPass, passes: [ProfileV3WorldPass]) {
+        let app = environment.app
         let events = ProfileV3ProgrammesEvents(
             requiresKYC: { [weak viewModel] in viewModel?.addProgrammeRequiresKYC(for: $0) ?? false },
             onProgrammesChanged: { [weak viewModel] in viewModel?.requestRefresh() },
             onPassChanged: { [weak viewModel] in viewModel?.selectPass(id: $0.id) },
             onUseInsight: { [weak self] in self?.afterSettings { self?.viewModel.useInsight() } },
+            onOpenChat: app.opensChat ? { app.openChat(prompt: $0) } : nil,
             onOpenBenefits: { [weak self] in self?.afterSettings { self?.viewModel.tapViewAllBenefits() } },
             onRequestKYC: { [weak self] in
                 self?.dismiss(animated: true) {
@@ -303,5 +312,6 @@ struct ProfileV3HubRoot: View {
         ProfileV3HubView(viewModel: viewModel)
             .environment(\.profileV3Globe, globe)
             .environment(\.profileV3FloatingBarClearance, floatingBarClearance)
+            .environment(\.profileV3PausesAnimations, ProfileV3ScreenCover.shared.isCovered)
     }
 }

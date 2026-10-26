@@ -101,11 +101,42 @@ enum ProfileV3ConnectorGlyph: String {
     case atlysMark = "profile_v3_atlys_mark"
     case atlysWordmark = "profile_v3_atlys_wordmark"
     case disconnectLink = "profile_v3_disconnect_link"
+    case shieldCheck = "profile_v3_shield_check"
+    case addCircle = "profile_v3_add_circle"
+    case editStroke = "profile_v3_edit_stroke"
+    case vaultLock = "profile_v3_vault_lock"
     case reserveGlyph = "reserve_logo_clear"
 
     var image: Image {
         Image(rawValue, bundle: self == .reserveGlyph ? .main : .module)
     }
+}
+
+enum ProfileV3PersonaArt: String {
+    case gmail = "profile_v3_persona_gmail"
+    case edited = "profile_v3_persona_edited"
+    case flag = "profile_v3_persona_flag"
+    case scaleMidpoint = "profile_v3_persona_scale_mid"
+    case scaleKnob = "profile_v3_persona_scale_knob"
+
+    var image: Image { Image(rawValue, bundle: .module) }
+}
+
+enum ProfileV3GloveBoxArt: String {
+    case attention = "profile_v3_glovebox_attention"
+    case bolt = "profile_v3_glovebox_bolt"
+    case closeSmall = "profile_v3_glovebox_close_small"
+    case glow = "profile_v3_glovebox_glow"
+    case aylMark = "profile_v3_glovebox_ayl"
+    case cardGlobe = "profile_v3_glovebox_card_globe"
+    case cardDigits = "profile_v3_glovebox_card_digits"
+    case cardExpiry = "profile_v3_glovebox_card_expiry"
+    case cardCVC = "profile_v3_glovebox_card_cvc"
+    case noticeGlow = "profile_v3_glovebox_notice_glow"
+    case addCardGlow = "profile_v3_glovebox_add_card_glow"
+    case emptyCard = "profile_v3_glovebox_empty_card"
+
+    var image: Image { Image(rawValue, bundle: .module) }
 }
 
 enum ProfileV3AgentArt: String {

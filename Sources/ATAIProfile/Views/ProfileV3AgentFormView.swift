@@ -23,6 +23,11 @@ struct ProfileV3AgentFormView: View {
                 .fullScreenCover(isPresented: $viewModel.showsPreviousPassports) {
                     previousPassports
                 }
+                .sheet(item: $viewModel.rideRegions) { regions in
+                    ProfileV3RideRegionsView(viewModel: regions)
+                        .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
+                        .presentationDragIndicator(.hidden)
+                }
                 .toolbar(.hidden, for: .navigationBar)
         }
         .fullScreenCover(isPresented: showsPassportReason) {
@@ -33,6 +38,12 @@ struct ProfileV3AgentFormView: View {
                 .presentationDetents([.large])
                 .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
                 .presentationDragIndicator(.hidden)
+        }
+        .sheet(item: householdSheet) { _ in
+            ProfileV3HouseholdApplySheet(viewModel: viewModel)
+                .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
+                .presentationDragIndicator(.hidden)
+                .interactiveDismissDisabled(viewModel.householdApply?.phase == .saving)
         }
         .onDisappear { viewModel.cancelPendingWork() }
         .sensoryFeedback(.success, trigger: viewModel.saveState) { _, state in state == .saved }
@@ -76,6 +87,13 @@ struct ProfileV3AgentFormView: View {
 
     private var headerOffset: Binding<CGFloat> {
         Binding(get: { headerPin.offset }, set: { headerPin.offset = $0 })
+    }
+
+    private var householdSheet: Binding<ProfileV3HouseholdApplySession?> {
+        Binding(
+            get: { viewModel.householdApply },
+            set: { if $0 == nil { viewModel.closeHousehold() } }
+        )
     }
 
     private var showsSources: Binding<Bool> {
@@ -162,7 +180,8 @@ struct ProfileV3AgentFormView: View {
                     onSelectTab: { viewModel.selectTab($0, in: section.id) },
                     onSelectCar: { viewModel.selectCar($0, in: section.id) },
                     onToggleBaggage: { viewModel.toggleBaggage($0, in: section.id) },
-                    onStepBaggage: { viewModel.stepBaggage($0, by: $1, in: section.id) }
+                    onStepBaggage: { viewModel.stepBaggage($0, by: $1, in: section.id) },
+                    onOpenNoteLink: viewModel.openNoteLink
                 )
             }
         }

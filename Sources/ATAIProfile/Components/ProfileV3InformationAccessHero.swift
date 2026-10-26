@@ -2,6 +2,13 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3InformationAccessHero: View {
+    enum Glyph {
+        case check
+        case wordmark
+    }
+
+    var glyph: Glyph = .check
+
     private typealias Hero = ProfileV3Theme.Sizes.InformationAccess
 
     var body: some View {
@@ -45,12 +52,27 @@ struct ProfileV3InformationAccessHero: View {
                 .stroke(Color(at: .pureWhite), lineWidth: Hero.shieldRim)
                 .blur(radius: Hero.shieldRimBlur)
                 .clipShape(ProfileV3ShieldShape())
-            ProfileV3ConnectorGlyph.atlysWordmark.image
-                .resizable()
-                .scaledToFit()
-                .frame(width: Hero.wordmark.width, height: Hero.wordmark.height)
+            glyphImage
+                .frame(width: Hero.shield.width, height: Hero.shield.height, alignment: .topLeading)
         }
         .frame(width: Hero.shield.width, height: Hero.shield.height)
+    }
+
+    @ViewBuilder
+    private var glyphImage: some View {
+        switch glyph {
+        case .check:
+            ProfileV3ConnectorGlyph.shieldCheck.image
+                .resizable()
+                .scaledToFit()
+                .frame(width: Hero.check.width, height: Hero.check.height)
+                .offset(x: Hero.checkOrigin.x, y: Hero.checkOrigin.y)
+        case .wordmark:
+            ProfileV3ConnectorGlyph.atlysWordmark.image
+                .resizable()
+                .frame(width: Hero.wordmark.width, height: Hero.wordmark.height)
+                .offset(x: Hero.wordmarkOrigin.x, y: Hero.wordmarkOrigin.y)
+        }
     }
 
     private var shieldShadow: some View {

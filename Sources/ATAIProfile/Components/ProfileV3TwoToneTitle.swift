@@ -8,9 +8,15 @@ struct ProfileV3TwoToneTitle: View {
     var leadColor = Color(at: .neutralGrey400)
 
     var body: some View {
-        Text("\(Text(lead).foregroundStyle(leadColor))\(Text(emphasis).foregroundStyle(Color(at: .pureBlack)))")
+        title
             .typoGraphy(style)
             .multilineTextAlignment(.center)
+    }
+
+    private var title: Text {
+        let emphasisText = Text(emphasis).foregroundStyle(Color(at: .pureBlack))
+        guard lead.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty != nil else { return emphasisText }
+        return Text("\(Text(lead).foregroundStyle(leadColor))\(emphasisText)")
     }
 }
 
@@ -19,7 +25,7 @@ struct ProfileV3TwoToneTitle: View {
     VStack(spacing: ProfileV3Theme.Space.s32) {
         ProfileV3TwoToneTitle(
             lead: ProfileV3Strings.agentsHeadingLead,
-            emphasis: ProfileV3Strings.agentsHeadingEmphasis
+            emphasis: "your travel preferences"
         )
         ProfileV3TwoToneTitle(lead: "Found ", emphasis: "6/8 flight preferences", style: .H5InterMedium20)
     }

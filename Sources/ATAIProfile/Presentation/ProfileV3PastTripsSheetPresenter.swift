@@ -31,11 +31,17 @@ final class ProfileV3PastTripsSheetPresenter {
         case .add:
             guard let editor = viewModel.editor else { return }
             presentFloating(onDismiss: onDismiss) {
-                ProfileV3AddPastTripSheet(viewModel: editor)
+                ProfileV3AddPastTripSheet(viewModel: editor) { [weak viewModel] in viewModel?.dismissSheet() }
             }
         case .actions:
+            let trip = viewModel.actionsTrip
             presentFloating(onDismiss: onDismiss) {
-                ProfileV3PastTripActionsSheet(onEdit: viewModel.tapEdit, onDelete: viewModel.tapDelete)
+                ProfileV3PastTripActionsSheet(
+                    editTitle: trip?.edit?.label ?? "",
+                    deleteTitle: trip?.delete?.label ?? "",
+                    onEdit: viewModel.tapEdit,
+                    onDelete: viewModel.tapDelete
+                )
             }
         case .confirmDelete:
             ProfileV3SheetWindow.present(

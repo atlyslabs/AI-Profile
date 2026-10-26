@@ -8,7 +8,15 @@ enum ProfileV3FeatureFlags {
     static let isConnectOtherEmailsEnabled = false
     static let isITRDisconnectEnabled = false
     static let isAgentSourcesPillEnabled = false
-    static let isPastTripsEnabled = false
     static let isProgrammeScanLoaderEnabled = false
+    static let isPersonaEditingEnabled = true
+    static let isAppAccessEnabled = false
+    static let isVaultRecentSignInCheckEnabled = false
+    static let isGlobeEnabled = true
+    static let isGlobeRimEnabled = false
+    static let isCredentialStoreEnabled = true
+    static let isEmptyProgrammeSlotEnabled = false
+    static let isGloveBoxPhoneNumberEnabled = true
+    static let isGloveBoxVirtualCardEnabled = true
     static let isPhotoPlacesEnabled = false
 }

@@ -18,6 +18,14 @@ extension ProfileV3Theme.Sizes {
         static let bottomPadding: CGFloat = 40
     }
 
+    enum SectionSources {
+        static let logo: CGFloat = 16
+        static let logoOverlap: CGFloat = 13.33 - logo
+        static let captionGap: CGFloat = 40 - (13.33 + logo)
+        static let chevronGap = ProfileV3Theme.Space.s4
+        static let chevron = ProfileV3Theme.Icon.lg
+    }
+
     enum HowUsed {
         static let clusterTop: CGFloat = 20
         static let clusterSize = CGSize(width: 91.92, height: 64.05)

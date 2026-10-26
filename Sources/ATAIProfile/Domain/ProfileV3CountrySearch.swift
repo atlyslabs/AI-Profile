@@ -12,10 +12,11 @@ enum ProfileV3CountrySearch {
     static func countries(
         matching query: String,
         pinning pinned: ProfileV3Country?,
-        searchText: ((ProfileV3Country) -> String?)? = nil
+        searchText: ((ProfileV3Country) -> String?)? = nil,
+        in source: [ProfileV3Country]? = nil
     ) -> [ProfileV3Country] {
         let needle = searchKey(query.trimmingCharacters(in: .whitespaces))
-        let catalogue = catalogue
+        let catalogue = source.map { $0.map { ($0, searchKey($0.name)) } } ?? catalogue
         guard needle.isEmpty else {
             return catalogue.compactMap { matches($0, needle: needle, searchText: searchText) ? $0.country : nil }
         }

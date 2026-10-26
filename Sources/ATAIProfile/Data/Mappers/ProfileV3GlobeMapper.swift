@@ -6,7 +6,8 @@ enum ProfileV3GlobeMapper {
         return ProfileV3TravelStat(
             key: key,
             label: dto.label ?? "",
-            value: dto.value?.intValue ?? 0
+            value: dto.value?.intValue,
+            unit: dto.unit?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty
         )
     }
 

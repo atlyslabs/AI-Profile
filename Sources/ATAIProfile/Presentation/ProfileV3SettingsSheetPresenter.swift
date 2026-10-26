@@ -14,12 +14,15 @@ final class ProfileV3SettingsSheetPresenter {
     private let viewModel: ProfileV3SettingsViewModel
     private let onConnectConnector: ((String) -> Void)?
     private let onTravellersChanged: (() -> Void)?
+    private let onConnectorsDisconnected: ((Set<ProfileV3ConnectorKey>) -> Void)?
     private let onOpenProgrammes: (() -> Void)?
     private let onFinish: (ProfileV3SettingsSheetPresenter) -> Void
     private var afterDismiss: (@MainActor () -> Void)?
+    private var disconnectedConnectors: Set<ProfileV3ConnectorKey> = []
     private var isAwaitingOnboarding = false
     private var didReportFinish = false
     private weak var disconnectHost: UIViewController?
+    private var isDisconnectProgressPresented = false
     private weak var pageHost: UIViewController?
     private let pageTransition = ProfileV3PushTransition()
     private var isPagePresented = false
@@ -29,6 +32,7 @@ final class ProfileV3SettingsSheetPresenter {
     init(
         navCon: UINavigationController,
         repository: any ProfileV3SettingsRepository,
+        board: (any ProfileV3BoardRepository)?,
         kyc: any ProfileV3KYCHost,
         account: any ProfileV3AccountHost,
         coupons: any ProfileV3CouponsHost,
@@ -36,9 +40,11 @@ final class ProfileV3SettingsSheetPresenter {
         session: any ProfileV3SessionProviding,
         client: ProfileV3NetworkClient,
         profileID: String?,
+        profileName: String?,
         photoPlaces: ProfileV3PhotoPlacesSync? = nil,
         onConnectConnector: ((String) -> Void)?,
         onTravellersChanged: (() -> Void)?,
+        onConnectorsDisconnected: ((Set<ProfileV3ConnectorKey>) -> Void)?,
         onOpenProgrammes: (() -> Void)?,
         onFinish: @escaping (ProfileV3SettingsSheetPresenter) -> Void
     ) {
@@ -50,12 +56,15 @@ final class ProfileV3SettingsSheetPresenter {
         self.app = app
         self.onConnectConnector = onConnectConnector
         self.onTravellersChanged = onTravellersChanged
+        self.onConnectorsDisconnected = onConnectorsDisconnected
         self.onOpenProgrammes = onOpenProgrammes
         self.onFinish = onFinish
         viewModel = ProfileV3SettingsViewModel(
             deps: .live(account: account, session: session, client: client),
             repository: repository,
+            board: board,
             profileID: profileID,
+            profileName: profileName,
             photoPlaces: photoPlaces
         )
         viewModel.router = self
@@ -122,6 +131,9 @@ final class ProfileV3SettingsSheetPresenter {
         let completion = afterDismiss
         afterDismiss = nil
         withExtendedLifetime(self) {
+            if completion == nil, !disconnectedConnectors.isEmpty {
+                onConnectorsDisconnected?(disconnectedConnectors)
+            }
             completion?()
             if !isAwaitingOnboarding {
                 reportFinish()
@@ -272,6 +284,28 @@ extension ProfileV3SettingsSheetPresenter: ProfileV3ConnectorsRouting {
     func dismissDisconnectEmail() {
         disconnectHost?.dismiss(animated: true)
         disconnectHost = nil
+    }
+
+    func presentDisconnectProgress() {
+        guard !isDisconnectProgressPresented else { return }
+        isDisconnectProgressPresented = true
+        let connectors = viewModel.connectors
+        ProfileV3SheetWindow.present(
+            dismissOnBackdropTap: false,
+            onDismiss: {}
+        ) { _, bottomInset in
+            ProfileV3DisconnectProgressSheet(bottomInset: bottomInset, onStop: connectors.stopDisconnecting)
+        }
+    }
+
+    func dismissDisconnectProgress() {
+        guard isDisconnectProgressPresented else { return }
+        isDisconnectProgressPresented = false
+        ProfileV3SheetWindow.dismiss()
+    }
+
+    func connectorDidDisconnect(_ connector: ProfileV3ConnectorKey) {
+        disconnectedConnectors.insert(connector)
     }
 }
 

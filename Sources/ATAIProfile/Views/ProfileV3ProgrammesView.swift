@@ -15,15 +15,23 @@ struct ProfileV3ProgrammesView: View {
     @State private var draggingID: String?
     @State private var hoveredDropTargets: Set<ProfileV3ProgrammeDropTarget> = []
     @State private var isDemoSwapped = false
+    @State private var demoTileHeights: [String: CGFloat] = [:]
+    @State private var headerPin = ProfileV3HeaderPin()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var tileWidth: CGFloat {
         max(0, width - 2 * ProfileV3Theme.Sizes.screenHorizontalMargin)
     }
 
+    private var defaultTileHeight: CGFloat {
+        tileWidth / ProfileV3Theme.Sizes.Programme.artAspectRatio
+    }
+
     var body: some View {
         ZStack(alignment: .top) {
             content
+            ProfileV3HeaderFade(pin: headerPin)
+                .padding(.top, ProfileV3Theme.Sizes.topBarBackdropHeight)
             header
         }
         .overlay(alignment: .bottom) { bottomBar }
@@ -89,7 +97,9 @@ struct ProfileV3ProgrammesView: View {
                 }
             }
             .padding(.bottom, ProfileV3Theme.Sizes.Programmes.bottomFade)
+            .profileV3HeaderFadeAnchor(headerPin)
         }
+        .profileV3ScrollOffset(headerPin.offsetBinding)
     }
 
     private var header: some View {
@@ -163,6 +173,10 @@ struct ProfileV3ProgrammesView: View {
         LazyVStack(spacing: ProfileV3Theme.Sizes.Programmes.listSpacing) {
             ForEach(Array(viewModel.orderedOthers.enumerated()), id: \.element.id) { index, programme in
                 tile(programme, width: nil, order: firstOrder + index)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                        guard index < 2 else { return }
+                        demoTileHeights[programme.id] = height
+                    }
                     .offset(y: reorderDemoOffset(at: index))
                     .opacity(isDragPlaceholder(programme) ? ProfileV3Theme.Opacity.reorderPlaceholder : 1)
                     .onDrag {
@@ -206,9 +220,12 @@ struct ProfileV3ProgrammesView: View {
     }
 
     private func reorderDemoOffset(at index: Int) -> CGFloat {
-        guard isDemoSwapped, index < 2 else { return 0 }
-        let step = ProfileV3Theme.Sizes.Programmes.reorderStep
-        return index == 0 ? step : -step
+        let others = viewModel.orderedOthers
+        guard isDemoSwapped, index < 2, others.count > 1 else { return 0 }
+        let spacing = ProfileV3Theme.Sizes.Programmes.listSpacing
+        let first = demoTileHeights[others[0].id] ?? defaultTileHeight
+        let second = demoTileHeights[others[1].id] ?? defaultTileHeight
+        return index == 0 ? second + spacing : -(first + spacing)
     }
 
     private func playReorderDemo() async {
@@ -356,8 +373,8 @@ struct ProfileV3ProgrammesView: View {
 
     private var skeletons: some View {
         VStack(spacing: ProfileV3Theme.Space.s16) {
-            ProfileV3SkeletonCard(height: ProfileV3Theme.Sizes.ProgrammeTile.height)
-            ProfileV3SkeletonCard(height: ProfileV3Theme.Sizes.ProgrammeTile.height)
+            ProfileV3SkeletonCard(height: defaultTileHeight)
+            ProfileV3SkeletonCard(height: defaultTileHeight)
         }
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
         .padding(.top, ProfileV3Theme.Sizes.Programmes.headerTop + ProfileV3Theme.Sizes.Programmes.cardsTop)

@@ -105,7 +105,7 @@ enum ProfileV3BenefitCatalogue {
         id: String,
         title: String,
         subtitle: String,
-        terms: String = ProfileV3Strings.genericBenefitTerms
+        terms: String = "Available to active World Pass members. Eligibility, exclusions and booking conditions may apply."
     ) -> ProfileV3Benefit {
         ProfileV3Benefit(
             id: id,

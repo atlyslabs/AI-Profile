@@ -38,9 +38,11 @@ enum ProfileV3Backoff {
 
     static func poll(
         _ schedule: Schedule = .refresh,
+        startsImmediately: Bool = false,
         suggestedMilliseconds: () -> Int? = { nil },
         until settled: () async -> Bool
     ) async {
+        if startsImmediately, await settled() { return }
         var delay = schedule.initialMilliseconds
         for _ in 0 ..< schedule.attempts {
             try? await Task.sleep(for: .milliseconds(schedule.clamped(suggestedMilliseconds() ?? delay)))

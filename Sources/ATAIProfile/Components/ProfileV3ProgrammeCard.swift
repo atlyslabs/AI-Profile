@@ -15,7 +15,7 @@ struct ProfileV3ProgrammeCard: View {
 
     private var height: CGFloat {
         guard programme.artURL != nil else { return Layout.cardHeight }
-        return width / (artAspect ?? Layout.artAspectRatio)
+        return width / (artAspect ?? programme.artAspect ?? Layout.artAspectRatio)
     }
 
     private var numberInset: CGFloat {
@@ -45,10 +45,12 @@ struct ProfileV3ProgrammeCard: View {
             VStack(alignment: .leading, spacing: Layout.numberGap) {
                 logo
                     .frame(height: Layout.logoHeight, alignment: .leading)
-                Text(programme.displayNumber)
-                    .typoGraphy(.T1InterBold11)
-                    .textCase(.uppercase)
-                    .foregroundStyle(shade.number)
+                if let number = programme.displayNumber {
+                    Text(number)
+                        .typoGraphy(.T1InterBold11)
+                        .textCase(.uppercase)
+                        .foregroundStyle(shade.number)
+                }
             }
             .padding(.top, Layout.logoTop)
             Spacer(minLength: 0)
@@ -85,7 +87,12 @@ struct ProfileV3ProgrammeCard: View {
 
     @ViewBuilder
     private var logo: some View {
-        if programme.artURL != nil {
+        if programme.isArtPlaceholder {
+            Text(programme.name)
+                .typoGraphy(.B2InterSemibold12)
+                .foregroundStyle(shade.primary)
+                .lineLimit(1)
+        } else if programme.artURL != nil {
             Color.clear
         } else if let url = programme.logoURL {
             ProfileV3RemoteImage(url: url, contentMode: .fit, placeholder: .clear)

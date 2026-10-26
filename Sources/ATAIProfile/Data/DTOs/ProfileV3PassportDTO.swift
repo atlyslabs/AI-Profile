@@ -68,12 +68,18 @@ struct ProfileV3PassportScanScreenDTO: Decodable, Equatable {
 
 struct ProfileV3PassportScanResponseDTO: Decodable, Equatable {
     let ok: Bool?
+    let side: String?
+    let backRequired: Bool?
+    let nationality: String?
     private let rawPassport: ProfileV3LossyDTO<ProfileV3AgentPassportDTO>?
 
     var passport: ProfileV3AgentPassportDTO? { rawPassport?.value }
 
     enum CodingKeys: String, CodingKey {
         case ok
+        case side
+        case backRequired = "back_required"
+        case nationality
         case rawPassport = "passport"
     }
 }

@@ -56,24 +56,16 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
             fields: dto.fields.map { field in
                 ProfileV3LoyaltyEntryForm.Field(
                     key: field.key,
-                    label: text(field.label) ?? fallbackLabel(forKey: field.key),
+                    label: text(field.label) ?? "",
                     isRequired: field.required ?? false
                 )
             }
         )
     }
 
-    private static func fallbackLabel(forKey key: String) -> String {
-        switch key {
-        case ProfileV3LoyaltyEntryForm.Field.membershipNumberKey: return ProfileV3Strings.membershipNumber
-        case ProfileV3LoyaltyEntryForm.Field.pointsKey: return ProfileV3Strings.pointsMiles
-        default: return ProfileV3Strings.fieldLabel(fromKey: key)
-        }
-    }
-
     static func insight(_ dto: ProfileV3ProgrammeInsightScreenDTO) -> ProfileV3ProgrammeInsight {
         let summary = (dto.insight ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        let action = dto.continueCTA?.label ?? ""
+        let action = text(dto.continueCTA?.label) ?? ""
         let showsSources = dto.sources?.show ?? true
         return ProfileV3ProgrammeInsight(
             summary: summary,
@@ -84,7 +76,8 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
                 sourceCount: showsSources ? (dto.sources?.count?.intValue ?? 0) : 0,
                 sources: showsSources ? dto.sources?.next?.directive : nil
             ),
-            action: dto.action?.directive
+            action: dto.action?.directive,
+            continueDirective: dto.continueCTA?.next.directive
         )
     }
 
@@ -98,12 +91,13 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
             logoURL: remoteURL(row.imageURL) ?? remoteURL(row.art) ?? local?.logoURL,
             artURL: remoteURL(row.art),
             isArtPlaceholder: row.artPlaceholder == true,
-            textOverlay: row.textOverlay?.lowercased() == "dark" ? .dark : .light,
+            textOverlay: textOverlay(row.textOverlay),
             membershipNumber: text(row.membershipNumber),
             expiryLabel: text(row.expiry),
             pointsLine: text(row.pointsLine),
             tier: text(row.tier),
-            updatedLine: text(row.updatedLine)
+            updatedLine: text(row.updatedLine),
+            artAspect: row.artAspect.flatMap { $0 > 0 ? CGFloat($0) : nil }
         )
     }
 
@@ -114,8 +108,14 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
             name: row.name,
             category: category(for: row.kind) ?? local?.category ?? .all,
             cardImageURL: remoteURL(row.art) ?? local?.cardImageURL,
-            logoURL: remoteURL(row.imageURL) ?? local?.logoURL
+            logoURL: remoteURL(row.imageURL) ?? local?.logoURL,
+            isArtPlaceholder: row.artPlaceholder == true,
+            textOverlay: textOverlay(row.textOverlay)
         )
+    }
+
+    private static func textOverlay(_ raw: String?) -> ProfileV3TextOverlay {
+        raw?.lowercased() == "dark" ? .dark : .light
     }
 
     static func addProgrammeRequest(
@@ -123,13 +123,12 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
         profileID: String,
         kind: String? = nil
     ) -> ProfileV3AddLoyaltyProgrammeRequest {
-        let membership = submission.membershipNumber.trimmingCharacters(in: .whitespacesAndNewlines)
-        return ProfileV3AddLoyaltyProgrammeRequest(
+        ProfileV3AddLoyaltyProgrammeRequest(
             programID: submission.item.id,
             profileID: profileID,
             programName: submission.item.name,
             kind: kind ?? self.kind(for: submission.item.category),
-            membershipNumber: membership.isEmpty ? nil : membership,
+            membershipNumber: text(submission.membershipNumber),
             points: submission.points.map(String.init)
         )
     }

@@ -2,7 +2,7 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3SettingsView: View {
-    @ObservedObject var viewModel: ProfileV3SettingsViewModel
+    @Bindable var viewModel: ProfileV3SettingsViewModel
     @State private var headerPin = ProfileV3HeaderPin()
 
     private typealias Layout = ProfileV3Theme.Sizes.SettingsPage
@@ -32,6 +32,10 @@ struct ProfileV3SettingsView: View {
                     if let menu = viewModel.menu, viewModel.menuPhase == .loaded {
                         panel(menu)
                             .padding(.top, Layout.cardsTop)
+                    } else if viewModel.menuPhase == .failed {
+                        failedPanel
+                            .padding(.top, ProfileV3Theme.Sizes.ErrorState.cardTop)
+                            .transition(.opacity)
                     } else {
                         ProfileV3LoadStateView(phase: viewModel.menuPhase, retry: viewModel.loadMenu)
                             .frame(height: Layout.loadStateHeight)
@@ -48,10 +52,24 @@ struct ProfileV3SettingsView: View {
         .background(Color(at: .pureWhite))
         .background(alignment: .top) {
             if viewModel.menu != nil {
-                premeasure
+                ProfileV3SettingsPremeasure(
+                    viewModel: viewModel,
+                    permissions: viewModel.permissions,
+                    account: viewModel.account
+                )
             }
         }
-        .onAppear { viewModel.loadMenu() }
+        .onAppear {
+            viewModel.loadMenuIfNeeded()
+            viewModel.loadMonogramIfNeeded()
+            viewModel.loadGloveBoxStatusIfNeeded()
+        }
+        .profileV3CredentialStore(viewModel.credentialStore)
+        .fullScreenCover(isPresented: $viewModel.isGloveBoxPresented, onDismiss: viewModel.gloveBoxDidClose) {
+            if let repository = viewModel.gloveBoxRepository {
+                ProfileV3GloveBoxLiveFlow(repository: repository) { viewModel.isGloveBoxPresented = false }
+            }
+        }
     }
 
     private var headerOffset: Binding<CGFloat> {
@@ -61,6 +79,13 @@ struct ProfileV3SettingsView: View {
     private func panel(_ menu: ProfileV3SettingsMenu) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: Layout.cardSpacing) {
+                if viewModel.hasGloveBox {
+                    ProfileV3SettingsGloveBoxCard(
+                        showsActivate: viewModel.showsGloveBoxActivate,
+                        action: viewModel.tapGloveBox
+                    )
+                    .animation(ProfileV3Theme.Motion.contentSwitch, value: viewModel.showsGloveBoxActivate)
+                }
                 ProfileV3SettingsAccountsCard(
                     menu: menu,
                     fields: viewModel.fields,
@@ -74,27 +99,39 @@ struct ProfileV3SettingsView: View {
                     onInformationAccess: viewModel.tapInformationAccess,
                     onAppAccess: viewModel.tapAppAccess
                 )
+                if ProfileV3FeatureFlags.isCredentialStoreEnabled {
+                    ProfileV3CredentialStoreCard(action: viewModel.tapCredentialStore)
+                        .padding(.top, ProfileV3Theme.Sizes.CredentialStore.cardTop)
+                }
             }
-            ProfileV3SettingsRowList(menu: menu, account: viewModel.account, onSelect: viewModel.tap)
+            ProfileV3SettingsRowList(rows: menu.rows, account: viewModel.account, onSelect: viewModel.tap)
                 .padding(.top, Layout.rowsTop)
+            #if DEBUG
+            ProfileV3SettingsDebugSection()
+                .padding(.top, Layout.rowsTop)
+            #endif
         }
     }
 
-    private var premeasure: some View {
-        ZStack(alignment: .top) {
-            ForEach(ProfileV3SettingsDestination.premeasured, id: \.self) { destination in
-                ProfileV3SettingsDestinationView(destination: destination, viewModel: viewModel)
-                    .frame(maxWidth: .infinity)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
-                        guard height > 0 else { return }
-                        viewModel.sheetHeights[destination] = height
-                    }
-            }
+    private var failedPanel: some View {
+        let shape = RoundedRectangle(cornerRadius: ProfileV3Theme.Sizes.ErrorState.cardRadius, style: .continuous)
+        return VStack(alignment: .leading, spacing: 0) {
+            ProfileV3ErrorState(action: viewModel.loadMenu)
+                .padding(.top, ProfileV3Theme.Sizes.ErrorState.cardContentDrop)
+                .frame(maxWidth: .infinity)
+                .frame(height: ProfileV3Theme.Sizes.ErrorState.cardHeight)
+                .background(shape.fill(Color(at: .backgroundLightTheme)))
+                .overlay(
+                    shape.strokeBorder(ProfileV3Theme.Palette.errorStateCardBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
+                )
+                .profileV3FeedbackOnAppear(.error)
+            ProfileV3SettingsRowList(rows: viewModel.failedMenuRows, account: viewModel.account, onSelect: viewModel.tap)
+                .padding(.top, ProfileV3Theme.Sizes.ErrorState.rowsTop)
+            #if DEBUG
+            ProfileV3SettingsDebugSection()
+                .padding(.top, Layout.rowsTop)
+            #endif
         }
-        .opacity(0)
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
     }
 
     @ViewBuilder
@@ -103,10 +140,50 @@ struct ProfileV3SettingsView: View {
         case .connectors:
             ProfileV3InformationAccessView(model: viewModel.connectors, onBack: viewModel.pop)
         case .appAccess:
-            ProfileV3AppAccessView(onBack: viewModel.pop)
+            if ProfileV3FeatureFlags.isAppAccessEnabled {
+                ProfileV3AppAccessView(model: viewModel.appAccess, connectors: viewModel.connectors, onBack: viewModel.pop)
+            } else {
+                ProfileV3AppAccessComingSoonView(onBack: viewModel.pop)
+            }
         default:
             EmptyView()
         }
+    }
+}
+
+private struct ProfileV3SettingsPremeasure: View {
+    let viewModel: ProfileV3SettingsViewModel
+    @ObservedObject var permissions: ProfileV3PermissionsSettingsModel
+    @ObservedObject var account: ProfileV3AccountSettingsModel
+    @State private var measured: Set<ProfileV3SettingsDestination> = []
+
+    private var pending: [ProfileV3SettingsDestination] {
+        ProfileV3SettingsDestination.premeasured.filter { destination in
+            guard !measured.contains(destination) else { return false }
+            switch destination {
+            case .permissions: return permissions.permissions != nil
+            case .deleteAccountConfirm: return account.deleteConfirm != nil
+            default: return true
+            }
+        }
+    }
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            ForEach(pending, id: \.self) { destination in
+                ProfileV3SettingsDestinationView(destination: destination, viewModel: viewModel)
+                    .frame(maxWidth: .infinity)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                        guard height > 0 else { return }
+                        viewModel.sheetHeights[destination] = height
+                        measured.insert(destination)
+                    }
+            }
+        }
+        .opacity(0)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
 
@@ -295,18 +372,19 @@ private struct ProfileV3SettingsAccessCard: View {
 }
 
 private struct ProfileV3SettingsRowList: View {
-    let menu: ProfileV3SettingsMenu
+    let rows: [ProfileV3SettingsRowItem]
     @ObservedObject var account: ProfileV3AccountSettingsModel
     let onSelect: (ProfileV3SettingsRowItem) -> Void
 
     var body: some View {
+        let dangerRows = rows.filter(\.isDanger)
         VStack(alignment: .leading, spacing: ProfileV3Theme.Sizes.SettingsPage.rowSpacing) {
-            ForEach(menu.listRows) { row in
+            ForEach(rows.filter { !$0.isDanger }) { row in
                 ProfileV3SettingsRow(icon: row.icon, title: row.label) { onSelect(row) }
             }
-            if !menu.dangerRows.isEmpty {
+            if !dangerRows.isEmpty {
                 ProfileV3DashedDivider()
-                ForEach(menu.dangerRows) { row in
+                ForEach(dangerRows) { row in
                     dangerRow(row)
                 }
             }
@@ -387,7 +465,7 @@ private struct ProfileV3CitizenshipLockLayer: View {
 }
 
 #Preview("Settings · citizenship locked") {
-    ProfileV3SettingsView(viewModel: .preview(deps: .preview(passportCitizenship: .india)))
+    ProfileV3SettingsView(viewModel: .preview(repository: ProfileV3MockRepository(settingsCitizenship: "IN")))
 }
 
 #Preview("Settings · deletion requested") {
@@ -396,5 +474,17 @@ private struct ProfileV3CitizenshipLockLayer: View {
 
 #Preview("Settings · information access") {
     ProfileV3SettingsView(viewModel: .preview(pagePath: [.connectors]))
+}
+
+#Preview("Settings · app access") {
+    let viewModel = ProfileV3SettingsViewModel.preview()
+    viewModel.appAccess.open()
+    return ProfileV3SettingsView(viewModel: viewModel)
+}
+
+#Preview("Settings · credential store") {
+    let viewModel = ProfileV3SettingsViewModel.preview()
+    viewModel.credentialStore.open()
+    return ProfileV3SettingsView(viewModel: viewModel)
 }
 #endif

@@ -17,6 +17,7 @@ struct ProfileV3SettingsDestinationView: View {
         case .controlPanel:
             ProfileV3SettingsControlPanelScreen(
                 model: viewModel.connectors,
+                apps: viewModel.appAccess,
                 title: viewModel.title,
                 onBack: viewModel.pop
             )
@@ -30,7 +31,7 @@ struct ProfileV3SettingsDestinationView: View {
                 onBack: viewModel.pop,
                 onClose: viewModel.tapClose
             )
-        case .logout, .deleteAccount, .deleteReason:
+        case .logout, .deleteAccount, .deleteAccountConfirm:
             ProfileV3SettingsAccountScreen(destination: destination, settings: viewModel, model: viewModel.account)
         case .permissions:
             ProfileV3PermissionsView(model: viewModel.permissions, onClose: viewModel.tapClose)
@@ -118,27 +119,50 @@ private struct ProfileV3SettingsFieldScreen: View {
 
 private struct ProfileV3SettingsControlPanelScreen: View {
     @ObservedObject var model: ProfileV3ConnectorsSettingsModel
+    @ObservedObject var apps: ProfileV3AppAccessModel
     let title: String
     let onBack: () -> Void
 
+    private var isLoaded: Bool { model.controlPanelPhase == .loaded }
+
+    private var entries: [ProfileV3ConnectorDeckEntry] {
+        apps.deckEntries + (isLoaded ? model.deckEntries : [])
+    }
+
     var body: some View {
-        if model.controlPanelPhase == .loaded {
-            ProfileV3ConnectorDeckView(
-                entries: model.deckEntries,
-                confirm: model.disconnectConfirm,
-                onBack: onBack,
-                onEngage: { model.loadDisconnectConfirm($0.id) },
-                onDisconnect: { model.tapDeckDisconnect($0.id) }
-            )
-            .id(model.deckResetToken)
-        } else {
-            ProfileV3SettingsLoadState(
-                title: title,
-                phase: model.controlPanelPhase,
-                onBack: onBack,
-                retry: model.loadControlPanel
-            )
+        Group {
+            if isLoaded || !apps.deckEntries.isEmpty {
+                ProfileV3ConnectorDeckView(
+                    entries: entries,
+                    confirm: model.disconnectConfirm,
+                    onBack: onBack,
+                    onEngage: { model.loadDisconnectConfirm($0.id) },
+                    onDisconnect: { entry in
+                        if entry.isApp {
+                            apps.disconnect(entry.id)
+                        } else {
+                            model.tapDeckDisconnect(entry.id)
+                        }
+                    },
+                    onEdit: { apps.tapEdit($0.id) }
+                )
+                .id("\(model.deckResetToken)-\(apps.deckResetToken)")
+            } else {
+                ProfileV3SettingsLoadState(
+                    title: title,
+                    phase: model.controlPanelPhase,
+                    onBack: onBack,
+                    retry: model.loadControlPanel
+                )
+            }
         }
+        .sheet(item: editor) { editor in
+            ProfileV3AppCredentialsView(viewModel: editor, onClose: apps.closeEditor)
+        }
+    }
+
+    private var editor: Binding<ProfileV3AppCredentialsViewModel?> {
+        Binding(get: { apps.editor(from: .panel) }, set: { if $0 == nil { apps.closeEditor() } })
     }
 }
 
@@ -151,8 +175,7 @@ struct ProfileV3DisconnectEmailHost: View {
             confirm: model.pendingConfirm,
             isDisconnecting: model.isDisconnecting,
             onBack: onClose,
-            onDisconnect: model.confirmDisconnect,
-            onStop: model.stopDisconnecting
+            onDisconnect: model.confirmDisconnect
         )
     }
 }
@@ -243,7 +266,7 @@ private struct ProfileV3SettingsTravellersScreen: View {
 
 private struct ProfileV3SettingsAccountScreen: View {
     let destination: ProfileV3SettingsDestination
-    @ObservedObject var settings: ProfileV3SettingsViewModel
+    let settings: ProfileV3SettingsViewModel
     @ObservedObject var model: ProfileV3AccountSettingsModel
 
     var body: some View {
@@ -255,15 +278,32 @@ private struct ProfileV3SettingsAccountScreen: View {
                 onLogout: model.confirmLogout
             )
         case .deleteAccount:
-            ProfileV3ConfirmationView.deleteAccount(onBack: settings.pop, onProceed: model.tapProceedToDelete)
-        case .deleteReason:
-            ProfileV3DeleteReasonView(
-                isSubmitting: model.isSubmittingDeletion,
-                errorMessage: model.deletionError,
-                onBack: settings.pop,
-                onReasonChange: model.clearDeletionError,
-                onSubmit: model.submitDeletion
-            )
+            if let screen = model.deleteReason {
+                ProfileV3DeleteReasonView(screen: screen, onBack: settings.pop, onSubmit: model.submitDeletionReason)
+            } else {
+                ProfileV3SettingsLoadState(
+                    title: "",
+                    phase: model.deleteReasonPhase,
+                    onBack: settings.pop,
+                    retry: model.loadDeleteReason
+                )
+            }
+        case .deleteAccountConfirm:
+            if let confirm = model.deleteConfirm {
+                ProfileV3ConfirmationView.deleteAccount(
+                    confirm,
+                    isDeleting: model.isSubmittingDeletion,
+                    onBack: settings.pop,
+                    onProceed: model.confirmDeletion
+                )
+            } else {
+                ProfileV3SettingsLoadState(
+                    title: "",
+                    phase: model.deleteConfirmPhase,
+                    onBack: settings.pop,
+                    retry: model.loadDeleteConfirm
+                )
+            }
         default:
             EmptyView()
         }

@@ -70,7 +70,7 @@ struct ProfileV3GradientButton: View {
 #if DEBUG
 #Preview("Gradient buttons") {
     VStack(spacing: ProfileV3Theme.Space.s20) {
-        ProfileV3GradientButton(title: ProfileV3Strings.updatePassport) {}
+        ProfileV3GradientButton(title: "Update passport") {}
         ProfileV3GradientButton(title: ProfileV3Strings.redeem, style: .redeem) {}
     }
     .padding(ProfileV3Theme.Sizes.screenHorizontalMargin)

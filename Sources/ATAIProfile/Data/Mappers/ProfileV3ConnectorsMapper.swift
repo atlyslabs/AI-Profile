@@ -12,7 +12,7 @@ enum ProfileV3ConnectorsMapper: ProfileV3DTOReading {
 
     static func controlPanel(_ dto: ProfileV3ConnectorControlPanelScreenDTO) -> ProfileV3ConnectorControlPanel {
         ProfileV3ConnectorControlPanel(
-            title: text(dto.title) ?? ProfileV3Strings.connectors,
+            title: text(dto.title) ?? "",
             cards: dto.cards.compactMap(card)
         )
     }
@@ -21,10 +21,10 @@ enum ProfileV3ConnectorsMapper: ProfileV3DTOReading {
         guard let key = connectorKey(dto.key) else { return nil }
         return ProfileV3ConnectorCard(
             key: key,
-            headline: text(dto.headline) ?? ProfileV3Strings.connectorDeckTitle(displayName(for: key)),
+            headline: text(dto.headline) ?? "",
             body: text(dto.body) ?? "",
             isConnected: dto.connected ?? false,
-            disconnectHint: text(dto.disconnectHint) ?? ProfileV3Strings.connectorDeckHint,
+            disconnectHint: text(dto.disconnectHint) ?? "",
             connectLabel: text(dto.connect?.label),
             accountEmail: text(dto.accountEmail),
             iconURL: remoteURL(dto.imageURL)
@@ -40,23 +40,18 @@ enum ProfileV3ConnectorsMapper: ProfileV3DTOReading {
             ?? actions.first { $0.style == "danger" }
         let cancel = actions.first { $0.next?.directive.go == "back" }
             ?? actions.first { $0.key != confirm?.key }
-        let losses = dto.losses.compactMap { text($0.label) }
-        let detailLosses = dto.detailLosses.compactMap(text)
-        let detailParagraphs = dto.detailParagraphs.compactMap(text)
         return ProfileV3DisconnectConfirm(
             connector: connectorKey(dto.connector) ?? fallback,
-            title: text(dto.title) ?? ProfileV3Strings.disconnectConfirmTitle,
-            warning: text(dto.warning) ?? ProfileV3Strings.disconnectConfirmBody,
-            losses: losses.isEmpty ? ProfileV3Strings.disconnectLosses : losses,
-            detailIntro: text(dto.detailIntro) ?? ProfileV3Strings.disconnectTermsIntro,
-            detailLosses: detailLosses.isEmpty ? ProfileV3Strings.disconnectTermsItems : detailLosses,
-            detailParagraphs: detailParagraphs.isEmpty
-                ? ProfileV3Strings.disconnectTermsClosing
-                : detailParagraphs,
-            consentLabel: text(dto.consent?.label) ?? ProfileV3Strings.disconnectConsent,
+            title: text(dto.title) ?? "",
+            warning: text(dto.warning) ?? "",
+            losses: dto.losses.compactMap { text($0.label) },
+            detailIntro: text(dto.detailIntro) ?? "",
+            detailLosses: dto.detailLosses.compactMap(text),
+            detailParagraphs: dto.detailParagraphs.compactMap(text),
+            consentLabel: text(dto.consent?.label) ?? "",
             isConsentRequired: dto.consent?.required ?? true,
-            confirmTitle: text(confirm?.label) ?? ProfileV3Strings.disconnectEmail,
-            cancelTitle: text(cancel?.label) ?? ProfileV3Strings.dontDisconnect
+            confirmTitle: text(confirm?.label) ?? "",
+            cancelTitle: text(cancel?.label) ?? ""
         )
     }
 
@@ -64,25 +59,11 @@ enum ProfileV3ConnectorsMapper: ProfileV3DTOReading {
         guard let key = connectorKey(dto.key) else { return nil }
         return ProfileV3Connector(
             id: key.rawValue,
-            name: name(text(dto.label), for: key),
+            name: text(dto.label) ?? "",
             icon: remoteURL(dto.imageURL).map { ProfileV3ConnectorIcon.remote($0) } ?? icon(for: key),
             status: (dto.connected ?? false) ? .connected : .needsAttention,
             accountEmail: text(dto.accountEmail)
         )
-    }
-
-    private static func name(_ label: String?, for key: ProfileV3ConnectorKey) -> String {
-        let canonical = displayName(for: key)
-        guard let label, label.caseInsensitiveCompare(canonical) != .orderedSame else { return canonical }
-        return label
-    }
-
-    static func displayName(for key: ProfileV3ConnectorKey) -> String {
-        switch key {
-        case .gmail: return ProfileV3Strings.gmailConnector
-        case .itr: return ProfileV3Strings.itrConnector
-        case .photos: return ProfileV3Strings.photosConnector
-        }
     }
 
     static func icon(for key: ProfileV3ConnectorKey) -> ProfileV3ConnectorIcon {

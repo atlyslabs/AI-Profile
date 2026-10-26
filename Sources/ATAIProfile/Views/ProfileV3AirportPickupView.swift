@@ -80,10 +80,14 @@ struct ProfileV3AirportPickupView: View {
                 .typoGraphy(.H5InterMedium20)
                 .foregroundStyle(Color(at: .pureBlack))
                 .padding(.top, ProfileV3Theme.Sizes.Agent.summaryTop)
-            Text(viewModel.subtitle)
-                .frame(maxWidth: ProfileV3Theme.Sizes.Agent.summaryWidth)
-            Text(viewModel.note)
-                .padding(.top, ProfileV3Theme.Space.s8)
+            if !viewModel.subtitle.isEmpty {
+                Text(viewModel.subtitle)
+                    .frame(maxWidth: ProfileV3Theme.Sizes.Agent.summaryWidth)
+            }
+            if !viewModel.note.isEmpty {
+                Text(viewModel.note)
+                    .padding(.top, ProfileV3Theme.Space.s8)
+            }
         }
         .typoGraphy(.B2InterSemibold12)
         .foregroundStyle(Color(at: .neutralGrey400))
@@ -226,12 +230,14 @@ struct ProfileV3AirportPickupView: View {
                     .padding(.top, Pickup.buttonTop)
                     .disabled(isConfirming || !viewModel.isEligible)
             }
-            Text(viewModel.footer)
-                .typoGraphy(.B2InterSemibold12)
-                .foregroundStyle(Color(at: .neutralGrey400))
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: Pickup.captionWidth)
-                .padding(.top, Pickup.captionTop)
+            if !viewModel.footer.isEmpty {
+                Text(viewModel.footer)
+                    .typoGraphy(.B2InterSemibold12)
+                    .foregroundStyle(Color(at: .neutralGrey400))
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: Pickup.captionWidth)
+                    .padding(.top, Pickup.captionTop)
+            }
         }
     }
 

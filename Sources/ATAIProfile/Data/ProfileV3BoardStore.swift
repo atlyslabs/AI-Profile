@@ -135,6 +135,11 @@ final class ProfileV3BoardStore {
     }
 
     private nonisolated static func decode(_ data: Data) throws -> ProfileV3Board {
-        ProfileV3BoardMapper.board(try JSONDecoder().decode(ProfileV3BoardDTO.self, from: data))
+        let board = ProfileV3BoardMapper.board(try JSONDecoder().decode(ProfileV3BoardDTO.self, from: data))
+        #if DEBUG
+        return board.applying(.current)
+        #else
+        return board
+        #endif
     }
 }

@@ -1,47 +1,66 @@
-import Combine
 import Foundation
+import Observation
 
 @MainActor
-final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavigating {
-    @Published var pagePath: [ProfileV3SettingsDestination] = []
-    @Published var sheetPath: [ProfileV3SettingsDestination] = []
-    @Published private(set) var sheetEntry: ProfileV3SettingsDestination?
-    @Published var isAccountExpanded = false
-    @Published private(set) var menu: ProfileV3SettingsMenu?
-    @Published private(set) var menuPhase: ProfileV3LoadPhase = .loading
+@Observable
+final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
+    var pagePath: [ProfileV3SettingsDestination] = []
+    var sheetPath: [ProfileV3SettingsDestination] = []
+    private(set) var sheetEntry: ProfileV3SettingsDestination?
+    var isAccountExpanded = false
+    private(set) var menu: ProfileV3SettingsMenu?
+    private(set) var menuPhase: ProfileV3LoadPhase = .loading
 
     let fields: ProfileV3ProfileFieldsModel
     let connectors: ProfileV3ConnectorsSettingsModel
+    let appAccess: ProfileV3AppAccessModel
+    let credentialStore: ProfileV3CredentialStoreModel
     let travellers: ProfileV3TravellersSettingsModel
     let account: ProfileV3AccountSettingsModel
     let permissions: ProfileV3PermissionsSettingsModel
-    let monogram: String?
-    var sheetHeights: [ProfileV3SettingsDestination: CGFloat] = [:]
+    private(set) var monogram: String?
+    var isGloveBoxPresented = false
+    private(set) var gloveBoxHasAddress: Bool?
+    @ObservationIgnored var sheetHeights: [ProfileV3SettingsDestination: CGFloat] = [:]
 
-    weak var router: (any ProfileV3SettingsRouter)? {
+    @ObservationIgnored weak var router: (any ProfileV3SettingsRouter)? {
         didSet {
             fields.router = router
             connectors.router = router
+            appAccess.router = router
             travellers.router = router
             account.router = router
         }
     }
 
-    private let repository: any ProfileV3SettingsRepository
-    private var menuTask: Task<Void, Never>?
-    private var presentTask: Task<Void, Never>?
+    @ObservationIgnored private let repository: any ProfileV3SettingsRepository
+    @ObservationIgnored let gloveBoxRepository: (any ProfileV3GloveBoxRepository)?
+    @ObservationIgnored private let board: (any ProfileV3BoardRepository)?
+    @ObservationIgnored private var menuTask: Task<Void, Never>?
+    @ObservationIgnored private var presentTask: Task<Void, Never>?
+    @ObservationIgnored private var monogramTask: Task<Void, Never>?
+    @ObservationIgnored private var gloveBoxTask: Task<Void, Never>?
 
     init(
         deps: ProfileV3SettingsDependencies,
         repository: any ProfileV3SettingsRepository,
+        board: (any ProfileV3BoardRepository)? = nil,
         profileID: String? = nil,
+        profileName: String? = nil,
         photoPlaces: ProfileV3PhotoPlacesSync? = nil
     ) {
         self.repository = repository
-        monogram = deps.currentFirstName()?.trimmingCharacters(in: .whitespaces).first.map { String($0).lowercased() }
+        gloveBoxRepository = repository as? any ProfileV3GloveBoxRepository
+        self.board = board
+        monogram = Self.monogram(from: deps.currentFirstName())
+            ?? Self.monogram(from: profileName)
+            ?? Self.monogram(from: board?.cachedBoard()?.mainProfile?.name)
         let fields = ProfileV3ProfileFieldsModel(deps: deps, repository: repository, profileID: profileID)
         self.fields = fields
-        connectors = ProfileV3ConnectorsSettingsModel(repository: repository, photoPlaces: photoPlaces)
+        let connectors = ProfileV3ConnectorsSettingsModel(repository: repository, photoPlaces: photoPlaces)
+        self.connectors = connectors
+        appAccess = ProfileV3AppAccessModel(repository: repository, connectors: connectors)
+        credentialStore = ProfileV3CredentialStoreModel(repository: repository)
         travellers = ProfileV3TravellersSettingsModel(
             deps: deps,
             repository: repository,
@@ -51,6 +70,7 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
         permissions = ProfileV3PermissionsSettingsModel(repository: repository)
         fields.navigator = self
         connectors.navigator = self
+        appAccess.navigator = self
         travellers.navigator = self
         account.navigator = self
         permissions.navigator = self
@@ -62,7 +82,74 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
     }
 
     var title: String {
-        menu?.title.nonEmpty ?? ProfileV3Strings.settings
+        menu?.title ?? ProfileV3Strings.settings
+    }
+
+    var failedMenuRows: [ProfileV3SettingsRowItem] {
+        [
+            ProfileV3SettingsRowItem(
+                key: "logout",
+                label: ProfileV3Strings.logout,
+                directive: ProfileV3Directive(go: "logout_confirm")
+            ),
+            ProfileV3SettingsRowItem(
+                key: "delete_account",
+                label: ProfileV3Strings.deleteAccount,
+                directive: ProfileV3Directive(go: "delete_account"),
+                isDestructive: true
+            )
+        ]
+    }
+
+    func loadMenuIfNeeded() {
+        guard menu == nil else { return }
+        loadMenu()
+    }
+
+    func loadMonogramIfNeeded() {
+        guard monogram == nil, monogramTask == nil, let board else { return }
+        monogramTask = Task { [weak self] in
+            let name = try? await board.loadLatestBoard().mainProfile?.name
+            guard let self, !Task.isCancelled else { return }
+            monogramTask = nil
+            if monogram == nil {
+                monogram = Self.monogram(from: name)
+            }
+        }
+    }
+
+    var hasGloveBox: Bool { gloveBoxRepository != nil }
+    var showsGloveBoxActivate: Bool { gloveBoxHasAddress == false }
+
+    func loadGloveBoxStatusIfNeeded() {
+        guard gloveBoxHasAddress == nil, gloveBoxTask == nil else { return }
+        loadGloveBoxStatus()
+    }
+
+    func tapGloveBox() {
+        ProfileV3Analytics.settingsRowClicked(rowKey: "glove_box")
+        isGloveBoxPresented = true
+    }
+
+    func gloveBoxDidClose() {
+        loadGloveBoxStatus()
+    }
+
+    private func loadGloveBoxStatus() {
+        guard let gloveBoxRepository else { return }
+        gloveBoxTask?.cancel()
+        gloveBoxTask = Task { [weak self] in
+            let account = try? await gloveBoxRepository.loadGloveBoxCard()
+            guard let self, !Task.isCancelled else { return }
+            gloveBoxTask = nil
+            if let account {
+                gloveBoxHasAddress = account.hasAddress
+            }
+        }
+    }
+
+    static func monogram(from name: String?) -> String? {
+        name?.trimmingCharacters(in: .whitespacesAndNewlines).first.map { String($0).lowercased() }
     }
 
     func loadMenu() {
@@ -78,11 +165,7 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
                 if menu.rows.contains(where: { $0.route == .permissions }) {
                     model.permissions.preload()
                 }
-                if menu.accountsRows.contains(where: {
-                    $0.route == .editField(ProfileV3ProfileField.citizenship.rawValue)
-                }) {
-                    model.fields.preloadCitizenshipIcon()
-                }
+                model.fields.applyCitizenship(code: menu.citizenshipCode)
             }
         )
     }
@@ -123,7 +206,16 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
 
     func tapAppAccess() {
         ProfileV3Analytics.settingsRowClicked(rowKey: "app_access")
-        push(.appAccess)
+        guard ProfileV3FeatureFlags.isAppAccessEnabled else {
+            push(.appAccess)
+            return
+        }
+        appAccess.open()
+    }
+
+    func tapCredentialStore() {
+        ProfileV3Analytics.settingsRowClicked(rowKey: "credential_store")
+        credentialStore.open()
     }
 
     func tapConcierge(_ concierge: ProfileV3Concierge) {
@@ -143,8 +235,14 @@ final class ProfileV3SettingsViewModel: ObservableObject, ProfileV3SettingsNavig
     func cancelReads() {
         menuTask?.cancel()
         presentTask?.cancel()
+        monogramTask?.cancel()
+        monogramTask = nil
+        gloveBoxTask?.cancel()
+        gloveBoxTask = nil
         fields.cancelReads()
         connectors.cancelReads()
+        appAccess.cancelReads()
+        credentialStore.cancelReads()
         travellers.cancelReads()
         permissions.cancelReads()
     }

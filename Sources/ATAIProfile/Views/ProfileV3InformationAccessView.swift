@@ -10,7 +10,11 @@ struct ProfileV3InformationAccessView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
-                header
+                ProfileV3AccessPageHeader(
+                    showsConnected: model.canOpenControlPanel,
+                    onBack: onBack,
+                    onConnected: model.openControlPanel
+                )
                 ProfileV3InformationAccessHero()
                     .padding(.top, Layout.heroTop)
                 Text(ProfileV3Strings.informationAccess)
@@ -39,29 +43,6 @@ struct ProfileV3InformationAccessView: View {
         .sensoryFeedback(.success, trigger: model.disconnectCompletions)
     }
 
-    private var header: some View {
-        HStack {
-            ProfileV3CircleIconButton.back(action: onBack)
-            Spacer()
-            if model.canOpenControlPanel {
-                Button(action: model.openControlPanel) {
-                    HStack(spacing: ProfileV3Theme.Space.s8) {
-                        ProfileV3TagLabel(text: ProfileV3Strings.connectorConnected)
-                        ATIcon.SwiftUIImage.chevronRight
-                            .profileV3Icon(ProfileV3Theme.Icon.xl)
-                            .foregroundStyle(Color(at: .pureBlack))
-                    }
-                    .frame(minHeight: ProfileV3Theme.Control.tapTarget)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.profileV3Pressable)
-                .accessibilityLabel(ProfileV3Strings.connectorConnected)
-            }
-        }
-        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-        .padding(.top, ProfileV3Theme.Sizes.SettingsPage.headerTop)
-    }
-
     @ViewBuilder
     private var cards: some View {
         if model.phase == .loaded {
@@ -88,6 +69,47 @@ struct ProfileV3InformationAccessView: View {
     private var addAction: (() -> Void)? {
         guard ProfileV3FeatureFlags.isConnectOtherEmailsEnabled else { return nil }
         return model.tapConnectEmails
+    }
+}
+
+struct ProfileV3AccessPageHeader<Hint: View>: View {
+    let showsConnected: Bool
+    let onBack: () -> Void
+    let onConnected: () -> Void
+    @ViewBuilder var hint: () -> Hint
+
+    var body: some View {
+        HStack {
+            ProfileV3CircleIconButton.back(action: onBack)
+            Spacer()
+            if showsConnected {
+                Button(action: onConnected) {
+                    HStack(spacing: ProfileV3Theme.Space.s8) {
+                        ProfileV3TagLabel(text: ProfileV3Strings.connectorConnected)
+                        ATIcon.SwiftUIImage.chevronRight
+                            .profileV3Icon(ProfileV3Theme.Icon.xl)
+                            .foregroundStyle(Color(at: .pureBlack))
+                    }
+                    .frame(minHeight: ProfileV3Theme.Control.tapTarget)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.profileV3Pressable)
+                .accessibilityLabel(ProfileV3Strings.connectorConnected)
+            }
+        }
+        .overlay(alignment: .topTrailing) {
+            if showsConnected {
+                hint()
+            }
+        }
+        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+        .padding(.top, ProfileV3Theme.Sizes.SettingsPage.headerTop)
+    }
+}
+
+extension ProfileV3AccessPageHeader where Hint == EmptyView {
+    init(showsConnected: Bool, onBack: @escaping () -> Void, onConnected: @escaping () -> Void) {
+        self.init(showsConnected: showsConnected, onBack: onBack, onConnected: onConnected) { EmptyView() }
     }
 }
 
@@ -126,7 +148,7 @@ private struct ProfileV3EmailConnectorCard: View {
             }
         }
         .frame(minHeight: Layout.cardHeight, alignment: .top)
-        .profileV3SettingsCard(cornerRadius: Layout.cardRadius)
+        .profileV3AccessCard()
         .accessibilityElement(children: .contain)
         .accessibilityValue(connector.status.accessibilityValue)
     }
@@ -150,7 +172,7 @@ private struct ProfileV3ConnectorCardRow: View {
             }
         }
         .frame(height: ProfileV3Theme.Sizes.InformationAccess.cardHeight, alignment: .top)
-        .profileV3SettingsCard(cornerRadius: ProfileV3Theme.Sizes.InformationAccess.cardRadius)
+        .profileV3AccessCard()
         .accessibilityElement(children: .combine)
         .accessibilityValue(connector.status.accessibilityValue)
     }
@@ -168,9 +190,10 @@ private struct ProfileV3ConnectorCardRow: View {
     }
 }
 
-private struct ProfileV3ConnectorCardTitle<Accessory: View>: View {
+struct ProfileV3ConnectorCardTitle<Accessory: View>: View {
     let icon: Image
     var iconURL: URL?
+    var isIconRound = false
     let title: String
     @ViewBuilder var accessory: () -> Accessory
 
@@ -178,7 +201,11 @@ private struct ProfileV3ConnectorCardTitle<Accessory: View>: View {
 
     var body: some View {
         HStack(spacing: ProfileV3Theme.Space.s12) {
-            if let iconURL {
+            if let iconURL, isIconRound {
+                ProfileV3RemoteImage(url: iconURL, contentMode: .fill, placeholder: .clear)
+                    .frame(width: Layout.cardIcon, height: Layout.cardIcon)
+                    .clipShape(Circle())
+            } else if let iconURL {
                 ProfileV3RemoteImage(url: iconURL, contentMode: .fit, placeholder: .clear)
                     .frame(width: Layout.cardIcon, height: Layout.cardIcon)
             } else {
@@ -199,7 +226,7 @@ private struct ProfileV3ConnectorCardTitle<Accessory: View>: View {
     }
 }
 
-private struct ProfileV3ConnectorAction: View {
+struct ProfileV3ConnectorAction: View {
     let title: String
     let action: (() -> Void)?
 
@@ -232,11 +259,22 @@ private struct ProfileV3ConnectedEmailChip: View {
                 .foregroundStyle(ProfileV3Theme.Palette.accessChipText)
                 .lineLimit(1)
         }
+        .padding(.vertical, Layout.chipPadding)
         .padding(.leading, Layout.chipPadding)
         .padding(.trailing, Layout.chipTrailing)
-        .padding(.vertical, Layout.chipPadding)
-        .background(Capsule().fill(Color(at: .pureWhite)))
+        .background(Capsule().fill(ProfileV3Theme.Palette.background))
         .accessibilityElement(children: .combine)
+    }
+}
+
+extension View {
+    func profileV3AccessCard() -> some View {
+        profileV3SettingsCard(cornerRadius: ProfileV3Theme.Sizes.InformationAccess.cardRadius, fill: Color(at: .pureWhite))
+            .shadow(
+                color: ProfileV3Theme.Palette.accessCardShadow,
+                radius: ProfileV3Theme.Sizes.InformationAccess.cardShadowRadius,
+                y: ProfileV3Theme.Sizes.InformationAccess.cardShadowY
+            )
     }
 }
 

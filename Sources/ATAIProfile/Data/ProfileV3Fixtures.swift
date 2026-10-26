@@ -80,6 +80,21 @@ enum ProfileV3Fixtures {
         ProfileV3Connector(id: "itr", name: "ITR connector", icon: .contract, status: .needsAttention)
     ]
 
+    static let deleteAccountReason = ProfileV3DeleteAccountReason(
+        title: "Tell us why you want to delete your ayl account",
+        subtitle: "We would like to know so we can improve things in our mission to making travel seamless",
+        placeholder: "Enter your reason here",
+        submitLabel: "Delete account"
+    )
+
+    static let deleteAccountConfirm = ProfileV3DeleteAccountConfirm(
+        title: "Are you sure you want to delete your ayl account?",
+        warning: "Deleting your account will delete all of its data. "
+            + "You will have to re-enter your documents to apply for a visa again.",
+        proceedLabel: "Proceed to delete",
+        cancelLabel: "Don't delete"
+    )
+
     static let kycExpired = ProfileV3KYCStatus.expired(on: "23 Dec, 2027")
     static let kycComplete = ProfileV3KYCStatus.complete(validTill: "Jan 2027")
 
@@ -99,9 +114,16 @@ enum ProfileV3Fixtures {
             kycStatus: kyc,
             visitedCountryCodes: ["IN", "AE", "US", "GB", "FR", "IT", "TH"],
             stats: travelStats(flights: 45, distance: 294_565, countries: 20, airports: 28, airlines: 28),
+            tripsEntry: .pill(
+                flags: ["MU", "JP", "IN", "AE", "US"],
+                more: 3,
+                next: ProfileV3Directive(go: "past_trips", profileID: "main"),
+                add: ProfileV3Directive(go: "add_trip", profileID: "main")
+            ),
             programmes: ProfileV3ProgrammeFixtures.extraProgrammes + programmes,
             connectedProgrammeCount: 6,
-            programmesUpdate: .label("14 mins ago")
+            programmesUpdate: .label("14 mins ago"),
+            brand: "atlys worldpass"
         )
     }
 
@@ -119,8 +141,8 @@ enum ProfileV3Fixtures {
             (.airports, ProfileV3Strings.airports, airports),
             (.airlines, ProfileV3Strings.airlines, airlines)
         ]
-        return entries.compactMap { key, label, value in
-            value.map { ProfileV3TravelStat(key: key, label: label, value: $0) }
+        return entries.map { key, label, value in
+            ProfileV3TravelStat(key: key, label: label, value: value, unit: key == .distance ? "km" : nil)
         }
     }
 
@@ -130,7 +152,12 @@ enum ProfileV3Fixtures {
         memberNumber: "6190002",
         kycStatus: .complete(validTill: "Mar 2027"),
         visitedCountryCodes: ["IN", "SG", "JP"],
-        stats: travelStats(flights: 12, distance: 88_120, countries: 6, airports: 9, airlines: 5)
+        stats: travelStats(flights: 12, distance: 88_120, countries: 6, airports: 9, airlines: 5),
+        tripsEntry: .add(
+            label: ProfileV3Strings.addPastTrips,
+            next: ProfileV3Directive(go: "add_trip", profileID: "co-traveller")
+        ),
+        brand: "atlys worldpass"
     )
 
     static let worldPasses = [worldPass, coTravellerPass]
@@ -403,7 +430,7 @@ enum ProfileV3Fixtures {
         ProfileV3DeleteTravellerConfirm(
             profileID: profileID,
             name: travellers.first { $0.id == profileID }?.displayName ?? "",
-            title: ProfileV3Strings.deleteTravellerTitle,
+            title: "Are you sure you want to delete traveler profile",
             body: "Their passport, visas and saved documents will be removed from your account.",
             proceedLabel: ProfileV3Strings.proceedToDelete,
             cancelLabel: ProfileV3Strings.dontDelete
@@ -428,7 +455,7 @@ enum ProfileV3Fixtures {
         cards: [
             ProfileV3ConnectorCard(
                 key: .gmail,
-                headline: ProfileV3Strings.connectorDeckTitle("Gmail"),
+                headline: "Atlys x Gmail",
                 body: ProfileV3Strings.connectorDeckGmailBlurb,
                 isConnected: true,
                 disconnectHint: ProfileV3Strings.connectorDeckHint,
@@ -436,7 +463,7 @@ enum ProfileV3Fixtures {
             ),
             ProfileV3ConnectorCard(
                 key: .itr,
-                headline: ProfileV3Strings.connectorDeckTitle("ITR"),
+                headline: "Atlys x ITR",
                 body: ProfileV3Strings.connectorDeckITRBlurb,
                 isConnected: false,
                 disconnectHint: ProfileV3Strings.connectorDeckHint,
@@ -451,16 +478,16 @@ enum ProfileV3Fixtures {
     ) -> ProfileV3DisconnectConfirm {
         ProfileV3DisconnectConfirm(
             connector: connector,
-            title: ProfileV3Strings.disconnectConfirmTitle,
-            warning: ProfileV3Strings.disconnectConfirmBody,
-            losses: ProfileV3Strings.disconnectLosses,
-            detailIntro: ProfileV3Strings.disconnectTermsIntro,
-            detailLosses: ProfileV3Strings.disconnectTermsItems,
-            detailParagraphs: ProfileV3Strings.disconnectTermsClosing,
-            consentLabel: ProfileV3Strings.disconnectConsent,
+            title: "Are you sure you want to disconnect your email?",
+            warning: "Your agents will lose access to everything this connection provides. You can reconnect a supported service at any time.",
+            losses: ["No automated slot booking", "No visa applications", "No personalised offers"],
+            detailIntro: "By proceeding with disconnection, the selected account connection will be revoked and the associated data will no longer be available to your agents for future use.",
+            detailLosses: ["Flight and travel history", "Airport, immigration and other travel logistics information"],
+            detailParagraphs: ["You may reconnect supported services at any time."],
+            consentLabel: "I have read and agree to the terms",
             isConsentRequired: isConsentRequired,
             confirmTitle: ProfileV3Strings.disconnectEmail,
-            cancelTitle: ProfileV3Strings.dontDisconnect
+            cancelTitle: "Don't disconnect"
         )
     }
 
@@ -511,8 +538,8 @@ enum ProfileV3Fixtures {
 
     static let settingsMenu = ProfileV3SettingsMenu(
         title: ProfileV3Strings.settings,
-        accountsLabel: ProfileV3Strings.accountsCenter,
-        accountsSubtitle: ProfileV3Strings.accountsCenterSubtitle,
+        accountsLabel: "Accounts center",
+        accountsSubtitle: "Residence, Citizenship, Currency & Contact Info",
         accountsRows: [
             settingsRow("residence", ProfileV3Strings.countryOfResidence, go: "edit_field", field: "residence"),
             settingsRow("citizenship", ProfileV3Strings.citizenship, go: "edit_field", field: "citizenship"),

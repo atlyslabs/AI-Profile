@@ -32,16 +32,20 @@ struct ProfileV3OfferDetailScaffold<Meter: View>: View {
                         .frame(maxWidth: ProfileV3Theme.Sizes.BenefitDetail.titleWidth)
                         .padding(.top, ProfileV3Theme.Space.s10)
                         .modifier(entry(1))
-                    ProfileV3TagLabel(text: termsTitle)
-                        .padding(.top, ProfileV3Theme.Space.s40)
-                        .modifier(entry(2))
-                    Text(terms)
-                        .typoGraphy(.H7InterMedium16)
-                        .foregroundStyle(Color(at: .neutralGrey500))
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: ProfileV3Theme.Sizes.BenefitDetail.bodyWidth)
-                        .padding(.top, ProfileV3Theme.Space.s24)
-                        .modifier(entry(3))
+                    if !termsTitle.isEmpty {
+                        ProfileV3TagLabel(text: termsTitle)
+                            .padding(.top, ProfileV3Theme.Space.s40)
+                            .modifier(entry(2))
+                    }
+                    if !terms.isEmpty {
+                        Text(terms)
+                            .typoGraphy(.H7InterMedium16)
+                            .foregroundStyle(Color(at: .neutralGrey500))
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: ProfileV3Theme.Sizes.BenefitDetail.bodyWidth)
+                            .padding(.top, ProfileV3Theme.Space.s24)
+                            .modifier(entry(3))
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.bottom, ProfileV3Theme.Space.s32)

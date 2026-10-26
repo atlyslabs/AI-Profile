@@ -6,6 +6,14 @@ public protocol ProfileV3AppHost: AnyObject, Sendable {
     func logOut()
     func restartApp()
     var floatingBarClearance: CGFloat { get }
+    var opensChat: Bool { get }
+    func openChat(prompt: String)
+}
+
+public extension ProfileV3AppHost {
+    var opensChat: Bool { false }
+
+    func openChat(prompt: String) {}
 }
 
 extension EnvironmentValues {

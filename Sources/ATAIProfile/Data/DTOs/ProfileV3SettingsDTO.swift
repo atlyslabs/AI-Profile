@@ -3,6 +3,7 @@ import Foundation
 struct ProfileV3SettingsMenuDTO: Decodable, Equatable {
     let type: String?
     let title: String?
+    private let rawCitizenshipCountryCode: ProfileV3LossyDTO<String>?
     private let rawAccountsCenter: ProfileV3LossyDTO<ProfileV3AccountsCenterDTO>?
     private let rawRows: [ProfileV3LossyDTO<ProfileV3SettingsRowDTO>]?
     private let rawConcierge: ProfileV3LossyDTO<ProfileV3ConciergeDTO>?
@@ -10,11 +11,13 @@ struct ProfileV3SettingsMenuDTO: Decodable, Equatable {
     enum CodingKeys: String, CodingKey {
         case type
         case title
+        case rawCitizenshipCountryCode = "citizenship_country_code"
         case rawAccountsCenter = "accounts_center"
         case rawRows = "rows"
         case rawConcierge = "contact_concierge"
     }
 
+    var citizenshipCountryCode: String? { rawCitizenshipCountryCode?.value }
     var accountsCenter: ProfileV3AccountsCenterDTO? { rawAccountsCenter?.value }
     var concierge: ProfileV3ConciergeDTO? { rawConcierge?.value }
     var rows: [ProfileV3SettingsRowDTO] { (rawRows ?? []).compactMap(\.value) }
@@ -120,4 +123,59 @@ struct ProfileV3PermissionsScreenDTO: Decodable, Equatable {
 struct ProfileV3SavePermissionsRequest: Encodable, Equatable {
     let action = "save_permissions"
     let updates: [String: String]
+}
+
+struct ProfileV3DeleteAccountReasonDTO: Decodable, Equatable {
+    struct Field: Decodable, Equatable {
+        let key: String?
+        let input: String?
+        let placeholder: String?
+    }
+
+    struct Submit: Decodable, Equatable {
+        let label: String?
+        let style: String?
+        let next: ProfileV3DirectiveDTO?
+    }
+
+    let type: String?
+    let title: String?
+    let subtitle: String?
+    private let rawField: ProfileV3LossyDTO<Field>?
+    private let rawSubmit: ProfileV3LossyDTO<Submit>?
+
+    var field: Field? { rawField?.value }
+    var submit: Submit? { rawSubmit?.value }
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case title
+        case subtitle
+        case rawField = "field"
+        case rawSubmit = "submit"
+    }
+}
+
+struct ProfileV3DeleteAccountConfirmDTO: Decodable, Equatable {
+    struct Action: Decodable, Equatable {
+        let key: String?
+        let label: String?
+        let style: String?
+        let action: String?
+        let next: ProfileV3DirectiveDTO?
+    }
+
+    let type: String?
+    let title: String?
+    let warning: String?
+    private let rawActions: [ProfileV3LossyDTO<Action>]?
+
+    var actions: [Action] { rawActions?.compactMap(\.value) ?? [] }
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case title
+        case warning
+        case rawActions = "actions"
+    }
 }

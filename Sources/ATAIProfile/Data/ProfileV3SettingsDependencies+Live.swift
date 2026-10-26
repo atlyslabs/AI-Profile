@@ -24,9 +24,6 @@ extension ProfileV3SettingsDependencies {
             currentCitizenship: {
                 MainActor.assumeIsolated { account.snapshot().citizenship }
             },
-            passportCitizenship: {
-                MainActor.assumeIsolated { account.snapshot().passportNationality }
-            },
             currentCurrencyCountry: {
                 let stored = UserDefaults.standard.string(forKey: Self.preferredCurrencyKey)
                 let fallback = MainActor.assumeIsolated { account.snapshot().residenceCode }
@@ -134,12 +131,14 @@ extension ProfileV3SettingsDependencies {
     }
 
     #if DEBUG
-    static func preview(passportCitizenship: ProfileV3Country? = nil, isAccountDeletionRequested: Bool = false) -> Self {
+    static func preview(
+        firstName: String? = "mohak",
+        isAccountDeletionRequested: Bool = false
+    ) -> Self {
         Self(
-            currentFirstName: { "mohak" },
+            currentFirstName: { firstName },
             currentResidence: { .india },
             currentCitizenship: { .india },
-            passportCitizenship: { passportCitizenship },
             currentCurrencyCountry: { .india },
             currentContact: { ProfileV3Fixtures.contactDetails },
             saveResidence: { _ in true },

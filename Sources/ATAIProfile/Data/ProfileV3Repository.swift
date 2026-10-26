@@ -18,17 +18,22 @@ protocol ProfileV3BoardRepository: Sendable {
 
 protocol ProfileV3AgentRepository: Sendable {
     func loadAgentFlow(agentID: String, profileID: String?) async throws -> ProfileV3AgentFlow
-    func saveAgentForm(_ form: ProfileV3AgentForm, profileID: String?) async throws
+    func saveAgentForm(
+        _ form: ProfileV3AgentForm,
+        profileID: String?,
+        profileIDs: [String]?
+    ) async throws -> String?
     func loadPassportHistory(profileID: String?) async throws -> [ProfileV3Passport]
     func loadPassportScan(profileID: String?) async throws -> ProfileV3PassportScan
     func uploadPassportScan(_ side: ProfileV3PassportSide, data: Data, profileID: String?) async throws
-        -> ProfileV3PassportField?
+        -> ProfileV3PassportScanResult
     func loadPassportReason() async throws -> ProfileV3PassportReasonScreen
     func loadPassportHowUsed() async throws -> ProfileV3PassportHowUsed
     func updatePassport(reason: String, profileID: String?) async throws
     func loadPreferenceSources(_ source: ProfileV3SectionSource, profileID: String?) async throws
         -> ProfileV3PreferenceSources
     func loadRidePicker(agentType: String, profileID: String?) async throws -> ProfileV3RidePicker
+    func loadRideRegions() async throws -> ProfileV3RideRegions
 }
 
 protocol ProfileV3LoyaltyRepository: Sendable {
@@ -61,7 +66,24 @@ protocol ProfileV3KYCCaptureRepository: Sendable {
     func uploadCoTravellerImage(_ image: ProfileV3CaptureImage, data: Data, profileID: String) async throws
 }
 
-protocol ProfileV3SettingsRepository: Sendable {
+protocol ProfileV3AppAccessRepository: Sendable {
+    func loadAppAccess() async throws -> ProfileV3AppAccess
+    func saveAppCredentials(_ credentials: ProfileV3AppCredentials, appID: String) async throws
+    func addAppPassword(_ credentials: ProfileV3AppCredentials) async throws
+    func disconnectApp(_ appID: String) async throws
+    func loadVaultCredentials() async throws -> [ProfileV3VaultCredential]
+    func loadVaultSites() async throws -> [ProfileV3VaultSite]
+    func saveVault(_ draft: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult
+    func updateVault(id: String, draft: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult
+    func vaultCredential(id: String, includeUsername: Bool) async throws -> ProfileV3VaultCredential
+    func retestVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult
+    func deleteVaultCredential(id: String) async throws
+    func pauseVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult
+    func resumeVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult
+    func revealVaultPassword(id: String, deviceName: String) async throws -> String
+}
+
+protocol ProfileV3SettingsRepository: ProfileV3AppAccessRepository {
     func loadSettings() async throws -> ProfileV3SettingsMenu
     func loadEditField(_ field: ProfileV3ProfileField) async throws -> ProfileV3EditField
     func saveProfileField(
@@ -90,19 +112,34 @@ protocol ProfileV3SettingsRepository: Sendable {
     func loadTerms(locale: String?) async throws -> ProfileV3Terms?
     func acknowledgeLogout() async throws
     func requestAccountDeletion() async throws
+    func loadDeleteAccountReason() async throws -> ProfileV3DeleteAccountReason
+    func loadDeleteAccountConfirm() async throws -> ProfileV3DeleteAccountConfirm
     func loadPermissions() async throws -> ProfileV3Permissions
     func savePermission(_ optionID: String, in sectionID: String) async throws
 }
 
+protocol ProfileV3GloveBoxRepository: Sendable {
+    func loadGloveBoxCard() async throws -> ProfileV3GloveBoxAccount
+    func createGloveBoxAddress() async throws -> ProfileV3GloveBoxAccount
+    func setGloveBoxForwardingPaused(_ paused: Bool) async throws -> ProfileV3GloveBoxAccount
+    func addGloveBoxForwardingAddress(_ email: String) async throws -> ProfileV3GloveBoxAccount
+    func loadGloveBoxMessages(cursor: String?) async throws -> ProfileV3GloveBoxInboxPage
+    func loadGloveBoxMessage(_ listed: ProfileV3GloveBoxEmail) async throws -> ProfileV3GloveBoxEmail
+    func loadGloveBoxAttachment(messageID: String, index: Int) async throws -> Data
+}
+
 protocol ProfileV3PastTripsRepository: Sendable {
-    func loadPastTrips(profileID: String) async throws -> [ProfileV3PastTrip]
-    func addPastTrip(_ draft: ProfileV3PastTripDraft, profileID: String) async throws -> ProfileV3PastTrip
-    func updatePastTrip(
-        id: String,
-        with draft: ProfileV3PastTripDraft,
-        profileID: String
-    ) async throws -> ProfileV3PastTrip
-    func deletePastTrip(id: String, profileID: String) async throws
+    func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen
+    func loadAddTrip(profileID: String) async throws -> ProfileV3AddTripScreen
+    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, year: Int, month: Int) async throws
+    func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws
+    func deletePastTrip(_ submit: ProfileV3BoardAction) async throws
+}
+
+protocol ProfileV3PersonaRepository: Sendable {
+    func loadTravelPersona(profileID: String?) async throws -> ProfileV3TravelPersona
+    func loadPersonaTrait(_ trait: String, profileID: String?, page: Int) async throws -> ProfileV3PersonaTrait
+    func submitPersonaAction(_ action: ProfileV3BoardAction, score: Int?) async throws
 }
 
 typealias ProfileV3HubRepository = ProfileV3BoardRepository & ProfileV3PastTripsRepository
@@ -113,6 +150,7 @@ typealias ProfileV3Repository = ProfileV3BoardRepository
     & ProfileV3KYCCaptureRepository
     & ProfileV3SettingsRepository
     & ProfileV3PastTripsRepository
+    & ProfileV3PersonaRepository
 
 extension ProfileV3BoardRepository {
     func loadLatestBoard() async throws -> ProfileV3Board {

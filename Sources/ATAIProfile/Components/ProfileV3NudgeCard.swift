@@ -10,12 +10,16 @@ struct ProfileV3NudgeCard: View {
         HStack(spacing: ProfileV3Theme.Space.s16) {
             Button(action: action) {
                 VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s8) {
-                    Text(message)
-                        .typoGraphy(.B2InterMedium12)
-                        .foregroundStyle(Color(at: .neutralGrey400))
-                    Text(actionTitle)
-                        .typoGraphy(.B1InterMedium14)
-                        .foregroundStyle(Color(at: .accentEmerald600))
+                    if !message.isEmpty {
+                        Text(message)
+                            .typoGraphy(.B2InterMedium12)
+                            .foregroundStyle(Color(at: .neutralGrey400))
+                    }
+                    if !actionTitle.isEmpty {
+                        Text(actionTitle)
+                            .typoGraphy(.B1InterMedium14)
+                            .foregroundStyle(Color(at: .accentEmerald600))
+                    }
                 }
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -34,7 +38,7 @@ struct ProfileV3NudgeCard: View {
 #Preview("Nudge card") {
     ProfileV3NudgeCard(
         message: ProfileV3Strings.kycRegainAccess,
-        actionTitle: ProfileV3Strings.completeKYC,
+        actionTitle: "Complete KYC",
         action: {}
     )
     .padding(ProfileV3Theme.Sizes.screenHorizontalMargin)

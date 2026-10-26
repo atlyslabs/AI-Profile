@@ -7,6 +7,8 @@ struct ProfileV3PassportReasonView: View {
     let onBack: () -> Void
     var onHowUsed: (() -> Void)?
 
+    @State private var headerPin = ProfileV3HeaderPin()
+
     private var screen: ProfileV3PassportReasonScreen { viewModel.screen }
 
     var body: some View {
@@ -14,7 +16,7 @@ struct ProfileV3PassportReasonView: View {
             header
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    Text(screen.title ?? ProfileV3Strings.passportReasonTitle)
+                    Text(screen.title ?? "")
                         .typoGraphy(.H5InterMedium20)
                         .foregroundStyle(ProfileV3Theme.Palette.countryText)
                         .multilineTextAlignment(.center)
@@ -30,7 +32,9 @@ struct ProfileV3PassportReasonView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.bottom, ProfileV3Theme.Sizes.Passport.listBottom)
+                .profileV3HeaderFadeAnchor(headerPin)
             }
+            .profileV3HeaderFade(headerPin, color: ProfileV3Theme.Palette.background)
             .scrollBounceBehavior(.basedOnSize)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -54,7 +58,7 @@ struct ProfileV3PassportReasonView: View {
                 .profileV3Icon(ProfileV3Theme.Icon.xl)
                 .foregroundStyle(Color(at: .pureBlack))
                 .accessibilityHidden(true)
-            Text(screen.subtitle ?? ProfileV3Strings.passportReasonPrompt)
+            Text(screen.subtitle ?? "")
                 .typoGraphy(.H5InterMedium20)
                 .foregroundStyle(Color(at: .pureBlack))
                 .frame(width: ProfileV3Theme.Sizes.Passport.reasonPromptWidth, alignment: .leading)
@@ -110,9 +114,11 @@ struct ProfileV3PassportReasonView: View {
                     .foregroundStyle(ProfileV3Theme.Palette.error)
                     .multilineTextAlignment(.center)
             }
-            ProfileV3GradientButton(title: screen.ctaTitle ?? ProfileV3Strings.updatePassport, action: viewModel.submit)
-                .disabled(viewModel.selection == nil || viewModel.isSubmitting)
-                .opacity(viewModel.selection == nil ? ProfileV3Theme.Motion.disabledOpacity : 1)
+            if let ctaTitle = screen.ctaTitle {
+                ProfileV3GradientButton(title: ctaTitle, action: viewModel.submit)
+                    .disabled(viewModel.selection == nil || viewModel.isSubmitting)
+                    .opacity(viewModel.selection == nil ? ProfileV3Theme.Motion.disabledOpacity : 1)
+            }
         }
         .animation(ProfileV3Theme.Motion.saveState, value: viewModel.submitFailed)
         .profileV3CTABar(top: ProfileV3Theme.Sizes.Disconnect.barTop)

@@ -147,6 +147,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     func confirmDisconnect() {
         guard let pendingDisconnect, pendingDisconnect.canDisconnect, !isDisconnecting else { return }
         isDisconnecting = true
+        router?.presentDisconnectProgress()
         let connector = pendingDisconnect
         let repository = repository
         disconnectTask = Task { [weak self] in
@@ -169,6 +170,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
         guard isDisconnecting else { return }
         disconnectTask?.cancel()
         isDisconnecting = false
+        router?.dismissDisconnectProgress()
         load()
         router?.dismissDisconnectEmail()
         deckResetToken += 1
@@ -188,10 +190,12 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
 
     private func finishDisconnect(_ connector: ProfileV3ConnectorKey, result: Result<Void, Error>) {
         isDisconnecting = false
+        router?.dismissDisconnectProgress()
         switch result {
         case .success:
             ProfileV3Analytics.connectorDisconnected(connectorKey: connector.rawValue)
             if connector == .photos { photoPlaces?.disconnect() }
+            router?.connectorDidDisconnect(connector)
             disconnectedKeys.insert(connector)
             connectors = reconciled(connectors)
             disconnectCompletions += 1
@@ -234,7 +238,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
             guard ProfileV3FeatureFlags.isPhotoPlacesEnabled else { return connectors }
             return connectors + [ProfileV3Connector(
                 id: key.rawValue,
-                name: ProfileV3ConnectorsMapper.displayName(for: key),
+                name: ProfileV3Strings.photosConnector,
                 icon: ProfileV3ConnectorsMapper.icon(for: key),
                 status: status
             )]

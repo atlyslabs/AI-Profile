@@ -69,9 +69,13 @@ struct ProfileV3HeroGlobe: View, Animatable {
                     draw(in: context, sphere: sphere, yaw: yaw, pitch: pitch, blend: blend)
                 }
             }
+            ProfileV3GlobeRim()
+                .frame(width: sphere.radius * 2, height: sphere.radius * 2)
+                .position(sphere.centre)
         }
         .task {
             await globe.prepare(Globe.cardAppearance)
+            await globe.prepare(Globe.expandedAppearance)
             isLandReady = true
         }
         .allowsHitTesting(false)
@@ -84,10 +88,10 @@ struct ProfileV3HeroGlobe: View, Animatable {
         var settled = context
         settled.opacity = blend
         settled.fill(disc, with: .color(ProfileV3Theme.Palette.globeOcean))
-        globe.drawLand(
-            Globe.cardAppearance.blended(toward: Globe.expandedAppearance, blend),
+        drawLand(
             in: context,
-            projection: ProfileV3Globe.Projection(centre: sphere.centre, radius: sphere.radius, yaw: yaw, pitch: pitch)
+            projection: ProfileV3Globe.Projection(centre: sphere.centre, radius: sphere.radius, yaw: yaw, pitch: pitch),
+            blend: blend
         )
         settled.fill(
             disc,
@@ -101,6 +105,21 @@ struct ProfileV3HeroGlobe: View, Animatable {
                 endPoint: CGPoint(x: sphere.centre.x, y: sphere.bounds.maxY)
             )
         )
+    }
+
+    /// The card and the open globe sample different land. Crossfade the two fields with the flight so
+    /// the last frame is the field the settled globe draws, instead of swapping it on afterwards.
+    private func drawLand(in context: GraphicsContext, projection: ProfileV3Globe.Projection, blend: Double) {
+        if blend < 1 {
+            var card = context
+            card.opacity = 1 - blend
+            globe.drawLand(Globe.cardAppearance, in: card, projection: projection)
+        }
+        if blend > 0 {
+            var expanded = context
+            expanded.opacity = blend
+            globe.drawLand(Globe.expandedAppearance, in: expanded, projection: projection)
+        }
     }
 }
 

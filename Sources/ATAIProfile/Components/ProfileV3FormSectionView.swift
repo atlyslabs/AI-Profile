@@ -18,8 +18,11 @@ struct ProfileV3FormSectionView: View {
     var onSelectCar: ((String) -> Void)?
     var onToggleBaggage: ((String) -> Void)?
     var onStepBaggage: ((String, Int) -> Void)?
+    var onOpenNoteLink: ((ProfileV3Directive) -> Void)?
 
     @State private var sliderPreview: Double?
+
+    private static let noteLinkURL = URL(string: "profilev3-note-link://open")!
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -32,12 +35,17 @@ struct ProfileV3FormSectionView: View {
                     onTrailingTap: passportField?.hasHistory == true ? onViewPreviousPassports : nil
                 )
                 if let source = section.source(selectedTab: selectedTabID), let onOpenSources {
-                    ProfileV3SectionSourcesRow(iconURL: source.iconURL, action: onOpenSources)
+                    ProfileV3SectionSourcesRow(source: source, action: onOpenSources)
                 }
                 if showsNoteAsSubtitle, let note = section.note {
-                    Text(note.text)
+                    Text(Self.attributed(note))
                         .typoGraphy(.B2InterSemibold12)
                         .foregroundStyle(Color(at: .neutralGrey400))
+                        .tint(Color(at: .neutralGrey800))
+                        .environment(\.openURL, OpenURLAction { _ in
+                            if let link = note.link { onOpenNoteLink?(link.directive) }
+                            return .handled
+                        })
                         .frame(maxWidth: ProfileV3Theme.Sizes.Car.subtitleWidth, alignment: .leading)
                         .padding(.top, ProfileV3Theme.Sizes.Car.subtitleTop - ProfileV3Theme.Space.s8)
                 }
@@ -56,6 +64,15 @@ struct ProfileV3FormSectionView: View {
     private var showsNoteAsSubtitle: Bool {
         if case .cars = section.control { return true }
         return false
+    }
+
+    private static func attributed(_ note: ProfileV3FormNote) -> AttributedString {
+        var text = AttributedString(note.text)
+        if let link = note.link, let range = text.range(of: link.text) {
+            text[range].link = noteLinkURL
+            text[range].underlineStyle = .single
+        }
+        return text
     }
 
     @ViewBuilder
@@ -117,6 +134,7 @@ struct ProfileV3FormSectionView: View {
                 placeholder: field.placeholder,
                 accessibilityLabel: section.title,
                 date: field.value,
+                hidesYear: field.hidesYear,
                 onChange: { onDateChange?($0) }
             )
         case .cars(let field):

@@ -158,13 +158,16 @@ struct ProfileV3FocusScroll<ID: Hashable, Content: View>: View {
     @ViewBuilder let content: () -> Content
 
     @State private var viewportHeight: CGFloat = 0
+    @State private var headerPin = ProfileV3HeaderPin()
 
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
                 content()
                     .frame(minHeight: fillsViewport ? viewportHeight : nil, alignment: .top)
+                    .profileV3HeaderFadeAnchor(headerPin)
             }
+            .profileV3HeaderFade(headerPin)
             .scrollBounceBehavior(.basedOnSize)
             .scrollDismissesKeyboard(.interactively)
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }

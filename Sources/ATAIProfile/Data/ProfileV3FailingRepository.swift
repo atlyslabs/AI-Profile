@@ -10,7 +10,7 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func saveAgentForm(_: ProfileV3AgentForm, profileID _: String?) async throws {
+    func saveAgentForm(_: ProfileV3AgentForm, profileID _: String?, profileIDs _: [String]?) async throws -> String? {
         throw ProfileV3RepositoryError.unavailable
     }
 
@@ -62,23 +62,23 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func loadPastTrips(profileID _: String) async throws -> [ProfileV3PastTrip] {
+    func loadPastTrips(profileID _: String) async throws -> ProfileV3PastTripsScreen {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func addPastTrip(_: ProfileV3PastTripDraft, profileID _: String) async throws -> ProfileV3PastTrip {
+    func loadAddTrip(profileID _: String) async throws -> ProfileV3AddTripScreen {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func updatePastTrip(
-        id _: String,
-        with _: ProfileV3PastTripDraft,
-        profileID _: String
-    ) async throws -> ProfileV3PastTrip {
+    func addPastTrip(_: ProfileV3BoardAction, country _: String, year _: Int, month _: Int) async throws {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func deletePastTrip(id _: String, profileID _: String) async throws {
+    func editPastTrip(_: ProfileV3BoardAction, year _: Int, month _: Int) async throws {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func deletePastTrip(_: ProfileV3BoardAction) async throws {
         throw ProfileV3RepositoryError.unavailable
     }
 
@@ -87,6 +87,14 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
     }
 
     func requestAccountDeletion() async throws {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadDeleteAccountReason() async throws -> ProfileV3DeleteAccountReason {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadDeleteAccountConfirm() async throws -> ProfileV3DeleteAccountConfirm {
         throw ProfileV3RepositoryError.unavailable
     }
 
@@ -99,6 +107,62 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
     }
 
     func loadConnectorControlPanel() async throws -> ProfileV3ConnectorControlPanel {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadAppAccess() async throws -> ProfileV3AppAccess {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func saveAppCredentials(_: ProfileV3AppCredentials, appID _: String) async throws {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func addAppPassword(_: ProfileV3AppCredentials) async throws {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func disconnectApp(_: String) async throws {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadVaultCredentials() async throws -> [ProfileV3VaultCredential] {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadVaultSites() async throws -> [ProfileV3VaultSite] {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func saveVault(_: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func updateVault(id _: String, draft _: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func vaultCredential(id _: String, includeUsername _: Bool) async throws -> ProfileV3VaultCredential {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func retestVaultCredential(id _: String) async throws -> ProfileV3VaultWriteResult {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func deleteVaultCredential(id _: String) async throws {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func pauseVaultCredential(id _: String) async throws -> ProfileV3VaultWriteResult {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func resumeVaultCredential(id _: String) async throws -> ProfileV3VaultWriteResult {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func revealVaultPassword(id _: String, deviceName _: String) async throws -> String {
         throw ProfileV3RepositoryError.unavailable
     }
 
@@ -156,7 +220,7 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
     }
 
     func uploadPassportScan(_: ProfileV3PassportSide, data _: Data, profileID _: String?) async throws
-        -> ProfileV3PassportField? {
+        -> ProfileV3PassportScanResult {
         throw ProfileV3RepositoryError.unavailable
     }
 
@@ -165,6 +229,22 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
     }
 
     func loadRidePicker(agentType _: String, profileID _: String?) async throws -> ProfileV3RidePicker {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadRideRegions() async throws -> ProfileV3RideRegions {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadTravelPersona(profileID _: String?) async throws -> ProfileV3TravelPersona {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadPersonaTrait(_: String, profileID _: String?, page _: Int) async throws -> ProfileV3PersonaTrait {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func submitPersonaAction(_: ProfileV3BoardAction, score _: Int?) async throws {
         throw ProfileV3RepositoryError.unavailable
     }
 

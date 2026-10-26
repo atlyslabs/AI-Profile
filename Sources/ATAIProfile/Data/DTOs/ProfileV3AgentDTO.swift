@@ -95,10 +95,46 @@ struct ProfileV3AgentSourcesDTO: Decodable, Equatable {
 struct ProfileV3AgentSaveDTO: Decodable, Equatable {
     let action: String?
     let agentType: String?
+    let household: ProfileV3AgentHouseholdDTO?
 
     enum CodingKeys: String, CodingKey {
         case action
         case agentType = "agent_type"
+        case household
+    }
+}
+
+struct ProfileV3AgentHouseholdDTO: Decodable, Equatable {
+    let eyebrow: String?
+    let icon: String?
+    let title: String?
+    let travelers: [ProfileV3AgentHouseholdTravellerDTO]?
+    let confirm: ProfileV3AgentHouseholdConfirmDTO?
+}
+
+struct ProfileV3AgentHouseholdTravellerDTO: Decodable, Equatable {
+    let profileID: String?
+    let name: String?
+    let passNumber: String?
+    let selected: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case profileID = "profile_id"
+        case name
+        case passNumber = "pass_number"
+        case selected
+    }
+}
+
+struct ProfileV3AgentHouseholdConfirmDTO: Decodable, Equatable {
+    let label: String?
+}
+
+struct ProfileV3AgentSaveResponseDTO: Decodable, Equatable {
+    let doneLabel: String?
+
+    enum CodingKeys: String, CodingKey {
+        case doneLabel = "done_label"
     }
 }
 
@@ -193,6 +229,8 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
     let max: ProfileV3ScalarDTO?
     let step: ProfileV3ScalarDTO?
     let unit: String?
+    let display: String?
+    let format: String?
     let ratherNotSay: Bool?
     let value: ProfileV3AgentValueDTO?
     let note: String?
@@ -202,12 +240,14 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
     private let rawSource: ProfileV3LossyDTO<ProfileV3FieldSourceDTO>?
     private let rawFound: ProfileV3LossyDTO<Bool>?
     private let rawNext: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
+    private let rawAssistLink: ProfileV3LossyDTO<ProfileV3AssistLinkDTO>?
 
     enum CodingKeys: String, CodingKey {
         case key
         case label
         case input
         case assist
+        case rawAssistLink = "assist_link"
         case select
         case rawOptions = "options"
         case rawSource = "source"
@@ -220,6 +260,8 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
         case max
         case step
         case unit
+        case display
+        case format
         case ratherNotSay = "rather_not_say"
         case value
         case note
@@ -233,6 +275,8 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
 
     var next: ProfileV3DirectiveDTO? { rawNext?.value }
 
+    var assistLink: ProfileV3AssistLinkDTO? { rawAssistLink?.value }
+
     var isFound: Bool { rawFound?.value == true }
 
     var inputKind: ProfileV3AgentInput? { input.flatMap(ProfileV3AgentInput.init(rawValue:)) }
@@ -243,8 +287,11 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
 
     var selectedOptions: [ProfileV3AgentOptionDTO] {
         let listed = Set(value?.list ?? [])
+        let single = value?.stringValue ?? value?.boolValue.map { $0 ? "yes" : "no" }
         return options.filter { option in
-            option.selected == true || option.id.map(listed.contains) == true
+            if option.selected == true { return true }
+            guard let id = option.id else { return false }
+            return listed.contains(id) || id == single
         }
     }
 }
@@ -260,19 +307,51 @@ struct ProfileV3AgentOptionDTO: Decodable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case value
+        case code
+        case optionID = "id"
         case label
+        case name
         case sub
+        case detail
+        case description
         case selected
         case imageURL = "image_url"
         case countable
         case count
     }
 
-    var id: String? {
-        guard let raw = value?.stringValue?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty else {
-            return nil
+    init(from decoder: Decoder) throws {
+        if let code = try? decoder.singleValueContainer().decode(String.self) {
+            value = .string(code)
+            label = code
+            sub = nil
+            selected = nil
+            imageURL = nil
+            countable = nil
+            count = nil
+            return
         }
-        return raw
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        value = try container.decodeIfPresent(ProfileV3ScalarDTO.self, forKey: .value)
+            ?? container.decodeIfPresent(ProfileV3ScalarDTO.self, forKey: .code)
+            ?? container.decodeIfPresent(ProfileV3ScalarDTO.self, forKey: .optionID)
+        label = try container.decodeIfPresent(String.self, forKey: .label)
+            ?? container.decodeIfPresent(String.self, forKey: .name)
+        sub = try container.decodeIfPresent(String.self, forKey: .sub)
+            ?? container.decodeIfPresent(String.self, forKey: .detail)
+            ?? container.decodeIfPresent(String.self, forKey: .description)
+        selected = try container.decodeIfPresent(Bool.self, forKey: .selected)
+        imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL)
+        countable = try container.decodeIfPresent(Bool.self, forKey: .countable)
+        count = try container.decodeIfPresent(ProfileV3ScalarDTO.self, forKey: .count)
+    }
+
+    var id: String? {
+        if let raw = value?.stringValue?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty {
+            return raw
+        }
+        let named = (label ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        return named.isEmpty ? nil : named
     }
 
     var detail: String? {
@@ -377,7 +456,20 @@ enum ProfileV3AgentValueDTO: Decodable, Equatable {
 
 struct ProfileV3FieldSourceDTO: Decodable, Equatable {
     let icon: String?
+    let count: ProfileV3ScalarDTO?
+    let label: String?
     let next: ProfileV3DirectiveDTO?
+    private let rawIcons: [ProfileV3LossyDTO<ProfileV3AgentSourceDTO>]?
+
+    var icons: [ProfileV3AgentSourceDTO] { rawIcons?.compactMap(\.value) ?? [] }
+
+    enum CodingKeys: String, CodingKey {
+        case icon
+        case count
+        case label
+        case next
+        case rawIcons = "icons"
+    }
 }
 
 struct ProfileV3PreferenceSourcesDTO: Decodable, Equatable {
@@ -427,6 +519,50 @@ struct ProfileV3RideOptionDTO: Decodable, Equatable {
         case spec
         case imageURL = "image_url"
         case selected
+    }
+}
+
+struct ProfileV3AssistLinkDTO: Decodable, Equatable {
+    let text: String?
+    private let rawNext: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
+
+    var next: ProfileV3DirectiveDTO? { rawNext?.value }
+
+    enum CodingKeys: String, CodingKey {
+        case text
+        case rawNext = "next"
+    }
+}
+
+struct ProfileV3RideRegionDTO: Decodable, Equatable {
+    let country: String?
+    let name: String?
+    let imageURL: String?
+    let imageAspect: ProfileV3ScalarDTO?
+
+    enum CodingKeys: String, CodingKey {
+        case country
+        case name
+        case imageURL = "image_url"
+        case imageAspect = "image_aspect"
+    }
+}
+
+struct ProfileV3RideRegionsScreenDTO: Decodable, Equatable {
+    let type: String?
+    let title: String?
+    let heading: String?
+    let dividerLabel: String?
+    private let rawRegions: [ProfileV3LossyDTO<ProfileV3RideRegionDTO>]?
+
+    var regions: [ProfileV3RideRegionDTO] { rawRegions?.compactMap(\.value) ?? [] }
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case title
+        case heading
+        case dividerLabel = "divider_label"
+        case rawRegions = "regions"
     }
 }
 

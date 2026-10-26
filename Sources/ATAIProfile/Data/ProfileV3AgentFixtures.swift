@@ -53,7 +53,12 @@ enum ProfileV3AgentFixtures {
                 options: ["Cheapest"], selected: ["Singapore Airlines", "Emirates"],
                 picker: ProfileV3OptionPicker(title: "+Add preferred airlines", catalogue: airlines),
                 note: "...I will scan flights 24x7 and get you the best deals",
-                source: ProfileV3SectionSource(iconURL: gmailSourceIcon, agentType: "flight", fieldKey: "airlines")
+                source: ProfileV3SectionSource(
+                    icons: [ProfileV3SourceIcon(url: gmailSourceIcon), ProfileV3SourceIcon(url: emiratesSourceIcon)],
+                    count: 3,
+                    agentType: "flight",
+                    fieldKey: "airlines"
+                )
             ),
             chips(
                 "class", "Class",
@@ -369,7 +374,7 @@ enum ProfileV3AgentFixtures {
                 hasHistory: true
             ),
             chips(
-                "travelling-with", "Travelling with", status: .complete,
+                "travelling-with", "Traveling with", status: .complete,
                 options: ["Solo", "Partner", "Family", "Friends", "Colleagues"], selected: ["Solo"],
                 note: "...I will size rooms, tables and transfers accordingly"
             ),
@@ -420,7 +425,10 @@ enum ProfileV3AgentFixtures {
                         detail: ProfileV3Directive(go: "ride_picker", agentType: ProfileV3AgentID.airportLogistics.apiValue)
                     )
                 ),
-                note: ProfileV3FormNote(text: "Book your ride on the Atlys app. Available in Dubai.")
+                note: ProfileV3FormNote(
+                    text: "Book your ride on the app. Available in selected regions",
+                    link: ProfileV3FormNote.Link(text: "selected regions", directive: ProfileV3Directive(go: "ride_regions"))
+                )
             ),
             chips(
                 "pickup_type", "Pick up type", status: .pending,
@@ -461,6 +469,20 @@ enum ProfileV3AgentFixtures {
         car("koenigsegg_jesko", "Koenigsegg Jesko"),
         car("ford_mustang", "Ford Mustang")
     ]
+
+    static let rideRegions = ProfileV3RideRegions(
+        title: "Pick your ride",
+        heading: "Skip the queue not the ride",
+        dividerLabel: "Now available in",
+        regions: [
+            ProfileV3RideRegions.Region(
+                id: "0-AE",
+                name: "Dubai",
+                imageURL: URL(string: "https://media.atlys.com/b2c/ai-native/cars/regions/dubai.png"),
+                aspectRatio: 1.819
+            )
+        ]
+    )
 
     static let ridePicker = ProfileV3RidePicker(
         title: "Select your airport pickup",
@@ -582,6 +604,7 @@ enum ProfileV3AgentFixtures {
     }
 
     static let gmailSourceIcon = URL(string: "https://media.atlys.com/b2c/ai-native/icons/kyc/gmail.png")
+    static let emiratesSourceIcon = URL(string: "https://media.atlys.com/b2c/ai-native/loyalty/flights/emirates_skywards.png")
 
     static let airlineSources = ProfileV3PreferenceSources(
         title: "Your preferred airlines",

@@ -34,7 +34,7 @@ extension ProfileV3Theme.Sizes {
         static let nameTop: CGFloat = 24
         static let nameWidth: CGFloat = 127
         static let subtitleTop: CGFloat = 10
-        static let subtitleWidth: CGFloat = 310
+        static let subtitleWidth: CGFloat = 381
         static let carouselTop: CGFloat = 19
     }
 
@@ -90,6 +90,13 @@ extension ProfileV3Theme.Sizes {
         static let cardSideScale: CGFloat = 170 / 190
         static let cardSpacing: CGFloat = 20
         static let cardNamePadding: CGFloat = 20
+        static let nameTop: CGFloat = 20
+        static let nameWidth: CGFloat = 142
+        static let nameLines = 2
+        static let nameHeight: CGFloat = 38
+        static let sideNameOpacity: Double = 0.4
+        static let sideNameLift = cardHeight / 2 * (1 - cardSideScale)
+        static let carouselHeight = cardHeight + nameTop + nameHeight
     }
 
     enum Save {
@@ -115,6 +122,19 @@ extension ProfileV3Theme.Sizes {
         static let buttonTop: CGFloat = 32
         static let captionTop: CGFloat = 20
         static let captionWidth: CGFloat = 241
+    }
+
+    enum RideRegions {
+        static let headingTop: CGFloat = 37
+        static let headingWidth: CGFloat = 216
+        static let dividerTop = ProfileV3Theme.Space.s40
+        static let dividerSpacing = ProfileV3Theme.Space.s40
+        static let cardsTop: CGFloat = 37
+        static let cardSpacing = ProfileV3Theme.Space.s16
+        static let cardInset: CGFloat = 29
+        static let cardRadius: CGFloat = 32
+        static let fallbackAspect: CGFloat = 1.819
+        static let bottom = ProfileV3Theme.Space.s32
     }
 
     enum Staged {

@@ -14,6 +14,9 @@ struct ProfileV3Podium: View {
                 .blendMode(.multiply)
         }
         .frame(height: ProfileV3Theme.Sizes.Podium.height)
+        .padding(.horizontal, ProfileV3Theme.Sizes.Podium.renderSpill)
+        .drawingGroup()
+        .padding(.horizontal, -ProfileV3Theme.Sizes.Podium.renderSpill)
         .accessibilityHidden(true)
     }
 }

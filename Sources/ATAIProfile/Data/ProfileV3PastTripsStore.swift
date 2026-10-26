@@ -1,8 +1,7 @@
 import Foundation
 
+#if DEBUG
 actor ProfileV3PastTripsStore {
-    static let shared = ProfileV3PastTripsStore()
-
     private var tripsByProfile: [String: [ProfileV3PastTrip]]
 
     init(tripsByProfile: [String: [ProfileV3PastTrip]] = [:]) {
@@ -13,7 +12,7 @@ actor ProfileV3PastTripsStore {
         (tripsByProfile[profileID] ?? []).newestFirst
     }
 
-    func add(_ draft: ProfileV3PastTripDraft, profileID: String) -> ProfileV3PastTrip {
+    func add(_ draft: ProfileV3PastTripDraft, profileID: String) {
         let trip = ProfileV3PastTrip(
             id: UUID().uuidString,
             countryCode: draft.countryCode,
@@ -21,19 +20,23 @@ actor ProfileV3PastTripsStore {
             month: draft.month
         )
         tripsByProfile[profileID, default: []].append(trip)
-        return trip
     }
 
-    func update(id: String, with draft: ProfileV3PastTripDraft, profileID: String) throws -> ProfileV3PastTrip {
-        guard let index = tripsByProfile[profileID]?.firstIndex(where: { $0.id == id }) else {
+    func reschedule(id: String, year: Int, month: Int, profileID: String) throws {
+        guard let index = tripsByProfile[profileID]?.firstIndex(where: { $0.id == id }),
+              let trip = tripsByProfile[profileID]?[index] else {
             throw ProfileV3RepositoryError.unavailable
         }
-        let trip = ProfileV3PastTrip(id: id, countryCode: draft.countryCode, year: draft.year, month: draft.month)
-        tripsByProfile[profileID]?[index] = trip
-        return trip
+        tripsByProfile[profileID]?[index] = ProfileV3PastTrip(
+            id: id,
+            countryCode: trip.countryCode,
+            year: year,
+            month: month
+        )
     }
 
     func remove(id: String, profileID: String) {
         tripsByProfile[profileID]?.removeAll { $0.id == id }
     }
 }
+#endif

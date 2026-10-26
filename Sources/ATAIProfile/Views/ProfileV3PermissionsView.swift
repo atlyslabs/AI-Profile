@@ -5,11 +5,13 @@ struct ProfileV3PermissionsView: View {
     @ObservedObject var model: ProfileV3PermissionsSettingsModel
     let onClose: () -> Void
 
+    @State private var headerPin = ProfileV3HeaderPin()
+
     var body: some View {
         VStack(spacing: 0) {
             ProfileV3SheetChrome(
                 icon: ATIcon.SwiftUIImage.settings,
-                title: model.permissions?.title ?? ProfileV3Strings.permissions,
+                title: model.permissions?.title ?? "",
                 onClose: onClose
             )
             if let permissions = model.permissions {
@@ -17,7 +19,9 @@ struct ProfileV3PermissionsView: View {
                     cards(permissions)
                     ScrollView(showsIndicators: false) {
                         cards(permissions)
+                            .profileV3HeaderFadeAnchor(headerPin)
                     }
+                    .profileV3HeaderFade(headerPin)
                 }
                 .transition(.opacity)
             } else {

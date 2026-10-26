@@ -6,7 +6,7 @@ struct ProfileV3WorldPassCarousel: View {
     @Binding var selectedID: String?
     var expandedID: String?
     var showsHint = false
-    var playsFlipDemo = false
+    var flipDemoPassID: String?
     var kycGlowPlays: [String: Int] = [:]
     var collapseProgress: CGFloat = 0
     var flipAffordancePassIDs: Set<String> = []
@@ -34,7 +34,7 @@ struct ProfileV3WorldPassCarousel: View {
                     isHidden: expandedID == pass.id,
                     isSelected: selectedID == pass.id,
                     showsHint: showsHint && hintPassID == pass.id,
-                    playsFlipDemo: playsFlipDemo && selectedID == pass.id,
+                    playsFlipDemo: flipDemoPassID == pass.id && selectedID == pass.id,
                     glowTrigger: kycGlowPlays[pass.id, default: 0],
                     collapseProgress: collapseProgress,
                     showsFlipAffordance: flipAffordancePassIDs.contains(pass.id),

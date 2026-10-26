@@ -13,6 +13,7 @@ struct ProfileV3HubView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.profileV3Globe) private var globeRenderer
     @Environment(\.profileV3FloatingBarClearance) private var floatingBarClearance
+    @Environment(\.profileV3PausesAnimations) private var pausesAnimations
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -21,6 +22,7 @@ struct ProfileV3HubView: View {
                 ProfileV3LoadStateView(
                     phase: viewModel.phase.loadPhase,
                     loadingLabel: ProfileV3Strings.loadingHome,
+                    failureStyle: .errorState,
                     retry: viewModel.retryLoad
                 )
                 .profileV3EntryReveal(stage.showsChrome)
@@ -61,6 +63,11 @@ struct ProfileV3HubView: View {
         .onChange(of: viewModel.benefitRedemption) { _, redemption in
             benefitPresenter.dismiss(after: redemption)
         }
+        #if DEBUG
+        .onReceive(NotificationCenter.default.publisher(for: ProfileV3DebugKYCScenario.didChange)) { _ in
+            viewModel.requestRefresh()
+        }
+        #endif
         .sensoryFeedback(.success, trigger: viewModel.kycStepCompletions)
         .sensoryFeedback(trigger: viewModel.kycGlowCue) { _, cue in
             switch cue?.tone {
@@ -80,10 +87,10 @@ struct ProfileV3HubView: View {
             ProfileV3HubPassOverlay(
                 stage: stage,
                 target: worldPassTarget,
-                extraVisitedCodes: viewModel.extraVisitedCodes,
+                latestPasses: viewModel.latestPasses,
                 isGlobeAnimating: viewModel.pastTrips == nil,
                 onAddTraveller: viewModel.tapAddTraveller,
-                onPastTrips: viewModel.openPastTrips
+                onTrips: viewModel.openTrips
             )
             ProfileV3BenefitHeroOverlay(
                 presenter: benefitPresenter,
@@ -103,6 +110,15 @@ struct ProfileV3HubView: View {
 
     private var coversHub: Bool {
         stage.expandedPass != nil
+            || benefitPresenter.isPresenting
+            || couponPresenter.isPresenting
+            || viewModel.showsAllBenefits
+            || viewModel.showsAllCoupons
+            || viewModel.pastTrips != nil
+    }
+
+    private var hidesHub: Bool {
+        stage.isDetailSettled
             || benefitPresenter.isPresenting
             || couponPresenter.isPresenting
             || viewModel.showsAllBenefits
@@ -143,6 +159,7 @@ struct ProfileV3HubView: View {
                 || benefitPresenter.isPresenting
                 || couponPresenter.isPresenting
         )
+        .environment(\.profileV3PausesAnimations, pausesAnimations || hidesHub)
     }
 
     private var scrollOffset: Binding<CGFloat> {
@@ -238,7 +255,6 @@ struct ProfileV3HubView: View {
             ProfileV3AgentGrid(
                 agents: home.agents,
                 isKYCComplete: home.kycStatus.isComplete,
-                isGmailConnected: home.isGmailConnected,
                 onImpression: viewModel.trackAgentCard,
                 onActivate: viewModel.tapAgent
             )
@@ -263,14 +279,14 @@ struct ProfileV3HubView: View {
                     )
                 } else if home.needsKYCReconnect {
                     ProfileV3NudgeCard(
-                        message: home.kycBannerTitle ?? ProfileV3Strings.kycReconnectMessage,
-                        actionTitle: home.kycActionLabel ?? ProfileV3Strings.reconnect,
+                        message: home.kycBannerTitle ?? "",
+                        actionTitle: home.kycActionLabel ?? "",
                         action: viewModel.tapCompleteKYC
                     )
                 } else {
                     ProfileV3NudgeCard(
                         message: ProfileV3Strings.kycRegainAccess,
-                        actionTitle: home.kycActionLabel ?? ProfileV3Strings.completeKYC,
+                        actionTitle: home.kycActionLabel ?? "",
                         action: viewModel.tapCompleteKYC
                     )
                 }
@@ -306,7 +322,6 @@ struct ProfileV3HubView: View {
         cover.present {
             stage.expand(pass, from: frame, to: worldPassTarget, globe: pose, renderer: globeRenderer)
             viewModel.markHoldHintSeen()
-            viewModel.loadPastTripCodes(for: pass)
         }
     }
 

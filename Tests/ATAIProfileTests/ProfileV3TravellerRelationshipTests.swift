@@ -35,8 +35,8 @@ struct ProfileV3TravellerRelationshipTests {
          "submit":{"label":"Save","action":"edit_profile_field","field":"relationship","profile_id":"p2"}}
         """#)
         #expect(field.input == .singleSelect)
-        #expect(field.options.map(\.value) == ["son", "daughter", "father_in_law"])
-        #expect(field.options.map(\.title) == ["Son", "Daughter", "Father in law"])
+        #expect(field.options.map(\.value) == ["son", "daughter"])
+        #expect(field.options.map(\.title) == ["Son", "Daughter"])
         #expect(field.selectedValue == "daughter")
         #expect(field.submitLabel == "Save")
         #expect(field.submitProfileID == "p2")
@@ -44,13 +44,69 @@ struct ProfileV3TravellerRelationshipTests {
 
     @Test func selectionFallsBackToCurrentOnlyWhenItIsAnOption() throws {
         let known = try editField(#"""
-        {"field":"relationship","input":"single_select","options":[{"value":"son"},{"value":"daughter"}],"current":"son"}
+        {"field":"relationship","input":"single_select",
+         "options":[{"value":"son","title":"Son"},{"value":"daughter","title":"Daughter"}],"current":"son"}
         """#)
         #expect(known.selectedValue == "son")
         let unknown = try editField(#"""
-        {"field":"relationship","input":"single_select","options":[{"value":"son"}],"current":"cousin"}
+        {"field":"relationship","input":"single_select","options":[{"value":"son","title":"Son"}],"current":"cousin"}
         """#)
         #expect(unknown.selectedValue == nil)
+    }
+
+    @Test func currentMatchesAnOptionWhateverItsCaseOrSeparators() throws {
+        let field = try editField(#"""
+        {"field":"relationship","input":"single_select",
+         "options":[{"value":"father_in_law","title":"Father-in-law"},{"value":"daughter","title":"Daughter"}],
+         "current":"Father-In-Law"}
+        """#)
+        #expect(field.selectedValue == "father_in_law")
+    }
+
+    @Test func theTravellersRelationshipIsSelectedWhenTheEditorMarksNone() throws {
+        let field = try editField(#"""
+        {"field":"relationship","input":"single_select",
+         "options":[{"value":"spouse","title":"Spouse"},{"value":"father_in_law","title":"Father-in-law"}]}
+        """#)
+        #expect(field.selectedValue == nil)
+        #expect(field.selectedValue(fallingBackTo: "spouse") == "spouse")
+        #expect(field.selectedValue(fallingBackTo: "FATHER_IN_LAW") == "father_in_law")
+        #expect(field.selectedValue(fallingBackTo: "Father-in-law") == "father_in_law")
+        #expect(field.selectedValue(fallingBackTo: "cousin") == nil)
+        #expect(field.selectedValue(fallingBackTo: nil) == nil)
+
+        let marked = try editField(#"""
+        {"field":"relationship","options":[{"value":"spouse","title":"Spouse","selected":true},{"value":"son","title":"Son"}]}
+        """#)
+        #expect(marked.selectedValue(fallingBackTo: "son") == "spouse")
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func theEditorOpensOnTheTravellersRelationshipAndSavesOnlyAChange() async throws {
+        let session = ProfileV3SessionStore()
+        let model = ProfileV3TravellersSettingsModel(
+            deps: .preview(),
+            repository: ProfileV3MockRepository(delay: .zero, session: session),
+            currentContact: { ProfileV3Fixtures.contactDetails }
+        )
+        model.load()
+        try await Self.waitUntil { model.screen != nil }
+        let row = try #require(model.rows.first { $0.relationshipEntry != nil })
+        session.relationships[row.id] = "Sibling"
+        model.load()
+        try await Self.waitUntil { model.rows.first { $0.id == row.id }?.relationship == "Sibling" }
+        model.select(try #require(model.rows.first { $0.id == row.id }))
+        #expect(model.editingRelationshipTitle == "Sibling")
+
+        model.tapRelationship()
+        try await Self.waitUntil { model.relationshipField != nil }
+        #expect(model.relationshipSelection == "sibling")
+        #expect(!model.canSaveRelationship)
+
+        model.selectRelationship("friend")
+        #expect(model.canSaveRelationship)
+        model.selectRelationship("sibling")
+        #expect(!model.canSaveRelationship)
     }
 
     @Test func relationshipFieldWithoutInputIsSingleSelect() throws {
@@ -89,12 +145,6 @@ struct ProfileV3TravellerRelationshipTests {
         ])
     }
 
-    @Test func displayTitleHumanisesTheValue() {
-        #expect(ProfileV3RelationshipEntry.title(for: "daughter") == "Daughter")
-        #expect(ProfileV3RelationshipEntry.title(for: "father_in_law") == "Father in law")
-        #expect(ProfileV3RelationshipEntry.title(for: "step-son") == "Step son")
-    }
-
     private func editTravellers(_ json: String) throws -> ProfileV3EditTravellersScreen {
         let dto = try JSONDecoder().decode(ProfileV3EditTravellersScreenDTO.self, from: Data(json.utf8))
         return ProfileV3TravellersMapper.editTravellers(dto)
@@ -103,5 +153,12 @@ struct ProfileV3TravellerRelationshipTests {
     private func editField(_ json: String) throws -> ProfileV3EditField {
         let dto = try JSONDecoder().decode(ProfileV3EditFieldScreenDTO.self, from: Data(json.utf8))
         return try #require(ProfileV3EditFieldMapper.field(dto))
+    }
+
+    private static func waitUntil(_ condition: () -> Bool) async throws {
+        for _ in 0 ..< 200 where !condition() {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        #expect(condition())
     }
 }

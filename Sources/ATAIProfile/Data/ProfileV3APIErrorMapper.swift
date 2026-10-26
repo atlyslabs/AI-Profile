@@ -9,26 +9,38 @@ enum ProfileV3APIErrorMapper {
         if error is CancellationError { return error }
         if let profileError = error as? ProfileV3Error { return profileError }
 
+        let parsed = ProfileV3ServerFailureBox.shared.consume()
         let status = statusCode(of: error)
-        let message = serverMessage(of: error)
+        let message = serverMessage(of: error) ?? parsed?.message
         ATCoreLogger.error(
             "[ProfileV3] \(action) failed status=\(status.map(String.init) ?? "-") error=\(error.localizedDescription)"
         )
 
         switch status {
         case 401:
+            if let message, message.localizedCaseInsensitiveContains("re-authentication") {
+                return ProfileV3Error.server(code: "reauth", message: ProfileV3VaultStrings.confirmItsYou)
+            }
             return ProfileV3Error.unauthorized
         case 409:
             return ProfileV3Error.conflict(code: nil, message: message)
+        case 404:
+            return ProfileV3Error.server(code: parsed?.code, message: message)
         case 422:
             return ProfileV3Error.invalidRequest(message: message)
         case 501:
             return ProfileV3Error.notImplemented(action: action)
+        case 502 where parsed?.code == "preferences_write_failed":
+            return ProfileV3Error.partialSave(
+                message: message,
+                failedIDs: parsed?.failedProfileIDs ?? [],
+                savedIDs: parsed?.savedProfileIDs ?? []
+            )
         case 502, 503, 504:
             return ProfileV3Error.transient(message: message)
         default:
             if let message {
-                return ProfileV3Error.server(code: nil, message: message)
+                return ProfileV3Error.server(code: parsed?.code, message: message)
             }
             return error
         }

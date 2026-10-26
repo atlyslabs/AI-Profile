@@ -2,6 +2,8 @@ import Foundation
 
 struct ProfileV3HubHints {
     static let holdHintShowLimit = 3
+    static let flipDemoShowLimit = 5
+    static let programmeReorderHintShowLimit = 5
 
     private let defaults: UserDefaults
 
@@ -14,9 +16,13 @@ struct ProfileV3HubHints {
         nonmutating set { defaults.set(newValue, forKey: Keys.holdHintSeen) }
     }
 
-    var hasSeenFlipDemo: Bool {
-        get { defaults.bool(forKey: Keys.flipDemoSeen) }
-        nonmutating set { defaults.set(newValue, forKey: Keys.flipDemoSeen) }
+    var flipDemoShows: Int {
+        get { defaults.integer(forKey: Keys.flipDemoShows) }
+        nonmutating set { defaults.set(newValue, forKey: Keys.flipDemoShows) }
+    }
+
+    var isFlipDemoDue: Bool {
+        flipDemoShows < Self.flipDemoShowLimit
     }
 
     var holdHintShows: Int {
@@ -25,18 +31,34 @@ struct ProfileV3HubHints {
     }
 
     var isHoldHintDue: Bool {
-        hasSeenFlipDemo && !hasSeenHoldHint && holdHintShows < Self.holdHintShowLimit
+        flipDemoShows > 0 && !hasSeenHoldHint && holdHintShows < Self.holdHintShowLimit
     }
 
-    var hasSeenProgrammeReorderHint: Bool {
-        get { defaults.bool(forKey: Keys.programmeReorderHintSeen) }
-        nonmutating set { defaults.set(newValue, forKey: Keys.programmeReorderHintSeen) }
+    var programmeReorderHintShows: Int {
+        get { defaults.integer(forKey: Keys.programmeReorderHintShows) }
+        nonmutating set { defaults.set(newValue, forKey: Keys.programmeReorderHintShows) }
+    }
+
+    var isProgrammeReorderHintDue: Bool {
+        programmeReorderHintShows < Self.programmeReorderHintShowLimit
+    }
+
+    var hasSeenConnectedAppsHint: Bool {
+        get { defaults.bool(forKey: Keys.connectedAppsHintSeen) }
+        nonmutating set { defaults.set(newValue, forKey: Keys.connectedAppsHintSeen) }
+    }
+
+    var hasSeenPersonaCoach: Bool {
+        get { defaults.bool(forKey: Keys.personaCoachSeen) }
+        nonmutating set { defaults.set(newValue, forKey: Keys.personaCoachSeen) }
     }
 
     private enum Keys {
         static let holdHintSeen = "profileV3.holdToExploreSeen"
         static let holdHintShows = "profileV3.holdToExploreShows"
-        static let flipDemoSeen = "profileV3.flipDemoSeen"
-        static let programmeReorderHintSeen = "profileV3.programmeReorderHintSeen"
+        static let flipDemoShows = "profileV3.flipDemoShows"
+        static let programmeReorderHintShows = "profileV3.programmeReorderHintShows"
+        static let connectedAppsHintSeen = "profileV3.connectedAppsHintSeen"
+        static let personaCoachSeen = "profileV3.personaCoachSeen"
     }
 }

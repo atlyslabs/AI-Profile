@@ -55,6 +55,7 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     @Published private(set) var isSaving = false
     @Published private(set) var didAdd = false
     @Published private(set) var entryForm: ProfileV3LoyaltyEntryForm?
+    @Published private(set) var entryFormFailed = false
     @Published private(set) var saveError: String?
 
     weak var router: ProfileV3AddProgrammeRouter?
@@ -112,8 +113,20 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
 
     var canContinuePick: Bool { selectedItem != nil && !isLoadingCatalogue }
 
+    var entryFields: [ProfileV3LoyaltyEntryForm.Field] {
+        (entryForm?.fields ?? []).filter { $0.key == Field.membershipNumberKey || $0.key == Field.pointsKey }
+    }
+
     var canSubmit: Bool {
-        !membershipNumber.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isSaving
+        guard entryForm != nil, !isSaving else { return false }
+        return entryFields.allSatisfy { !$0.isRequired || !value(for: $0.key).isEmpty }
+    }
+
+    private typealias Field = ProfileV3LoyaltyEntryForm.Field
+
+    private func value(for key: String) -> String {
+        let raw = key == Field.pointsKey ? points : membershipNumber
+        return raw.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     func start() async {
@@ -239,6 +252,9 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     private func loadEntryForm(for item: ProfileV3ProgrammeCatalogueItem) {
         entryTask?.cancel()
         entryForm = nil
+        entryFormFailed = false
+        membershipNumber = ""
+        points = ""
         entryTask = Task { [weak self] in
             guard let self else { return }
             do {
@@ -250,9 +266,15 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
                 guard !Task.isCancelled else { return }
                 entryForm = form
             } catch {
-                return
+                guard !Task.isCancelled else { return }
+                entryFormFailed = true
             }
         }
+    }
+
+    func retryEntryForm() {
+        guard let item = selectedItem else { return }
+        loadEntryForm(for: item)
     }
 
     func backToPick() {
@@ -264,10 +286,11 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
         guard let item = selectedItem, canSubmit, submitTask == nil else { return }
         isSaving = true
         saveError = nil
+        let keys = Set(entryFields.map(\.key))
         let submission = ProfileV3ProgrammeSubmission(
             item: item,
-            membershipNumber: membershipNumber.trimmingCharacters(in: .whitespacesAndNewlines),
-            points: Int(points.filter(\.isNumber))
+            membershipNumber: keys.contains(Field.membershipNumberKey) ? value(for: Field.membershipNumberKey) : nil,
+            points: keys.contains(Field.pointsKey) ? Int(points.filter(\.isNumber)) : nil
         )
         submitTask = Task { [weak self] in
             guard let self else { return }
@@ -388,6 +411,13 @@ extension ProfileV3AddProgrammeViewModel {
         viewModel.catalogue = ProfileV3ProgrammeCatalogue.all
         viewModel.query = query
         viewModel.reconcileSelection()
+        if stage == .details, let item = viewModel.selectedItem {
+            viewModel.entryForm = .mock(
+                programID: item.id,
+                programName: item.name,
+                kind: ProfileV3LoyaltyMapper.kind(for: item.category)
+            )
+        }
         viewModel.membershipNumber = membershipNumber
         viewModel.stage = stage
         viewModel.isLoadingCatalogue = isLoadingCatalogue

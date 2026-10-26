@@ -20,7 +20,7 @@ struct ProfileV3ExpandableCard<Content: View>: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.profileV3Pressable(.selection))
-            .accessibilityLabel("\(title), \(subtitle)")
+            .accessibilityLabel([title, subtitle].filter { !$0.isEmpty }.joined(separator: ", "))
             .accessibilityValue(isExpanded ? ProfileV3Strings.expanded : ProfileV3Strings.collapsed)
             .accessibilityHint(isExpanded ? ProfileV3Strings.collapseHint : ProfileV3Strings.expandHint)
 
@@ -70,12 +70,16 @@ struct ProfileV3SettingsCardHeader<Accessory: View>: View {
             }
             .foregroundStyle(Color(at: .pureBlack))
             VStack(alignment: .leading, spacing: ProfileV3Theme.Sizes.Accounts.subtitleSpacing) {
-                Text(title)
-                    .typoGraphy(.H7InterMedium16)
-                    .foregroundStyle(Color(at: .pureBlack))
-                Text(subtitle)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(Color(at: .neutralGrey400))
+                if !title.isEmpty {
+                    Text(title)
+                        .typoGraphy(.H7InterMedium16)
+                        .foregroundStyle(Color(at: .pureBlack))
+                }
+                if !subtitle.isEmpty {
+                    Text(subtitle)
+                        .typoGraphy(.B2InterMedium12)
+                        .foregroundStyle(Color(at: .neutralGrey400))
+                }
             }
         }
         .multilineTextAlignment(.leading)
@@ -94,9 +98,12 @@ extension ProfileV3SettingsCardHeader where Accessory == EmptyView {
 }
 
 extension View {
-    func profileV3SettingsCard(cornerRadius: CGFloat = ProfileV3Theme.Sizes.SettingsPage.cardRadius) -> some View {
+    func profileV3SettingsCard(
+        cornerRadius: CGFloat = ProfileV3Theme.Sizes.SettingsPage.cardRadius,
+        fill: Color = ProfileV3Theme.Palette.background
+    ) -> some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-        return background(shape.fill(ProfileV3Theme.Palette.background))
+        return background(shape.fill(fill))
             .overlay(
                 shape.strokeBorder(ProfileV3Theme.Palette.settingsCardBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
             )
@@ -111,8 +118,8 @@ private struct ProfileV3ExpandableCardPreview: View {
     var body: some View {
         ProfileV3ExpandableCard(
             icon: ATIcon.SwiftUIImage.person,
-            title: ProfileV3Strings.accountsCenter,
-            subtitle: ProfileV3Strings.accountsCenterSubtitle,
+            title: "Accounts center",
+            subtitle: "Residence, Citizenship, Currency & Contact Info",
             isExpanded: $isExpanded
         ) {
             ProfileV3SettingsRow(

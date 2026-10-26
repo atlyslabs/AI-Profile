@@ -190,6 +190,7 @@ extension ProfileV3Theme {
         let primary: Color
         let secondary: Color
         let faint: Color
+        let label: Color
         let dots: Color
         let number: LinearGradient
         let pill: LinearGradient
@@ -208,6 +209,7 @@ extension ProfileV3Theme {
             primary: Color(at: .pureWhite),
             secondary: Palette.statLabel,
             faint: Palette.programmeTileExpiry,
+            label: Palette.programmeTilePointsLabel,
             dots: Palette.programmeTileDots,
             number: programmeTextGradient,
             pill: programmeTilePillGradient,
@@ -220,6 +222,7 @@ extension ProfileV3Theme {
             primary: Color(at: .pureBlack),
             secondary: Palette.cardDarkSecondary,
             faint: Palette.cardDarkFaint,
+            label: Palette.cardDarkPointsLabel,
             dots: Color(at: .pureBlack),
             number: programmeTextGradientDark,
             pill: programmeTilePillGradientDark,

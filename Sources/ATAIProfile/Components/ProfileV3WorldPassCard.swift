@@ -12,21 +12,30 @@ struct ProfileV3WorldPassCard: View {
     var body: some View {
         ZStack {
             Color(at: .pureBlack)
-            ProfileV3CardGlobe(
-                isAnimating: animatesGlobe,
-                facingLongitude: ProfileV3Theme.Globe.cardLongitude,
-                appearance: ProfileV3Theme.Globe.cardAppearance,
-                pose: globePose
-            )
-            .frame(width: ProfileV3Theme.Sizes.worldPassGlobe, height: ProfileV3Theme.Sizes.worldPassGlobe)
-            .background {
-                ProfileV3GlobeOrbits()
-                    .frame(
-                        width: ProfileV3Theme.Sizes.worldPassGlobeOrbits,
-                        height: ProfileV3Theme.Sizes.worldPassGlobeOrbits
-                    )
+            if ProfileV3FeatureFlags.isGlobeEnabled {
+                ProfileV3CardGlobe(
+                    isAnimating: animatesGlobe,
+                    facingLongitude: ProfileV3Theme.Globe.cardLongitude,
+                    appearance: ProfileV3Theme.Globe.cardAppearance,
+                    pose: globePose
+                )
+                .frame(width: ProfileV3Theme.Sizes.worldPassGlobe, height: ProfileV3Theme.Sizes.worldPassGlobe)
+                .overlay {
+                    ProfileV3GlobeRim()
+                        .frame(
+                            width: ProfileV3Theme.Sizes.worldPassGlobeSphere,
+                            height: ProfileV3Theme.Sizes.worldPassGlobeSphere
+                        )
+                }
+                .background {
+                    ProfileV3GlobeOrbits()
+                        .frame(
+                            width: ProfileV3Theme.Sizes.worldPassGlobeOrbits,
+                            height: ProfileV3Theme.Sizes.worldPassGlobeOrbits
+                        )
+                }
+                .offset(y: ProfileV3Theme.Sizes.worldPassGlobeOffsetY)
             }
-            .offset(y: ProfileV3Theme.Sizes.worldPassGlobeOffsetY)
             ProfileV3Theme.Palette.worldPassWash
             if pass.resolvedKYCGlowTone != .hidden {
                 ProfileV3KYCGlow(
@@ -37,7 +46,7 @@ struct ProfileV3WorldPassCard: View {
                 )
             }
             VStack(spacing: 0) {
-                ProfileV3WorldPassHeader()
+                ProfileV3WorldPassHeader(brand: pass.brand)
                     .padding(.top, ProfileV3Theme.Space.s20)
                 Spacer()
                 footer
@@ -77,17 +86,21 @@ struct ProfileV3WorldPassCard: View {
 }
 
 struct ProfileV3WorldPassHeader: View {
+    let brand: String?
+
     var body: some View {
-        HStack(spacing: ProfileV3Theme.Space.s4) {
-            ProfileV3Vector.worldPassPlus.image
-                .profileV3Icon(ProfileV3Theme.Icon.sm)
-                .rotationEffect(.degrees(ProfileV3Theme.Rotation.quarter))
-            Text(ProfileV3Strings.worldPass)
-                .font(Font.Inter.get(size: ProfileV3Theme.Typography.worldPassHeaderSize, weight: .regular))
-                .tracking(ProfileV3Theme.Typography.worldPassHeaderTracking)
+        if let brand = brand?.nonEmpty {
+            HStack(spacing: ProfileV3Theme.Space.s4) {
+                ProfileV3Vector.worldPassPlus.image
+                    .profileV3Icon(ProfileV3Theme.Icon.sm)
+                    .rotationEffect(.degrees(ProfileV3Theme.Rotation.quarter))
+                Text(brand)
+                    .font(Font.Inter.get(size: ProfileV3Theme.Typography.worldPassHeaderSize, weight: .regular))
+                    .tracking(ProfileV3Theme.Typography.worldPassHeaderTracking)
+            }
+            .foregroundStyle(ProfileV3Theme.worldPassTitleGradient)
+            .opacity(ProfileV3Theme.Opacity.worldPassSubtitle)
         }
-        .foregroundStyle(ProfileV3Theme.worldPassTitleGradient)
-        .opacity(ProfileV3Theme.Opacity.worldPassSubtitle)
     }
 }
 
