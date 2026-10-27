@@ -82,8 +82,7 @@ extension ProfileV3Theme.Sizes {
         static let rowTextGap: CGFloat = 17
         static let rowTrailing: CGFloat = 26
         static let listBottom: CGFloat = 54
-        static let pickerTitleTop: CGFloat = 104
-        static let pickerSearchTop: CGFloat = 40
+        static let pickerSearchTop: CGFloat = 24
         static let pickerRowsTop: CGFloat = 32
     }
 }

@@ -352,4 +352,89 @@ struct ProfileV3GloveBoxTests {
         #expect(sample.card.linkedCard == nil)
         #expect(Fixtures.home.card.viewAllTitle != nil)
     }
+
+    @Test func anEmptyInboxShowsSampleEmailsUntilARealOneArrives() {
+        let account = ProfileV3GloveBoxAccount(address: "priya@trips.atlys.com", forwardingEmail: "priya@gmail.com", eligible: true)
+        let empty = ProfileV3GloveBoxMapper.section(account: account, emails: [], hasMore: false)
+        #expect(empty.sampleLabel == ProfileV3GloveBoxCopy.sample)
+        #expect(empty.emails == ProfileV3GloveBoxSamples.emails)
+        #expect(empty.viewAllTitle == nil)
+        #expect(empty.forwardingNotice == nil)
+
+        let real = ProfileV3GloveBoxEmail(id: "m1", sender: "IndiGo", summary: "Your web check-in is open")
+        let filled = ProfileV3GloveBoxMapper.section(account: account, emails: [real], hasMore: false)
+        #expect(filled.sampleLabel == nil)
+        #expect(filled.emails == [real])
+
+        let home = ProfileV3GloveBoxMapper.home(email: filled)
+        #expect(home.phone.calls == ProfileV3GloveBoxSamples.calls)
+        #expect(home.phone.sampleLabel == ProfileV3GloveBoxCopy.sample)
+        #expect(home.card.transactions == ProfileV3GloveBoxSamples.transactions)
+        #expect(home.card.sampleLabel == ProfileV3GloveBoxCopy.sample)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func sampleEntriesNeverReachTheServerAndStaySamples() async throws {
+        let repository = EmptyInboxStub()
+        let viewModel = ProfileV3GloveBoxViewModel(repository: repository)
+        while viewModel.home == nil { try await Task.sleep(for: .milliseconds(10)) }
+        let home = try #require(viewModel.home)
+        #expect(home.email.sampleLabel == ProfileV3GloveBoxCopy.sample)
+        #expect(viewModel.sampleLabel(for: .transaction(home.card.transactions[0])) == ProfileV3GloveBoxCopy.sample)
+
+        viewModel.open(.email(home.email.emails[0]))
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(repository.openedMessages == 0)
+        viewModel.dismissSheets()
+
+        viewModel.toggleForwarding()
+        while viewModel.isUpdatingForwarding { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(viewModel.home?.email.forwardingPaused == true)
+        #expect(viewModel.home?.email.sampleLabel == ProfileV3GloveBoxCopy.sample)
+        #expect(viewModel.home?.email.emails == ProfileV3GloveBoxSamples.emails)
+    }
+}
+
+private final class EmptyInboxStub: ProfileV3GloveBoxRepository, @unchecked Sendable {
+    private let lock = NSLock()
+    private var account = ProfileV3GloveBoxAccount(
+        address: "priya@trips.atlys.com",
+        forwardingEmail: "priya@gmail.com",
+        eligible: true
+    )
+    private var _openedMessages = 0
+
+    var openedMessages: Int { lock.withLock { _openedMessages } }
+
+    func loadGloveBoxCard() async throws -> ProfileV3GloveBoxAccount {
+        lock.withLock { account }
+    }
+
+    func createGloveBoxAddress() async throws -> ProfileV3GloveBoxAccount {
+        lock.withLock { account }
+    }
+
+    func setGloveBoxForwardingPaused(_ paused: Bool) async throws -> ProfileV3GloveBoxAccount {
+        lock.withLock {
+            account.forwardingPaused = paused
+            return account
+        }
+    }
+
+    func addGloveBoxForwardingAddress(_ email: String) async throws -> ProfileV3GloveBoxAccount {
+        lock.withLock { account }
+    }
+
+    func loadGloveBoxMessages(cursor _: String?) async throws -> ProfileV3GloveBoxInboxPage {
+        ProfileV3GloveBoxInboxPage(emails: [], nextCursor: nil)
+    }
+
+    func loadGloveBoxMessage(_ listed: ProfileV3GloveBoxEmail) async throws -> ProfileV3GloveBoxEmail {
+        lock.withLock { _openedMessages += 1 }
+        return listed
+    }
+
+    func loadGloveBoxAttachment(messageID _: String, index _: Int) async throws -> Data {
+        Data()
+    }
 }

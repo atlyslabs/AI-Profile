@@ -2701,6 +2701,18 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-badge-changed": {
+      "comment": "Badge on a glove box entry whose booking changed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changed"
+          }
+        }
+      }
+    },
     "mo-aiprofile-glovebox-badge-paused": {
       "comment": "Email section badge while forwarding is paused.",
       "extractionState": "manual",
@@ -3085,6 +3097,18 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-label-sample": {
+      "comment": "Tag on glove box sample entries shown while there is no real data.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sample"
+          }
+        }
+      }
+    },
     "mo-aiprofile-glovebox-label-virtual-email": {
       "comment": "Settings glove box card subtitle.",
       "extractionState": "manual",
@@ -3165,6 +3189,198 @@
           "stringUnit": {
             "state": "translated",
             "value": "Confirm your forwarding email and new emails will reach your inbox."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-call-note": {
+      "comment": "Agent's note in the sample glove box call.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I called the hotel and got you an early check-in at 11 am, so your room is ready when you land."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-call-status": {
+      "comment": "Status line of the sample glove box call.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendar updated"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-call-summary": {
+      "comment": "Summary of the sample glove box call.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Called Marriott Dubai and got you an early check-in at 11 am"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-call-title": {
+      "comment": "Title of the sample glove box call.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marriott Dubai"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-email-flight-note": {
+      "comment": "Agent's note in the first sample glove box email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I found a better seat at the same price and upgraded you. The seat was available, so I grabbed it before it was gone — no extra cost."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-email-flight-sender": {
+      "comment": "Sender of the first sample glove box email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emirates"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-email-flight-status": {
+      "comment": "Status line of the first sample glove box email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "change caught"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-email-flight-subject": {
+      "comment": "Subject of the first sample glove box email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your flight on 12 Oct now leaves 40 min later"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-email-hotel-note": {
+      "comment": "Agent's note in the second sample glove box email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your stay qualifies for a free room upgrade. Want me to accept it?"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-email-hotel-sender": {
+      "comment": "Sender of the second sample glove box email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marriott Dubai"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-email-hotel-status": {
+      "comment": "Status line of the second sample glove box email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added to trip"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-email-hotel-subject": {
+      "comment": "Subject of the second sample glove box email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Free upgrade available"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-transaction-note": {
+      "comment": "Agent's note on the sample virtual card transaction.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I used your virtual card to hold a table for 4. You'll see every charge here."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-transaction-status": {
+      "comment": "Outcome of the sample virtual card transaction.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approved"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-transaction-summary": {
+      "comment": "Summary of the sample virtual card transaction.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card check for table of 4"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-sample-transaction-title": {
+      "comment": "Title of the sample virtual card transaction.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dinner at SOHO, New York"
           }
         }
       }

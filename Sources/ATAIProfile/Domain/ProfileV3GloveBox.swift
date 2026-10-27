@@ -223,6 +223,7 @@ struct ProfileV3GloveBoxCardSection: Equatable {
     let addCardTitle: String
     let secureNote: String
     let transactions: [ProfileV3GloveBoxTransaction]
+    var sampleLabel: String?
     let emptyTitle: String
     let emptyBody: String
     var viewAllTitle: String?

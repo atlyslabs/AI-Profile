@@ -77,15 +77,25 @@ struct ProfileV3PastTripsView: View {
     }
 
     private var list: some View {
-        ScrollView(showsIndicators: false) {
-            LazyVStack(spacing: Sizes.cardSpacing) {
-                ForEach(Array(viewModel.trips.enumerated()), id: \.element.id) { index, trip in
-                    row(trip, index: index)
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                LazyVStack(spacing: Sizes.cardSpacing) {
+                    ForEach(Array(viewModel.trips.enumerated()), id: \.element.id) { index, trip in
+                        row(trip, index: index)
+                            .id(trip.id)
+                    }
+                }
+                .padding(.top, Sizes.listTop)
+                .padding(.bottom, Sizes.listBottom)
+                .frame(maxWidth: .infinity)
+            }
+            .onChange(of: viewModel.focus) { _, focus in
+                guard let focus else { return }
+                let animation = reduceMotion ? nil : Motion.pastTripsFocus
+                DispatchQueue.main.async {
+                    withAnimation(animation) { proxy.scrollTo(focus.tripID, anchor: .center) }
                 }
             }
-            .padding(.top, Sizes.listTop)
-            .padding(.bottom, Sizes.listBottom)
-            .frame(maxWidth: .infinity)
         }
         .onAppear(perform: enter)
     }

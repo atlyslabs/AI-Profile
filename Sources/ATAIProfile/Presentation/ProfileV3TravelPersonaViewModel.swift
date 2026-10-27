@@ -62,7 +62,10 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
     }
 
     func load() {
-        if content == nil { isDecoding = true }
+        if content == nil, !isDecoding, hints.isPersonaLoaderDue {
+            hints.personaLoaderShows += 1
+            isDecoding = true
+        }
         let repository = repository
         let profileID = profileID
         ProfileV3PhasedLoad.start(
@@ -217,9 +220,25 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
             isEditable: isEditable,
             onChanged: { [weak self] in self?.load() }
         )
-        viewModel.load()
         coach = nil
         trait = viewModel
+        guard let pendingSave = flushDrafts() else {
+            viewModel.load()
+            return
+        }
+        Task { [weak self, weak viewModel] in
+            await pendingSave.value
+            guard let self, let viewModel, trait === viewModel else { return }
+            viewModel.load()
+        }
+    }
+
+    private func flushDrafts() -> Task<Void, Never>? {
+        if saveTask == nil, !drafts.isEmpty {
+            adjustTask?.cancel()
+            saveDrafts()
+        }
+        return saveTask
     }
 
     func closeTrait() {
