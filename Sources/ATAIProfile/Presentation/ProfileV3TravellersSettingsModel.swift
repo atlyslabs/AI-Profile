@@ -159,11 +159,20 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
         }
         let profileID = relationshipField?.submitProfileID ?? entry.profileID
         let rowID = editingTraveller.id
+        let stored = rows.first { $0.id == rowID }.map(seeded) ?? editingTraveller
+        let oldDetails = Self.analyticsDetails(stored, relationship: editingRow?.relationship)
+        let newDetails = Self.analyticsDetails(stored, relationship: value)
         isSavingRelationship = true
         let repository = repository
         relationshipTask = Task { [weak self] in
             do {
                 try await repository.saveTravellerRelationship(value, profileID: profileID)
+                ProfileV3Analytics.travellerSaved(
+                    travellerId: rowID,
+                    oldDetails: oldDetails,
+                    newDetails: newDetails,
+                    passportChanged: false
+                )
                 let refreshed = try? await repository.loadEditTravellers()
                 guard let self else { return }
                 isSavingRelationship = false
@@ -231,6 +240,9 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
             return
         }
         let email = traveller.isMain ? currentContact().email.nonEmpty : deps.storedTraveller(traveller.id)?.email
+        let relationship = editingRow?.relationship
+        let oldDetails = stored.map { Self.analyticsDetails($0, relationship: relationship) } ?? [:]
+        let newDetails = Self.analyticsDetails(traveller, relationship: relationship)
         isSavingTraveller = true
         let repository = repository
         mutationTask = Task { [weak self] in
@@ -250,7 +262,12 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
                         profileID: traveller.id
                     )
                 }
-                ProfileV3Analytics.travellerSaved(travellerId: traveller.id, passportChanged: passportNumber != nil)
+                ProfileV3Analytics.travellerSaved(
+                    travellerId: traveller.id,
+                    oldDetails: oldDetails,
+                    newDetails: newDetails,
+                    passportChanged: passportNumber != nil
+                )
                 guard let self else { return }
                 isSavingTraveller = false
                 router?.travellerDidChange()
@@ -326,7 +343,15 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
         mutationTask = Task { [weak self] in
             do {
                 let profileID = try await repository.addTraveller(submission)
-                ProfileV3Analytics.travellerAdded(travellerId: profileID)
+                ProfileV3Analytics.travellerAdded(
+                    travellerId: profileID,
+                    details: ProfileV3Analytics.travellerDetails(
+                        name: "\(submission.firstName) \(submission.lastName)",
+                        phone: submission.mobileNumber,
+                        passportNumber: submission.passportNumber,
+                        relationship: submission.relationship
+                    )
+                )
                 let refreshed = try? await repository.loadEditTravellers()
                 guard let self else { return }
                 isAddingTraveller = false
@@ -378,6 +403,15 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
             load()
         }
         router?.travellersDidChange()
+    }
+
+    private static func analyticsDetails(_ traveller: ProfileV3Traveller, relationship: String?) -> [String: String] {
+        ProfileV3Analytics.travellerDetails(
+            name: "\(traveller.firstName) \(traveller.lastName)",
+            phone: traveller.mobileNumber,
+            passportNumber: traveller.passportNumber,
+            relationship: relationship
+        )
     }
 
     private func seeded(_ row: ProfileV3TravellerRow) -> ProfileV3Traveller {

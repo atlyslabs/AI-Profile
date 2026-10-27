@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import UIKit
 
 @MainActor
 final class ProfileV3CredentialStoreModel: ObservableObject {
@@ -30,17 +31,24 @@ final class ProfileV3CredentialStoreModel: ObservableObject {
 
     private let repository: any ProfileV3AppAccessRepository
     private let unlock: @Sendable () async -> ProfileV3VaultUnlock
+    private let lock: @Sendable () -> Void
     private var unlockTask: Task<Void, Never>?
     private var loadTask: Task<Void, Never>?
     private var sitesTask: Task<Void, Never>?
     private var openTask: Task<Void, Never>?
+    private var backgroundObserver: AnyCancellable?
 
     init(
         repository: any ProfileV3AppAccessRepository,
-        unlock: @escaping @Sendable () async -> ProfileV3VaultUnlock = { await ProfileV3VaultDevice.unlockVault() }
+        unlock: @escaping @Sendable () async -> ProfileV3VaultUnlock = { await ProfileV3VaultDevice.unlockVault() },
+        lock: @escaping @Sendable () -> Void = { ProfileV3VaultDevice.lockVault() }
     ) {
         self.repository = repository
         self.unlock = unlock
+        self.lock = lock
+        backgroundObserver = NotificationCenter.default
+            .publisher(for: UIApplication.didEnterBackgroundNotification)
+            .sink { _ in lock() }
     }
 
     var rows: [ProfileV3VaultCredential] { entries ?? [] }
@@ -150,6 +158,7 @@ final class ProfileV3CredentialStoreModel: ObservableObject {
     }
 
     func cancelReads() {
+        lock()
         unlockTask?.cancel()
         isUnlocking = false
         loadTask?.cancel()

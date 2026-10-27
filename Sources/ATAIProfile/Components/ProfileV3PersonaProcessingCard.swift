@@ -14,7 +14,7 @@ struct ProfileV3PersonaProcessingCard: View {
                 .padding(.top, Persona.radarTop)
             Text(ProfileV3Strings.personaProcessing)
                 .typoGraphy(.B2InterSemibold12)
-                .foregroundStyle(ProfileV3Theme.personaProcessingShimmer)
+                .foregroundStyle(ProfileV3Theme.personaCaptionGradient)
                 .multilineTextAlignment(.center)
                 .padding(.top, Layout.messageTop)
         }

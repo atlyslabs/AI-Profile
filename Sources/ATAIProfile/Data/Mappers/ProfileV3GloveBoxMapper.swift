@@ -19,6 +19,9 @@ enum ProfileV3GloveBoxCopy {
     static var activateTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleActivate }
     static var activateSubtitle: String { ProfileV3L10n.moAiprofileGloveboxDescriptionActivate }
     static var activateButton: String { ProfileV3Strings.activate }
+    static var unlockTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleUnlock }
+    static var unlockSubtitle: String { ProfileV3L10n.moAiprofileGloveboxDescriptionUnlock }
+    static var completeKYC: String { ProfileV3L10n.moAiprofileGloveboxButtonCompleteKyc }
     static var tryAgain: String { ProfileV3L10n.moAiprofileGeneralButtonTryAgain }
     static var unavailable: String { ProfileV3L10n.moAiprofileGloveboxErrorUnavailable }
     static var signInAgain: String { ProfileV3L10n.moAiprofileGloveboxErrorSignInAgain }

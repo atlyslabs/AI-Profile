@@ -207,7 +207,7 @@ struct ProfileV3TravelPersonaContent: View {
             if viewModel.isEditable {
                 Text(ProfileV3Strings.personaEditHint)
                     .typoGraphy(.B2InterSemibold12)
-                    .foregroundStyle(ProfileV3Theme.personaHintGradient)
+                    .foregroundStyle(ProfileV3Theme.personaCaptionGradient)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: Persona.hintWidth)

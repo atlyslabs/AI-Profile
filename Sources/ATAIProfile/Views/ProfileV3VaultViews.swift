@@ -38,25 +38,23 @@ struct ProfileV3CredentialStoreCard: View {
     }
 
     private var art: some View {
-        ZStack(alignment: .topTrailing) {
-            ProfileV3ShieldShape()
-                .fill(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.credentialCardBigShield))
-                .frame(width: Layout.cardBigShield.width, height: Layout.cardBigShield.height)
-                .padding(.trailing, Layout.cardBigShieldTrailing)
-                .padding(.top, Layout.cardBigShieldTop)
-            ProfileV3ShieldShape()
-                .fill(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.credentialCardShield))
-                .frame(width: Layout.cardShield.width, height: Layout.cardShield.height)
-                .padding(.trailing, Layout.cardShieldTrailing)
-                .padding(.top, Layout.cardShieldTop)
-            ProfileV3CredentialLock(size: Layout.cardLock, box: Layout.cardLockBox)
-                .opacity(ProfileV3Theme.Opacity.credentialCardLock)
-                .padding(.trailing, Layout.cardLockTrailing)
-                .padding(.top, Layout.cardLockTop)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
+        ProfileV3ConnectorGlyph.credentialCardArt.image
+            .resizable()
+            .frame(width: Layout.cardArt.width, height: Layout.cardArt.height)
+            .mask {
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: Layout.cardArtFade / Layout.cardArt.width),
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            .mask { shape.offset(y: -Layout.cardInsetShadow) }
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 
     private var bottomEdge: some View {

@@ -517,6 +517,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxBadgePaused: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-badge-paused", fallback: "Paused") }
   /// Virtual card section button that adds a card.
   internal static var moAiprofileGloveboxButtonAddCard: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-add-card", fallback: "Add card") }
+  /// Starts KYC from the locked glove box intro.
+  internal static var moAiprofileGloveboxButtonCompleteKyc: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-complete-kyc", fallback: "Complete KYC") }
   /// Glove box copy button right after copying.
   internal static var moAiprofileGloveboxButtonCopied: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-copied", fallback: "Copied") }
   /// Glove box button that copies the address or number.
@@ -539,6 +541,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxDescriptionPhoneAbout: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-description-phone-about", fallback: "Agent answers every call, day or night. It handles the simple ones and puts urgent ones through to you.") }
   /// Settings glove box card description. The line break follows the design.
   internal static var moAiprofileGloveboxDescriptionSettingsCard: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-description-settings-card", fallback: "Built for your agent. Get your\nown email, number and virtual card") }
+  /// Glove box intro subtitle while the main traveler's KYC isn't done.
+  internal static var moAiprofileGloveboxDescriptionUnlock: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-description-unlock", fallback: "A travel email, number and card that work for you. Your real ones stay private.") }
   /// Virtual card section empty state title.
   internal static var moAiprofileGloveboxEmptyStateNoTransactions: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-empty-state-no-transactions", fallback: "No transactions yet...") }
   /// Virtual card section empty state body.
@@ -651,6 +655,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxTitlePhoneNumber: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-phone-number", fallback: "Phone number") }
   /// Title of the glove box transactions list sheet.
   internal static var moAiprofileGloveboxTitleTransactionsList: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-transactions-list", fallback: "Glove box  ·  Transactions") }
+  /// Glove box intro title while the main traveler's KYC isn't done.
+  internal static var moAiprofileGloveboxTitleUnlock: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-unlock", fallback: "Your Glove box is ready to unlock") }
   /// Title of the glove box virtual card section.
   internal static var moAiprofileGloveboxTitleVirtualCard: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-virtual-card", fallback: "Virtual card") }
   /// Action button to add airlines to loyalty programs.

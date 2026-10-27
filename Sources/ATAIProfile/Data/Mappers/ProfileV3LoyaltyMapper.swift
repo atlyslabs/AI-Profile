@@ -97,7 +97,8 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
             pointsLine: text(row.pointsLine),
             tier: text(row.tier),
             updatedLine: text(row.updatedLine),
-            artAspect: row.artAspect.flatMap { $0 > 0 ? CGFloat($0) : nil }
+            artAspect: row.artAspect.flatMap { $0 > 0 ? CGFloat($0) : nil },
+            category: category(for: row.kind) ?? local?.category
         )
     }
 

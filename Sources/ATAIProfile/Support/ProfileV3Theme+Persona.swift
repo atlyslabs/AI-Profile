@@ -172,11 +172,11 @@ extension ProfileV3Theme {
         endPoint: UnitPoint(x: 0.943, y: 1.3)
     )
 
-    static let personaHintGradient = LinearGradient(
+    static let personaCaptionGradient = LinearGradient(
         stops: [
-            .init(color: Palette.personaShimmerEdge, location: 0.054),
-            .init(color: Palette.personaHintMid, location: 0.462),
-            .init(color: Palette.personaShimmerEdge, location: 0.946)
+            .init(color: Palette.personaCaptionEdge, location: 0.054),
+            .init(color: Palette.personaCaptionMid, location: 0.462),
+            .init(color: Palette.personaCaptionEdge, location: 0.946)
         ],
         startPoint: UnitPoint(x: 0.19, y: -1.579),
         endPoint: UnitPoint(x: 0.81, y: 2.579)

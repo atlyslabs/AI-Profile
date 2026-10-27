@@ -72,6 +72,7 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     private var catalogueTask: Task<Void, Never>?
     private var catalogueFilter: ProfileV3ProgrammeFilter?
     private var catalogueLoaderShownAt = ContinuousClock.now
+    private var slideDepthReached = 0
     private var hasStarted = false
     private var didClose = false
 
@@ -219,6 +220,8 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
         guard next != selectedFilter else { return }
         showCatalogueLoader()
         selectedFilter = next
+        slideDepthReached = 0
+        ProfileV3Analytics.cardTypeSelected(travellerId: profileID, connectorType: connectorType)
         reconcileSelection()
         scheduleCatalogueRefresh(debounced: false)
     }
@@ -227,8 +230,34 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     func selectItem(_ id: String) -> Bool {
         guard selectedItemID != id else { return false }
         selectedItemID = id
+        trackSlideDepth(to: id)
         return true
     }
+
+    private var connectorType: String {
+        selectedFilter.map(Self.connectorType) ?? ProfileV3Analytics.connectorType(.all)
+    }
+
+    private static func connectorType(_ filter: ProfileV3ProgrammeFilter) -> String {
+        filter.category.map(ProfileV3Analytics.connectorType)
+            ?? filter.label.lowercased().split(whereSeparator: \.isWhitespace).joined(separator: "_")
+    }
+
+    private func trackSlideDepth(to id: String) {
+        let items = filteredCatalogue
+        guard let index = items.firstIndex(where: { $0.id == id }), index > 0 else { return }
+        let step = Self.slideDepthStep
+        let depth = (index + 1) * 100 / items.count / step * step
+        guard depth >= step, depth > slideDepthReached else { return }
+        slideDepthReached = depth
+        ProfileV3Analytics.programCardScrolled(
+            travellerId: profileID,
+            slideDepthPercentage: depth,
+            connectorType: connectorType
+        )
+    }
+
+    private static let slideDepthStep = 25
 
     private func rememberSelection() {
         guard let profileID else { return }
@@ -243,9 +272,11 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
 
     func continueFromPick() {
         guard canContinuePick, let item = selectedItem else { return }
+        ProfileV3Analytics.loyaltyCardClicked(travellerId: profileID, cardName: item.name, connectorType: connectorType)
         ProfileV3Analytics.programmeSelected(itemId: item.id)
         saveError = nil
         setStage(.details)
+        ProfileV3Analytics.cardDetailScreenViewed(travellerId: profileID, item: item)
         loadEntryForm(for: item)
     }
 
@@ -292,6 +323,7 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
             membershipNumber: keys.contains(Field.membershipNumberKey) ? value(for: Field.membershipNumberKey) : nil,
             points: keys.contains(Field.pointsKey) ? Int(points.filter(\.isNumber)) : nil
         )
+        ProfileV3Analytics.cardDetailsEntered(travellerId: profileID, submission: submission)
         submitTask = Task { [weak self] in
             guard let self else { return }
             defer {

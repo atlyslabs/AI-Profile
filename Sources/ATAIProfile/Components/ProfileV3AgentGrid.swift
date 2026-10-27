@@ -32,7 +32,6 @@ struct ProfileV3AgentsHeader: View {
 struct ProfileV3AgentGrid: View {
     let agents: [ProfileV3Agent]
     var isKYCComplete = true
-    var onImpression: ((ProfileV3Agent, Int) -> Void)?
     let onActivate: (ProfileV3Agent) -> Void
 
     private static let columns = [
@@ -42,11 +41,10 @@ struct ProfileV3AgentGrid: View {
 
     var body: some View {
         LazyVGrid(columns: Self.columns, spacing: ProfileV3Theme.Space.s18) {
-            ForEach(Array(agents.enumerated()), id: \.element.id) { index, agent in
+            ForEach(agents) { agent in
                 ProfileV3AgentGridCard(agent: agent, isKYCComplete: isKYCComplete) {
                     onActivate(agent)
                 }
-                .profileV3OnImpression { onImpression?(agent, index) }
             }
         }
     }

@@ -67,7 +67,11 @@ struct ProfileV3SettingsView: View {
         .profileV3CredentialStore(viewModel.credentialStore)
         .fullScreenCover(isPresented: $viewModel.isGloveBoxPresented, onDismiss: viewModel.gloveBoxDidClose) {
             if let repository = viewModel.gloveBoxRepository {
-                ProfileV3GloveBoxLiveFlow(repository: repository) { viewModel.isGloveBoxPresented = false }
+                ProfileV3GloveBoxLiveFlow(
+                    repository: repository,
+                    isKYCComplete: viewModel.isMainTravellerKYCComplete,
+                    onCompleteKYC: viewModel.completeKYCFromGloveBox
+                ) { viewModel.isGloveBoxPresented = false }
             }
         }
     }

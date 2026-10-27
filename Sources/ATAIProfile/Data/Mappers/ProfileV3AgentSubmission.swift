@@ -32,6 +32,19 @@ enum ProfileV3AgentSubmissionValue: Encodable, Equatable {
             try container.encodeNil()
         }
     }
+
+    var analyticsValue: Any {
+        switch self {
+        case .string(let value): return value
+        case .number(let value): return Int(exactly: value) ?? value
+        case .bool(let value): return value
+        case .list(let values): return values
+        case .items(let items):
+            return Dictionary(items.map { ($0.value, $0.count ?? 1) }, uniquingKeysWith: { first, _ in first })
+        case .object(let values): return values
+        case .null: return NSNull()
+        }
+    }
 }
 
 struct ProfileV3AgentSubmissionItem: Encodable, Equatable {
@@ -99,7 +112,7 @@ enum ProfileV3AgentSubmission {
                 }
                 continue
             }
-            guard let value = value(for: section, residuals: residuals) else { continue }
+            guard let value = value(for: section.control, sectionID: section.id, residuals: residuals) else { continue }
             values[section.id] = value
         }
         if let key = residuals.lockScreenFieldKey, let card = form.medicalCard {
@@ -108,15 +121,30 @@ enum ProfileV3AgentSubmission {
         return values
     }
 
+    static func analyticsValue(of control: ProfileV3FormControl) -> Any? {
+        switch control {
+        case .baggage(let field):
+            return Dictionary(
+                field.tabs.map { ($0.id, baggageValue($0).analyticsValue) },
+                uniquingKeysWith: { first, _ in first }
+            )
+        case .passport:
+            return nil
+        default:
+            return value(for: control, sectionID: "", residuals: .empty)?.analyticsValue
+        }
+    }
+
     private static func agentType(for agentID: String) -> String {
         ProfileV3AgentID(rawValue: agentID)?.apiValue ?? agentID.replacingOccurrences(of: "-", with: "_")
     }
 
     private static func value(
-        for section: ProfileV3FormSection,
+        for control: ProfileV3FormControl,
+        sectionID: String,
         residuals: ProfileV3AgentResiduals
     ) -> ProfileV3AgentSubmissionValue? {
-        switch section.control {
+        switch control {
         case .chips(let field):
             return selection(field.selection, ordered: ordering(of: field), allowsMultiple: field.allowsMultiple)
         case .cards(let field):
@@ -124,11 +152,11 @@ enum ProfileV3AgentSubmission {
         case .slider(let field):
             return field.optOut?.isOn == true ? .null : .number(field.value)
         case .text(let field):
-            guard let contact = residuals.contacts[section.id] else { return .string(field.value) }
+            guard let contact = residuals.contacts[sectionID] else { return .string(field.value) }
             return contactValue(contact, text: field.value)
         case .date(let field):
             guard let date = field.value else { return .null }
-            let format = residuals.dateFormats[section.id] ?? .iso
+            let format = residuals.dateFormats[sectionID] ?? .iso
             return .string(ProfileV3AgentDateCodec.string(from: date, format: format))
         case .cars(let field):
             return field.selection.map(ProfileV3AgentSubmissionValue.string) ?? .null

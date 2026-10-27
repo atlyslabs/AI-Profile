@@ -8,6 +8,7 @@ struct ProfileV3FormSectionView: View {
     let onSliderChange: (Double) -> Void
     let onOptOut: (Bool) -> Void
     let onTextChange: @MainActor (String) -> Void
+    var onTextCommit: (() -> Void)?
     var onDateChange: ((Date) -> Void)?
     var onAdd: (() -> Void)?
     var onOpenSources: (() -> Void)?
@@ -134,7 +135,10 @@ struct ProfileV3FormSectionView: View {
                 accessibilityLabel: section.title,
                 text: Binding(get: { field.value }, set: onTextChange),
                 keyboard: field.keyboard == .phone ? .phonePad : .default,
-                growsWithContent: !field.isDate
+                growsWithContent: !field.isDate,
+                onFocusChange: { isFocused in
+                    if !isFocused { onTextCommit?() }
+                }
             )
         case .date(let field):
             ProfileV3DateInput(
@@ -191,6 +195,7 @@ extension ProfileV3FormSectionView: Equatable {
         lhs.section == rhs.section
             && lhs.agentAvatarURL == rhs.agentAvatarURL
             && lhs.selectedTabID == rhs.selectedTabID
+            && (lhs.onTextCommit == nil) == (rhs.onTextCommit == nil)
             && (lhs.onDateChange == nil) == (rhs.onDateChange == nil)
             && (lhs.onAdd == nil) == (rhs.onAdd == nil)
             && (lhs.onOpenSources == nil) == (rhs.onOpenSources == nil)

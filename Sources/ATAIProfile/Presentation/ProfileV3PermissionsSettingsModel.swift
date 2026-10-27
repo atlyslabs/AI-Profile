@@ -51,6 +51,7 @@ final class ProfileV3PermissionsSettingsModel: ObservableObject {
         Task { [weak self] in
             do {
                 try await repository.savePermission(optionID, in: sectionID)
+                ProfileV3Analytics.permissionChanged(sectionID: sectionID, to: optionID, from: previous)
             } catch {
                 guard let self, self.saveGenerations[sectionID] == generation,
                       let current = self.permissions,

@@ -146,10 +146,9 @@ final class ProfileV3HubStage: ObservableObject {
     }
 
     func collapse() {
-        guard let expandedPass, !isCollapsing else { return }
+        guard expandedPass != nil, !isCollapsing else { return }
         isCollapsing = true
         flight += 1
-        ProfileV3Analytics.passExpanded(passId: expandedPass.id, toState: .collapsed)
         heroTask?.cancel()
         if let pose = heroGlobe?.pose {
             heroGlobe = ProfileV3HeroGlobeState(

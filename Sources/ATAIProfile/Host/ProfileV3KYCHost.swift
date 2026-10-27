@@ -124,10 +124,24 @@ public enum ProfileV3KYC {
         case skipped
     }
 
+    public struct PhotoUpload: Equatable, Sendable {
+        public enum Flow: Equatable, Sendable {
+            case capture
+            case passportUpdate
+        }
+
+        public let photo: ProfileV3CaptureImage
+        public let travellerID: String?
+        public let isCoTraveller: Bool
+        public let flow: Flow
+        public let actionSource: String
+    }
+
     public enum Event: Equatable, Sendable {
         case captureStarted(actionSource: String)
         case captureEnded
         case itrConnectionDecision(ConnectorDecision)
         case itrConnectionResponse(decision: String, apiResponse: String?, itrAmount: String?, itr: String?)
+        case photoUploaded(PhotoUpload)
     }
 }

@@ -47,7 +47,7 @@ final class ProfileV3ProgrammesHostingController: UIHostingController<ProfileV3P
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(Color(at: .pureWhite))
-        ProfileV3Analytics.screen(.programmes)
+        ProfileV3Analytics.screen(.programmes, travellerId: viewModel.pass.id)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -93,7 +93,8 @@ extension ProfileV3ProgrammesHostingController: ProfileV3ProgrammesRouter {
                     ProfileV3Analytics.cta(directive, origin: .programmeInsight)
                     self?.openSources(for: programme, programID: programID, profileID: profileID)
                 }
-            }
+            },
+            onCopyNumber: { [weak viewModel] in viewModel?.copiedNumber(of: programme) }
         ))
         host.modalPresentationStyle = .overFullScreen
         host.modalTransitionStyle = .crossDissolve

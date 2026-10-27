@@ -185,10 +185,11 @@ struct ProfileV3HubPinnedBlock: View {
             flipAffordancePassIDs: viewModel.kycAnnouncedPassIDs,
             onLongPress: onExpand,
             onAddProgramme: viewModel.tapAddProgramme,
-            onOpenProgrammes: viewModel.tapOpenProgrammes,
+            onOpenProgrammes: viewModel.tapAddedCards,
             onAddHousehold: viewModel.home == nil ? nil : { viewModel.tapAddTraveller() },
             onFlipSeen: viewModel.markFlipSeen,
-            onHintShown: viewModel.holdHintDidAppear
+            onHintShown: viewModel.holdHintDidAppear,
+            onFlip: viewModel.tapWorldPass
         )
     }
 

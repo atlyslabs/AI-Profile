@@ -12,6 +12,8 @@ final class ProfileV3AgentFlowHostingController: UIHostingController<ProfileV3Ag
         profileID: String?,
         repository: any ProfileV3AgentRepository,
         identityCapture: any ProfileV3IdentityCaptureHost,
+        kyc: (any ProfileV3KYCHost)? = nil,
+        isCoTraveller: Bool = false,
         residenceCode: @escaping @MainActor () -> String? = { nil },
         onSaved: @escaping () -> Void = {}
     ) {
@@ -19,6 +21,8 @@ final class ProfileV3AgentFlowHostingController: UIHostingController<ProfileV3Ag
             agent: agent,
             profileID: profileID,
             repository: repository,
+            kyc: kyc,
+            isCoTraveller: isCoTraveller,
             residenceCode: residenceCode,
             onSaved: onSaved
         )
@@ -42,7 +46,7 @@ final class ProfileV3AgentFlowHostingController: UIHostingController<ProfileV3Ag
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        ProfileV3Analytics.screen(.agent, agentKey: ProfileV3Analytics.agentKey(viewModel.agent.id))
+        viewModel.trackScreen()
         view.backgroundColor = UIColor(Color(at: .pureWhite))
     }
 

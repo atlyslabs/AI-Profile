@@ -107,6 +107,8 @@ public enum ProfileV3EntryPoint {
         profileID: String?,
         repository: any ProfileV3AgentRepository,
         identityCapture: any ProfileV3IdentityCaptureHost,
+        kyc: (any ProfileV3KYCHost)? = nil,
+        isCoTraveller: Bool = false,
         residenceCode: @escaping @MainActor () -> String? = { nil },
         onSaved: @escaping () -> Void = {}
     ) -> UIViewController {
@@ -115,6 +117,8 @@ public enum ProfileV3EntryPoint {
             profileID: profileID,
             repository: repository,
             identityCapture: identityCapture,
+            kyc: kyc,
+            isCoTraveller: isCoTraveller,
             residenceCode: residenceCode,
             onSaved: onSaved
         )

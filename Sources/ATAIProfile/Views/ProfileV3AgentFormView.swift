@@ -169,6 +169,7 @@ struct ProfileV3AgentFormView: View {
                     onSliderChange: { viewModel.setSliderValue($0, in: section.id) },
                     onOptOut: { viewModel.setOptOut($0, in: section.id) },
                     onTextChange: { viewModel.setText($0, in: section.id) },
+                    onTextCommit: { viewModel.commitText(in: section.id) },
                     onDateChange: { viewModel.setDate($0, in: section.id) },
                     onAdd: { viewModel.openPicker(for: section.id) },
                     onOpenSources: { viewModel.openSources(for: section.id) },

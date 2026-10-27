@@ -17,6 +17,49 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   second settings presenter.
 - The travel persona radar and its loading dial have no title. The "Traveler profile" heading is
   gone from both, and `profile.title` in `GET …/board/travel_persona` is no longer read.
+- The persona loading caption ("Decoding your travel choices…") uses the edit hint's grey gradient
+  instead of the shimmer that faded its middle words to white.
+- Secure credential store card: the shield and padlock are the design's own render
+  (`profile_v3_credential_card_art`), glass included, where they used to be drawn natively 11pt high.
+- Glove box: the cabinet's and the Settings card's dials use the design's mail, call and credit card
+  glyphs. The credit card is filled and rounded, as designed, instead of ATUIKit's outline.
+- Glove box: while the main traveler's KYC isn't done (from the board), the intro is the locked
+  "Your Glove box is ready to unlock" with "Complete KYC", which closes Settings and starts KYC
+  onboarding. Three new string keys (`mo-aiprofile-glovebox-title-unlock`,
+  `-description-unlock`, `-button-complete-kyc`) need adding in Ditto.
+- Secure credential store: a Face ID unlock of the vault also covers revealing passwords while the
+  vault stays open. Closing the vault or leaving the app ends that, and unlocking with the passcode
+  still asks for Face ID on each reveal.
+
+### Analytics
+
+Profile events follow the profile analytics spec.
+
+- `screen_view` for the hub (`aiProfile`) is sent each time the hub appears, not once per hub
+  instance. Settings is `aiSettings`. An agent sends one screen view named after the agent
+  (`flight_agent`, `personal_info_agent`, `travel_person_agent` and so on). A benefit's screen
+  view is named from its ID (`aiFlightBenefit`, `aiFTIBenefit` and so on, else `aiProfileBenefit`).
+- New: `profile_worldpass_tapped`, `profile_card_connect_clicked`, `profile_view_benefits_clicked`,
+  `profile_benefits_screen_viewed`, the `profile_connector_*` card events and
+  `profile_loyalty_card_clicked`, `profile_agent_preference_changed`, and the `settings_*` click,
+  update, permission, back and logout events.
+- Renamed: `profile_benefit_clicked` → `profile_benefits_clicked`, `profile_traveller_*` →
+  `settings_traveller_*`, `profile_field_saved` → `settings_residence_updated` /
+  `settings_citizenship_updated` / `settings_currency_updated`, `profile_contact_saved` →
+  `settings_contact_info_updated`, `profile_logout` → `settings_logout_clicked` and
+  `settings_logged_out`, `profile_agent_option_toggled` → `profile_agent_preference_changed`.
+  `profile_pass_switched` sends `travellerId` instead of `passId`, and the disconnect events send
+  `connectorName` instead of `connectorKey`.
+- Removed: `profile_pass_viewed`, `profile_agent_card_viewed`, `profile_benefit_viewed`,
+  `profile_coupon_viewed`, `profile_programme_viewed`, `profile_settings_row_clicked` and
+  `profile_pass_expanded`.
+- Several events now carry dictionaries or arrays (`changedSections`, `oldSections`,
+  `loyaltyDetails`, `benefitList`, `cardsName`, the traveller and contact details). Hosts forward
+  them as they come.
+- New `ProfileV3KYC.Event.photoUploaded(_:)` reports each passport page and selfie the profile
+  uploads, from KYC capture and from "Upload new passport". Hosts map it to their
+  `passport_front_uploaded`, `passport_back_uploaded` and `selfie_uploaded` events and the
+  co-traveller variants. A host whose own KYC screens already send them can skip the `.capture` flow.
 
 ### Strings
 

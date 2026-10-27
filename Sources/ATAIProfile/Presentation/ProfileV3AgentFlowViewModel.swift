@@ -23,6 +23,8 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
 
     private let profileID: String?
     private let repository: any ProfileV3AgentRepository
+    private let kyc: (any ProfileV3KYCHost)?
+    private let isCoTraveller: Bool
     private let residenceCode: @MainActor () -> String?
     private let onSaved: () -> Void
     private var retryTask: Task<Void, Never>?
@@ -31,18 +33,26 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
         agent: ProfileV3Agent,
         profileID: String? = nil,
         repository: any ProfileV3AgentRepository,
+        kyc: (any ProfileV3KYCHost)? = nil,
+        isCoTraveller: Bool = false,
         residenceCode: @escaping @MainActor () -> String? = { nil },
         onSaved: @escaping () -> Void = {}
     ) {
         self.agent = agent
         self.profileID = profileID
         self.repository = repository
+        self.kyc = kyc
+        self.isCoTraveller = isCoTraveller
         self.residenceCode = residenceCode
         self.onSaved = onSaved
     }
 
     var avatarURL: URL? { agent.avatarURL ?? ProfileV3PlaceholderArt.agent(id: agent.id)?.url }
     var sheetTag: String { agent.sheetTag }
+
+    func trackScreen() {
+        ProfileV3Analytics.agentScreen(agentID: agent.id, travellerId: profileID)
+    }
 
     func load() async {
         switch content {
@@ -56,7 +66,6 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
             guard !Task.isCancelled else { return }
             switch flow {
             case .preferences(let form):
-                ProfileV3Analytics.screen(.agentForm, agentKey: ProfileV3Analytics.agentKey(agent.id))
                 content = .form(
                     ProfileV3AgentFormViewModel(
                         form: form,
@@ -65,6 +74,7 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
                         repository: repository,
                         residenceCode: residenceCode,
                         presentPassportScan: { [weak self] in self?.router?.presentPassportScan($0) },
+                        onPassportUploaded: { [weak self] in self?.trackPassportUpload($0, profileID: $1) },
                         onSaved: onSaved,
                         onFinish: finish
                     )
@@ -86,5 +96,15 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
 
     func finish() {
         router?.dismissAgentFlow()
+    }
+
+    private func trackPassportUpload(_ side: ProfileV3PassportSide, profileID scanProfileID: String?) {
+        kyc?.track(.photoUploaded(ProfileV3KYC.PhotoUpload(
+            photo: side == .front ? .passportFront : .passportBack,
+            travellerID: scanProfileID ?? profileID,
+            isCoTraveller: isCoTraveller,
+            flow: .passportUpdate,
+            actionSource: ProfileV3Analytics.profileSource
+        )))
     }
 }

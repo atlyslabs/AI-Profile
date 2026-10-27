@@ -2713,6 +2713,18 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-button-complete-kyc": {
+      "comment": "Starts KYC from the locked glove box intro.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete KYC"
+          }
+        }
+      }
+    },
     "mo-aiprofile-glovebox-button-copied": {
       "comment": "Glove box copy button right after copying.",
       "extractionState": "manual",
@@ -2841,6 +2853,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Built for your agent. Get your\nown email, number and virtual card"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-description-unlock": {
+      "comment": "Glove box intro subtitle while the main traveler's KYC isn't done.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A travel email, number and card that work for you. Your real ones stay private."
           }
         }
       }
@@ -3501,6 +3525,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Glove box  ·  Transactions"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-unlock": {
+      "comment": "Glove box intro title while the main traveler's KYC isn't done.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Glove box is ready to unlock"
           }
         }
       }

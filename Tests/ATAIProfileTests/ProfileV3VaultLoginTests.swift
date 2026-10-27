@@ -1,5 +1,6 @@
 import Foundation
 import LocalAuthentication
+import os
 import Testing
 import UIKit
 @testable import ATAIProfile
@@ -64,6 +65,21 @@ struct ProfileV3VaultLoginTests {
 
         model.open()
         #expect(model.isUnlocking)
+    }
+
+    @Test func closingTheVaultOrLeavingTheAppEndsItsFaceIDSession() async throws {
+        let vault = VaultStub(entries: [Self.saved])
+        let locks = LockCounter()
+        let model = ProfileV3CredentialStoreModel(repository: vault, unlock: { .unlocked }, lock: { locks.lock() })
+        model.open()
+        try await waitUntil { model.isPresented }
+        #expect(locks.count == 0)
+
+        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        #expect(locks.count == 1)
+
+        model.cancelReads()
+        #expect(locks.count == 2)
     }
 
     @Test func storeListsSavedLoginsAndOpensOneWithItsFullUsername() async throws {
@@ -381,6 +397,16 @@ private actor UnlockCounter {
 
     func ask() {
         count += 1
+    }
+}
+
+private final class LockCounter: Sendable {
+    private let state = OSAllocatedUnfairLock(initialState: 0)
+
+    var count: Int { state.withLock { $0 } }
+
+    func lock() {
+        state.withLock { $0 += 1 }
     }
 }
 

@@ -189,7 +189,7 @@ struct ProfileV3GloveBoxCabinet: View {
             )
         }
 
-        let icons = [ATIcon.SwiftUIImage.mail, ATIcon.SwiftUIImage.call, ATIcon.SwiftUIImage.creditCard]
+        let icons = [ProfileV3GloveBoxArt.dialMail.image, ProfileV3GloveBoxArt.dialCall.image, ProfileV3GloveBoxArt.dialCreditCard.image]
         for (index, icon) in icons.enumerated() {
             let centre = CGPoint(
                 x: Layout.box.width / 2 + CGFloat(index - 1) * (Layout.dial + Layout.dialSpacing),

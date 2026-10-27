@@ -65,11 +65,12 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
     }
 
     func selectResidence(_ country: ProfileV3Country) {
+        let previous = residence?.code
         guard deps.saveResidence(country) else { return }
         residence = country
         let code = country.code
         let pushLegacy = deps.pushResidenceToServer
-        let pending = write(.residence, .code(code), alongside: { @Sendable in
+        let pending = write(.residence, .code(code), replacing: previous, alongside: { @Sendable in
             await pushLegacy(code)
         })
         router?.restartAfterSaving(pending)
@@ -80,18 +81,20 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
             navigator?.popToRoot()
             return
         }
+        let previous = citizenship?.code
         guard deps.saveCitizenship(country) else { return }
         citizenship = country
         citizenshipIconCode = country.code
-        let pending = write(.citizenship, .code(country.code))
+        let pending = write(.citizenship, .code(country.code), replacing: previous)
         router?.restartAfterSaving(pending)
     }
 
     func selectCurrency(_ country: ProfileV3Country) {
+        let previous = currencyCountry.flatMap(ProfileV3CurrencyCodes.code(for:))
         deps.saveCurrencyCountry(country)
         currencyCountry = country
         if let currency = ProfileV3CurrencyCodes.code(for: country) {
-            write(.currency, .code(currency))
+            write(.currency, .code(currency), replacing: previous)
         }
         navigator?.popToRoot()
     }
@@ -101,10 +104,11 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
             details.email != contactDetails.email ? "email" : nil,
             details.mobileNumber != contactDetails.mobileNumber ? "phone" : nil
         ].compactMap { $0 }
+        let previous = contactDetails
         let outcome = await deps.saveContact(details)
         switch outcome {
         case .success:
-            ProfileV3Analytics.contactSaved(changedFields: changedFields)
+            ProfileV3Analytics.contactUpdated(to: details, from: previous)
             contactDetails = details
             write(.contact, .contact(email: details.email, mobileNumber: details.mobileNumber))
             router?.showFlash(ProfileV3Strings.contactSaved, isSuccess: true)
@@ -142,6 +146,7 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
     private func write(
         _ field: ProfileV3ProfileField,
         _ value: ProfileV3ProfileFieldValue,
+        replacing previous: String? = nil,
         alongside legacy: (@Sendable () async -> Void)? = nil
     ) -> Task<Void, Never> {
         let repository = repository
@@ -152,7 +157,7 @@ final class ProfileV3ProfileFieldsModel: ObservableObject {
             do {
                 try await repository.saveProfileField(field, value: value, profileID: profileID)
                 if let tracked, case .code(let code) = value {
-                    ProfileV3Analytics.fieldSaved(tracked, value: code)
+                    ProfileV3Analytics.fieldUpdated(tracked, to: code, from: previous)
                 }
             } catch {
                 if let tracked { ProfileV3Analytics.fieldSaveFailed(tracked, error: error) }
