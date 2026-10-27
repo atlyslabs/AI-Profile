@@ -371,7 +371,7 @@ enum ProfileV3AgentFixtures {
             passport(
                 "passport", ProfileV3Strings.passportDetails,
                 passport: ProfileV3PassportFixtures.active,
-                hasHistory: true
+                previous: ProfileV3PassportFixtures.previousEntry
             ),
             chips(
                 "travelling-with", "Traveling with", status: .complete,
@@ -559,14 +559,14 @@ enum ProfileV3AgentFixtures {
         _ id: String,
         _ title: String,
         passport: ProfileV3Passport?,
-        hasHistory: Bool
+        previous: ProfileV3PassportPrevious?
     ) -> ProfileV3FormSection {
         let field = ProfileV3PassportField(
             holderName: passport?.holderName ?? "alex r.",
             countryName: passport?.countryName ?? ProfileV3Strings.passportCountryIndia,
             countryNativeName: passport?.countryNativeName ?? ProfileV3Strings.passportCountryIndiaNative,
             passport: passport,
-            hasHistory: hasHistory,
+            previous: previous,
             rescan: ProfileV3PassportFixtures.rescan,
             howUsed: ProfileV3PassportFixtures.howUsedDirective
         )

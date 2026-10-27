@@ -91,6 +91,7 @@ final class ProfileV3HubViewModel: ObservableObject {
 
     private let repository: any ProfileV3HubRepository
     private let hints: ProfileV3HubHints
+    private let addsTripsWithoutDate: Bool
     private var board: ProfileV3Board?
     private var loadedPassID: String?
     private var isLoadingBoard = false
@@ -116,10 +117,12 @@ final class ProfileV3HubViewModel: ObservableObject {
         repository: any ProfileV3HubRepository,
         hints: ProfileV3HubHints = ProfileV3HubHints(),
         userFirstName: String? = nil,
+        addsTripsWithoutDate: Bool = false,
         photoPlaces: ProfileV3PhotoPlacesSync? = nil
     ) {
         self.repository = repository
         self.hints = hints
+        self.addsTripsWithoutDate = addsTripsWithoutDate
         placeholderName = userFirstName?.nonEmpty?.lowercased()
         showsHoldHint = hints.isHoldHintDue
         playsFlipDemo = hints.isFlipDemoDue
@@ -532,6 +535,17 @@ final class ProfileV3HubViewModel: ObservableObject {
         tapOpenProgrammes(pass)
     }
 
+    func open(_ destination: ProfileV3Destination) {
+        switch destination {
+        case .addTraveller:
+            router?.openAddTraveller()
+        case .addLoyaltyProgramme:
+            guard let pass = board?.mainProfile?.pass else { return }
+            withAnimation(ProfileV3Theme.Motion.selection) { selectPass(id: pass.id) }
+            router?.openAddProgramme(requiresKYC: addProgrammeRequiresKYC(for: pass), profileID: pass.id)
+        }
+    }
+
     func addProgrammeRequiresKYC(for pass: ProfileV3WorldPass?) -> Bool {
         gatesKYC(pass?.addProgrammeDirective, fallback: home?.kycStatus.isComplete == false)
     }
@@ -609,6 +623,7 @@ final class ProfileV3HubViewModel: ObservableObject {
             pass: pass,
             repository: repository,
             startsAdding: startsAdding,
+            addsTripsWithoutDate: addsTripsWithoutDate,
             onChange: { [weak self] in self?.refreshAfterTripChange() },
             onClose: { [weak self] in self?.dismissPastTrips() }
         )

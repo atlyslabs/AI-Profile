@@ -329,9 +329,9 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         return ProfileV3Fixtures.disconnectConfirm(connector)
     }
 
-    func loadPassportHistory(profileID _: String?) async throws -> [ProfileV3Passport] {
+    func loadPreviousPassports(profileID _: String?) async throws -> ProfileV3PreviousPassports {
         try await Task.sleep(for: delay)
-        return ProfileV3PassportFixtures.history
+        return ProfileV3PassportFixtures.previous
     }
 
     func loadPassportScan(profileID _: String?) async throws -> ProfileV3PassportScan {
@@ -540,10 +540,10 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         return ProfileV3PastTripsFixtures.addScreen(profileID: profileID)
     }
 
-    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, year: Int, month: Int) async throws {
+    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, date: ProfileV3TripYearMonth?) async throws {
         try await Task.sleep(for: delay)
         let profileID = submit.fields["profile_id"]?.stringValue ?? ""
-        await pastTrips.add(ProfileV3PastTripDraft(countryCode: country, year: year, month: month), profileID: profileID)
+        await pastTrips.add(ProfileV3PastTripDraft(countryCode: country, date: date), profileID: profileID)
     }
 
     func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws {

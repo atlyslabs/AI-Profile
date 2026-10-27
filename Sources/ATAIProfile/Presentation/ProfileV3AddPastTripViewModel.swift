@@ -33,6 +33,7 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
     private let existing: [ProfileV3PastTrip]
     private let repository: any ProfileV3PastTripsRepository
     private let editDuration: ProfileV3TripDuration?
+    private let addsWithoutDate: Bool
     private let onSaved: (ProfileV3PastTripDraft) -> Void
     private let onFailed: () -> Void
     private var loadTask: Task<Void, Never>?
@@ -44,6 +45,7 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
         repository: any ProfileV3PastTripsRepository,
         screen: ProfileV3AddTripScreen? = nil,
         editDuration: ProfileV3TripDuration? = nil,
+        addsWithoutDate: Bool = false,
         onSaved: @escaping (ProfileV3PastTripDraft) -> Void,
         onFailed: @escaping () -> Void
     ) {
@@ -53,6 +55,7 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
         self.repository = repository
         self.screen = screen
         self.editDuration = editDuration
+        self.addsWithoutDate = addsWithoutDate
         self.onSaved = onSaved
         self.onFailed = onFailed
         switch mode {
@@ -71,6 +74,12 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
     var isEditing: Bool {
         if case .edit = mode { return true }
         return false
+    }
+
+    var asksForDate: Bool {
+        guard case .add = mode else { return true }
+        guard !addsWithoutDate else { return false }
+        return screen.map { $0.duration != nil } ?? true
     }
 
     var duration: ProfileV3TripDuration {
@@ -100,12 +109,15 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
     var canContinue: Bool { selectedCountry != nil }
 
     var canSubmit: Bool {
-        selectedCountry != nil && selectedYear != nil && selectedMonth != nil && !isSubmitting && submitAction != nil
+        guard selectedCountry != nil, !isSubmitting, submitAction != nil else { return false }
+        return !asksForDate || selectedDate != nil
     }
+
+    var canConfirmCountry: Bool { asksForDate ? canContinue : canSubmit }
 
     var stepIndex: Int { isEditing ? 0 : Step.allCases.firstIndex(of: step) ?? 0 }
 
-    var stepCount: Int { isEditing ? 1 : Step.allCases.count }
+    var stepCount: Int { isEditing || !asksForDate ? 1 : Step.allCases.count }
 
     var title: String {
         step == .country ? screen?.countryTitle ?? "" : duration.title
@@ -134,8 +146,16 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
         errorMessage = nil
     }
 
+    func confirmCountry() {
+        if asksForDate {
+            continueToDuration()
+        } else {
+            submit()
+        }
+    }
+
     func continueToDuration() {
-        guard canContinue else { return }
+        guard canContinue, asksForDate else { return }
         withAnimation(ProfileV3Theme.Motion.tripStep) { step = .duration }
     }
 
@@ -146,12 +166,10 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
     }
 
     func submit() {
-        guard canSubmit, let country = selectedCountry, let year = selectedYear, let month = selectedMonth,
-              let action = submitAction else {
-            return
-        }
-        let draft = ProfileV3PastTripDraft(countryCode: country.code, year: year, month: month)
-        guard !existing.contains(where: { $0.id != editedTripID && $0.matches(draft) }) else {
+        guard canSubmit, let country = selectedCountry, let action = submitAction else { return }
+        let date = asksForDate ? selectedDate : nil
+        let draft = ProfileV3PastTripDraft(countryCode: country.code, date: date)
+        guard !existing.contains(where: { $0.id != editedTripID && $0.duplicates(draft) }) else {
             errorMessage = ProfileV3Strings.pastTripDuplicate
             return
         }
@@ -161,11 +179,13 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
         let mode = mode
         Task { [weak self] in
             do {
-                switch mode {
-                case .add:
-                    try await repository.addPastTrip(action, country: draft.countryCode, year: year, month: month)
-                case .edit:
-                    try await repository.editPastTrip(action, year: year, month: month)
+                switch (mode, date) {
+                case (.add, _):
+                    try await repository.addPastTrip(action, country: draft.countryCode, date: date)
+                case (.edit, let date?):
+                    try await repository.editPastTrip(action, year: date.year, month: date.month)
+                case (.edit, nil):
+                    throw ProfileV3RepositoryError.unavailable
                 }
                 guard let self else { return }
                 isSubmitting = false
@@ -195,16 +215,18 @@ final class ProfileV3AddPastTripViewModel: ObservableObject {
         return nil
     }
 
+    private var selectedDate: ProfileV3TripYearMonth? {
+        guard let selectedYear, let selectedMonth else { return nil }
+        return ProfileV3TripYearMonth(year: selectedYear, month: selectedMonth)
+    }
+
     private func applyDefaults() {
-        switch mode {
-        case .add:
-            let initial = duration.defaultValue ?? duration.max
-            selectedYear = initial?.year ?? years.last
-            selectedMonth = initial?.month ?? months.last
-        case .edit(let trip):
-            selectedYear = trip.year
-            selectedMonth = trip.month
+        var initial = duration.defaultValue ?? duration.max
+        if case .edit(let trip) = mode, let date = trip.date {
+            initial = date
         }
+        selectedYear = initial?.year ?? years.last
+        selectedMonth = initial?.month ?? months.last
     }
 
     private func clampMonth() {

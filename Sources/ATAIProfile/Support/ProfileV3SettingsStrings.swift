@@ -80,8 +80,6 @@ extension ProfileV3Strings {
     static var upload: String { ProfileV3L10n.moAiprofileDocumentsButtonUpload }
     static var uploadNewPassport: String { ProfileV3L10n.moAiprofileDocumentsButtonUploadNewPassport }
     static var passportDetails: String { ProfileV3L10n.moAiprofileDocumentsHeaderPassportDetails }
-    static var viewPrevious: String { ProfileV3L10n.moAiprofileDocumentsButtonViewPrevious }
-    static var previousPassports: String { ProfileV3L10n.moAiprofileDocumentsHeaderPreviousPassports }
     static var noPreviousPassportsTitle: String { ProfileV3L10n.moAiprofileDocumentsEmptyStateNoPreviousPassports }
     static var noPreviousPassportsSubtitle: String { ProfileV3L10n.moAiprofileDocumentsEmptyStateNoPreviousPassportsDescription }
     static var newPassport: String { ProfileV3L10n.moAiprofileDocumentsHeaderNewPassport }

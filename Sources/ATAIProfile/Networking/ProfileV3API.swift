@@ -15,6 +15,7 @@ enum ProfileV3API {
     case passportUpdate(profileID: String?)
     case passportReason
     case passportHowUsed
+    case passportPrevious(profileID: String?)
     case passportScan(body: Data, contentType: String)
     case loyaltyCatalogue(query: String?, kind: String?)
     case loyaltyEnter(programID: String, programName: String?, kind: String?)
@@ -101,6 +102,8 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.boardBasePath + "/passport/reason"
         case .passportHowUsed:
             return Self.boardBasePath + "/passport/how-used"
+        case .passportPrevious:
+            return Self.boardBasePath + "/passport/previous"
         case .passportScan:
             return Self.boardBasePath + "/passport/scan"
         case .loyaltyCatalogue:
@@ -214,6 +217,7 @@ extension ProfileV3API: ATCoreTargetType {
         case .agent(_, let profileID),
              .ridePicker(_, let profileID),
              .passportUpdate(let profileID),
+             .passportPrevious(let profileID),
              .loyaltyInsight(_, let profileID),
              .loyaltySources(_, let profileID),
              .benefits(let profileID),

@@ -63,6 +63,7 @@ enum ProfileV3Route: Equatable {
     case passportUpdate(profileID: String?)
     case passportReason
     case passportHowUsed
+    case passportPrevious(profileID: String?)
     case ridePicker(agentType: String, profileID: String?)
     case rideRegions
     case travelPersona(profileID: String?)
@@ -150,6 +151,8 @@ extension ProfileV3Directive {
             return .passportReason
         case ProfileV3PassportRoute.howUsed:
             return .passportHowUsed
+        case ProfileV3PassportRoute.previous:
+            return .passportPrevious(profileID: profileID)
         case "ride_picker":
             return agentType.map { ProfileV3Route.ridePicker(agentType: $0, profileID: profile) } ?? .unsupported(go)
         case "ride_regions":

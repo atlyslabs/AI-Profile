@@ -125,8 +125,6 @@ struct ProfileV3InteractiveGlobe: View {
             }
     }
 
-    /// Until this globe takes over, follow the flying globe's pose. The spin captured at appear is the
-    /// card's, and painting that once the card has finished is the flash.
     private func orientation(at date: Date) -> (yaw: Double, pitch: Double) {
         if hasTakenHandoff {
             publishPose(at: date)

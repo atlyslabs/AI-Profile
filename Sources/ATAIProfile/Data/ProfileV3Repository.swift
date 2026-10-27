@@ -23,7 +23,7 @@ protocol ProfileV3AgentRepository: Sendable {
         profileID: String?,
         profileIDs: [String]?
     ) async throws -> String?
-    func loadPassportHistory(profileID: String?) async throws -> [ProfileV3Passport]
+    func loadPreviousPassports(profileID: String?) async throws -> ProfileV3PreviousPassports
     func loadPassportScan(profileID: String?) async throws -> ProfileV3PassportScan
     func uploadPassportScan(_ side: ProfileV3PassportSide, data: Data, profileID: String?) async throws
         -> ProfileV3PassportScanResult
@@ -131,7 +131,7 @@ protocol ProfileV3GloveBoxRepository: Sendable {
 protocol ProfileV3PastTripsRepository: Sendable {
     func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen
     func loadAddTrip(profileID: String) async throws -> ProfileV3AddTripScreen
-    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, year: Int, month: Int) async throws
+    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, date: ProfileV3TripYearMonth?) async throws
     func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws
     func deletePastTrip(_ submit: ProfileV3BoardAction) async throws
 }

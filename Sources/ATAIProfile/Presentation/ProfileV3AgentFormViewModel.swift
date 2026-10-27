@@ -17,8 +17,8 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     @Published var pickerSectionID: String?
     @Published private(set) var sources: ProfileV3PreferenceSourcesViewModel?
     @Published private(set) var pickerOptions: [ProfileV3ChipOption] = []
-    @Published private(set) var passportHistory: [ProfileV3Passport] = []
-    @Published private(set) var passportHistoryPhase: ProfileV3LoadPhase = .loading
+    @Published private(set) var previousPassports: ProfileV3PreviousPassports?
+    @Published private(set) var previousPassportsPhase: ProfileV3LoadPhase = .loading
     @Published var showsPreviousPassports = false
     @Published private(set) var passportReason: ProfileV3PassportReasonViewModel?
     @Published var passportHowUsed: ProfileV3PassportHowUsedViewModel?
@@ -38,7 +38,8 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     private let presentPassportScan: ((ProfileV3PassportScanRequest) -> Void)?
     private var saveTask: Task<Void, Never>?
     private var didFinish = false
-    private var historyTask: Task<Void, Never>?
+    private var previousPassportsTask: Task<Void, Never>?
+    private var previousPassportsProfileID: String?
     private var passportScanTask: Task<Void, Never>?
     private var ridePickerTask: Task<Void, Never>?
     private var refreshTask: Task<Void, Never>?
@@ -154,13 +155,18 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
             applyPassportField(field)
             ProfileV3Analytics.passportScanned(agentKey: agentKey, sectionId: passportSection?.id ?? "")
         }
-        guard completed, next?.route() == .passportReason else { return }
+        guard completed else { return }
+        guard next?.route() == .passportReason else {
+            refresh()
+            return
+        }
         openPassportReason(profileID: profileID)
     }
 
     private func applyPassportField(_ field: ProfileV3PassportField) {
         guard let section = passportSection, case .passport(let current) = section.control else { return }
         var merged = field
+        merged.previous = field.previous ?? current.previous
         merged.rescan = field.rescan ?? current.rescan
         merged.howUsed = field.howUsed ?? current.howUsed
         if merged.countryName.isEmpty {
@@ -174,34 +180,43 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         guard passportReason == nil else { return }
         let reason = ProfileV3PassportReasonViewModel(repository: repository, profileID: profileID) { [weak self] in
             self?.passportReason = nil
+            self?.refresh()
         }
         reason.load()
         passportReason = reason
     }
 
-    func loadPassportHistory() {
-        historyTask?.cancel()
-        passportHistoryPhase = passportHistory.isEmpty ? .loading : .loaded
-        historyTask = Task { [weak self] in
-            guard let self else { return }
+    var previousPassportsTitle: String {
+        previousPassports?.title.nonEmpty ?? passportField?.previous?.title ?? ""
+    }
+
+    func loadPreviousPassports() {
+        previousPassportsTask?.cancel()
+        previousPassportsPhase = previousPassports == nil ? .loading : .loaded
+        let repository = repository
+        let profileID = previousPassportsProfileID
+        previousPassportsTask = Task { [weak self] in
             do {
-                let history = try await repository.loadPassportHistory(profileID: profileID)
-                guard !Task.isCancelled else { return }
-                passportHistory = history
-                passportHistoryPhase = .loaded
+                let screen = try await repository.loadPreviousPassports(profileID: profileID)
+                guard let self, !Task.isCancelled else { return }
+                previousPassports = screen
+                previousPassportsPhase = .loaded
             } catch is CancellationError {
                 return
             } catch {
-                guard !Task.isCancelled else { return }
-                passportHistoryPhase = passportHistory.isEmpty ? .failed : .loaded
+                guard let self, !Task.isCancelled else { return }
+                previousPassportsPhase = previousPassports == nil ? .failed : .loaded
             }
         }
     }
 
     func tapViewPreviousPassports() {
+        guard let previous = passportField?.previous,
+              case .passportPrevious(let profileID) = previous.next.route() else { return }
         ProfileV3Analytics.previousPassportsOpened(agentKey: agentKey)
+        previousPassportsProfileID = profileID
         showsPreviousPassports = true
-        loadPassportHistory()
+        loadPreviousPassports()
     }
 
     var pickerSection: ProfileV3FormSection? {
@@ -531,6 +546,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         refreshTask?.cancel()
         passportScanTask?.cancel()
         passportScanTask = nil
+        previousPassportsTask?.cancel()
         ridePickerTask?.cancel()
         airportPickup?.cancelPendingWork()
         rideRegions?.cancel()

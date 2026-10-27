@@ -71,8 +71,8 @@ struct ProfileV3AddPastTripSheet: View {
         countryList
             .padding(.top, Sizes.countryListTop)
             .overlay(alignment: .bottom) {
-                ctaBar(title: viewModel.countryCTA, isEnabled: viewModel.canContinue, fades: true) {
-                    viewModel.continueToDuration()
+                ctaBar(title: viewModel.countryCTA, isEnabled: viewModel.canConfirmCountry, fades: true) {
+                    viewModel.confirmCountry()
                 }
             }
     }
@@ -200,6 +200,10 @@ struct ProfileV3PastTripActionsSheet: View {
 
     private typealias Sizes = ProfileV3Theme.Sizes.TripSheet
 
+    private var height: CGFloat {
+        editTitle.isEmpty || deleteTitle.isEmpty ? Sizes.actionsSingleHeight : Sizes.actionsHeight
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             if !editTitle.isEmpty {
@@ -226,7 +230,7 @@ struct ProfileV3PastTripActionsSheet: View {
         }
         .padding(.horizontal, Sizes.inset)
         .padding(.top, Sizes.actionsTop)
-        .frame(height: Sizes.actionsHeight, alignment: .top)
+        .frame(height: height, alignment: .top)
     }
 
     private func row(icon: Image, title: String, action: @escaping () -> Void) -> some View {

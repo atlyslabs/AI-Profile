@@ -28,7 +28,7 @@ struct ProfileV3BackTagHeader: View {
 
 #if DEBUG
 #Preview("Back and tag header") {
-    ProfileV3BackTagHeader(title: ProfileV3Strings.previousPassports) {}
+    ProfileV3BackTagHeader(title: "PREVIOUS PASSPORTS") {}
         .background(Color(at: .pureWhite))
 }
 #endif

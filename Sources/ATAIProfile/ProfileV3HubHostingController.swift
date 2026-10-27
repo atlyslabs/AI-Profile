@@ -30,6 +30,7 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
         let viewModel = ProfileV3HubViewModel(
             repository: repository,
             userFirstName: userFirstName,
+            addsTripsWithoutDate: environment.app.addsPastTripsWithoutDate,
             photoPlaces: environment.photoPlaces
         )
         self.viewModel = viewModel
@@ -204,7 +205,10 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
     }
 
     func openAddTraveller() {
-        makeSettingsPresenter(profileID: viewModel.mainProfileID).presentAddTraveller()
+        afterSettings { [weak self] in
+            guard let self else { return }
+            makeSettingsPresenter(profileID: viewModel.mainProfileID).presentAddTraveller()
+        }
     }
 }
 

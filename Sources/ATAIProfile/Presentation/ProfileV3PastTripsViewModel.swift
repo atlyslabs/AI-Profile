@@ -29,6 +29,7 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
     let pass: ProfileV3WorldPass
 
     private let repository: any ProfileV3PastTripsRepository
+    private let addsTripsWithoutDate: Bool
     private let onChange: () -> Void
     private let onClose: () -> Void
     private var startsAdding: Bool
@@ -45,12 +46,14 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         pass: ProfileV3WorldPass,
         repository: any ProfileV3PastTripsRepository,
         startsAdding: Bool,
+        addsTripsWithoutDate: Bool = false,
         onChange: @escaping () -> Void,
         onClose: @escaping () -> Void
     ) {
         self.pass = pass
         self.repository = repository
         self.startsAdding = startsAdding
+        self.addsTripsWithoutDate = addsTripsWithoutDate
         self.onChange = onChange
         self.onClose = onClose
     }
@@ -258,7 +261,8 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
             existing: trips,
             repository: repository,
             screen: addScreen,
-            editDuration: screen?.duration
+            editDuration: screen?.duration,
+            addsWithoutDate: addsTripsWithoutDate
         ) { [weak self] draft in
             self?.saved(draft)
         } onFailed: { [weak self] in

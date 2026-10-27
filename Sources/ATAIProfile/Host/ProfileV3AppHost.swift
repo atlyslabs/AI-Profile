@@ -8,12 +8,15 @@ public protocol ProfileV3AppHost: AnyObject, Sendable {
     var floatingBarClearance: CGFloat { get }
     var opensChat: Bool { get }
     func openChat(prompt: String)
+    var addsPastTripsWithoutDate: Bool { get }
 }
 
 public extension ProfileV3AppHost {
     var opensChat: Bool { false }
 
     func openChat(prompt: String) {}
+
+    var addsPastTripsWithoutDate: Bool { false }
 }
 
 extension EnvironmentValues {

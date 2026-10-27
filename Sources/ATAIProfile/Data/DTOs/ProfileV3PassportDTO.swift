@@ -10,9 +10,11 @@ struct ProfileV3AgentPassportDTO: Decodable, Equatable {
     let verified: Bool?
     private let rawRescan: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
     private let rawHowUsed: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
+    private let rawPrevious: ProfileV3LossyDTO<ProfileV3PassportPreviousDTO>?
 
     var rescan: ProfileV3DirectiveDTO? { rawRescan?.value }
     var howUsed: ProfileV3DirectiveDTO? { rawHowUsed?.value }
+    var previous: ProfileV3PassportPreviousDTO? { rawPrevious?.value }
 
     enum CodingKeys: String, CodingKey {
         case name
@@ -24,6 +26,7 @@ struct ProfileV3AgentPassportDTO: Decodable, Equatable {
         case verified
         case rawRescan = "rescan"
         case rawHowUsed = "how_used"
+        case rawPrevious = "previous"
     }
 
     init(from decoder: Decoder) throws {
@@ -37,6 +40,51 @@ struct ProfileV3AgentPassportDTO: Decodable, Equatable {
         verified = try? container.decodeIfPresent(Bool.self, forKey: .verified)
         rawRescan = try? container.decodeIfPresent(ProfileV3LossyDTO<ProfileV3DirectiveDTO>.self, forKey: .rawRescan)
         rawHowUsed = try? container.decodeIfPresent(ProfileV3LossyDTO<ProfileV3DirectiveDTO>.self, forKey: .rawHowUsed)
+        rawPrevious = try? container.decodeIfPresent(
+            ProfileV3LossyDTO<ProfileV3PassportPreviousDTO>.self,
+            forKey: .rawPrevious
+        )
+    }
+}
+
+struct ProfileV3PassportPreviousDTO: Decodable, Equatable {
+    let label: String?
+    let title: String?
+    private let rawNext: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
+
+    var next: ProfileV3DirectiveDTO? { rawNext?.value }
+
+    enum CodingKeys: String, CodingKey {
+        case label
+        case title
+        case rawNext = "next"
+    }
+}
+
+struct ProfileV3PassportLabelsDTO: Decodable, Equatable {
+    let number: String?
+    let issueDate: String?
+    let expiryDate: String?
+
+    enum CodingKeys: String, CodingKey {
+        case number
+        case issueDate = "issue_date"
+        case expiryDate = "expiry_date"
+    }
+}
+
+struct ProfileV3PreviousPassportsScreenDTO: Decodable, Equatable {
+    let title: String?
+    private let rawLabels: ProfileV3LossyDTO<ProfileV3PassportLabelsDTO>?
+    private let rawPassports: [ProfileV3LossyDTO<ProfileV3AgentPassportDTO>]?
+
+    var labels: ProfileV3PassportLabelsDTO? { rawLabels?.value }
+    var passports: [ProfileV3AgentPassportDTO] { rawPassports?.compactMap(\.value) ?? [] }
+
+    enum CodingKeys: String, CodingKey {
+        case title
+        case rawLabels = "labels"
+        case rawPassports = "passports"
     }
 }
 

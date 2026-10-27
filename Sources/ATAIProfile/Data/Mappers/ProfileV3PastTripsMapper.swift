@@ -20,9 +20,22 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
             searchPlaceholder: text(step?.searchPlaceholder) ?? "",
             countryCTA: text(step?.ctaLabel) ?? "",
             countries: (step?.countries ?? []).compactMap(country),
-            duration: dto.duration.map(duration) ?? .fallback(),
+            duration: dto.duration.map(duration),
             submit: action(dto.submit)
         )
+    }
+
+    static func addRequest(
+        _ submit: ProfileV3BoardAction,
+        country: String,
+        date: ProfileV3TripYearMonth?
+    ) -> ProfileV3BoardSubmitRequest {
+        var extras: [String: ProfileV3ScalarDTO] = ["country": .string(country)]
+        if let date {
+            extras["year"] = .int(date.year)
+            extras["month"] = .int(date.month)
+        }
+        return ProfileV3BoardSubmitRequest(action: submit, extras: extras)
     }
 
     static func entry(_ dto: ProfileV3GlobeDTO?) -> ProfileV3TripsEntry? {
@@ -40,15 +53,20 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
     }
 
     static func trip(_ dto: ProfileV3PastTripDTO) -> ProfileV3PastTrip? {
-        guard let id = text(dto.tripID?.stringValue),
-              let code = text(dto.code)?.uppercased(),
-              let year = dto.year?.intValue,
-              let month = dto.month?.intValue, monthRange.contains(month) else { return nil }
+        guard let id = text(dto.tripID?.stringValue), let code = text(dto.code)?.uppercased() else { return nil }
+        let date: ProfileV3TripYearMonth?
+        switch (dto.year?.intValue, dto.month?.intValue) {
+        case (nil, nil):
+            date = nil
+        case (let year?, let month?) where monthRange.contains(month):
+            date = ProfileV3TripYearMonth(year: year, month: month)
+        default:
+            return nil
+        }
         return ProfileV3PastTrip(
             id: id,
             countryCode: code,
-            year: year,
-            month: month,
+            date: date,
             imageURL: remoteURL(dto.imageURL),
             name: text(dto.name),
             monthLabel: text(dto.monthLabel),

@@ -85,6 +85,8 @@ extension ProfileV3Theme.Sizes {
         static let actionsTop: CGFloat = 51.5
         static let actionsDividerGap: CGFloat = 7.5
         static let actionsSecondGap: CGFloat = 13.5
+        static let actionsSingleHeight = actionsHeight - actionRowHeight - actionsDividerGap
+            - ProfileV3Theme.Stroke.hairline - actionsSecondGap
         static let actionIcon = ProfileV3Theme.Icon.md
         static let actionGap = ProfileV3Theme.Space.s10
         static let dividerDash: [CGFloat] = [2, 2]

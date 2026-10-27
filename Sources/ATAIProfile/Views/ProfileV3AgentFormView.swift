@@ -185,19 +185,14 @@ struct ProfileV3AgentFormView: View {
         }
     }
 
-    @ViewBuilder
     private var previousPassports: some View {
-        if let field = viewModel.passportField {
-            ProfileV3PreviousPassportsView(
-                holderName: field.holderName,
-                countryName: field.countryName,
-                countryNativeName: field.countryNativeName,
-                passports: viewModel.passportHistory,
-                phase: viewModel.passportHistoryPhase,
-                onBack: { viewModel.showsPreviousPassports = false },
-                onRetry: viewModel.loadPassportHistory
-            )
-        }
+        ProfileV3PreviousPassportsView(
+            title: viewModel.previousPassportsTitle,
+            screen: viewModel.previousPassports,
+            phase: viewModel.previousPassportsPhase,
+            onBack: { viewModel.showsPreviousPassports = false },
+            onRetry: viewModel.loadPreviousPassports
+        )
     }
 }
 

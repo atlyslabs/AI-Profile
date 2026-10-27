@@ -7,14 +7,17 @@ private struct ProfileV3SurfaceCardModifier<CardShape: Shape>: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .background(shape.fill(fill))
             .clipShape(shape)
-            .overlay(shape.stroke(ProfileV3Theme.Palette.cardBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
-            .shadow(
-                color: ProfileV3Theme.Palette.shadow,
-                radius: ProfileV3Theme.Shadow.cardRadius,
-                y: ProfileV3Theme.Shadow.cardY
+            .background(
+                shape
+                    .fill(fill)
+                    .shadow(
+                        color: ProfileV3Theme.Palette.shadow,
+                        radius: ProfileV3Theme.Shadow.cardRadius,
+                        y: ProfileV3Theme.Shadow.cardY
+                    )
             )
+            .overlay(shape.stroke(ProfileV3Theme.Palette.cardBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
     }
 }
 

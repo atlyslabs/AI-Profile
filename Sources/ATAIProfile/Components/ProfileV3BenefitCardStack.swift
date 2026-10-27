@@ -14,9 +14,10 @@ struct ProfileV3BenefitCardStack: View {
     @State private var isOnScreen = false
     @State private var width: CGFloat = ProfileV3Theme.Sizes.stackFallbackWidth
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.profileV3PausesAnimations) private var isPaused
 
     private var layerCount: Int { min(benefits.count, ProfileV3Theme.Counts.stackLayers) }
-    private var isRotating: Bool { benefits.count > 1 && expandedID == nil && isVisible }
+    private var isRotating: Bool { benefits.count > 1 && expandedID == nil && isVisible && !isPaused }
 
     private var rotation: ProfileV3StackRotation {
         ProfileV3StackRotation(benefitIDs: benefits.map(\.id), isRotating: isRotating)

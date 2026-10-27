@@ -14,6 +14,7 @@ enum ProfileV3FeatureFlags {
     static let isVaultRecentSignInCheckEnabled = false
     static let isGlobeEnabled = true
     static let isGlobeRimEnabled = false
+    static let isFloatingControlGlassEnabled = false
     static let isCredentialStoreEnabled = true
     static let isEmptyProgrammeSlotEnabled = false
     static let isGloveBoxPhoneNumberEnabled = true
