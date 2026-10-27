@@ -1,0 +1,205 @@
+Sources/ATAIProfile/Host/ProfileV3AppHost.swift
+  s_2a5c018dca59ea::t_718c8acfd4ef07 11,18-19
+Sources/ATAIProfile/Presentation/ProfileV3HubViewModel.swift
+  s_8d6f82e9c5700b::t_92de3c8c79fdd7 535-545
+  s_2a5c018dca59ea::t_bd5cbade4e3ed4 118-119,123
+  s_2a5c018dca59ea::t_ebc4488b91dd19 93
+  s_2a5c018dca59ea::t_ec721371e2cd57 614
+CLAUDE.md
+  s_2a5c018dca59ea::t_954d19b085f1ca 34
+  s_c482717a7a4db6::t_1f037f6e434d5c 905-906
+  s_2a5c018dca59ea::t_1a69561d85edee 65
+  s_2a5c018dca59ea::t_7198ec386c7328 868-875
+  s_8d6f82e9c5700b::t_fffadd33154a92 859-866
+  s_c482717a7a4db6::t_8e8d70c1f63688 877-882,909
+  s_c482717a7a4db6::t_8c25d17d711d71 883-904
+  s_2a5c018dca59ea::t_a26713cc372363 876
+  s_2a5c018dca59ea::t_7ffb49e27d1661 834-858
+  s_c482717a7a4db6::t_1657aada3351c3 907-908
+  s_2a5c018dca59ea::t_ffa97cdc9820ce 923
+  s_2a5c018dca59ea::t_1ab2de93b0afab 113
+  s_c482717a7a4db6::t_ea328068fdb615 21
+Sources/ATAIProfile/Domain/ProfileV3PastTrip.swift
+  s_2a5c018dca59ea::t_8c1b5066b8ddb7 6,13,21-23,31-35,41
+  s_2a5c018dca59ea::t_d9bfc2c920071e 150-155
+  s_2a5c018dca59ea::t_57e44dd031f70c 124
+Sources/ATAIProfile/Data/Mappers/ProfileV3PastTripsMapper.swift
+  s_2a5c018dca59ea::t_2618b6dd1d8909 23,28-38
+  s_2a5c018dca59ea::t_5a2d353268aa62 56-65,69
+  s_2a5c018dca59ea::t_f99930ca9cad75 39-40
+Sources/ATAIProfile/Presentation/ProfileV3PastTripsViewModel.swift
+  s_2a5c018dca59ea::t_4b50deb6ee066c 49,56
+  s_2a5c018dca59ea::t_aaee4eb05b1b13 264-265
+  s_2a5c018dca59ea::t_4cc00ca0f74d0b 32
+Sources/ATAIProfile/ProfileV3EntryPoint.swift
+  s_8d6f82e9c5700b::t_9d89827c4d80e9 20-23
+Sources/ATAIProfile/Components/ProfileV3SectionHeader.swift
+  s_2a5c018dca59ea::t_dc6860f665c3cf 24
+Sources/ATAIProfile/Data/ProfileV3PastTripsFixtures.swift
+  s_2a5c018dca59ea::t_43b1bcf7f18d45 6-8,18-23
+Sources/ATAIProfile/Views/ProfileV3AddPastTripSheet.swift
+  s_2a5c018dca59ea::t_7d5ba7f0403df3 74-75
+  s_2a5c018dca59ea::t_96d6893b97745d 203-206
+  s_2a5c018dca59ea::t_eeac72796fd85e 233
+Sources/ATAIProfile/Components/ProfileV3BackTagHeader.swift
+  s_2a5c018dca59ea::t_ddcb7cf5a8effa 31
+Sources/ATAIProfile/Components/ProfileV3SurfaceCard.swift
+  s_c482717a7a4db6::t_c3c14968734e4a 11-18,20
+Sources/ATAIProfile/Networking/ProfileV3API.swift
+  s_2a5c018dca59ea::t_cb7c98fb77cfa9 18
+  s_2a5c018dca59ea::t_89e427ae58d8e3 220
+  s_2a5c018dca59ea::t_d8c63911748c2b 105-106
+Sources/ATAIProfile/Data/ProfileV3Repository.swift
+  s_2a5c018dca59ea::t_566856ce648b26 26
+  s_2a5c018dca59ea::t_2033ba626c11f9 133
+Sources/ATAIProfile/Data/ProfileV3PassportFixtures.swift
+  s_2a5c018dca59ea::t_44567aa69cd7a1 40-51
+Tests/ATAIProfileTests/ProfileV3PreviousPassportsTests.swift
+  s_2a5c018dca59ea::t_47b99038753b1a 1-256
+Sources/ATAIProfile/Views/ProfileV3PassportHowUsedView.swift
+  s_2a5c018dca59ea::t_ce75bbcfa3d3fa 189
+Sources/ATAIProfile/Components/ProfileV3BenefitCardStack.swift
+  s_c482717a7a4db6::t_714d8e7eebc911 17,20
+Sources/ATAIProfile/Views/ProfileV3HubChrome.swift
+  s_2a5c018dca59ea::t_03bd15257cb175 11-14,17,28-41
+  s_2a5c018dca59ea::t_ab940d444755b0 141,151,153
+Tests/ATAIProfileTests/ProfileV3HubNotchTests.swift
+  s_2a5c018dca59ea::t_4a877df94eb877 1-48
+CHANGELOG.md
+  s_8d6f82e9c5700b::t_06496846d76718 8-18
+Tests/ATAIProfileTests/ProfileV3PastTripsTests.swift
+  s_2a5c018dca59ea::t_01d87ab28bb2da 509,511-513
+  s_2a5c018dca59ea::t_b14f0431580c91 528-529,534,536-538,548
+  s_2a5c018dca59ea::t_c6287e4c35a2ad 358-451
+  s_2a5c018dca59ea::t_b9c703c06e8751 118-119,121-126
+  s_2a5c018dca59ea::t_7bf23a3f8e8013 472,483,485-488,490
+  s_2a5c018dca59ea::t_26cb04f412d16c 206
+  s_2a5c018dca59ea::t_04b151e142e952 274-277
+  s_2a5c018dca59ea::t_2a3d3fe89420ad 262
+  s_2a5c018dca59ea::t_3ee82d487bf4eb 68-104
+Sources/ATAIProfile/Data/Mappers/ProfileV3PassportMapper.swift
+  s_2a5c018dca59ea::t_8247cbaed28aee 20-65,67-69
+README.md
+  s_2a5c018dca59ea::t_4d4be0de75e3ae 113
+  s_8d6f82e9c5700b::t_690cc49db3efee 87-92,95
+Sources/ATAIProfile/Data/DTOs/ProfileV3PassportDTO.swift
+  s_2a5c018dca59ea::t_add63b9796a2e2 13,17,29,43-87
+Sources/ATAIProfile/Data/ProfileV3MockRepository.swift
+  s_2a5c018dca59ea::t_eabc0392f762a3 539,542
+  s_2a5c018dca59ea::t_3c692d4a0fd7d1 328,330
+Sources/ATAIProfile/ProfileV3HubHostingController.swift
+  s_2a5c018dca59ea::t_167f64c96d2fbd 30-34
+  s_8d6f82e9c5700b::t_4a2ce1fd7efc05 205-208
+Sources/ATAIProfile/Support/ProfileV3Theme+Settings.swift
+  s_2a5c018dca59ea::t_1e16f8f7d5d453 120
+  s_2a5c018dca59ea::t_72e0d42a0a5f0d 151-152
+  s_2a5c018dca59ea::t_c138a67140e4de 199,201
+  s_2a5c018dca59ea::t_9d322ec90b63a8 150
+  s_2a5c018dca59ea::t_d566435d4ba549 200
+  s_2a5c018dca59ea::t_be8ede89e26bb2 130-133,139
+Sources/ATAIProfile/Support/ProfileV3FeatureFlags.swift
+  s_c482717a7a4db6::t_165c437e8e0e44 17
+Sources/ATAIProfile/Support/ProfileV3Theme+PastTripsSizes.swift
+  s_2a5c018dca59ea::t_158f3a803773e0 88-89
+Tests/ATAIProfileTests/ProfileV3DestinationTests.swift
+  s_8d6f82e9c5700b::t_f94eba5cb3bd9f 1-114
+Sources/ATAIProfile/Presentation/ProfileV3AgentFormViewModel.swift
+  s_2a5c018dca59ea::t_3a75edbf9b1dbd 41-42
+  s_2a5c018dca59ea::t_35397c190812a2 183,189-198,200-203,207-208,214-215,217,219
+  s_2a5c018dca59ea::t_a17e28e8e7b4ae 158-162,169
+  s_2a5c018dca59ea::t_6f682a0a721b89 549
+  s_2a5c018dca59ea::t_3906b0c0ffdcad 20-21
+Sources/ATAIProfile/Components/ProfileV3PassportCard.swift
+  s_2a5c018dca59ea::t_be07cd6c8ad3a6 73-74,82-83,98,100,118,133-134,144-145,155-156,163,174,219-220
+  s_2a5c018dca59ea::t_3622805c34d18b 46
+  s_2a5c018dca59ea::t_0b3a233a25c918 14,19-20,22-32,40-41,45,48-49,51-58,60
+  s_2a5c018dca59ea::t_e89177e472aaaf 179,181-183,185,188-204,209
+  s_2a5c018dca59ea::t_1da1465f1fbb3f 50,59
+Sources/ATAIProfile/Components/ProfileV3FloatingControlBackground.swift
+  s_c482717a7a4db6::t_d352b1c7432990 16
+Sources/ATAIProfile/Data/ProfileV3LiveRepository.swift
+  s_2a5c018dca59ea::t_a1a8a186c0ec5a 487-488
+  s_2a5c018dca59ea::t_8dd11c8533c7a1 295-301
+Sources/ATAIProfile/ProfileV3Destination.swift
+  s_8d6f82e9c5700b::t_505bd3b11e6bc0 1-22
+Tests/ATAIProfileTests/ProfileV3AgentBoxTests.swift
+  s_2a5c018dca59ea::t_9a14d066d03e72 538
+Sources/ATAIProfile/Views/ProfileV3PreviousPassportsView.swift
+  s_2a5c018dca59ea::t_efe866d56cf899 5-6,13-14,21,28-29,31,35,37-38,40-43,47-52,54,59-60,63,79,86-87,94-95,102-103,111-112
+Sources/ATAIProfile/Domain/ProfileV3Directive.swift
+  s_2a5c018dca59ea::t_9fcb55be5e013c 65
+  s_2a5c018dca59ea::t_ede1abfcd4c6df 153-154
+Sources/ATAIProfile/Components/ProfileV3PastTripCard.swift
+  s_2a5c018dca59ea::t_fc4c447630852f 92
+  s_2a5c018dca59ea::t_f004660dcc9a91 122-127
+  s_2a5c018dca59ea::t_cdf02417ceba62 60,64-66
+  s_2a5c018dca59ea::t_b2a594e8859f3a 67-68
+Sources/ATAIProfile/Data/ProfileV3AgentFixtures.swift
+  s_2a5c018dca59ea::t_004816201abe86 562,569
+  s_2a5c018dca59ea::t_06583045910381 374
+Sources/ATAIProfile/Data/ProfileV3PastTripsStore.swift
+  s_2a5c018dca59ea::t_1c605213579f2f 12,16-19,21,23,36
+Sources/ATAIProfile/Data/ProfileV3FailingRepository.swift
+  s_2a5c018dca59ea::t_f817f451d720f5 210
+  s_2a5c018dca59ea::t_d550979db8f5c3 73
+Sources/ATAIProfile/Domain/ProfileV3Passport.swift
+  s_2a5c018dca59ea::t_476eb4faa37d54 143
+  s_2a5c018dca59ea::t_2e11d82004336d 42,47-71
+  s_2a5c018dca59ea::t_bc9fdeba0a72cc 72
+Sources/ATAIProfile/Components/ProfileV3FormSectionView.swift
+  s_2a5c018dca59ea::t_2b9aef143eaabc 124
+  s_2a5c018dca59ea::t_319ce96e343223 54
+  s_2a5c018dca59ea::t_5354a33834c9c8 35
+  s_2a5c018dca59ea::t_ffe579bd480f3f 69-76
+  s_2a5c018dca59ea::t_6b552f882b488c 175
+Sources/ATAIProfile/Views/ProfileV3AgentFormView.swift
+  s_2a5c018dca59ea::t_76c83ffe139824 189-195
+Sources/ATAIProfile/Support/ProfileV3Theme+Gradients.swift
+  s_2a5c018dca59ea::t_f5260a14915d82 12
+  s_2a5c018dca59ea::t_e9b9ffa71eebc2 11
+Sources/ATAIProfile/Presentation/ProfileV3AddPastTripViewModel.swift
+  s_2a5c018dca59ea::t_52d0670d4f9fdf 149-156,158
+  s_2a5c018dca59ea::t_248cd00edc6af0 169-172,182-188
+  s_2a5c018dca59ea::t_4a766dcbd072a3 36,48,58
+  s_2a5c018dca59ea::t_7c17e69b8adbc0 218-222,224-226,228-229
+  s_2a5c018dca59ea::t_387d607f969356 79-84
+  s_2a5c018dca59ea::t_697d2e1821ca0c 112-113,116-117,120
+Sources/ATAIProfile/Views/ProfileV3HubView.swift
+  s_8d6f82e9c5700b::t_98d3ef07fc795b 6
+  s_8d6f82e9c5700b::t_42550b93213705 119-122
+  s_8d6f82e9c5700b::t_c7c81982816282 52,59-64
+  s_2a5c018dca59ea::t_1fb22a8d7e6165 280,282
+  s_8d6f82e9c5700b::t_5b117e033ee4e8 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e94a37ea589a9b8fc9f22983cf2e527e8f0a9c68",
+  "prompts": {},
+  "sessions": {
+    "s_2a5c018dca59ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "46f1d9bf-0c69-4fbf-9200-2a9d6e21db34",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_8d6f82e9c5700b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "adc49df2-b868-4adc-b471-2356d7282fcd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
