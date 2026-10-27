@@ -32,7 +32,7 @@ struct ProfileV3FormSectionView: View {
                     status: statusKind,
                     trailing: trailing?.value,
                     trailingDetail: trailing?.detail,
-                    onTrailingTap: passportField?.hasHistory == true ? onViewPreviousPassports : nil
+                    onTrailingTap: passportField?.previous != nil ? onViewPreviousPassports : nil
                 )
                 if let source = section.source(selectedTab: selectedTabID), let onOpenSources {
                     ProfileV3SectionSourcesRow(source: source, action: onOpenSources)
@@ -51,7 +51,7 @@ struct ProfileV3FormSectionView: View {
                 }
             }
             control
-                .padding(.top, showsNoteAsSubtitle ? ProfileV3Theme.Sizes.Car.carouselTop : ProfileV3Theme.Space.s24)
+                .padding(.top, controlTop)
             if !showsNoteAsSubtitle, let note = section.note {
                 ProfileV3AINoteLine(text: note.text, icon: noteIcon(for: note))
                     .padding(.top, ProfileV3Theme.Space.s24)
@@ -64,6 +64,14 @@ struct ProfileV3FormSectionView: View {
     private var showsNoteAsSubtitle: Bool {
         if case .cars = section.control { return true }
         return false
+    }
+
+    private var controlTop: CGFloat {
+        switch section.control {
+        case .cars: return ProfileV3Theme.Sizes.Car.carouselTop
+        case .passport: return ProfileV3Theme.Sizes.Passport.sectionTop
+        default: return ProfileV3Theme.Space.s24
+        }
     }
 
     private static func attributed(_ note: ProfileV3FormNote) -> AttributedString {
@@ -113,8 +121,7 @@ struct ProfileV3FormSectionView: View {
                 if field.passport != nil {
                     ProfileV3PillButton(
                         title: ProfileV3Strings.uploadNewPassport,
-                        size: .medium,
-                        tint: Color(at: .pureBlack),
+                        tint: Color(at: .neutralGrey800),
                         titleTint: Color(at: .pureWhite),
                         action: { onUploadPassport?() }
                     )
@@ -165,7 +172,7 @@ struct ProfileV3FormSectionView: View {
 
     private var trailing: (value: String, detail: String?)? {
         if case .passport(let field) = section.control {
-            return field.hasHistory ? (ProfileV3Strings.viewPrevious, nil) : nil
+            return field.previous.map { ($0.label, nil) }
         }
         guard case .slider(let field) = section.control else { return nil }
         return field.previewing(sliderPreview).readout

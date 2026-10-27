@@ -344,7 +344,6 @@ struct ProfileV3GloveBoxVirtualCard: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(card.holder)
         .accessibilityValue(card.lastFour)
-        // Card details stay out of session replay.
         .postHogMask()
     }
 

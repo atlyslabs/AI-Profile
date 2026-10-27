@@ -17,25 +17,62 @@ enum ProfileV3PassportMapper: ProfileV3DTOReading {
         let rescan = dto.rescan?.directive
         let accountFallback = rescan?.profileID == nil ? accountCountry.map(ProfileV3PassportCountry.init) : nil
         let country = text(dto.title).flatMap(ProfileV3PassportCountry.init(title:)) ?? accountFallback
-        let holderName = text(dto.name) ?? ""
+        let passport = passport(dto, id: nil, country: country)
+        return ProfileV3PassportField(
+            holderName: passport.holderName,
+            countryName: country?.name ?? "",
+            countryNativeName: country?.nativeName,
+            passport: passport,
+            previous: previous(dto.previous),
+            rescan: rescan,
+            howUsed: dto.howUsed?.directive
+        )
+    }
+
+    static func previous(_ dto: ProfileV3PassportPreviousDTO?) -> ProfileV3PassportPrevious? {
+        guard let label = text(dto?.label), let next = dto?.next?.directive,
+              case .passportPrevious = next.route() else { return nil }
+        return ProfileV3PassportPrevious(label: label, title: text(dto?.title) ?? "", next: next)
+    }
+
+    static func previousPassports(
+        _ dto: ProfileV3PreviousPassportsScreenDTO,
+        accountCountry: ProfileV3Country?
+    ) -> ProfileV3PreviousPassports {
+        let untitled = accountCountry.flatMap { $0 == .india ? nil : ProfileV3PassportCountry($0) }
+        let passports = dto.passports.enumerated().map { index, row in
+            passport(
+                row,
+                id: "\(index)-\(text(row.number) ?? "")",
+                country: text(row.title).flatMap(ProfileV3PassportCountry.init(title:)) ?? untitled
+            )
+        }
+        return ProfileV3PreviousPassports(
+            title: text(dto.title) ?? "",
+            labels: ProfileV3PassportLabels(
+                number: text(dto.labels?.number) ?? "",
+                issueDate: text(dto.labels?.issueDate) ?? "",
+                expiryDate: text(dto.labels?.expiryDate) ?? ""
+            ),
+            passports: passports
+        )
+    }
+
+    private static func passport(
+        _ dto: ProfileV3AgentPassportDTO,
+        id: String?,
+        country: ProfileV3PassportCountry?
+    ) -> ProfileV3Passport {
         let number = text(dto.number) ?? ""
-        let passport = ProfileV3Passport(
-            id: number.isEmpty ? sectionID : number,
-            holderName: holderName,
+        return ProfileV3Passport(
+            id: id ?? (number.isEmpty ? sectionID : number),
+            holderName: text(dto.name) ?? "",
             number: number,
             countryName: country?.name ?? "",
             countryNativeName: country?.nativeName,
             issuedOn: displayDate(dto.issueDate),
             expiresOn: displayDate(dto.expiryDate),
             status: text(dto.status)?.lowercased() == expiredStatus ? .expired : .active
-        )
-        return ProfileV3PassportField(
-            holderName: holderName,
-            countryName: country?.name ?? "",
-            countryNativeName: country?.nativeName,
-            passport: passport,
-            rescan: rescan,
-            howUsed: dto.howUsed?.directive
         )
     }
 

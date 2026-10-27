@@ -292,8 +292,13 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return ProfileV3ConnectorsMapper.disconnectConfirm(dto, fallback: connector)
     }
 
-    func loadPassportHistory(profileID _: String?) async throws -> [ProfileV3Passport] {
-        throw ProfileV3Error.notImplemented(action: "passport_history")
+    func loadPreviousPassports(profileID: String?) async throws -> ProfileV3PreviousPassports {
+        let dto: ProfileV3PreviousPassportsScreenDTO = try await request(
+            ProfileV3API.passportPrevious(profileID: profileID),
+            action: "passport_previous"
+        )
+        let country = await accountCountry(for: profileID)
+        return ProfileV3PassportMapper.previousPassports(dto, accountCountry: country)
     }
 
     func loadPassportScan(profileID: String?) async throws -> ProfileV3PassportScan {
@@ -479,11 +484,8 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return ProfileV3PastTripsMapper.addScreen(dto)
     }
 
-    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, year: Int, month: Int) async throws {
-        let request = ProfileV3BoardSubmitRequest(
-            action: submit,
-            extras: ["country": .string(country), "year": .int(year), "month": .int(month)]
-        )
+    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, date: ProfileV3TripYearMonth?) async throws {
+        let request = ProfileV3PastTripsMapper.addRequest(submit, country: country, date: date)
         try await self.submit(try JSONEncoder().encode(request), action: submit.name ?? "add_past_trip")
     }
 

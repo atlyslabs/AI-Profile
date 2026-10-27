@@ -8,11 +8,8 @@ extension ProfileV3Theme {
         endPoint: .trailing
     )
 
-    static let passportHeaderShade = LinearGradient(
-        stops: [
-            .init(color: Palette.passportHeaderShade, location: 0),
-            .init(color: Palette.passportHeaderShadeEnd, location: 0.18)
-        ],
+    static let passportPageEdgeShade = LinearGradient(
+        colors: [Palette.passportPageEdgeShade, Palette.passportPageEdgeShadeEnd],
         startPoint: .top,
         endPoint: .bottom
     )

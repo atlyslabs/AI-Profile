@@ -186,7 +186,7 @@ struct ProfileV3PassportHowUsedSheet: View {
     }
 }
 
-private struct ProfileV3HorizontalRule: Shape {
+struct ProfileV3HorizontalRule: Shape {
     func path(in rect: CGRect) -> Path {
         Path { path in
             path.move(to: CGPoint(x: rect.minX, y: rect.midY))

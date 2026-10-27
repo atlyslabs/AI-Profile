@@ -105,7 +105,6 @@ enum ProfileV3VaultCrypto {
         return SecKeyCreateWithData(data as CFData, attributes as CFDictionary, nil)
     }
 
-    /// `BEGIN PUBLIC KEY` is an SPKI wrapper. Secure Enclave import wants the PKCS#1 key inside it.
     private static func pkcs1RSAPublicKey(from der: Data) -> Data {
         let oid = Data([0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01])
         guard let oidRange = der.range(of: oid) else { return der }

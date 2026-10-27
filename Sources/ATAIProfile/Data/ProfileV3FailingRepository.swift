@@ -70,7 +70,7 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func addPastTrip(_: ProfileV3BoardAction, country _: String, year _: Int, month _: Int) async throws {
+    func addPastTrip(_: ProfileV3BoardAction, country _: String, date _: ProfileV3TripYearMonth?) async throws {
         throw ProfileV3RepositoryError.unavailable
     }
 
@@ -207,7 +207,7 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func loadPassportHistory(profileID _: String?) async throws -> [ProfileV3Passport] {
+    func loadPreviousPassports(profileID _: String?) async throws -> ProfileV3PreviousPassports {
         throw ProfileV3RepositoryError.unavailable
     }
 

@@ -17,6 +17,10 @@ public enum ProfileV3EntryPoint {
         Task { @MainActor in environment.boardStore.prefetch() }
     }
 
+    public static func open(_ destination: ProfileV3Destination) {
+        ProfileV3PendingDestination.shared.post(destination)
+    }
+
     public static func presentAddTraveller(navCon: UINavigationController) {
         guard addTravellerPresenter == nil else { return }
         let repository = environment.makeRepository()

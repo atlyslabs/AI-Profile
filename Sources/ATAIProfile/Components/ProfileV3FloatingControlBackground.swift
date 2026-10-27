@@ -13,7 +13,7 @@ struct ProfileV3FloatingControlBackground: View {
 private extension View {
     @ViewBuilder
     func profileV3LiquidGlassIfAvailable(in shape: some Shape, interactive: Bool = false) -> some View {
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, *), ProfileV3FeatureFlags.isFloatingControlGlassEnabled {
             profileV3GlassLayer(in: shape, interactive: interactive)
         } else {
             self

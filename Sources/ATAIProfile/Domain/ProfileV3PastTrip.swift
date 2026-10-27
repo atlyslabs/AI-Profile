@@ -3,15 +3,14 @@ import Foundation
 struct ProfileV3PastTrip: Identifiable, Equatable, Sendable {
     let id: String
     let countryCode: String
-    let year: Int
-    let month: Int
+    let date: ProfileV3TripYearMonth?
     var imageURL: URL?
     var name: String?
     var monthLabel: String?
     var edit: ProfileV3TripAction?
     var delete: ProfileV3TripAction?
 
-    var sortKey: Int { year * 100 + month }
+    var sortKey: Int { date.map { $0.year * 100 + $0.month } ?? 0 }
 
     var revision: String { "\(id)-\(countryCode)-\(sortKey)" }
 
@@ -19,8 +18,9 @@ struct ProfileV3PastTrip: Identifiable, Equatable, Sendable {
         name ?? ProfileV3Country(code: countryCode)?.name ?? countryCode
     }
 
-    var monthName: String {
-        monthLabel ?? ProfileV3TripCalendar.monthName(month)
+    var monthName: String? {
+        guard let date else { return nil }
+        return monthLabel ?? ProfileV3TripCalendar.monthName(date.month)
     }
 
     var displayImageURL: URL? {
@@ -28,14 +28,17 @@ struct ProfileV3PastTrip: Identifiable, Equatable, Sendable {
     }
 
     func matches(_ draft: ProfileV3PastTripDraft) -> Bool {
-        countryCode == draft.countryCode && year == draft.year && month == draft.month
+        countryCode == draft.countryCode && date == draft.date
+    }
+
+    func duplicates(_ draft: ProfileV3PastTripDraft) -> Bool {
+        draft.date == nil ? countryCode == draft.countryCode : matches(draft)
     }
 }
 
 struct ProfileV3PastTripDraft: Equatable, Sendable {
     let countryCode: String
-    let year: Int
-    let month: Int
+    let date: ProfileV3TripYearMonth?
 }
 
 struct ProfileV3TripAction: Equatable, Sendable {
@@ -118,7 +121,7 @@ struct ProfileV3AddTripScreen: Equatable, Sendable {
     var searchPlaceholder: String
     var countryCTA: String
     var countries: [ProfileV3Country]
-    var duration: ProfileV3TripDuration
+    var duration: ProfileV3TripDuration?
     var submit: ProfileV3BoardAction?
 }
 
@@ -144,7 +147,11 @@ enum ProfileV3TripCalendar {
 }
 
 extension Array where Element == ProfileV3PastTrip {
-    var newestFirst: [ProfileV3PastTrip] {
-        sorted { $0.sortKey > $1.sortKey }
+    var listed: [ProfileV3PastTrip] {
+        let dated = filter { $0.date != nil }.sorted { $0.sortKey > $1.sortKey }
+        let covered = Set(dated.map(\.countryCode))
+        let undated = filter { $0.date == nil && !covered.contains($0.countryCode) }
+            .sorted { $0.countryName.localizedStandardCompare($1.countryName) == .orderedAscending }
+        return dated + undated
     }
 }

@@ -82,7 +82,6 @@ struct ProfileV3ContactInfoView: View {
                 .foregroundStyle(Color(at: .pureBlack))
                 .keyboardType(.emailAddress)
                 .textContentType(.emailAddress)
-                // Session replay masks email fields by type; an email is fine to show.
                 .postHogNoMask()
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled(true)

@@ -5,6 +5,17 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ## Unreleased
 
+### Added
+
+- `ProfileV3EntryPoint.open(_:)` with `ProfileV3Destination.addTraveller` and
+  `.addLoyaltyProgramme`, for deep links. The hub opens the sheet once it is on screen with its board
+  loaded; a loyalty programme is added for the main traveller, behind the usual KYC gate.
+
+### Changed
+
+- The hub's add-traveller sheet closes Settings first when Settings is open, instead of opening a
+  second settings presenter.
+
 ### Strings
 
 - The Ditto project `ai-profile` matches the client again. It drops the 68 keys whose copy now comes

@@ -2,15 +2,15 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3PreviousPassportsView: View {
-    let holderName: String
-    let countryName: String
-    var countryNativeName: String?
-    let passports: [ProfileV3Passport]
+    let title: String
+    let screen: ProfileV3PreviousPassports?
     var phase: ProfileV3LoadPhase = .loaded
     let onBack: () -> Void
     var onRetry: () -> Void = {}
 
     @State private var headerPin = ProfileV3HeaderPin()
+
+    private typealias Passport = ProfileV3Theme.Sizes.Passport
 
     var body: some View {
         VStack(spacing: 0) {
@@ -18,44 +18,49 @@ struct ProfileV3PreviousPassportsView: View {
             content
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(ProfileV3Theme.passportScreenGradient.ignoresSafeArea())
+        .background(Color(at: .pureWhite).ignoresSafeArea())
     }
 
     @ViewBuilder
     private var content: some View {
         if phase != .loaded {
             ProfileV3LoadStateView(phase: phase, retry: onRetry)
-        } else if passports.isEmpty {
-            emptyState
+        } else if let screen, !screen.passports.isEmpty {
+            list(screen)
         } else {
-            list
+            emptyState
         }
     }
 
-    private var list: some View {
+    private func list(_ screen: ProfileV3PreviousPassports) -> some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: ProfileV3Theme.Sizes.Passport.listSpacing) {
-                ForEach(Array(passports.enumerated()), id: \.element.id) { index, passport in
+            VStack(spacing: Passport.listSpacing) {
+                ForEach(Array(screen.passports.enumerated()), id: \.element.id) { index, passport in
                     ProfileV3PassportCard(
-                        holderName: holderName,
-                        countryName: countryName,
-                        countryNativeName: countryNativeName,
+                        holderName: passport.holderName,
+                        countryName: passport.countryName,
+                        countryNativeName: passport.countryNativeName,
+                        labels: screen.labels,
                         content: .details(passport),
                         showsStatusBadge: true
                     )
-                    if index == 0, passports.count > 1 {
-                        Rectangle()
-                            .fill(Color(at: .borderLightLight100))
+                    if index == 0, screen.passports.count > 1 {
+                        ProfileV3HorizontalRule()
+                            .stroke(
+                                ProfileV3Theme.Palette.passportListDivider,
+                                style: StrokeStyle(lineWidth: ProfileV3Theme.Stroke.hairline, dash: Passport.listDividerDash)
+                            )
                             .frame(height: ProfileV3Theme.Stroke.hairline)
+                            .accessibilityHidden(true)
                     }
                 }
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.Passport.listTop)
-            .padding(.bottom, ProfileV3Theme.Sizes.Passport.listBottom)
+            .padding(.top, Passport.listTop)
+            .padding(.bottom, Passport.listBottom)
             .profileV3HeaderFadeAnchor(headerPin)
         }
-        .profileV3HeaderFade(headerPin, color: ProfileV3Theme.Palette.background)
+        .profileV3HeaderFade(headerPin)
         .scrollBounceBehavior(.basedOnSize)
     }
 
@@ -71,35 +76,31 @@ struct ProfileV3PreviousPassportsView: View {
     }
 
     private var header: some View {
-        ProfileV3BackTagHeader(title: ProfileV3Strings.previousPassports, onBack: onBack)
+        ProfileV3BackTagHeader(title: title, onBack: onBack)
     }
 }
 
 #if DEBUG
 #Preview("Previous passports") {
     ProfileV3PreviousPassportsView(
-        holderName: "alex r.",
-        countryName: ProfileV3Strings.passportCountryIndia,
-        countryNativeName: ProfileV3Strings.passportCountryIndiaNative,
-        passports: ProfileV3PassportFixtures.history,
+        title: "PREVIOUS PASSPORTS",
+        screen: ProfileV3PassportFixtures.previous,
         onBack: {}
     )
 }
 
 #Preview("Previous passports · empty") {
     ProfileV3PreviousPassportsView(
-        holderName: "alex r.",
-        countryName: ProfileV3Strings.passportCountryIndia,
-        passports: [],
+        title: "PREVIOUS PASSPORTS",
+        screen: ProfileV3PreviousPassports(title: "PREVIOUS PASSPORTS", labels: .card, passports: []),
         onBack: {}
     )
 }
 
 #Preview("Previous passports · loading") {
     ProfileV3PreviousPassportsView(
-        holderName: "alex r.",
-        countryName: ProfileV3Strings.passportCountryIndia,
-        passports: [],
+        title: "PREVIOUS PASSPORTS",
+        screen: nil,
         phase: .loading,
         onBack: {}
     )
@@ -107,9 +108,8 @@ struct ProfileV3PreviousPassportsView: View {
 
 #Preview("Previous passports · failed") {
     ProfileV3PreviousPassportsView(
-        holderName: "alex r.",
-        countryName: ProfileV3Strings.passportCountryIndia,
-        passports: [],
+        title: "PREVIOUS PASSPORTS",
+        screen: nil,
         phase: .failed,
         onBack: {},
         onRetry: {}

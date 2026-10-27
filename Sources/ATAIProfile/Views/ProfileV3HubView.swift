@@ -3,13 +3,14 @@ import SwiftUI
 
 struct ProfileV3HubView: View {
     @ObservedObject var viewModel: ProfileV3HubViewModel
+    @ObservedObject var destinations = ProfileV3PendingDestination.shared
     @StateObject private var stage = ProfileV3HubStage()
     @StateObject private var benefitPresenter = ProfileV3HeroPresenter<ProfileV3Benefit>()
     @StateObject private var couponPresenter = ProfileV3HeroPresenter<ProfileV3Coupon>()
     @StateObject private var cover = ProfileV3HubCover()
     @State private var scroll = ProfileV3HubScroll()
     @State private var viewport: CGSize = .zero
-    @State private var isKYCTagUnderBackdrop = false
+    @State private var isSettled = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.profileV3Globe) private var globeRenderer
     @Environment(\.profileV3FloatingBarClearance) private var floatingBarClearance
@@ -48,12 +49,19 @@ struct ProfileV3HubView: View {
         .onChange(of: coversHub) { _, covers in cover.update(isCovering: covers) }
         .onChange(of: passImpressionKey, initial: true) { _, _ in viewModel.trackSelectedPass() }
         .onDisappear {
+            isSettled = false
             viewModel.cancelPendingWork()
             stage.suspend()
         }
         .onGeometryChange(for: CGSize.self) { $0.size } action: { viewport = $0 }
         .task {
             await stage.enter(viewModel, reducesMotion: reduceMotion)
+            guard !Task.isCancelled else { return }
+            isSettled = true
+        }
+        .onChange(of: opensDestination) { _, opens in
+            guard opens, let destination = destinations.take() else { return }
+            viewModel.open(destination)
         }
         .onChange(of: viewModel.pendingBenefit) { _, benefit in
             guard let benefit else { return }
@@ -108,6 +116,10 @@ struct ProfileV3HubView: View {
         .onAppear { cover.didAppear { coversHub } }
     }
 
+    private var opensDestination: Bool {
+        isSettled && viewModel.home != nil && destinations.destination != nil
+    }
+
     private var coversHub: Bool {
         stage.expandedPass != nil
             || benefitPresenter.isPresenting
@@ -140,7 +152,6 @@ struct ProfileV3HubView: View {
                     viewModel: viewModel,
                     stage: stage,
                     scroll: scroll,
-                    isKYCTagUnderBackdrop: isKYCTagUnderBackdrop,
                     onExpand: expand
                 )
                 .zIndex(1)
@@ -266,10 +277,9 @@ struct ProfileV3HubView: View {
     private func kycSection(_ home: ProfileV3Home, line: String) -> some View {
         VStack(spacing: ProfileV3Theme.Space.s20) {
             ProfileV3TagLabel.kyc(viewModel.isSyncingKYC ? ProfileV3Strings.kycUpdating : line)
-                .onGeometryChange(for: Bool.self) { proxy in
+                .onGeometryChange(for: CGFloat.self) { proxy in
                     proxy.frame(in: .named(ProfileV3HeroSpace.name)).maxY
-                        < ProfileV3Theme.Sizes.Collapse.backdropSolidBottom
-                } action: { isKYCTagUnderBackdrop = $0 }
+                } action: { scroll.kycTagBottom = $0 }
             Group {
                 if let progress = home.kycProgress {
                     ProfileV3KYCProgressCard(
