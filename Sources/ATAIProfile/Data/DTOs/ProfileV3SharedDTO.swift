@@ -207,7 +207,7 @@ enum ProfileV3ScalarDTO: Decodable, Equatable {
         switch self {
         case .string(let value): return value
         case .int(let value): return String(value)
-        case .double(let value): return Self.integer(value).map(String.init) ?? String(value)
+        case .double(let value): return Int(exactly: value).map(String.init) ?? String(value)
         case .bool: return nil
         }
     }

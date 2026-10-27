@@ -1573,18 +1573,6 @@
         }
       }
     },
-    "mo-aiprofile-documents-button-view-previous": {
-      "comment": "Action button to view a list of previous passports.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "VIEW PREVIOUS"
-          }
-        }
-      }
-    },
     "mo-aiprofile-documents-country-name-india": {
       "comment": "Display name for the country (India).",
       "extractionState": "manual",
@@ -1689,18 +1677,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "PASSPORT DETAILS"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-documents-header-previous-passports": {
-      "comment": "Title for the previous passports section.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PREVIOUS PASSPORTS"
           }
         }
       }

@@ -19,7 +19,6 @@ struct ProfileV3TravelPersona: Equatable {
     let iconURL: URL?
     let foundLabel: String
     let subtitle: String
-    let profileTitle: String
     let range: ClosedRange<Int>
     var traits: [Trait]
 

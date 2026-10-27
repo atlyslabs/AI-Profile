@@ -181,6 +181,7 @@ struct ProfileV3AgentFormView: View {
                     onStepBaggage: { viewModel.stepBaggage($0, by: $1, in: section.id) },
                     onOpenNoteLink: viewModel.openNoteLink
                 )
+                .equatable()
             }
         }
     }

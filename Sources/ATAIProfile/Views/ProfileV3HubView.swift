@@ -2,7 +2,7 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3HubView: View {
-    @ObservedObject var viewModel: ProfileV3HubViewModel
+    let viewModel: ProfileV3HubViewModel
     @ObservedObject var destinations = ProfileV3PendingDestination.shared
     @StateObject private var stage = ProfileV3HubStage()
     @StateObject private var benefitPresenter = ProfileV3HeroPresenter<ProfileV3Benefit>()
@@ -372,7 +372,7 @@ private extension View {
 }
 
 private struct ProfileV3HubSheets: View {
-    @ObservedObject var viewModel: ProfileV3HubViewModel
+    let viewModel: ProfileV3HubViewModel
     let isRevealed: Bool
 
     var body: some View {

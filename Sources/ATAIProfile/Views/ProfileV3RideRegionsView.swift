@@ -30,13 +30,13 @@ struct ProfileV3RideRegionsView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())
         .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
-        .presentationDetents(detents)
+        .profileV3FittedDetent(fittedHeight)
         .onDisappear(perform: viewModel.cancel)
     }
 
-    private var detents: Set<PresentationDetent> {
-        guard viewModel.content != nil, measured.content > 0 else { return [.medium] }
-        return [.height(Self.headerHeight + measured.content + measured.bottomInset)]
+    private var fittedHeight: CGFloat? {
+        guard viewModel.content != nil, measured.content > 0 else { return nil }
+        return Self.headerHeight + measured.content + measured.bottomInset
     }
 
     private static var headerHeight: CGFloat {

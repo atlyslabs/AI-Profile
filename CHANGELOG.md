@@ -15,6 +15,8 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 - The hub's add-traveller sheet closes Settings first when Settings is open, instead of opening a
   second settings presenter.
+- The travel persona radar and its loading dial have no title. The "Traveler profile" heading is
+  gone from both, and `profile.title` in `GET …/board/travel_persona` is no longer read.
 
 ### Strings
 

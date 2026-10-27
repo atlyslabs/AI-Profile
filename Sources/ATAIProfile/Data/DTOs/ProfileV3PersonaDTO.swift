@@ -79,7 +79,6 @@ struct ProfileV3PersonaPointDTO: Decodable, Equatable {
 }
 
 struct ProfileV3PersonaProfileDTO: Decodable, Equatable {
-    let title: String?
     let min: ProfileV3ScalarDTO?
     let max: ProfileV3ScalarDTO?
     private let rawTraits: [ProfileV3LossyDTO<ProfileV3PersonaPointDTO>]?
@@ -87,7 +86,6 @@ struct ProfileV3PersonaProfileDTO: Decodable, Equatable {
     var traits: [ProfileV3PersonaPointDTO] { rawTraits?.compactMap(\.value) ?? [] }
 
     enum CodingKeys: String, CodingKey {
-        case title
         case min
         case max
         case rawTraits = "traits"

@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 enum ProfileV3GloveBoxCopy {
     static var title: String { ProfileV3L10n.moAiprofileGloveboxTitleGloveBox }
@@ -331,20 +332,32 @@ enum ProfileV3GloveBoxMapper {
     }
 
     private static func date(_ raw: String) -> Date? {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let date = formatter.date(from: raw) { return date }
-        formatter.formatOptions = [.withInternetDateTime]
-        return formatter.date(from: raw)
+        fractionalParser.withLock { $0.date(from: raw) } ?? plainParser.withLock { $0.date(from: raw) }
     }
 
     private static func label(_ date: Date) -> String {
+        labelFormatter.withLock { $0.string(from: date) }
+    }
+
+    private static let fractionalParser: OSAllocatedUnfairLock<ISO8601DateFormatter> = {
+        let parser = ISO8601DateFormatter()
+        parser.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return OSAllocatedUnfairLock(uncheckedState: parser)
+    }()
+
+    private static let plainParser: OSAllocatedUnfairLock<ISO8601DateFormatter> = {
+        let parser = ISO8601DateFormatter()
+        parser.formatOptions = [.withInternetDateTime]
+        return OSAllocatedUnfairLock(uncheckedState: parser)
+    }()
+
+    private static let labelFormatter: OSAllocatedUnfairLock<DateFormatter> = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "d MMM, yyyy"
-        return formatter.string(from: date)
-    }
+        return OSAllocatedUnfairLock(uncheckedState: formatter)
+    }()
 
     private static var phone: ProfileV3GloveBoxPhoneSection {
         ProfileV3GloveBoxPhoneSection(

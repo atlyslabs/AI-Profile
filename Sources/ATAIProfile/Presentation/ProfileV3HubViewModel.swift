@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 import SwiftUI
 
@@ -17,7 +16,8 @@ protocol ProfileV3HubRouter: AnyObject {
 }
 
 @MainActor
-final class ProfileV3HubViewModel: ObservableObject {
+@Observable
+final class ProfileV3HubViewModel {
 
     struct KYCGlowCue: Equatable {
         let tone: ProfileV3KYCGlowTone
@@ -53,38 +53,38 @@ final class ProfileV3HubViewModel: ObservableObject {
         }
     }
 
-    @Published private(set) var phase: Phase = .loading {
+    private(set) var phase: Phase = .loading {
         didSet { refreshStackBenefits() }
     }
 
     private(set) var stackBenefits: [ProfileV3Benefit] = []
-    @Published private(set) var kycGlowPlays: [String: Int] = [:]
-    @Published private(set) var kycGlowCue: KYCGlowCue?
-    @Published private(set) var kycAnnouncedPassIDs: Set<String> = []
-    @Published private(set) var selectedPassID: String?
-    @Published private(set) var isHouseholdSelected = false
-    @Published private(set) var contentVersion = 0
-    @Published private(set) var showsHoldHint: Bool
-    @Published private(set) var playsFlipDemo: Bool
-    @Published private(set) var redeemError: String?
-    @Published private(set) var benefitRedemption: ProfileV3BenefitRedemption?
-    @Published private(set) var showsAllBenefits = false
-    @Published private(set) var benefitsSheet = ProfileV3BenefitsSheet.empty {
+    private(set) var kycGlowPlays: [String: Int] = [:]
+    private(set) var kycGlowCue: KYCGlowCue?
+    private(set) var kycAnnouncedPassIDs: Set<String> = []
+    private(set) var selectedPassID: String?
+    private(set) var isHouseholdSelected = false
+    private(set) var contentVersion = 0
+    private(set) var showsHoldHint: Bool
+    private(set) var playsFlipDemo: Bool
+    private(set) var redeemError: String?
+    private(set) var benefitRedemption: ProfileV3BenefitRedemption?
+    private(set) var showsAllBenefits = false
+    private(set) var benefitsSheet = ProfileV3BenefitsSheet.empty {
         didSet { refreshStackBenefits() }
     }
-    @Published private(set) var allBenefitsPhase: ProfileV3LoadPhase = .loading
-    @Published private(set) var isFetchingBenefits = false
-    @Published private(set) var showsAllCoupons = false
-    @Published private(set) var pastTrips: ProfileV3PastTripsViewModel?
-    @Published private(set) var couponsSheet = ProfileV3CouponsSheet.empty
-    @Published private(set) var allCouponsPhase: ProfileV3LoadPhase = .loading
-    @Published private(set) var isFetchingCoupons = false
-    @Published private(set) var notice: String?
-    @Published private(set) var pendingBenefit: ProfileV3Benefit?
-    @Published private(set) var isSyncingKYC = false
-    @Published private(set) var kycStepCompletions = 0
+    private(set) var allBenefitsPhase: ProfileV3LoadPhase = .loading
+    private(set) var isFetchingBenefits = false
+    private(set) var showsAllCoupons = false
+    private(set) var pastTrips: ProfileV3PastTripsViewModel?
+    private(set) var couponsSheet = ProfileV3CouponsSheet.empty
+    private(set) var allCouponsPhase: ProfileV3LoadPhase = .loading
+    private(set) var isFetchingCoupons = false
+    private(set) var notice: String?
+    private(set) var pendingBenefit: ProfileV3Benefit?
+    private(set) var isSyncingKYC = false
+    private(set) var kycStepCompletions = 0
 
-    weak var router: ProfileV3HubRouter?
+    @ObservationIgnored weak var router: ProfileV3HubRouter?
 
     let placeholderName: String?
 
@@ -97,20 +97,20 @@ final class ProfileV3HubViewModel: ObservableObject {
     private var needsRevalidation = false
     private var pendingResumption: KYCResumption = .none
     private var benefitsSheetProfileID: String?
-    private var afterOverlaysClose: (() -> Void)?
+    @ObservationIgnored private var afterOverlaysClose: (() -> Void)?
     private let impressions = ProfileV3ImpressionLog()
     private var isKYCGlowArmed = false
     private var hasCountedHoldHint = false
     private var pendingKYCGlowPassIDs: Set<String> = []
-    private var kycAnnounceTasks: [String: Task<Void, Never>] = [:]
+    @ObservationIgnored private var kycAnnounceTasks: [String: Task<Void, Never>] = [:]
     private var kycSyncGeneration = 0
-    private var loadTask: Task<Void, Never>?
-    private var refreshTask: Task<Void, Never>?
-    private var kycSyncTask: Task<Void, Never>?
-    private var revalidateTask: Task<Void, Never>?
-    private var benefitsTask: Task<Void, Never>?
-    private var couponsTask: Task<Void, Never>?
-    private var redeemTask: Task<Void, Never>?
+    @ObservationIgnored private var loadTask: Task<Void, Never>?
+    @ObservationIgnored private var refreshTask: Task<Void, Never>?
+    @ObservationIgnored private var kycSyncTask: Task<Void, Never>?
+    @ObservationIgnored private var revalidateTask: Task<Void, Never>?
+    @ObservationIgnored private var benefitsTask: Task<Void, Never>?
+    @ObservationIgnored private var couponsTask: Task<Void, Never>?
+    @ObservationIgnored private var redeemTask: Task<Void, Never>?
 
     init(
         repository: any ProfileV3HubRepository,

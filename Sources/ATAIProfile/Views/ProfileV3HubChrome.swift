@@ -131,7 +131,7 @@ struct ProfileV3HubPodiumSlot: View {
 }
 
 struct ProfileV3HubPinnedBlock: View {
-    @ObservedObject var viewModel: ProfileV3HubViewModel
+    let viewModel: ProfileV3HubViewModel
     @ObservedObject var stage: ProfileV3HubStage
     let scroll: ProfileV3HubScroll
     let onExpand: (ProfileV3WorldPass, CGRect, ProfileV3GlobePose) -> Void

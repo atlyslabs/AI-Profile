@@ -449,8 +449,8 @@ enum ProfileV3AgentValueDTO: Decodable, Equatable {
     var boolValue: Bool? { scalar?.boolValue }
 
     var doubleValue: Double? {
-        guard let scalar, scalar.boolValue == nil, let text = scalar.stringValue else { return nil }
-        return Double(text)
+        guard let scalar, scalar.boolValue == nil else { return nil }
+        return scalar.doubleValue
     }
 }
 

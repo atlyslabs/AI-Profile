@@ -36,6 +36,8 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     @Published private(set) var forwardingError: String?
     @Published private(set) var openingAttachmentID: String?
     @Published private(set) var isResolvingScreen = false
+    @Published private(set) var hasMoreEmails = false
+    @Published private(set) var emailPagingFailed = false
 
     var onIntroAction: (ProfileV3GloveBoxIntro.Action) -> Void = { _ in }
     var onFollowUp: (Entry) -> Void = { _ in }
@@ -45,7 +47,9 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     private var loadTask: Task<Void, Never>?
     private let repository: (any ProfileV3GloveBoxRepository)?
     private var account: ProfileV3GloveBoxAccount?
-    private var nextCursor: String?
+    private var nextCursor: String? {
+        didSet { hasMoreEmails = nextCursor != nil }
+    }
     private var isPaging = false
 
     init(gloveBox: ProfileV3GloveBox) {
@@ -153,7 +157,10 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     func openList(_ section: Section) {
         guard home != nil else { return }
         withAnimation(ProfileV3Theme.GloveBox.Motion.sheetSwitch) { sheets = [.list(section)] }
-        if section == .emails { loadMoreEmails() }
+        if section == .emails {
+            emailPagingFailed = false
+            loadMoreEmails()
+        }
     }
 
     func open(_ entry: Entry) {
@@ -311,8 +318,13 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
         show(.home(ProfileV3GloveBoxMapper.home(email: section)))
     }
 
-    private func loadMoreEmails() {
-        guard let repository, let cursor = nextCursor, !isPaging else { return }
+    func retryLoadMoreEmails() {
+        emailPagingFailed = false
+        loadMoreEmails()
+    }
+
+    func loadMoreEmails() {
+        guard let repository, let cursor = nextCursor, !isPaging, !emailPagingFailed else { return }
         isPaging = true
         loadTask = Task { [weak self] in
             guard let self else { return }
@@ -324,7 +336,8 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
             } catch is CancellationError {
                 return
             } catch {
-                return
+                guard !Task.isCancelled else { return }
+                emailPagingFailed = true
             }
         }
     }

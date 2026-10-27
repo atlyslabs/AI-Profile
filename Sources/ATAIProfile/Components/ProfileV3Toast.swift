@@ -32,6 +32,12 @@ struct ProfileV3Toast: View {
         )
         .accessibilityElement(children: .combine)
         .accessibilityLabel(message)
+        .onAppear(perform: announce)
+        .onChange(of: message) { _, _ in announce() }
+    }
+
+    private func announce() {
+        AccessibilityNotification.Announcement(message).post()
     }
 
     private var toastBackground: some View {

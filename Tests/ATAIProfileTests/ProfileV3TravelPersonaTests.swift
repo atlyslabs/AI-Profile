@@ -21,7 +21,6 @@ struct ProfileV3TravelPersonaTests {
         let persona = ProfileV3PersonaMapper.persona(dto)
         #expect(persona.title == "Travel persona")
         #expect(persona.foundLabel == "Found 1/10 traits")
-        #expect(persona.profileTitle == "Traveler profile")
         #expect(persona.iconURL == ProfileV3PlaceholderArt.agentPersonal.url)
         #expect(persona.traits.map(\.id) == ["adventure", "new_places"])
         #expect(persona.traits.map(\.score) == [72, 100])
@@ -479,7 +478,6 @@ private final class PersonaRepositoryStub: ProfileV3PersonaRepository, @unchecke
             iconURL: nil,
             foundLabel: "Found 0/\(order.count) traits",
             subtitle: "",
-            profileTitle: "Traveler profile",
             range: 0 ... 100,
             traits: order.map { id in
                 ProfileV3TravelPersona.Trait(

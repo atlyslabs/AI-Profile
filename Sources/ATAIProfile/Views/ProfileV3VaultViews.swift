@@ -125,7 +125,7 @@ struct ProfileV3CredentialStoreSheet: View {
             Color.clear
                 .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
         }
-        .presentationDetents(detents)
+        .profileV3FittedDetent(fittedHeight, until: .large)
         .presentationCornerRadius(Credentials.cornerRadius)
         .presentationDragIndicator(.hidden)
         .sheet(item: route) { route in
@@ -141,9 +141,9 @@ struct ProfileV3CredentialStoreSheet: View {
         .sensoryFeedback(.success, trigger: model.deleteCompletions)
     }
 
-    private var detents: Set<PresentationDetent> {
-        guard measured.content > 0, measured.bar > 0 else { return [.large] }
-        return [.height(measured.content + measured.bar + measured.bottomInset)]
+    private var fittedHeight: CGFloat? {
+        guard measured.content > 0, measured.bar > 0 else { return nil }
+        return measured.content + measured.bar + measured.bottomInset
     }
 
     private var measuredContent: some View {

@@ -158,14 +158,20 @@ struct ProfileV3PersonaTraitContent: View {
     }
 
     private func rows(_ trait: ProfileV3PersonaTrait) -> some View {
-        VStack(spacing: Persona.rowGap) {
+        LazyVStack(spacing: Persona.rowGap) {
             ForEach(Array(trait.rows.enumerated()), id: \.element.id) { index, row in
                 rowView(row, connectsBelow: index < trait.rows.count - 1)
             }
             if trait.nextPage != nil {
-                ProfileV3Spinner()
-                    .frame(maxWidth: .infinity)
-                    .onAppear(perform: viewModel.loadMore)
+                if viewModel.loadMoreFailed {
+                    ProfileV3PillButton(title: ProfileV3Strings.tryAgain, action: viewModel.retryLoadMore)
+                        .frame(maxWidth: .infinity)
+                } else {
+                    ProfileV3Spinner()
+                        .frame(maxWidth: .infinity)
+                        .id(trait.rows.count)
+                        .onAppear(perform: viewModel.loadMore)
+                }
             }
             if let start = trait.startingPoint {
                 startingPointRow(start)

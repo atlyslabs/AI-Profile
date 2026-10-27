@@ -285,8 +285,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileDocumentsButtonUploadNewPassport: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-button-upload-new-passport", fallback: "Upload new passport") }
   /// Action button to initiate passport upload.
   internal static var moAiprofileDocumentsButtonUploadPassport: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-button-upload-passport", fallback: "Upload passport") }
-  /// Action button to view a list of previous passports.
-  internal static var moAiprofileDocumentsButtonViewPrevious: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-button-view-previous", fallback: "VIEW PREVIOUS") }
   /// Display name for the country (India).
   internal static var moAiprofileDocumentsCountryNameIndia: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-country-name-india", fallback: "REPUBLIC OF INDIA") }
   /// Country name in Devanagari on the passport card.
@@ -305,8 +303,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileDocumentsHeaderNewPassport: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-header-new-passport", fallback: "NEW PASSPORT") }
   /// Section header for passport details.
   internal static var moAiprofileDocumentsHeaderPassportDetails: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-header-passport-details", fallback: "PASSPORT DETAILS") }
-  /// Title for the previous passports section.
-  internal static var moAiprofileDocumentsHeaderPreviousPassports: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-header-previous-passports", fallback: "PREVIOUS PASSPORTS") }
   /// Label for the passport expiry date input field.
   internal static var moAiprofileDocumentsInputLabelExpiryDate: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-input-label-expiry-date", fallback: "EXPIRY DATE") }
   /// Label for the passport issue date input field.

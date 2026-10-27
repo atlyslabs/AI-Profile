@@ -4,9 +4,7 @@ import SwiftUI
 extension ProfileV3Theme.Sizes {
     enum Persona {
         static let cardRadius: CGFloat = 40
-        static let cardTitleTop: CGFloat = 39
-        static let cardTitleLineHeight: CGFloat = 25
-        static let radarTop = ProfileV3Theme.Space.s40
+        static let radarTop: CGFloat = 39
         static let radarHeight: CGFloat = 314
         static let cardBottom: CGFloat = 69
         static let cardTop: CGFloat = 34

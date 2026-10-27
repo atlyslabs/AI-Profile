@@ -186,6 +186,24 @@ struct ProfileV3FormSectionView: View {
     }
 }
 
+extension ProfileV3FormSectionView: Equatable {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.section == rhs.section
+            && lhs.agentAvatarURL == rhs.agentAvatarURL
+            && lhs.selectedTabID == rhs.selectedTabID
+            && (lhs.onDateChange == nil) == (rhs.onDateChange == nil)
+            && (lhs.onAdd == nil) == (rhs.onAdd == nil)
+            && (lhs.onOpenSources == nil) == (rhs.onOpenSources == nil)
+            && (lhs.onUploadPassport == nil) == (rhs.onUploadPassport == nil)
+            && (lhs.onViewPreviousPassports == nil) == (rhs.onViewPreviousPassports == nil)
+            && (lhs.onSelectTab == nil) == (rhs.onSelectTab == nil)
+            && (lhs.onSelectCar == nil) == (rhs.onSelectCar == nil)
+            && (lhs.onToggleBaggage == nil) == (rhs.onToggleBaggage == nil)
+            && (lhs.onStepBaggage == nil) == (rhs.onStepBaggage == nil)
+            && (lhs.onOpenNoteLink == nil) == (rhs.onOpenNoteLink == nil)
+    }
+}
+
 #if DEBUG
 #Preview("Form sections") {
     ScrollView {
