@@ -337,7 +337,12 @@ struct ProfileV3TravelPersonaTests {
 
     @Test(.timeLimit(.minutes(1)))
     func theLoaderHoldsTheResponseUntilALoopEnds() async throws {
-        let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: PersonaRepositoryStub(), isEditable: true)
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(),
+            isEditable: true,
+            hints: try freshHints()
+        )
         viewModel.load()
         #expect(viewModel.isDecoding)
         viewModel.finishDecodingLoop()
@@ -357,7 +362,8 @@ struct ProfileV3TravelPersonaTests {
         let viewModel = ProfileV3TravelPersonaViewModel(
             profileID: "main",
             repository: PersonaRepositoryStub(loadError: ProfileV3RepositoryError.unavailable),
-            isEditable: true
+            isEditable: true,
+            hints: try freshHints()
         )
         viewModel.load()
         while viewModel.phase != .failed { try await Task.sleep(for: .milliseconds(10)) }
@@ -367,6 +373,50 @@ struct ProfileV3TravelPersonaTests {
 
         viewModel.load()
         #expect(viewModel.isDecoding)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func theDelightLoaderShowsFiveTimesThenTheNormalLoader() async throws {
+        let hints = try freshHints()
+        for show in 1 ... ProfileV3HubHints.personaLoaderShowLimit {
+            let viewModel = ProfileV3TravelPersonaViewModel(
+                profileID: "main",
+                repository: PersonaRepositoryStub(),
+                isEditable: true,
+                hints: hints
+            )
+            viewModel.load()
+            #expect(viewModel.isDecoding)
+            #expect(hints.personaLoaderShows == show)
+        }
+
+        let sixth = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(),
+            isEditable: true,
+            hints: hints
+        )
+        sixth.load()
+        #expect(!sixth.isDecoding)
+        #expect(sixth.phase == .loading)
+        while sixth.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(hints.personaLoaderShows == ProfileV3HubHints.personaLoaderShowLimit)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func openingADraggedKnobFetchesItsTraitAfterTheSave() async throws {
+        let repository = PersonaRepositoryStub(submitDelay: .milliseconds(200))
+        let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
+        try await loaded(viewModel)
+
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 70)
+        viewModel.tap("adventure")
+        let trait = try #require(viewModel.trait)
+        #expect(repository.events.isEmpty)
+        while trait.phase == .loading { try await Task.sleep(for: .milliseconds(10)) }
+
+        #expect(repository.events == ["submit:adventure", "trait:adventure"])
     }
 
     private static let board = [
@@ -397,6 +447,7 @@ private final class PersonaRepositoryStub: ProfileV3PersonaRepository, @unchecke
     private let order: [String]
     private var scores: [String: Int]
     private var _submitted: [Submission] = []
+    private var _events: [String] = []
     private let submitError: Error?
     private let loadError: Error?
     private let submitDelay: Duration
@@ -446,7 +497,12 @@ private final class PersonaRepositoryStub: ProfileV3PersonaRepository, @unchecke
         )
     }
 
-    func loadPersonaTrait(_: String, profileID _: String?, page _: Int) async throws -> ProfileV3PersonaTrait {
+    var events: [String] {
+        lock.withLock { _events }
+    }
+
+    func loadPersonaTrait(_ trait: String, profileID _: String?, page _: Int) async throws -> ProfileV3PersonaTrait {
+        lock.withLock { _events.append("trait:\(trait)") }
         throw ProfileV3RepositoryError.unavailable
     }
 
@@ -455,6 +511,7 @@ private final class PersonaRepositoryStub: ProfileV3PersonaRepository, @unchecke
         if let submitError { throw submitError }
         lock.withLock {
             _submitted.append(Submission(action: action, score: score))
+            if case .string(let id)? = action.fields["trait"] { _events.append("submit:\(id)") }
             if let score, case .string(let id)? = action.fields["trait"] { scores[id] = score }
         }
     }

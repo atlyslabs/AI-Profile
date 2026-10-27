@@ -55,6 +55,65 @@ enum ProfileV3GloveBoxCopy {
     static var cardListTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleTransactionsList }
     static var cardAdd: String { ProfileV3L10n.moAiprofileGloveboxButtonAddCard }
     static var cardSecure: String { ProfileV3L10n.moAiprofileGloveboxNoticeCardSecure }
+    static var sample: String { ProfileV3L10n.moAiprofileGloveboxLabelSample }
+    static var changed: String { ProfileV3L10n.moAiprofileGloveboxBadgeChanged }
+}
+
+enum ProfileV3GloveBoxSamples {
+    private static let emiratesLogo = URL(string: "https://media.atlys.com/b2c/ai-native/loyalty/flights/emirates_skywards.png")
+    private static let marriottLogo = URL(string: "https://media.atlys.com/b2c/ai-native/loyalty/hotels/marriott_bonvoy.png")
+
+    static var emails: [ProfileV3GloveBoxEmail] {
+        [
+            ProfileV3GloveBoxEmail(
+                id: "sample-email-flight",
+                sender: ProfileV3L10n.moAiprofileGloveboxSampleEmailFlightSender,
+                summary: ProfileV3L10n.moAiprofileGloveboxSampleEmailFlightSubject,
+                logoURL: emiratesLogo,
+                meta: ProfileV3GloveBoxMeta(glyphs: [.mail, .seen], label: ProfileV3L10n.moAiprofileGloveboxSampleEmailFlightStatus),
+                badge: ProfileV3GloveBoxCopy.changed,
+                note: ProfileV3L10n.moAiprofileGloveboxSampleEmailFlightNote
+            ),
+            ProfileV3GloveBoxEmail(
+                id: "sample-email-hotel",
+                sender: ProfileV3L10n.moAiprofileGloveboxSampleEmailHotelSender,
+                summary: ProfileV3L10n.moAiprofileGloveboxSampleEmailHotelSubject,
+                logoURL: marriottLogo,
+                attention: ProfileV3GloveBoxEmail.Attention(title: ProfileV3GloveBoxCopy.needsAttention),
+                meta: ProfileV3GloveBoxMeta(glyphs: [.done], label: ProfileV3L10n.moAiprofileGloveboxSampleEmailHotelStatus),
+                note: ProfileV3L10n.moAiprofileGloveboxSampleEmailHotelNote
+            )
+        ]
+    }
+
+    static var calls: [ProfileV3GloveBoxCall] {
+        [
+            ProfileV3GloveBoxCall(
+                id: "sample-call-hotel",
+                title: ProfileV3L10n.moAiprofileGloveboxSampleCallTitle,
+                summary: ProfileV3L10n.moAiprofileGloveboxSampleCallSummary,
+                logoURL: marriottLogo,
+                meta: ProfileV3GloveBoxMeta(glyphs: [.calendar, .done], label: ProfileV3L10n.moAiprofileGloveboxSampleCallStatus),
+                recording: .audio(duration: "1:23", speed: "1x"),
+                badge: ProfileV3GloveBoxCopy.changed,
+                note: ProfileV3L10n.moAiprofileGloveboxSampleCallNote
+            )
+        ]
+    }
+
+    static var transactions: [ProfileV3GloveBoxTransaction] {
+        [
+            ProfileV3GloveBoxTransaction(
+                id: "sample-transaction-dinner",
+                title: ProfileV3L10n.moAiprofileGloveboxSampleTransactionTitle,
+                summary: ProfileV3L10n.moAiprofileGloveboxSampleTransactionSummary,
+                amount: "-$12.00",
+                outcome: .approved,
+                outcomeLabel: ProfileV3L10n.moAiprofileGloveboxSampleTransactionStatus,
+                note: ProfileV3L10n.moAiprofileGloveboxSampleTransactionNote
+            )
+        ]
+    }
 }
 
 enum ProfileV3GloveBoxMapper {
@@ -130,6 +189,7 @@ enum ProfileV3GloveBoxMapper {
         hasMore: Bool
     ) -> ProfileV3GloveBoxEmailSection {
         let forwarding = forwardingLine(account)
+        let isSample = emails.isEmpty && !hasMore
         return ProfileV3GloveBoxEmailSection(
             title: ProfileV3GloveBoxCopy.emailTitle,
             badge: ProfileV3GloveBoxBadge(
@@ -144,7 +204,8 @@ enum ProfileV3GloveBoxMapper {
             canPauseForwarding: account.forwardingEmail != nil,
             canSetForwardingAddress: account.forwardingEmail == nil,
             forwardingNotice: forwardingNotice(account: account, emails: emails),
-            emails: emails,
+            emails: isSample ? ProfileV3GloveBoxSamples.emails : emails,
+            sampleLabel: isSample ? ProfileV3GloveBoxCopy.sample : nil,
             viewAllTitle: emails.count > 3 || hasMore ? ProfileV3GloveBoxCopy.viewAll : nil,
             listTitle: ProfileV3GloveBoxCopy.listTitle
         )
@@ -296,7 +357,8 @@ enum ProfileV3GloveBoxMapper {
                 trail: ProfileV3GloveBoxCopy.phoneHeadlineTrail
             ),
             about: ProfileV3GloveBoxCopy.phoneAbout,
-            calls: [],
+            calls: ProfileV3GloveBoxSamples.calls,
+            sampleLabel: ProfileV3GloveBoxCopy.sample,
             listTitle: ProfileV3GloveBoxCopy.phoneListTitle
         )
     }
@@ -319,7 +381,8 @@ enum ProfileV3GloveBoxMapper {
             payOptions: [],
             addCardTitle: ProfileV3GloveBoxCopy.cardAdd,
             secureNote: ProfileV3GloveBoxCopy.cardSecure,
-            transactions: [],
+            transactions: ProfileV3GloveBoxSamples.transactions,
+            sampleLabel: ProfileV3GloveBoxCopy.sample,
             emptyTitle: ProfileV3GloveBoxCopy.cardEmptyTitle,
             emptyBody: ProfileV3GloveBoxCopy.cardEmptyBody,
             listTitle: ProfileV3GloveBoxCopy.cardListTitle

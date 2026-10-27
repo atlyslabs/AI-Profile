@@ -159,7 +159,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     func open(_ entry: Entry) {
         guard home != nil else { return }
         withAnimation(ProfileV3Theme.GloveBox.Motion.sheetSwitch) { sheets.append(.detail(entry)) }
-        if case .email(let email) = entry { loadEmail(email) }
+        if case .email(let email) = entry, sampleLabel(for: entry) == nil { loadEmail(email) }
     }
 
     func back() {
@@ -184,7 +184,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
         switch entry {
         case .email: return home?.email.sampleLabel
         case .call: return home?.phone.sampleLabel
-        case .transaction: return nil
+        case .transaction: return home?.card.sampleLabel
         }
     }
 
@@ -302,7 +302,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     private func showInbox(_ page: ProfileV3GloveBoxInboxPage, replacing: Bool) {
         guard let account, account.hasAddress else { return }
         nextCursor = page.nextCursor
-        let emails = replacing ? page.emails : (home?.email.emails ?? []) + page.emails
+        let emails = replacing ? page.emails : (home.map(Self.realEmails) ?? []) + page.emails
         let section = ProfileV3GloveBoxMapper.section(
             account: account,
             emails: emails,
@@ -331,11 +331,12 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
 
     private func append(_ page: ProfileV3GloveBoxInboxPage) {
         guard let account, case .home(var home) = gloveBox.stage else { return }
-        let known = Set(home.email.emails.map(\.id))
+        let current = Self.realEmails(in: home)
+        let known = Set(current.map(\.id))
         nextCursor = page.nextCursor
         home.email = ProfileV3GloveBoxMapper.section(
             account: account,
-            emails: home.email.emails + page.emails.filter { known.contains($0.id) == false },
+            emails: current + page.emails.filter { known.contains($0.id) == false },
             hasMore: page.nextCursor != nil
         )
         gloveBox.stage = .home(home)
@@ -355,7 +356,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
         guard let account, case .home(var home) = gloveBox.stage else { return }
         home.email = ProfileV3GloveBoxMapper.section(
             account: account,
-            emails: home.email.emails,
+            emails: Self.realEmails(in: home),
             hasMore: nextCursor != nil
         )
         gloveBox.stage = .home(home)
@@ -392,6 +393,10 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
             guard case .detail(.email(let shown)) = sheet, shown.id == email.id else { return sheet }
             return .detail(.email(email))
         }
+    }
+
+    private static func realEmails(in home: ProfileV3GloveBoxHome) -> [ProfileV3GloveBoxEmail] {
+        home.email.sampleLabel == nil ? home.email.emails : []
     }
 
     private static func intro(subtitle: String, button: String) -> ProfileV3GloveBoxIntro {

@@ -159,6 +159,7 @@ extension ProfileV3Theme {
             static let sampleInset = EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10)
             static let sampleTop: CGFloat = 11
             static let sampleTrailing: CGFloat = 11
+            static let sampleClearance: CGFloat = 12
 
             static let previewRadius: CGFloat = 20
             static let previewPadding = EdgeInsets(top: 28, leading: 22, bottom: 28, trailing: 22)

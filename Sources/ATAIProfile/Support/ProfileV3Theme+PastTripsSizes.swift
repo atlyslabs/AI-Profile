@@ -14,6 +14,7 @@ extension ProfileV3Theme.Sizes {
         static let flag: CGFloat = 28
         static let flagTop: CGFloat = 149.5
         static let nameTop = ProfileV3Theme.Space.s24
+        static let nameLines = 2
         static let monthTop = ProfileV3Theme.Space.s8
         static let yearTop: CGFloat = 260.5
         static let yearSize: CGFloat = 80
@@ -144,6 +145,7 @@ extension ProfileV3Theme.Motion {
         .opacity.animation(.easeInOut(duration: pastTripsPageSeconds))
     }
     static let pastTripsEntrance: Animation = .timingCurve(0.16, 1, 0.3, 1, duration: 0.6)
+    static let pastTripsFocus: Animation = .easeInOut(duration: 0.4)
     static let pastTripsStaggerSeconds: Double = 0.25
     static let pastTripsEntranceWindowSeconds: Double = 2
     static let pastTripsSheenDelaySeconds: Double = 0.7

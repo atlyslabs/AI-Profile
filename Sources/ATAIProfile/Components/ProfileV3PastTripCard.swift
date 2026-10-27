@@ -12,6 +12,14 @@ struct ProfileV3PastTripCard: View {
     @State private var yearBlur: CGFloat
     @State private var glowOpacity: Double = 0
     @State private var sheens = 0
+    @State private var nameHeights = NameHeights()
+
+    private struct NameHeights: Equatable {
+        var name: CGFloat = 0
+        var oneLine: CGFloat = 0
+
+        var extra: CGFloat { max(0, name - oneLine) }
+    }
 
     init(
         trip: ProfileV3PastTrip,
@@ -95,8 +103,18 @@ struct ProfileV3PastTripCard: View {
             Text(trip.countryName)
                 .typoGraphy(.H4DentonMedium24)
                 .foregroundStyle(Color(at: .pureWhite))
-                .lineLimit(1)
+                .multilineTextAlignment(.center)
+                .lineLimit(Sizes.nameLines)
                 .minimumScaleFactor(ProfileV3Theme.Typography.tripNameMinScale)
+                .fixedSize(horizontal: false, vertical: true)
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { nameHeights.name = $0 }
+                .background {
+                    Text(verbatim: " ")
+                        .typoGraphy(.H4DentonMedium24)
+                        .fixedSize()
+                        .hidden()
+                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { nameHeights.oneLine = $0 }
+                }
                 .padding(.top, Sizes.nameTop)
             Text(trip.monthName)
                 .typoGraphy(.B1InterMedium14)
@@ -105,6 +123,7 @@ struct ProfileV3PastTripCard: View {
         }
         .padding(.top, Sizes.flagTop)
         .padding(.horizontal, ProfileV3Theme.Space.s20)
+        .offset(y: -nameHeights.extra)
     }
 
     @ViewBuilder

@@ -519,6 +519,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxBadgeActive: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-badge-active", fallback: "Active") }
   /// Phone number section badge.
   internal static var moAiprofileGloveboxBadgeActiveOnTrip: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-badge-active-on-trip", fallback: "Active on trip") }
+  /// Badge on a glove box entry whose booking changed.
+  internal static var moAiprofileGloveboxBadgeChanged: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-badge-changed", fallback: "Changed") }
   /// Email section badge while forwarding is paused.
   internal static var moAiprofileGloveboxBadgePaused: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-badge-paused", fallback: "Paused") }
   /// Virtual card section button that adds a card.
@@ -585,6 +587,8 @@ internal enum ProfileV3L10n {
   }
   /// Label before the forwarding address. Also the forwarding email field placeholder.
   internal static var moAiprofileGloveboxLabelEmailsForwardedTo: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-emails-forwarded-to", fallback: "Emails forwarded to") }
+  /// Tag on glove box sample entries shown while there is no real data.
+  internal static var moAiprofileGloveboxLabelSample: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-sample", fallback: "Sample") }
   /// Settings glove box card subtitle.
   internal static var moAiprofileGloveboxLabelVirtualEmail: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-virtual-email", fallback: "Your virtual email") }
   /// Label before a forwarding address that still needs confirming.
@@ -599,6 +603,38 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxNoticeForwardingPaused: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-notice-forwarding-paused", fallback: "Forwarding is paused, so new emails stay here until you resume it.") }
   /// Email section notice when the forwarding email isn't confirmed yet.
   internal static var moAiprofileGloveboxNoticeForwardingPending: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-notice-forwarding-pending", fallback: "Confirm your forwarding email and new emails will reach your inbox.") }
+  /// Agent's note in the sample glove box call.
+  internal static var moAiprofileGloveboxSampleCallNote: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-call-note", fallback: "I called the hotel and got you an early check-in at 11 am, so your room is ready when you land.") }
+  /// Status line of the sample glove box call.
+  internal static var moAiprofileGloveboxSampleCallStatus: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-call-status", fallback: "Calendar updated") }
+  /// Summary of the sample glove box call.
+  internal static var moAiprofileGloveboxSampleCallSummary: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-call-summary", fallback: "Called Marriott Dubai and got you an early check-in at 11 am") }
+  /// Title of the sample glove box call.
+  internal static var moAiprofileGloveboxSampleCallTitle: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-call-title", fallback: "Marriott Dubai") }
+  /// Agent's note in the first sample glove box email.
+  internal static var moAiprofileGloveboxSampleEmailFlightNote: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-flight-note", fallback: "I found a better seat at the same price and upgraded you. The seat was available, so I grabbed it before it was gone — no extra cost.") }
+  /// Sender of the first sample glove box email.
+  internal static var moAiprofileGloveboxSampleEmailFlightSender: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-flight-sender", fallback: "Emirates") }
+  /// Status line of the first sample glove box email.
+  internal static var moAiprofileGloveboxSampleEmailFlightStatus: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-flight-status", fallback: "change caught") }
+  /// Subject of the first sample glove box email.
+  internal static var moAiprofileGloveboxSampleEmailFlightSubject: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-flight-subject", fallback: "Your flight on 12 Oct now leaves 40 min later") }
+  /// Agent's note in the second sample glove box email.
+  internal static var moAiprofileGloveboxSampleEmailHotelNote: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-hotel-note", fallback: "Your stay qualifies for a free room upgrade. Want me to accept it?") }
+  /// Sender of the second sample glove box email.
+  internal static var moAiprofileGloveboxSampleEmailHotelSender: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-hotel-sender", fallback: "Marriott Dubai") }
+  /// Status line of the second sample glove box email.
+  internal static var moAiprofileGloveboxSampleEmailHotelStatus: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-hotel-status", fallback: "Added to trip") }
+  /// Subject of the second sample glove box email.
+  internal static var moAiprofileGloveboxSampleEmailHotelSubject: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-hotel-subject", fallback: "Free upgrade available") }
+  /// Agent's note on the sample virtual card transaction.
+  internal static var moAiprofileGloveboxSampleTransactionNote: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-transaction-note", fallback: "I used your virtual card to hold a table for 4. You'll see every charge here.") }
+  /// Outcome of the sample virtual card transaction.
+  internal static var moAiprofileGloveboxSampleTransactionStatus: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-transaction-status", fallback: "Approved") }
+  /// Summary of the sample virtual card transaction.
+  internal static var moAiprofileGloveboxSampleTransactionSummary: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-transaction-summary", fallback: "Card check for table of 4") }
+  /// Title of the sample virtual card transaction.
+  internal static var moAiprofileGloveboxSampleTransactionTitle: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-transaction-title", fallback: "Dinner at SOHO, New York") }
   /// Email row status: the agent handled it.
   internal static var moAiprofileGloveboxStatusHandledForYou: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-status-handled-for-you", fallback: "Handled for you") }
   /// Email row status: the user was added to the thread.

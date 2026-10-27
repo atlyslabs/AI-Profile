@@ -78,9 +78,7 @@ struct ProfileV3AgentFormView: View {
                 onHowUsed: viewModel.openPassportHowUsed
             )
             .sheet(item: $viewModel.passportHowUsed, onDismiss: viewModel.passportHowUsedDismissed) { howUsed in
-                ProfileV3PassportHowUsedView(viewModel: howUsed, onScan: viewModel.scanFromPassportHowUsed)
-                    .presentationDetents([.medium, .large])
-                    .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
+                ProfileV3PassportHowUsedSheet(viewModel: howUsed, onScan: viewModel.scanFromPassportHowUsed)
             }
         }
     }

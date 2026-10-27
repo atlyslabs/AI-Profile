@@ -225,6 +225,40 @@ struct ProfileV3PastTripsTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
+    func anEditedTripIsScrolledBackIntoViewWhereverItLands() async throws {
+        let repository = TripsRepositoryStub(trips: [
+            ProfileV3PastTrip(id: "1", countryCode: "JP", year: 2025, month: 9),
+            ProfileV3PastTrip(id: "2", countryCode: "FR", year: 2025, month: 3),
+            ProfileV3PastTrip(id: "3", countryCode: "IT", year: 2024, month: 6),
+            ProfileV3PastTrip(id: "4", countryCode: "CN", year: 2024, month: 2)
+        ])
+        let viewModel = ProfileV3PastTripsViewModel(
+            pass: ProfileV3Fixtures.worldPass,
+            repository: repository,
+            startsAdding: false,
+            onChange: {},
+            onClose: {}
+        )
+        viewModel.start()
+        try await waitUntil { viewModel.phase == .loaded }
+        #expect(viewModel.trips.map(\.id) == ["1", "2", "3", "4"])
+        #expect(viewModel.focus == nil)
+        let trip = try #require(viewModel.trips.last)
+
+        viewModel.tapMore(trip)
+        viewModel.tapEdit()
+        let editor = try #require(viewModel.editor)
+        editor.selectedYear = 2026
+        editor.selectedMonth = 1
+        editor.submit()
+        try await waitUntil { viewModel.focus != nil }
+
+        #expect(viewModel.trips.map(\.id) == ["4", "1", "2", "3"])
+        #expect(viewModel.focus == ProfileV3PastTripsViewModel.Focus(tripID: "4", request: 1))
+        #expect(viewModel.revealingTripID == "4")
+    }
+
+    @Test(.timeLimit(.minutes(1)))
     func deleteSendsTheTripsDeleteSubmit() async throws {
         let repository = TripsRepositoryStub()
         let viewModel = ProfileV3PastTripsViewModel(
@@ -308,9 +342,11 @@ private final class TripsRepositoryStub: ProfileV3PastTripsRepository, @unchecke
     }
 
     private let lock = NSLock()
-    private var trips = [
-        ProfileV3PastTrip(id: "41", countryCode: "JP", year: 2025, month: 3)
-    ]
+    private var trips: [ProfileV3PastTrip]
+
+    init(trips: [ProfileV3PastTrip] = [ProfileV3PastTrip(id: "41", countryCode: "JP", year: 2025, month: 3)]) {
+        self.trips = trips
+    }
     private var _added: [Added] = []
     private var _edited: [Edited] = []
     private var _deleted: [ProfileV3BoardAction] = []
@@ -359,7 +395,13 @@ private final class TripsRepositoryStub: ProfileV3PastTripsRepository, @unchecke
     }
 
     func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws {
-        lock.withLock { _edited.append(Edited(submit: submit, year: year, month: month)) }
+        lock.withLock {
+            _edited.append(Edited(submit: submit, year: year, month: month))
+            let id = submit.fields["trip_id"]?.stringValue
+            guard let index = trips.firstIndex(where: { $0.id == id }) else { return }
+            let trip = trips[index]
+            trips[index] = ProfileV3PastTrip(id: trip.id, countryCode: trip.countryCode, year: year, month: month)
+        }
     }
 
     func deletePastTrip(_ submit: ProfileV3BoardAction) async throws {

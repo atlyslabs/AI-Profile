@@ -233,24 +233,25 @@ struct ProfileV3VaultSitePicker: View {
     @ObservedObject var model: ProfileV3CredentialStoreModel
     var scrolls = true
     @State private var query = ""
+    @State private var headerPin = ProfileV3HeaderPin()
 
     private typealias Layout = ProfileV3Theme.Sizes.CredentialStore
     private typealias Credentials = ProfileV3Theme.Sizes.AppCredentials
 
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
+            ProfileV3VaultSheetHeader(title: ProfileV3Strings.appCredentialsTitle, onClose: model.closeSheet)
             if scrolls {
                 ScrollView(showsIndicators: false) {
                     content
+                        .profileV3HeaderFadeAnchor(headerPin)
                 }
+                .profileV3HeaderFade(headerPin)
                 .scrollBounceBehavior(.basedOnSize)
                 .scrollDismissesKeyboard(.interactively)
             } else {
                 content
             }
-        }
-        .overlay(alignment: .top) {
-            ProfileV3VaultSheetHeader(onClose: model.closeSheet)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())
@@ -261,19 +262,12 @@ struct ProfileV3VaultSitePicker: View {
 
     private var content: some View {
         VStack(spacing: 0) {
-            Text(ProfileV3Strings.appCredentialsTitle)
-                .typoGraphy(.H5InterMedium20)
-                .foregroundStyle(Color(at: .pureBlack))
-                .multilineTextAlignment(.center)
-                .frame(width: Credentials.titleWidth)
-                .accessibilityAddTraits(.isHeader)
             ProfileV3CredentialField(
                 label: ProfileV3Strings.appCredentialsWebsite,
                 text: $query,
                 keyboard: .URL,
                 contentType: .URL
             )
-            .padding(.top, Layout.pickerSearchTop)
             VStack(spacing: Layout.rowSpacing) {
                 if model.sites == nil, model.sitesPhase == .loading {
                     ProfileV3Spinner(size: ProfileV3Theme.Icon.xl, lineWidth: ProfileV3Theme.Stroke.regular)
@@ -293,12 +287,13 @@ struct ProfileV3VaultSitePicker: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-        .padding(.top, Layout.pickerTitleTop)
+        .padding(.top, Layout.pickerSearchTop)
         .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
     }
 }
 
 private struct ProfileV3VaultSheetHeader: View {
+    var title: String?
     let onClose: () -> Void
 
     var body: some View {
@@ -308,9 +303,19 @@ private struct ProfileV3VaultSheetHeader: View {
                 color: Color(at: .neutralGrey200),
                 top: ProfileV3Theme.Space.s10
             )
-            HStack {
-                Spacer()
-                ProfileV3CircleIconButton.close(action: onClose)
+            ZStack {
+                if let title {
+                    Text(title)
+                        .typoGraphy(.H5InterMedium20)
+                        .foregroundStyle(Color(at: .pureBlack))
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: ProfileV3Theme.Sizes.AppCredentials.titleWidth)
+                        .accessibilityAddTraits(.isHeader)
+                }
+                HStack {
+                    Spacer()
+                    ProfileV3CircleIconButton.close(action: onClose)
+                }
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)

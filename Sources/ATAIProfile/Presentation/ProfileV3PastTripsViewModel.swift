@@ -10,11 +10,17 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         case confirmDelete(String)
     }
 
+    struct Focus: Equatable {
+        let tripID: String
+        let request: Int
+    }
+
     @Published private(set) var screen: ProfileV3PastTripsScreen?
     @Published private(set) var phase: ProfileV3LoadPhase = .loading
     @Published private(set) var sheet: Sheet?
     @Published private(set) var editor: ProfileV3AddPastTripViewModel?
     @Published private(set) var revealingTripID: String?
+    @Published private(set) var focus: Focus?
     @Published private(set) var isDeleting = false
     @Published private(set) var notice: String?
     @Published private(set) var canRetryNotice = false
@@ -209,6 +215,9 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
                     self.screen = screen
                 }
                 phase = .loaded
+                if let revealed {
+                    focus = Focus(tripID: revealed.id, request: (focus?.request ?? 0) + 1)
+                }
             } catch is CancellationError {
                 return
             } catch {

@@ -169,6 +169,23 @@ struct ProfileV3PassportHowUsedView: View {
     }
 }
 
+struct ProfileV3PassportHowUsedSheet: View {
+    let viewModel: ProfileV3PassportHowUsedViewModel
+    let onScan: (ProfileV3Directive?) -> Void
+
+    @State private var fittedHeight: CGFloat?
+
+    var body: some View {
+        ProfileV3PassportHowUsedView(viewModel: viewModel, onScan: onScan, onHeightChange: { height in
+            guard height.rounded() != fittedHeight?.rounded() else { return }
+            fittedHeight = height
+        })
+        .presentationDetents(fittedHeight.map { [.height($0)] } ?? [.medium])
+        .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
+        .presentationDragIndicator(.hidden)
+    }
+}
+
 private struct ProfileV3HorizontalRule: Shape {
     func path(in rect: CGRect) -> Path {
         Path { path in
