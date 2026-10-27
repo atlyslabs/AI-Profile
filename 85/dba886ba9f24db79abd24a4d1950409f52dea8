@@ -1,0 +1,93 @@
+Sources/ATAIProfile/Support/ProfileV3Theme+AppAccess.swift
+  s_c482717a7a4db6::t_c37b6bd2b0fae1 85
+Sources/ATAIProfile/Components/ProfileV3BackTagHeader.swift
+  s_c482717a7a4db6::t_b7a55610f41633 16
+Sources/ATAIProfile/Presentation/ProfileV3GloveBoxViewModel.swift
+  s_c482717a7a4db6::t_7b53cb0dd31ae4 187
+  s_c482717a7a4db6::t_f38d42d78a33bd 162,305,334-335,339,359,398-399
+  s_c482717a7a4db6::t_4861d22c5fee9d 400-401
+Sources/ATAIProfile/Presentation/ProfileV3TravelPersonaViewModel.swift
+  s_c482717a7a4db6::t_9f95616e884f09 65-68
+  s_c482717a7a4db6::t_dc673aaf9924ae 225-241
+Tests/ATAIProfileTests/ProfileV3TravelPersonaTests.swift
+  s_c482717a7a4db6::t_ad4c8fa710bd92 340-345,365-366,378-421,450,500-505,514
+Sources/ATAIProfile/Support/ProfileV3Theme+GloveBox.swift
+  s_c482717a7a4db6::t_e3b47a3d413baa 162
+Sources/ATAIProfile/Data/Mappers/ProfileV3GloveBoxMapper.swift
+  s_c482717a7a4db6::t_f38d42d78a33bd 192,207-208,360-361,384-385
+  s_c482717a7a4db6::t_99fe75c2ab67a0 58-116
+Sources/ATAIProfile/Generated/ProfileV3L10n+Generated.swift
+  s_c482717a7a4db6::t_13b349fe0030dc 518-519,586-587,602-633
+Sources/ATAIProfile/Resources/ProfileV3Localizable.xcstrings
+  s_c482717a7a4db6::t_13b349fe0030dc 2704-2715,3100-3111,3196-3387
+Tests/ATAIProfileTests/ProfileV3GloveBoxTests.swift
+  s_c482717a7a4db6::t_38c05de60e1799 355-439
+Sources/ATAIProfile/Views/ProfileV3PastTripsView.swift
+  s_c482717a7a4db6::t_5a3db76f55062b 80-93
+  s_c482717a7a4db6::t_ba26af527b916e 94
+  s_c482717a7a4db6::t_2fc0f4dd384f71 95-96
+Sources/ATAIProfile/Components/ProfileV3PastTripCard.swift
+  s_c482717a7a4db6::t_fc97595147728a 110-117,126
+  s_c482717a7a4db6::t_d4b71865818610 15-22
+  s_c482717a7a4db6::t_65f4b9ff36b0cc 106-107,109
+Sources/ATAIProfile/Views/ProfileV3PassportHowUsedView.swift
+  s_c482717a7a4db6::t_c801993d049d1c 172-178,180-181,183-188
+  s_c482717a7a4db6::t_0191afebbc8ca5 179,182
+Tests/ATAIProfileTests/ProfileV3PastTripsTests.swift
+  s_c482717a7a4db6::t_5a3db76f55062b 228-260,345-349,398-404
+  s_c482717a7a4db6::t_b069a35889b333 227
+Sources/ATAIProfile/Views/ProfileV3AgentFormView.swift
+  s_c482717a7a4db6::t_3f4bd03d634ba7 81
+Sources/ATAIProfile/Domain/ProfileV3GloveBox.swift
+  s_c482717a7a4db6::t_740afb4ec18bf9 226
+Sources/ATAIProfile/Data/ProfileV3HubHints.swift
+  s_c482717a7a4db6::t_4598df2f22925e 52-60
+  s_c482717a7a4db6::t_6681c5aeb79712 73
+  s_c482717a7a4db6::t_6e11e236eaa9db 7
+Sources/ATAIProfile/Presentation/ProfileV3PastTripsViewModel.swift
+  s_c482717a7a4db6::t_5a3db76f55062b 13-17,23,218-220
+Sources/ATAIProfile/Views/ProfileV3VaultViews.swift
+  s_c482717a7a4db6::t_dad0a439160904 311
+  s_c482717a7a4db6::t_c37b6bd2b0fae1 236,242-243,247,249,290,296,306-310,312-318
+Sources/ATAIProfile/Support/ProfileV3Theme+PastTripsSizes.swift
+  s_c482717a7a4db6::t_7f4ef017733e2e 17
+  s_c482717a7a4db6::t_5a3db76f55062b 148
+Sources/ATAIProfile/Views/ProfileV3GloveBoxCardSection.swift
+  s_c482717a7a4db6::t_97e08860cddf5a 31-38
+  s_c482717a7a4db6::t_1a1c516310a845 262-267
+  s_c482717a7a4db6::t_670db7738ae070 249
+  s_c482717a7a4db6::t_0205f13b2ac18c 57-61,63
+CLAUDE.md
+  s_c482717a7a4db6::t_c7ed88bd650847 34,65,827-833,847
+  s_c482717a7a4db6::t_4e68fdbc4dafa1 808-812
+  s_b42bc6938e8df4::t_11111b8a5273fe 803-807
+  s_c482717a7a4db6::t_3076a5a475f618 21
+  s_b42bc6938e8df4::t_3476702d2b01f0 769
+  s_b42bc6938e8df4::t_b01e06750743aa 138-139
+  s_c482717a7a4db6::t_5e3c0d0ce15f69 157,813-826
+  s_b42bc6938e8df4::t_5db1a4603d609e 788
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "85dba886ba9f24db79abd24a4d1950409f52dea8",
+  "prompts": {},
+  "sessions": {
+    "s_b42bc6938e8df4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b627e2a2-86e5-4d21-b94b-c40836ff13f8",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_c482717a7a4db6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79b4da81-fe75-45a8-9cb4-3ca92753dd62",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
