@@ -2,7 +2,7 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3HubView: View {
-    @ObservedObject var viewModel: ProfileV3HubViewModel
+    let viewModel: ProfileV3HubViewModel
     @ObservedObject var destinations = ProfileV3PendingDestination.shared
     @StateObject private var stage = ProfileV3HubStage()
     @StateObject private var benefitPresenter = ProfileV3HeroPresenter<ProfileV3Benefit>()
@@ -47,7 +47,6 @@ struct ProfileV3HubView: View {
         .background(Color(at: .pureWhite).ignoresSafeArea(edges: .bottom))
         .fullScreenCover(isPresented: $cover.isPresented, onDismiss: closeCover) { overlays }
         .onChange(of: coversHub) { _, covers in cover.update(isCovering: covers) }
-        .onChange(of: passImpressionKey, initial: true) { _, _ in viewModel.trackSelectedPass() }
         .onDisappear {
             isSettled = false
             viewModel.cancelPendingWork()
@@ -213,15 +212,9 @@ struct ProfileV3HubView: View {
             if !home.giftCards.isEmpty {
                 ProfileV3UsageRail(
                     items: home.giftCards,
-                    usage: ProfileV3Usage.init(benefit:),
-                    onImpression: viewModel.trackBenefit
+                    usage: ProfileV3Usage.init(benefit:)
                 ) { benefit in
-                    ProfileV3Analytics.benefitClicked(
-                        benefitId: benefit.id,
-                        status: benefit.status.analyticsValue,
-                        origin: .giftCard,
-                        routedToGate: false
-                    )
+                    viewModel.trackBenefitClick(benefit, origin: .giftCard, routedToGate: false)
                     presentBenefit(benefit)
                 }
                     .profileV3EntryReveal(isRevealed(.giftCards))
@@ -229,8 +222,7 @@ struct ProfileV3HubView: View {
             if home.featuredCoupon != nil {
                 ProfileV3UsageRail(
                     items: viewModel.allCoupons,
-                    usage: ProfileV3Usage.init(coupon:),
-                    onImpression: viewModel.trackCoupon
+                    usage: ProfileV3Usage.init(coupon:)
                 ) { coupon in
                     ProfileV3Analytics.couponClicked(couponId: coupon.id, origin: .rail)
                     ProfileV3Analytics.screen(.coupons)
@@ -245,8 +237,7 @@ struct ProfileV3HubView: View {
                     viewAllLabel: home.viewAllBenefitsLabel,
                     onSelect: openBenefit,
                     expandedID: benefitPresenter.item?.id,
-                    onViewAll: viewModel.tapViewAllBenefits,
-                    onFrontImpression: viewModel.trackBenefit
+                    onViewAll: viewModel.tapViewAllBenefits
                 )
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .profileV3EntryReveal(isRevealed(.featuredBenefit))
@@ -266,7 +257,6 @@ struct ProfileV3HubView: View {
             ProfileV3AgentGrid(
                 agents: home.agents,
                 isKYCComplete: home.kycStatus.isComplete,
-                onImpression: viewModel.trackAgentCard,
                 onActivate: viewModel.tapAgent
             )
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
@@ -306,10 +296,6 @@ struct ProfileV3HubView: View {
         }
     }
 
-    private var passImpressionKey: String? {
-        viewModel.home == nil ? nil : viewModel.selectedPassID
-    }
-
     private var worldPassTarget: CGRect {
         let margin = ProfileV3Theme.Sizes.screenHorizontalMargin
         let cardWidth = max(0, viewport.width - 2 * margin)
@@ -328,7 +314,6 @@ struct ProfileV3HubView: View {
     }
 
     private func expand(_ pass: ProfileV3WorldPass, from frame: CGRect, globe pose: ProfileV3GlobePose) {
-        ProfileV3Analytics.passExpanded(passId: pass.id, toState: .expanded)
         cover.present {
             stage.expand(pass, from: frame, to: worldPassTarget, globe: pose, renderer: globeRenderer)
             viewModel.markHoldHintSeen()
@@ -336,9 +321,8 @@ struct ProfileV3HubView: View {
     }
 
     private func openBenefit(_ benefit: ProfileV3Benefit) {
-        ProfileV3Analytics.benefitClicked(
-            benefitId: benefit.id,
-            status: benefit.status.analyticsValue,
+        viewModel.trackBenefitClick(
+            benefit,
             origin: benefit.id == viewModel.home?.featuredBenefit?.id ? .featured : .stack,
             routedToGate: benefit.requiresKYC
         )
@@ -350,7 +334,7 @@ struct ProfileV3HubView: View {
     }
 
     private func presentBenefit(_ benefit: ProfileV3Benefit) {
-        ProfileV3Analytics.screen(.benefit, benefitId: benefit.id)
+        viewModel.trackBenefitScreen(benefit)
         cover.present { benefitPresenter.present(benefit) }
     }
 }
@@ -372,7 +356,7 @@ private extension View {
 }
 
 private struct ProfileV3HubSheets: View {
-    @ObservedObject var viewModel: ProfileV3HubViewModel
+    let viewModel: ProfileV3HubViewModel
     let isRevealed: Bool
 
     var body: some View {
@@ -411,7 +395,7 @@ private struct ProfileV3HubSheets: View {
                 onClose: viewModel.dismissAllBenefits,
                 onKnowMore: viewModel.tapKnowMore,
                 onActivateLocked: viewModel.activateLockedBenefit,
-                onImpression: viewModel.trackBenefit
+                travellerID: viewModel.selectedPassID
             )
             .transition(ProfileV3Theme.Motion.fullScreenTransition)
         }

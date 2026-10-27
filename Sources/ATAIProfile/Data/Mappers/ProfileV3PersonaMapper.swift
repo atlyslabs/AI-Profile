@@ -10,7 +10,6 @@ enum ProfileV3PersonaMapper: ProfileV3DTOReading {
             iconURL: ProfileV3BoardMapper.iconURL(dto.icon),
             foundLabel: text(dto.foundLabel) ?? "",
             subtitle: text(dto.subtitle) ?? "",
-            profileTitle: text(dto.profile?.title) ?? "",
             range: range,
             traits: (dto.profile?.traits ?? []).compactMap { point in
                 guard let id = text(point.trait) else { return nil }

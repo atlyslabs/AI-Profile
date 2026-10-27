@@ -131,7 +131,7 @@ struct ProfileV3HubPodiumSlot: View {
 }
 
 struct ProfileV3HubPinnedBlock: View {
-    @ObservedObject var viewModel: ProfileV3HubViewModel
+    let viewModel: ProfileV3HubViewModel
     @ObservedObject var stage: ProfileV3HubStage
     let scroll: ProfileV3HubScroll
     let onExpand: (ProfileV3WorldPass, CGRect, ProfileV3GlobePose) -> Void
@@ -185,10 +185,11 @@ struct ProfileV3HubPinnedBlock: View {
             flipAffordancePassIDs: viewModel.kycAnnouncedPassIDs,
             onLongPress: onExpand,
             onAddProgramme: viewModel.tapAddProgramme,
-            onOpenProgrammes: viewModel.tapOpenProgrammes,
+            onOpenProgrammes: viewModel.tapAddedCards,
             onAddHousehold: viewModel.home == nil ? nil : { viewModel.tapAddTraveller() },
             onFlipSeen: viewModel.markFlipSeen,
-            onHintShown: viewModel.holdHintDidAppear
+            onHintShown: viewModel.holdHintDidAppear,
+            onFlip: viewModel.tapWorldPass
         )
     }
 

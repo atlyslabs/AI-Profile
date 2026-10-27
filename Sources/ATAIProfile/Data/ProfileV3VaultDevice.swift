@@ -1,10 +1,12 @@
 import Foundation
 import LocalAuthentication
+import os
 import Security
 
 enum ProfileV3VaultDevice {
     private static let keyTag = Data("com.atlys.profile.vault.reveal".utf8)
     private static let deviceService = "com.atlys.profile.vault.device"
+    private static let unlockedContext = OSAllocatedUnfairLock<LAContext?>(uncheckedState: nil)
 
     static func publicKeyPEM() throws -> String {
         let privateKey = try ensurePrivateKey()
@@ -81,6 +83,7 @@ enum ProfileV3VaultDevice {
         guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
             throw ProfileV3Error.underlying(ProfileV3VaultStrings.revealNeedsPhone)
         }
+        if let unlocked = unlockedContext.withLockUnchecked({ $0 }) { return unlocked }
         let success = try await context.evaluatePolicy(
             .deviceOwnerAuthenticationWithBiometrics,
             localizedReason: ProfileV3VaultStrings.showPassword
@@ -90,6 +93,35 @@ enum ProfileV3VaultDevice {
     }
 
     static func unlockVault() async -> ProfileV3VaultUnlock {
+        lockVault()
+        let context = LAContext()
+        context.localizedCancelTitle = ProfileV3Strings.close
+        var error: NSError?
+        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
+            return await unlockWithPasscode()
+        }
+        do {
+            guard try await context.evaluatePolicy(
+                .deviceOwnerAuthenticationWithBiometrics,
+                localizedReason: ProfileV3VaultStrings.unlockVault
+            ) else { return .cancelled }
+            unlockedContext.withLockUnchecked { $0 = context }
+            return .unlocked
+        } catch let error as LAError where [.userFallback, .biometryLockout].contains(error.code) {
+            return await unlockWithPasscode()
+        } catch {
+            return .cancelled
+        }
+    }
+
+    static func lockVault() {
+        unlockedContext.withLockUnchecked { context in
+            context?.invalidate()
+            context = nil
+        }
+    }
+
+    private static func unlockWithPasscode() async -> ProfileV3VaultUnlock {
         let context = LAContext()
         context.localizedCancelTitle = ProfileV3Strings.close
         var error: NSError?

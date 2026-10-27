@@ -180,7 +180,7 @@ struct ProfileV3PassportHowUsedSheet: View {
             guard height.rounded() != fittedHeight?.rounded() else { return }
             fittedHeight = height
         })
-        .presentationDetents(fittedHeight.map { [.height($0)] } ?? [.medium])
+        .profileV3FittedDetent(fittedHeight)
         .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
         .presentationDragIndicator(.hidden)
     }

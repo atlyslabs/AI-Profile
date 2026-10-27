@@ -393,25 +393,75 @@ struct ProfileV3GloveBoxTests {
         #expect(viewModel.home?.email.sampleLabel == ProfileV3GloveBoxCopy.sample)
         #expect(viewModel.home?.email.emails == ProfileV3GloveBoxSamples.emails)
     }
+
+    @Test(.timeLimit(.minutes(1)))
+    func withoutKYCTheIntroIsLockedAndAsksForKYC() async throws {
+        let repository = EmptyInboxStub(account: ProfileV3GloveBoxAccount(eligible: true))
+        let viewModel = ProfileV3GloveBoxViewModel(repository: repository, isKYCComplete: { false })
+        var actions: [ProfileV3GloveBoxIntro.Action] = []
+        viewModel.onIntroAction = { actions.append($0) }
+        while viewModel.isResolvingScreen { try await Task.sleep(for: .milliseconds(10)) }
+
+        guard case .intro(let intro) = viewModel.gloveBox.stage else {
+            Issue.record("expected the intro")
+            return
+        }
+        #expect(intro.title == ProfileV3GloveBoxCopy.unlockTitle)
+        #expect(intro.subtitle == ProfileV3GloveBoxCopy.unlockSubtitle)
+        #expect(intro.status == .locked)
+        #expect(intro.statusLabel == ProfileV3GloveBoxCopy.activateButton)
+        #expect(intro.actionTitle == ProfileV3GloveBoxCopy.completeKYC)
+
+        viewModel.tapIntroAction()
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(actions == [.completeKYC])
+        #expect(repository.createdAddresses == 0)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func withKYCTheIntroOffersToActivate() async throws {
+        let repository = EmptyInboxStub(account: ProfileV3GloveBoxAccount(eligible: true))
+        let viewModel = ProfileV3GloveBoxViewModel(repository: repository, isKYCComplete: { true })
+        while viewModel.isResolvingScreen { try await Task.sleep(for: .milliseconds(10)) }
+
+        guard case .intro(let intro) = viewModel.gloveBox.stage else {
+            Issue.record("expected the intro")
+            return
+        }
+        #expect(intro.title == ProfileV3GloveBoxCopy.activateTitle)
+        #expect(intro.action == .activate)
+
+        viewModel.tapIntroAction()
+        while repository.createdAddresses == 0 { try await Task.sleep(for: .milliseconds(10)) }
+    }
 }
 
 private final class EmptyInboxStub: ProfileV3GloveBoxRepository, @unchecked Sendable {
     private let lock = NSLock()
-    private var account = ProfileV3GloveBoxAccount(
+    private var account: ProfileV3GloveBoxAccount
+    private var _openedMessages = 0
+    private var _createdAddresses = 0
+
+    init(account: ProfileV3GloveBoxAccount = ProfileV3GloveBoxAccount(
         address: "priya@trips.atlys.com",
         forwardingEmail: "priya@gmail.com",
         eligible: true
-    )
-    private var _openedMessages = 0
+    )) {
+        self.account = account
+    }
 
     var openedMessages: Int { lock.withLock { _openedMessages } }
+    var createdAddresses: Int { lock.withLock { _createdAddresses } }
 
     func loadGloveBoxCard() async throws -> ProfileV3GloveBoxAccount {
         lock.withLock { account }
     }
 
     func createGloveBoxAddress() async throws -> ProfileV3GloveBoxAccount {
-        lock.withLock { account }
+        lock.withLock {
+            _createdAddresses += 1
+            return account
+        }
     }
 
     func setGloveBoxForwardingPaused(_ paused: Bool) async throws -> ProfileV3GloveBoxAccount {

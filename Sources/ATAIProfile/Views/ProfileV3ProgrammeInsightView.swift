@@ -8,6 +8,7 @@ struct ProfileV3ProgrammeInsightView: View {
     var onContinue: (() -> Void)?
     var onAction: (() -> Void)?
     var onOpenSources: (() -> Void)?
+    var onCopyNumber: (() -> Void)?
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -15,7 +16,7 @@ struct ProfileV3ProgrammeInsightView: View {
                 .ignoresSafeArea()
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    ProfileV3ProgrammeTile(programme: programme)
+                    ProfileV3ProgrammeTile(programme: programme, onCopy: onCopyNumber)
                         .padding(.top, ProfileV3Theme.Sizes.hubBarBottom + ProfileV3Theme.Sizes.Insight.cardTop)
                     HStack(alignment: .top, spacing: 0) {
                         bodyText

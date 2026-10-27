@@ -16,6 +16,7 @@ struct ProfileV3ProgrammeTile: View {
     var onTap: (() -> Void)?
     var onAction: (() -> Void)?
     var onRemove: (() -> Void)?
+    var onCopy: (() -> Void)?
 
     @State private var isCopied = false
     @State private var copies = 0
@@ -239,6 +240,7 @@ struct ProfileV3ProgrammeTile: View {
         UIPasteboard.general.string = number
         withAnimation(ProfileV3Theme.Motion.selection) { isCopied = true }
         copies += 1
+        onCopy?()
     }
 
     private var hasInsight: Bool {

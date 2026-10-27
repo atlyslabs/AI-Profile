@@ -6,9 +6,20 @@ struct ProfileV3GloveBoxLiveFlow: View {
 
     @StateObject private var viewModel: ProfileV3GloveBoxViewModel
 
-    init(repository: any ProfileV3GloveBoxRepository, onClose: @escaping () -> Void) {
+    init(
+        repository: any ProfileV3GloveBoxRepository,
+        isKYCComplete: @escaping @MainActor () async -> Bool = { true },
+        onCompleteKYC: @escaping () -> Void = {},
+        onClose: @escaping () -> Void
+    ) {
         self.onClose = onClose
-        _viewModel = StateObject(wrappedValue: ProfileV3GloveBoxViewModel(repository: repository))
+        _viewModel = StateObject(wrappedValue: {
+            let viewModel = ProfileV3GloveBoxViewModel(repository: repository, isKYCComplete: isKYCComplete)
+            viewModel.onIntroAction = { action in
+                if action == .completeKYC { onCompleteKYC() }
+            }
+            return viewModel
+        }())
     }
 
     var body: some View {

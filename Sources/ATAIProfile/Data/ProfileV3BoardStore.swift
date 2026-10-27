@@ -116,7 +116,7 @@ final class ProfileV3BoardStore {
         "profile_v3_board_\(ownerID)"
     }
 
-    private nonisolated static func fetch(
+    @concurrent private nonisolated static func fetch(
         cacheKey: String,
         client: ProfileV3NetworkClient,
         cache: ProfileV3DiskCache
@@ -129,7 +129,7 @@ final class ProfileV3BoardStore {
         return board
     }
 
-    private nonisolated static func restore(cacheKey: String, cache: ProfileV3DiskCache) async -> ProfileV3Board? {
+    @concurrent private nonisolated static func restore(cacheKey: String, cache: ProfileV3DiskCache) async -> ProfileV3Board? {
         guard let data = cache.data(forKey: cacheKey) else { return nil }
         return try? decode(data)
     }

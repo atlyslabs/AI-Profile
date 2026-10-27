@@ -18,6 +18,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     weak var router: (any ProfileV3ConnectorsRouting & ProfileV3SettingsFeedbackRouting)?
 
     private let repository: any ProfileV3SettingsRepository
+    private let travellerID: String?
     private let photoPlaces: ProfileV3PhotoPlacesSync?
     private var loadTask: Task<Void, Never>?
     private var controlPanelTask: Task<Void, Never>?
@@ -27,8 +28,13 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     private var photosTask: Task<Void, Never>?
     private var disconnectedKeys: Set<ProfileV3ConnectorKey> = []
 
-    init(repository: any ProfileV3SettingsRepository, photoPlaces: ProfileV3PhotoPlacesSync? = nil) {
+    init(
+        repository: any ProfileV3SettingsRepository,
+        travellerID: String? = nil,
+        photoPlaces: ProfileV3PhotoPlacesSync? = nil
+    ) {
         self.repository = repository
+        self.travellerID = travellerID
         self.photoPlaces = photoPlaces
     }
 
@@ -63,7 +69,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     }
 
     func open() {
-        ProfileV3Analytics.screen(.connectors)
+        ProfileV3Analytics.screen(.connectors, travellerId: travellerID)
         navigator?.push(.connectors)
         load()
     }
@@ -113,7 +119,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
 
     func tapDeckDisconnect(_ connectorID: String) {
         guard let connector = ProfileV3ConnectorKey(rawValue: connectorID), connector.canDisconnect else { return }
-        ProfileV3Analytics.connectorDisconnectClicked(connectorKey: connector.rawValue)
+        ProfileV3Analytics.connectorDisconnectClicked(connectorName: connector.rawValue)
         pendingDisconnect = connector
         router?.presentDisconnectEmail()
     }
@@ -193,7 +199,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
         router?.dismissDisconnectProgress()
         switch result {
         case .success:
-            ProfileV3Analytics.connectorDisconnected(connectorKey: connector.rawValue)
+            ProfileV3Analytics.connectorDisconnected(connectorName: connector.rawValue)
             if connector == .photos { photoPlaces?.disconnect() }
             router?.connectorDidDisconnect(connector)
             disconnectedKeys.insert(connector)
@@ -203,7 +209,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
             navigator?.path = [.connectors]
             syncDisconnected()
         case .failure(let error):
-            ProfileV3Analytics.connectorDisconnectFailed(connectorKey: connector.rawValue, error: error)
+            ProfileV3Analytics.connectorDisconnectFailed(connectorName: connector.rawValue, error: error)
             router?.showFlash(failureMessage(error), isSuccess: false)
         }
     }

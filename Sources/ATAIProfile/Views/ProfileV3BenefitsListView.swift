@@ -17,7 +17,7 @@ struct ProfileV3BenefitsListView: View {
     let onClose: () -> Void
     var onKnowMore: (() -> Void)?
     var onActivateLocked: ((ProfileV3Benefit) -> Void)?
-    var onImpression: ((ProfileV3Benefit, Int) -> Void)?
+    var travellerID: String?
 
     @StateObject private var presenter = ProfileV3HeroPresenter<ProfileV3Benefit>()
 
@@ -54,11 +54,10 @@ struct ProfileV3BenefitsListView: View {
                 .accessibilityLabel(learnMoreLabel)
             }
         } rows: {
-            ForEach(Array(benefits.enumerated()), id: \.element.id) { index, benefit in
+            ForEach(benefits) { benefit in
                 ProfileV3BenefitCard(benefit: benefit, growsToFitText: true) {
                     open(benefit)
                 }
-                .profileV3OnImpression { onImpression?(benefit, index) }
             }
         } overlay: {
             ProfileV3BenefitHeroOverlay(
@@ -75,14 +74,9 @@ struct ProfileV3BenefitsListView: View {
     }
 
     private func open(_ benefit: ProfileV3Benefit) {
-        ProfileV3Analytics.benefitClicked(
-            benefitId: benefit.id,
-            status: benefit.status.analyticsValue,
-            origin: .list,
-            routedToGate: benefit.requiresKYC
-        )
+        ProfileV3Analytics.benefitClicked(benefit, travellerId: travellerID, origin: .list, routedToGate: benefit.requiresKYC)
         if !benefit.requiresKYC {
-            ProfileV3Analytics.screen(.benefit, benefitId: benefit.id)
+            ProfileV3Analytics.benefitScreen(benefitId: benefit.id, travellerId: travellerID)
         }
         presenter.open(benefit, onLocked: onActivateLocked)
     }

@@ -13,7 +13,7 @@ struct ProfileV3PersonaRipple: View {
     private typealias Persona = ProfileV3Theme.Sizes.Persona
 
     var body: some View {
-        TimelineView(.animation(paused: reduceMotion)) { context in
+        TimelineView(ProfileV3AmbientSchedule(isPaused: reduceMotion)) { context in
             let elapsed = reduceMotion ? nil : context.date.timeIntervalSince(start)
             ZStack {
                 ForEach(0 ..< Persona.rippleRings, id: \.self) { index in

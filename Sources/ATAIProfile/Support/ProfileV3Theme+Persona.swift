@@ -4,9 +4,7 @@ import SwiftUI
 extension ProfileV3Theme.Sizes {
     enum Persona {
         static let cardRadius: CGFloat = 40
-        static let cardTitleTop: CGFloat = 39
-        static let cardTitleLineHeight: CGFloat = 25
-        static let radarTop = ProfileV3Theme.Space.s40
+        static let radarTop: CGFloat = 39
         static let radarHeight: CGFloat = 314
         static let cardBottom: CGFloat = 69
         static let cardTop: CGFloat = 34
@@ -174,11 +172,11 @@ extension ProfileV3Theme {
         endPoint: UnitPoint(x: 0.943, y: 1.3)
     )
 
-    static let personaHintGradient = LinearGradient(
+    static let personaCaptionGradient = LinearGradient(
         stops: [
-            .init(color: Palette.personaShimmerEdge, location: 0.054),
-            .init(color: Palette.personaHintMid, location: 0.462),
-            .init(color: Palette.personaShimmerEdge, location: 0.946)
+            .init(color: Palette.personaCaptionEdge, location: 0.054),
+            .init(color: Palette.personaCaptionMid, location: 0.462),
+            .init(color: Palette.personaCaptionEdge, location: 0.946)
         ],
         startPoint: UnitPoint(x: 0.19, y: -1.579),
         endPoint: UnitPoint(x: 0.81, y: 2.579)

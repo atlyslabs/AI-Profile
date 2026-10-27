@@ -125,7 +125,7 @@ struct ProfileV3GloveBoxListSheet: View {
     private func rows(at time: Double) -> some View {
         switch section {
         case .emails:
-            VStack(alignment: .leading, spacing: Layout.rowSpacing) {
+            LazyVStack(alignment: .leading, spacing: Layout.rowSpacing) {
                 ForEach(Array(home.email.emails.enumerated()), id: \.element.id) { index, email in
                     VStack(alignment: .leading, spacing: Layout.rowSpacing) {
                         if index > 0 {
@@ -134,6 +134,17 @@ struct ProfileV3GloveBoxListSheet: View {
                         ProfileV3GloveBoxEmailRow(email: email) { viewModel.open(.email(email)) }
                     }
                     .revealed(Motion.row(index), at: time)
+                }
+                if viewModel.hasMoreEmails {
+                    if viewModel.emailPagingFailed {
+                        ProfileV3PillButton(title: ProfileV3GloveBoxCopy.tryAgain, action: viewModel.retryLoadMoreEmails)
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        ProfileV3Spinner()
+                            .frame(maxWidth: .infinity)
+                            .id(home.email.emails.count)
+                            .onAppear(perform: viewModel.loadMoreEmails)
+                    }
                 }
             }
         case .calls:

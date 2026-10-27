@@ -1597,18 +1597,6 @@
         }
       }
     },
-    "mo-aiprofile-documents-button-view-previous": {
-      "comment": "Action button to view a list of previous passports.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "VIEW PREVIOUS"
-          }
-        }
-      }
-    },
     "mo-aiprofile-documents-country-name-india": {
       "comment": "Display name for the country (India).",
       "extractionState": "manual",
@@ -1713,18 +1701,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "PASSPORT DETAILS"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-documents-header-previous-passports": {
-      "comment": "Title for the previous passports section.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PREVIOUS PASSPORTS"
           }
         }
       }
@@ -2761,6 +2737,18 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-button-complete-kyc": {
+      "comment": "Starts KYC from the locked glove box intro.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete KYC"
+          }
+        }
+      }
+    },
     "mo-aiprofile-glovebox-button-copied": {
       "comment": "Glove box copy button right after copying.",
       "extractionState": "manual",
@@ -2889,6 +2877,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Built for your agent. Get your\nown email, number and virtual card"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-description-unlock": {
+      "comment": "Glove box intro subtitle while the main traveler's KYC isn't done.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A travel email, number and card that work for you. Your real ones stay private."
           }
         }
       }
@@ -3549,6 +3549,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Glove box  ·  Transactions"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-unlock": {
+      "comment": "Glove box intro title while the main traveler's KYC isn't done.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Glove box is ready to unlock"
           }
         }
       }

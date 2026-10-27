@@ -42,7 +42,6 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
     private var reloadTask: Task<Void, Never>?
     private var retryTask: Task<Void, Never>?
     private var insightTask: Task<Void, Never>?
-    private let impressions = ProfileV3ImpressionLog()
     private var switchTask: Task<Void, Never>?
     private var reorderHintTask: Task<Void, Never>?
     private let orderWrites = ProfileV3WriteQueue()
@@ -153,7 +152,10 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
 
     func tapBack() { router?.goBack() }
 
-    func tapConnectMore() { router?.openAddProgramme() }
+    func tapConnectMore() {
+        ProfileV3Analytics.cardConnectClicked(travellerId: pass.id, actionSource: .connectMore)
+        router?.openAddProgramme()
+    }
 
     func tapEdit() {
         if showsReorderHint {
@@ -162,6 +164,9 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
         withAnimation(ProfileV3Theme.Motion.selection) {
             isEditing.toggle()
             flippedID = nil
+        }
+        if isEditing {
+            ProfileV3Analytics.cardEditClicked(travellerId: pass.id)
         }
         ProfileV3Analytics.programmeEditToggled(toState: isEditing ? .editing : .done)
     }
@@ -233,17 +238,16 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
         return true
     }
 
-    func trackProgramme(_ programme: ProfileV3LoyaltyProgramme, index: Int) {
-        impressions.once("\(pass.id):\(programme.id)") {
-            ProfileV3Analytics.programmeViewed(programmeId: programme.id, programmeIndex: index)
-        }
+    func copiedNumber(of programme: ProfileV3LoyaltyProgramme) {
+        ProfileV3Analytics.cardNumberCopied(travellerId: pass.id, programme: programme)
     }
 
     func tapInsight(_ programme: ProfileV3LoyaltyProgramme) {
         guard loadingInsightID == nil else { return }
+        ProfileV3Analytics.viewInsightClicked(travellerId: pass.id, programme: programme)
         ProfileV3Analytics.programmeInsightOpened(programmeId: programme.id)
         if programme.insight != nil {
-            router?.openInsight(for: programme)
+            openInsight(for: programme)
             return
         }
         loadingInsightID = programme.id
@@ -259,7 +263,7 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
                 guard !Task.isCancelled else { return }
                 var resolved = programme
                 resolved.insight = insight
-                router?.openInsight(for: resolved)
+                openInsight(for: resolved)
             } catch is CancellationError {
                 return
             } catch {
@@ -269,8 +273,21 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
         }
     }
 
+    private func openInsight(for programme: ProfileV3LoyaltyProgramme) {
+        if let insight = programme.insight {
+            let body = insight.detail.body.map(\.text).joined()
+            ProfileV3Analytics.insightViewed(
+                travellerId: pass.id,
+                programme: programme,
+                insightShown: body.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty ?? insight.summary
+            )
+        }
+        router?.openInsight(for: programme)
+    }
+
     func remove(_ programme: ProfileV3LoyaltyProgramme) {
         guard !removingIDs.contains(programme.id) else { return }
+        ProfileV3Analytics.cardRemoveClicked(travellerId: pass.id, programme: programme)
         removingIDs.insert(programme.id)
         let profileID = pass.id
         Task { [weak self] in

@@ -123,7 +123,25 @@ final class VDCProfileV3KYCHost: ProfileV3KYCHost {
                 itrAmount: itrAmount,
                 itr: itr
             )
+        case .photoUploaded(let upload):
+            guard upload.flow == .passportUpdate else { return }
+            trackPassportUpdate(upload)
         }
+    }
+
+    private func trackPassportUpdate(_ upload: ProfileV3KYC.PhotoUpload) {
+        let scope = KYCOnboardingAnalytics.actionSourceOverride
+        KYCOnboardingAnalytics.actionSourceOverride = upload.actionSource
+        let travellerId = upload.isCoTraveller ? upload.travellerID : nil
+        switch upload.photo {
+        case .passportFront:
+            KYCOnboardingAnalytics.passportFrontUploaded(travellerId: travellerId, mode: .live)
+        case .passportBack:
+            KYCOnboardingAnalytics.passportBackUploaded(travellerId: travellerId, mode: .live)
+        case .selfie:
+            KYCOnboardingAnalytics.selfieUploaded(travellerId: travellerId, mode: .live)
+        }
+        KYCOnboardingAnalytics.actionSourceOverride = scope
     }
 
     private func release(_ coordinator: KYCOnboardingCoordinator) {

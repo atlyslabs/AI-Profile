@@ -2,7 +2,6 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3PersonaProcessingCard: View {
-    let title: String
     let traits: [String]
     var animates = true
 
@@ -11,20 +10,11 @@ struct ProfileV3PersonaProcessingCard: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if !title.isEmpty {
-                Text(title)
-                    .typoGraphy(.H5DentonBold20)
-                    .foregroundStyle(ProfileV3Theme.Palette.personaLabel)
-                    .multilineTextAlignment(.center)
-                    .frame(minHeight: Persona.cardTitleLineHeight)
-                    .padding(.top, Persona.cardTitleTop)
-                    .accessibilityAddTraits(.isHeader)
-            }
             ProfileV3PersonaProcessingDial(traits: traits, animates: animates)
-                .padding(.top, title.isEmpty ? Persona.cardTitleTop : Persona.radarTop)
+                .padding(.top, Persona.radarTop)
             Text(ProfileV3Strings.personaProcessing)
                 .typoGraphy(.B2InterSemibold12)
-                .foregroundStyle(ProfileV3Theme.personaProcessingShimmer)
+                .foregroundStyle(ProfileV3Theme.personaCaptionGradient)
                 .multilineTextAlignment(.center)
                 .padding(.top, Layout.messageTop)
         }
@@ -47,7 +37,7 @@ struct ProfileV3PersonaProcessingDial: View {
     private var isStill: Bool { reduceMotion || !animates }
 
     var body: some View {
-        TimelineView(.animation(paused: isStill)) { context in
+        TimelineView(ProfileV3AmbientSchedule(isPaused: isStill)) { context in
             let phase = isStill ? 0 : loopPhase(at: context.date)
             ZStack(alignment: .top) {
                 ProfileV3PersonaLoader(rotation: .degrees(360 * phase))
@@ -259,10 +249,7 @@ struct ProfileV3PersonaLoader: View {
 #if DEBUG
 #Preview("Persona processing card") {
     ScrollView {
-        ProfileV3PersonaProcessingCard(
-            title: "Traveler profile",
-            traits: ProfileV3PersonaFixtures.traits.map(\.name)
-        )
+        ProfileV3PersonaProcessingCard(traits: ProfileV3PersonaFixtures.traits.map(\.name))
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
         .padding(.top, ProfileV3Theme.Space.s50)
     }

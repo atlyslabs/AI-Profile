@@ -337,7 +337,16 @@ struct ProfileV3AddProgrammeView: View {
             itemWidth: ProfileV3Theme.Sizes.Picker.cardWidth,
             height: ProfileV3Theme.Sizes.Picker.carouselHeight,
             spacing: ProfileV3Theme.Sizes.Picker.cardSpacing,
-            selection: $viewModel.selectedItemID,
+            selection: Binding(
+                get: { viewModel.selectedItemID },
+                set: { id in
+                    if let id {
+                        viewModel.selectItem(id)
+                    } else {
+                        viewModel.selectedItemID = nil
+                    }
+                }
+            ),
             revealOffset: ProfileV3Theme.Motion.entryOffsetY
         ) {
             ForEach(viewModel.filteredCatalogue) { item in

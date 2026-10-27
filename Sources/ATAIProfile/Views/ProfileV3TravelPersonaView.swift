@@ -89,12 +89,9 @@ private struct ProfileV3TravelPersonaLoader: View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
                 ProfileV3TravelPersonaHeader(persona: persona)
-                ProfileV3PersonaProcessingCard(
-                    title: ProfileV3Strings.personaLoaderTitle,
-                    traits: ProfileV3Strings.personaLoaderTraits
-                )
-                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                .padding(.top, Persona.cardTop)
+                ProfileV3PersonaProcessingCard(traits: ProfileV3Strings.personaLoaderTraits)
+                    .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                    .padding(.top, Persona.cardTop)
             }
             .padding(.bottom, Persona.bottom)
             .animation(ProfileV3Theme.Motion.contentSwitch, value: persona != nil)
@@ -192,14 +189,6 @@ struct ProfileV3TravelPersonaContent: View {
 
     private var radarCard: some View {
         VStack(spacing: 0) {
-            if !persona.profileTitle.isEmpty {
-                Text(persona.profileTitle)
-                    .typoGraphy(.H5DentonBold20)
-                    .foregroundStyle(ProfileV3Theme.Palette.personaLabel)
-                    .multilineTextAlignment(.center)
-                    .frame(minHeight: Persona.cardTitleLineHeight)
-                    .padding(.top, Persona.cardTitleTop)
-            }
             ProfileV3PersonaRadar(
                 traits: persona.traits,
                 range: persona.range,
@@ -214,11 +203,11 @@ struct ProfileV3TravelPersonaContent: View {
                 onAdjust: viewModel.adjust,
                 onCoachTap: viewModel.advanceCoach
             )
-            .padding(.top, persona.profileTitle.isEmpty ? Persona.cardTitleTop : Persona.radarTop)
+            .padding(.top, Persona.radarTop)
             if viewModel.isEditable {
                 Text(ProfileV3Strings.personaEditHint)
                     .typoGraphy(.B2InterSemibold12)
-                    .foregroundStyle(ProfileV3Theme.personaHintGradient)
+                    .foregroundStyle(ProfileV3Theme.personaCaptionGradient)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: Persona.hintWidth)

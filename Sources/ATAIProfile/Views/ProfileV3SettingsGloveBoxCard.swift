@@ -44,7 +44,7 @@ struct ProfileV3SettingsGloveBoxCard: View {
 
     private var dials: some View {
         Canvas { context, size in
-            let icons = [ATIcon.SwiftUIImage.creditCard, ATIcon.SwiftUIImage.call, ATIcon.SwiftUIImage.mail]
+            let icons = [ProfileV3GloveBoxArt.dialCreditCard.image, ProfileV3GloveBoxArt.dialCall.image, ProfileV3GloveBoxArt.dialMail.image]
             for (icon, dial) in zip(icons, Layout.settingsDials) {
                 ProfileV3GloveBoxDial.draw(
                     icon,
