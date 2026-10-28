@@ -123,6 +123,7 @@ struct ProfileV3GloveBoxIntroView: View {
                     )
                 }
                 .scrollBounceBehavior(.basedOnSize)
+                .trackScroll(.gloveBoxIntro)
             }
             if !intro.actionTitle.isEmpty {
                 ProfileV3GloveBoxActionButton(title: intro.actionTitle, action: onAction)
@@ -221,6 +222,7 @@ struct ProfileV3GloveBoxHomeView: View {
                     .profileV3HeaderFadeAnchor(headerPin)
                 }
                 .profileV3HeaderFade(headerPin)
+                .trackScroll(.gloveBoxHome)
             }
         }
     }

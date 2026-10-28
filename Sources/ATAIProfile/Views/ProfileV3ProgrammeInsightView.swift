@@ -38,6 +38,7 @@ struct ProfileV3ProgrammeInsightView: View {
                     ? ProfileV3Theme.Sizes.Programmes.bottomFade
                     : ProfileV3Theme.Sizes.Programmes.barBottom)
             }
+            .trackScroll(.programmeInsight, id: programme.id)
             ProfileV3CloseBar(action: onClose)
         }
         .overlay(alignment: .bottom) {

@@ -23,6 +23,7 @@ struct ProfileV3SectionSourcesView: View {
                         .profileV3HeaderFadeAnchor(headerPin)
                 }
                 .profileV3HeaderFade(headerPin)
+                .trackScroll(.sectionSources)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
             }

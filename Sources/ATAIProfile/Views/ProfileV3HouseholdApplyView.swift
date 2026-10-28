@@ -32,6 +32,7 @@ struct ProfileV3HouseholdApplySheet: View {
             .frame(maxWidth: .infinity)
         }
         .scrollBounceBehavior(.basedOnSize)
+        .trackScroll(.householdApply)
         .safeAreaInset(edge: .bottom, spacing: 0) { bar(session) }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())

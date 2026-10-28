@@ -37,6 +37,7 @@ struct ProfileV3EditTravellersView: View {
                     }
                     .scrollBounceBehavior(.basedOnSize)
                     .profileV3HeaderFade(headerPin, gap: 0)
+                    .trackScroll(.travellersList)
                     .frame(maxHeight: listHeight > 0 ? listHeight : nil)
                     .onChange(of: listHeight) { revealToast(proxy) }
                     .onChange(of: toast) { revealToast(proxy) }
@@ -58,8 +59,10 @@ struct ProfileV3EditTravellersView: View {
 
     private var list: some View {
         VStack(spacing: ProfileV3Theme.Sizes.Traveller.cardSpacing) {
-            ForEach(travellers) { traveller in
+            ForEach(travellers.indexed) { row in
+                let traveller = row.element
                 ProfileV3TravellerCard(traveller: traveller) { onSelect(traveller) }
+                    .trackRow(row.index, of: travellers.count)
             }
             if let toast {
                 ProfileV3Toast(message: toast)

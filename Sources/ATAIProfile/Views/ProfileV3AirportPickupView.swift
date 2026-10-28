@@ -26,6 +26,7 @@ struct ProfileV3AirportPickupView: View {
                 .scrollBounceBehavior(.basedOnSize)
                 .scrollDisabled(isConfirming)
                 .profileV3ScrollOffset($scrollOffset)
+                .trackScroll(.airportPickup)
                 .onChange(of: isConfirming) { _, confirming in
                     guard confirming else { return }
                     withAnimation(ProfileV3Theme.Motion.expand) { proxy.scrollTo(Self.contentID, anchor: .top) }

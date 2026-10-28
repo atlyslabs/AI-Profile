@@ -96,6 +96,7 @@ struct ProfileV3AppCredentialsSheet: View {
                     }
                     .scrollBounceBehavior(.basedOnSize)
                     .scrollDismissesKeyboard(.interactively)
+                    .trackScroll(.appCredentials)
                 } else {
                     VStack(spacing: 0) {
                         measuredContent

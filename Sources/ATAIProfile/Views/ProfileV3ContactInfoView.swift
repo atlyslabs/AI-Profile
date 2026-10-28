@@ -30,7 +30,7 @@ struct ProfileV3ContactInfoView: View {
                 title: ProfileV3Strings.contactInfo,
                 onBack: viewModel.tapBack
             )
-            ProfileV3FocusScroll(focused: focusedField) {
+            ProfileV3FocusScroll(focused: focusedField, scrollComponent: .contactInfo) {
                 VStack(spacing: 0) {
                     Text(ProfileV3Strings.contactHelper)
                         .typoGraphy(.B2InterMedium12)

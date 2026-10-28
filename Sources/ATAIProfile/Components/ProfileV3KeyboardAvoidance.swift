@@ -1,3 +1,4 @@
+import ATUIKit
 import SwiftUI
 import UIKit
 
@@ -155,6 +156,7 @@ private final class ProfileV3KeyboardDismissView: UIView, UIGestureRecognizerDel
 struct ProfileV3FocusScroll<ID: Hashable, Content: View>: View {
     let focused: ID?
     var fillsViewport = false
+    var scrollComponent: ScrollComponent?
     @ViewBuilder let content: () -> Content
 
     @State private var viewportHeight: CGFloat = 0
@@ -170,6 +172,7 @@ struct ProfileV3FocusScroll<ID: Hashable, Content: View>: View {
             .profileV3HeaderFade(headerPin)
             .scrollBounceBehavior(.basedOnSize)
             .scrollDismissesKeyboard(.interactively)
+            .trackScroll(ifNamed: scrollComponent)
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
             .onChange(of: focused) { _, id in reveal(id, with: proxy) }
             .onChange(of: viewportHeight) { _, _ in reveal(focused, with: proxy) }
@@ -185,7 +188,11 @@ struct ProfileV3FocusScroll<ID: Hashable, Content: View>: View {
 }
 
 extension ProfileV3FocusScroll where ID == Never {
-    init(fillsViewport: Bool = false, @ViewBuilder content: @escaping () -> Content) {
-        self.init(focused: nil, fillsViewport: fillsViewport, content: content)
+    init(
+        fillsViewport: Bool = false,
+        scrollComponent: ScrollComponent? = nil,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(focused: nil, fillsViewport: fillsViewport, scrollComponent: scrollComponent, content: content)
     }
 }

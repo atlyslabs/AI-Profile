@@ -23,6 +23,7 @@ struct ProfileV3RideRegionsView: View {
                 }
                 .profileV3HeaderFade(headerPin)
                 .scrollBounceBehavior(.basedOnSize)
+                .trackScroll(.rideRegions)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
             }

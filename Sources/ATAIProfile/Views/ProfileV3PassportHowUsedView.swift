@@ -31,6 +31,7 @@ struct ProfileV3PassportHowUsedView: View {
                 }
                 .profileV3HeaderFade(headerPin)
                 .scrollBounceBehavior(.basedOnSize)
+                .trackScroll(.passportHowUsed)
                 .safeAreaInset(edge: .bottom) {
                     footer(content)
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.footer = $0 }

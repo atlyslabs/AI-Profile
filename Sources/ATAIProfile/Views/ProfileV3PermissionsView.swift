@@ -22,6 +22,7 @@ struct ProfileV3PermissionsView: View {
                             .profileV3HeaderFadeAnchor(headerPin)
                     }
                     .profileV3HeaderFade(headerPin)
+                    .trackScroll(.permissions)
                 }
                 .transition(.opacity)
             } else {

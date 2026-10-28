@@ -27,7 +27,8 @@ struct ProfileV3BenefitsListView: View {
             isLoadingMore: isLoadingMore,
             isScrollDisabled: presenter.isPresenting,
             onRetry: onRetry,
-            onClose: onClose
+            onClose: onClose,
+            scrollComponent: .benefitsList
         ) {
             if !title.isEmpty {
                 Text(title)
@@ -54,10 +55,12 @@ struct ProfileV3BenefitsListView: View {
                 .accessibilityLabel(learnMoreLabel)
             }
         } rows: {
-            ForEach(benefits) { benefit in
+            ForEach(benefits.indexed) { row in
+                let benefit = row.element
                 ProfileV3BenefitCard(benefit: benefit, growsToFitText: true) {
                     open(benefit)
                 }
+                .trackRow(row.index, of: benefits.count)
             }
         } overlay: {
             ProfileV3BenefitHeroOverlay(
@@ -71,6 +74,7 @@ struct ProfileV3BenefitsListView: View {
         .onChange(of: redemption) { _, redemption in
             presenter.dismiss(after: redemption)
         }
+        .scrollTracking(active: !presenter.isPresenting)
     }
 
     private func open(_ benefit: ProfileV3Benefit) {

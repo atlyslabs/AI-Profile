@@ -99,6 +99,7 @@ struct ProfileV3ProgrammesView: View {
             .profileV3HeaderFadeAnchor(headerPin)
         }
         .profileV3ScrollOffset(headerPin.offsetBinding)
+        .trackScroll(.programmes)
     }
 
     private var header: some View {
@@ -328,6 +329,7 @@ struct ProfileV3ProgrammesView: View {
         .scrollTargetBehavior(.viewAligned)
         .contentMargins(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin, for: .scrollContent)
         .scrollClipDisabled()
+        .trackScroll(.featuredProgrammesRail, at: 1)
     }
 
     private func tile(_ programme: ProfileV3LoyaltyProgramme, width: CGFloat?, order: Int) -> some View {

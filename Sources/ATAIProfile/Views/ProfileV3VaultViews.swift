@@ -109,6 +109,7 @@ struct ProfileV3CredentialStoreSheet: View {
                         measuredContent
                     }
                     .scrollBounceBehavior(.basedOnSize)
+                    .trackScroll(.credentialStore)
                 } else {
                     measuredContent
                 }

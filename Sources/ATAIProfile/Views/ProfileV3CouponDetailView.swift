@@ -27,7 +27,9 @@ struct ProfileV3CouponDetailView: View {
             terms: coupon.terms,
             isDepleted: coupon.isDepleted,
             footer: footer,
-            onClose: onClose
+            onClose: onClose,
+            scrollComponent: .couponDetail,
+            scrollItemId: coupon.id
         ) {
             VStack(spacing: ProfileV3Theme.Space.s16) {
                 ProfileV3ProgressBar(progress: coupon.percentRedeemed)

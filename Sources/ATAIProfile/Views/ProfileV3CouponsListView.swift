@@ -19,7 +19,8 @@ struct ProfileV3CouponsListView: View {
             isLoadingMore: isLoadingMore,
             isScrollDisabled: presenter.isPresenting,
             onRetry: onRetry,
-            onClose: onClose
+            onClose: onClose,
+            scrollComponent: .couponsList
         ) {
             if !title.isEmpty {
                 Text(title)
@@ -34,8 +35,10 @@ struct ProfileV3CouponsListView: View {
                     .padding(.top, ProfileV3Theme.Space.s10)
             }
         } rows: {
-            ForEach(coupons) { coupon in
+            ForEach(coupons.indexed) { row in
+                let coupon = row.element
                 ProfileV3UsageCard(usage: ProfileV3Usage(coupon: coupon)) { presenter.present(coupon) }
+                    .trackRow(row.index, of: coupons.count)
             }
         } overlay: {
             if phase == .loaded, coupons.isEmpty, !isLoadingMore {
@@ -47,6 +50,7 @@ struct ProfileV3CouponsListView: View {
             }
             ProfileV3CouponHeroOverlay(presenter: presenter, loadDetail: loadDetail)
         }
+        .scrollTracking(active: !presenter.isPresenting)
     }
 }
 

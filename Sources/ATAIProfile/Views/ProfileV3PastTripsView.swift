@@ -83,12 +83,14 @@ struct ProfileV3PastTripsView: View {
                     ForEach(Array(viewModel.trips.enumerated()), id: \.element.id) { index, trip in
                         row(trip, index: index)
                             .id(trip.id)
+                            .trackRow(index, of: viewModel.trips.count)
                     }
                 }
                 .padding(.top, Sizes.listTop)
                 .padding(.bottom, Sizes.listBottom)
                 .frame(maxWidth: .infinity)
             }
+            .trackScroll(.pastTripsList)
             .onChange(of: viewModel.focus) { _, focus in
                 guard let focus else { return }
                 let animation = reduceMotion ? nil : Motion.pastTripsFocus

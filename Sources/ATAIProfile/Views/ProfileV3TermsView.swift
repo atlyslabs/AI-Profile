@@ -22,6 +22,7 @@ struct ProfileV3TermsView: View {
                 }
                 .profileV3HeaderFade(headerPin)
                 .scrollBounceBehavior(.basedOnSize)
+                .trackScroll(.terms)
             } else {
                 ProfileV3LoadStateView(phase: phase, retry: onRetry)
             }

@@ -36,6 +36,7 @@ struct ProfileV3PassportReasonView: View {
             }
             .profileV3HeaderFade(headerPin, color: ProfileV3Theme.Palette.background)
             .scrollBounceBehavior(.basedOnSize)
+            .trackScroll(.passportReason)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ProfileV3Theme.passportScreenGradient.ignoresSafeArea())
