@@ -387,6 +387,8 @@ internal enum ProfileV3L10n {
   }
   /// Navigation back button.
   internal static var moAiprofileGeneralButtonBack: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-button-back", fallback: "Back") }
+  /// Button to cancel an action and go back.
+  internal static var moAiprofileGeneralButtonCancel: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-button-cancel", fallback: "Cancel") }
   /// Navigation close button.
   internal static var moAiprofileGeneralButtonClose: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-button-close", fallback: "Close") }
   /// Generic confirm button for edits.
@@ -683,10 +685,20 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileLoyaltyButtonAddAirlines: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-add-airlines", fallback: "+Add preferred airlines") }
   /// Button to add a new loyalty program.
   internal static var moAiprofileLoyaltyButtonAddProgram: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-add-program", fallback: "Add program") }
+  /// Button to confirm deleting the selected loyalty programs.
+  internal static var moAiprofileLoyaltyButtonConfirmDelete: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-confirm-delete", fallback: "Confirm") }
   /// Call to action to connect additional loyalty programs.
   internal static var moAiprofileLoyaltyButtonConnectMorePrograms: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-connect-more-programs", fallback: "Connect more programs") }
   /// Action button to copy membership information to the clipboard.
   internal static var moAiprofileLoyaltyButtonCopyMembershipNumber: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-copy-membership-number", fallback: "Copy membership number") }
+  /// Edit-mode button to delete the selected loyalty programs, singular.
+  internal static func moAiprofileLoyaltyButtonDeleteProgramsOne(_ p1: Any) -> String {
+    return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-delete-programs-one", String(describing: p1), fallback: "Delete %1$@ program")
+  }
+  /// Edit-mode button to delete the selected loyalty programs, plural.
+  internal static func moAiprofileLoyaltyButtonDeleteProgramsOther(_ p1: Any) -> String {
+    return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-delete-programs-other", String(describing: p1), fallback: "Delete %1$@ programs")
+  }
   /// Button to exit edit mode.
   internal static var moAiprofileLoyaltyButtonDoneEditing: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-done-editing", fallback: "Done editing") }
   /// Action button to edit connected programs.
@@ -713,6 +725,14 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileLoyaltyCategoryLabelHotels: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-category-label-hotels", fallback: "Hotels") }
   /// Category filter label for travel passes.
   internal static var moAiprofileLoyaltyCategoryLabelTravelPasses: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-category-label-travel-passes", fallback: "Travel passes") }
+  /// Confirmation before deleting the selected loyalty programs, singular.
+  internal static func moAiprofileLoyaltyConfirmationDeleteProgramsOne(_ p1: Any) -> String {
+    return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-confirmation-delete-programs-one", String(describing: p1), fallback: "Are you sure you want to delete\n%1$@ program")
+  }
+  /// Confirmation before deleting the selected loyalty programs, plural.
+  internal static func moAiprofileLoyaltyConfirmationDeleteProgramsOther(_ p1: Any) -> String {
+    return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-confirmation-delete-programs-other", String(describing: p1), fallback: "Are you sure you want to delete\n%1$@ programs")
+  }
   /// Usage display for rewards or coupons.
   internal static func moAiprofileLoyaltyCouponUsedAmount(_ p1: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-coupon-used-amount", String(describing: p1), fallback: "%1$@ used")

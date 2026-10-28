@@ -5,7 +5,6 @@ struct ProfileV3ProgrammeTile: View {
     enum Pill: Equatable {
         case none
         case insight(isLoading: Bool)
-        case remove(isRemoving: Bool)
     }
 
     let programme: ProfileV3LoyaltyProgramme
@@ -15,7 +14,6 @@ struct ProfileV3ProgrammeTile: View {
     var isFlipped = false
     var onTap: (() -> Void)?
     var onAction: (() -> Void)?
-    var onRemove: (() -> Void)?
     var onCopy: (() -> Void)?
 
     @State private var isCopied = false
@@ -40,7 +38,6 @@ struct ProfileV3ProgrammeTile: View {
         guard !isFlipped else { return false }
         switch pill {
         case .none: return false
-        case .remove: return true
         case .insight: return insightTitle != nil
         }
     }
@@ -261,14 +258,6 @@ struct ProfileV3ProgrammeTile: View {
     @ViewBuilder
     private var bottomPill: some View {
         switch pill {
-        case .remove(let isRemoving):
-            ProfileV3ProgrammeTilePill(
-                title: ProfileV3Strings.removeProgramme,
-                isLoading: isRemoving,
-                shade: shade,
-                action: { onRemove?() }
-            )
-            .transition(.opacity.combined(with: .offset(y: ProfileV3Theme.Motion.insightRevealOffset)))
         case .insight(let isLoading):
             if let title = insightTitle {
                 ProfileV3ProgrammeTilePill(
@@ -417,11 +406,7 @@ private struct ProfileV3ProgrammeTilePreview: View {
                 onTap: { withAnimation(ProfileV3Theme.Motion.flip) { isFlipped.toggle() } },
                 onAction: {}
             )
-            ProfileV3ProgrammeTile(
-                programme: ProfileV3Fixtures.programmes[0],
-                pill: .remove(isRemoving: false),
-                onRemove: {}
-            )
+            ProfileV3ProgrammeTile(programme: ProfileV3Fixtures.programmes[0])
         }
         .padding(ProfileV3Theme.Sizes.screenHorizontalMargin)
         .background(Color(at: .pureWhite))

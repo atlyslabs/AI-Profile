@@ -10,6 +10,8 @@ protocol ProfileV3ProgrammesRouter: AnyObject {
     func openInsightAction(_ directive: ProfileV3Directive)
     func programmesChanged()
     func passChanged(to pass: ProfileV3WorldPass)
+    func presentDeleteConfirmation()
+    func dismissDeleteConfirmation()
 }
 
 @MainActor
@@ -25,7 +27,10 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
     @Published private(set) var showsInsights = false
     @Published private(set) var loadingInsightID: String?
     @Published private(set) var isEditing = false
-    @Published private(set) var removingIDs: Set<String> = []
+    @Published private(set) var selectedIDs: Set<String> = []
+    @Published private(set) var isConfirmingDelete = false
+    @Published private(set) var isDeleting = false
+    @Published private(set) var deletions = 0
     @Published private(set) var flippedID: String?
     @Published private(set) var actionError: String?
     @Published private(set) var actionFailures = 0
@@ -76,6 +81,14 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
         return listOrder.compactMap { byID[$0] } + others.filter { !known.contains($0.id) }
     }
 
+    var editingProgrammes: [ProfileV3LoyaltyProgramme] {
+        (overview?.featured ?? []) + orderedOthers
+    }
+
+    var selectedProgrammes: [ProfileV3LoyaltyProgramme] {
+        editingProgrammes.filter { selectedIDs.contains($0.id) }
+    }
+
     func load(reducesMotion: Bool) async {
         if overview == nil {
             phase = .loading
@@ -98,13 +111,14 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
     func selectPass(offsetBy delta: Int, reducesMotion: Bool) -> Bool {
         let current = selectedPassIndex
         let next = min(max(current + delta, 0), passes.count - 1)
-        guard next != current else { return false }
+        guard next != current, !isDeleting else { return false }
         [switchTask, reloadTask, retryTask, insightTask, reorderHintTask].forEach { $0?.cancel() }
         loadingInsightID = nil
         actionError = nil
         withAnimation(ProfileV3Theme.Motion.selection) {
             pass = passes[next]
             isEditing = false
+            selectedIDs = []
             flippedID = nil
             phase = .loading
             listOrder = []
@@ -150,7 +164,13 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
         actionFailures += 1
     }
 
-    func tapBack() { router?.goBack() }
+    func tapBack() {
+        guard !isEditing else {
+            endEditing()
+            return
+        }
+        router?.goBack()
+    }
 
     func tapConnectMore() {
         ProfileV3Analytics.cardConnectClicked(travellerId: pass.id, actionSource: .connectMore)
@@ -158,15 +178,59 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
     }
 
     func tapEdit() {
+        guard !isEditing else { return }
         if showsReorderHint {
             dismissReorderHint()
         }
         withAnimation(ProfileV3Theme.Motion.selection) {
-            isEditing.toggle()
+            isEditing = true
+            selectedIDs = []
             flippedID = nil
         }
-        if isEditing {
-            ProfileV3Analytics.cardEditClicked(travellerId: pass.id)
+        ProfileV3Analytics.cardEditClicked(travellerId: pass.id)
+    }
+
+    func endEditing() {
+        guard isEditing, !isDeleting else { return }
+        withAnimation(ProfileV3Theme.Motion.selection) {
+            isEditing = false
+            selectedIDs = []
+        }
+    }
+
+    func toggleSelection(_ programme: ProfileV3LoyaltyProgramme) {
+        guard isEditing, !isDeleting else { return }
+        withAnimation(ProfileV3Theme.Motion.selection) {
+            if selectedIDs.remove(programme.id) == nil {
+                selectedIDs.insert(programme.id)
+            }
+        }
+    }
+
+    func tapDeleteSelected() {
+        guard isEditing, !selectedIDs.isEmpty, !isDeleting, !isConfirmingDelete else { return }
+        isConfirmingDelete = true
+        router?.presentDeleteConfirmation()
+    }
+
+    func cancelDelete() {
+        guard isConfirmingDelete, !isDeleting else { return }
+        isConfirmingDelete = false
+        router?.dismissDeleteConfirmation()
+    }
+
+    func deleteConfirmationDidDismiss() {
+        isConfirmingDelete = false
+    }
+
+    func confirmDelete() {
+        let programmes = selectedProgrammes
+        guard isConfirmingDelete, !isDeleting, !programmes.isEmpty else { return }
+        programmes.forEach { ProfileV3Analytics.cardRemoveClicked(travellerId: pass.id, programme: $0) }
+        isDeleting = true
+        let profileID = pass.id
+        Task { [weak self] in
+            await self?.delete(programmes, profileID: profileID)
         }
     }
 
@@ -284,40 +348,39 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
         router?.openInsight(for: programme)
     }
 
-    func remove(_ programme: ProfileV3LoyaltyProgramme) {
-        guard !removingIDs.contains(programme.id) else { return }
-        ProfileV3Analytics.cardRemoveClicked(travellerId: pass.id, programme: programme)
-        removingIDs.insert(programme.id)
-        let profileID = pass.id
-        Task { [weak self] in
-            await self?.performRemove(programme, profileID: profileID)
+    private func delete(_ programmes: [ProfileV3LoyaltyProgramme], profileID: String) async {
+        var removedIDs: [String] = []
+        for programme in programmes {
+            do {
+                try await repository.removeProgramme(id: programme.id, name: programme.name, profileID: profileID)
+                ProfileV3Analytics.programmeRemoved(programmeId: programme.id)
+                removedIDs.append(programme.id)
+            } catch {
+                ProfileV3Analytics.programmeRemoveFailed(programmeId: programme.id, error: error)
+            }
         }
-    }
-
-    private func performRemove(_ programme: ProfileV3LoyaltyProgramme, profileID: String) async {
-        defer { removingIDs.remove(programme.id) }
-        do {
-            try await repository.removeProgramme(
-                id: programme.id,
-                name: programme.name,
-                profileID: profileID
-            )
-            ProfileV3Analytics.programmeRemoved(programmeId: programme.id)
-            guard profileID == pass.id else {
-                router?.programmesChanged()
-                return
-            }
-            if let overview {
-                withAnimation(ProfileV3Theme.Motion.programmeRemove) {
-                    phase = .content(overview.removing(programmeID: programme.id))
-                }
-            }
-            actionError = nil
+        isDeleting = false
+        isConfirmingDelete = false
+        router?.dismissDeleteConfirmation()
+        if !removedIDs.isEmpty {
+            deletions += 1
             router?.programmesChanged()
+        }
+        guard profileID == pass.id else { return }
+        let failed = removedIDs.count < programmes.count
+        withAnimation(ProfileV3Theme.Motion.programmeRemove) {
+            if let overview {
+                phase = .content(removedIDs.reduce(overview) { $0.removing(programmeID: $1) })
+            }
+            selectedIDs.subtract(removedIDs)
+            if !failed {
+                isEditing = false
+            }
+        }
+        if !removedIDs.isEmpty {
             await reload()
-        } catch {
-            ProfileV3Analytics.programmeRemoveFailed(programmeId: programme.id, error: error)
-            guard profileID == pass.id else { return }
+        }
+        if failed {
             failAction(ProfileV3Strings.removeProgrammeFailed)
         }
     }

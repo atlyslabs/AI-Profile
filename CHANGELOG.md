@@ -20,6 +20,16 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
+- Loyalty programmes: edit mode selects programs to delete. Every card gets a checkbox and slides
+  right, a "Delete N program(s)" bar appears once one is selected, and a confirmation sheet
+  ("Are you sure you want to delete N program(s)", Confirm / Cancel) removes them one by one. A
+  program that fails stays selected with the error shown. The back button leaves edit mode before
+  the page. The per-card Remove pill is gone. Six new string keys need adding in Ditto:
+  `mo-aiprofile-loyalty-button-delete-programs-one`/`-other`,
+  `mo-aiprofile-loyalty-confirmation-delete-programs-one`/`-other`,
+  `mo-aiprofile-loyalty-button-confirm-delete` and `mo-aiprofile-general-button-cancel`.
+  `mo-aiprofile-loyalty-button-remove-program` and `mo-aiprofile-loyalty-button-done-editing` are
+  now unused.
 - The loyalty programmes page no longer shows the number of programs connected or the points/miles
   total and estimated value; only the server's subtitle is left under the pass tabs.
   `GET …/board/loyalty/page/{profile_id}` is no longer read for `count` or `stats` (`points_total`,
@@ -99,6 +109,8 @@ Profile events follow the profile analytics spec.
   `glove_box_item_clicked` (`itemType` `mail` / `phone` / `card`, `activated`).
 - Removed: `profile_programme_selected`, `profile_programme_added` and
   `profile_programme_edit_toggled`.
+- `profile_connector_card_remove_clicked` is sent for each selected card when a multi-select
+  deletion is confirmed, rather than on a card's Remove pill.
 
 ### Strings
 

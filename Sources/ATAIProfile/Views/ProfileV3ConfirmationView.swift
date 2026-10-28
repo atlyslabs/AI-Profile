@@ -21,7 +21,7 @@ struct ProfileV3ConfirmationView: View {
         }
     }
 
-    let icon: Image
+    let icon: Image?
     let style: Style
     let title: String
     var message: String?
@@ -48,6 +48,10 @@ struct ProfileV3ConfirmationView: View {
             buttonsTop: ProfileV3Theme.Sizes.Confirmation.subjectButtonsTop,
             showsSubject: true
         )
+        static let plain = Metrics(
+            top: ProfileV3Theme.Sizes.Confirmation.plainTop,
+            buttonsTop: ProfileV3Theme.Sizes.Confirmation.plainButtonsTop
+        )
     }
 
     var body: some View {
@@ -55,7 +59,9 @@ struct ProfileV3ConfirmationView: View {
             ProfileV3SheetGrabber()
             ZStack(alignment: .top) {
                 VStack(spacing: metrics.iconSpacing) {
-                    iconCircle
+                    if let icon {
+                        iconCircle(icon)
+                    }
                     VStack(spacing: ProfileV3Theme.Sizes.Confirmation.textSpacing) {
                         if !title.isEmpty {
                             Text(title)
@@ -117,7 +123,7 @@ struct ProfileV3ConfirmationView: View {
         }
     }
 
-    private var iconCircle: some View {
+    private func iconCircle(_ icon: Image) -> some View {
         ZStack {
             Circle()
                 .fill(style.circle)
@@ -192,6 +198,26 @@ extension ProfileV3ConfirmationView {
             onSecondary: onBack
         )
     }
+
+    static func deleteProgrammes(
+        count: Int,
+        isDeleting: Bool,
+        onBack: @escaping () -> Void,
+        onConfirm: @escaping () -> Void
+    ) -> ProfileV3ConfirmationView {
+        ProfileV3ConfirmationView(
+            icon: nil,
+            style: .destructive,
+            title: ProfileV3Strings.deleteProgrammesConfirm(count),
+            primaryTitle: ProfileV3Strings.confirmDeleteProgrammes,
+            secondaryTitle: ProfileV3Strings.cancel,
+            isPrimaryLoading: isDeleting,
+            metrics: .plain,
+            onBack: onBack,
+            onPrimary: onConfirm,
+            onSecondary: onBack
+        )
+    }
 }
 
 #if DEBUG
@@ -205,6 +231,10 @@ extension ProfileV3ConfirmationView {
 
 #Preview("Delete account") {
     ProfileV3ConfirmationView.deleteAccount(ProfileV3Fixtures.deleteAccountConfirm, onBack: {}, onProceed: {})
+}
+
+#Preview("Delete programs") {
+    ProfileV3ConfirmationView.deleteProgrammes(count: 2, isDeleting: false, onBack: {}, onConfirm: {})
 }
 
 #Preview("Delete login") {

@@ -2137,6 +2137,18 @@
         }
       }
     },
+    "mo-aiprofile-general-button-cancel": {
+      "comment": "Button to cancel an action and go back.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
     "mo-aiprofile-general-button-close": {
       "comment": "Navigation close button.",
       "extractionState": "manual",
@@ -3697,6 +3709,18 @@
         }
       }
     },
+    "mo-aiprofile-loyalty-button-confirm-delete": {
+      "comment": "Button to confirm deleting the selected loyalty programs.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm"
+          }
+        }
+      }
+    },
     "mo-aiprofile-loyalty-button-connect-more-programs": {
       "comment": "Call to action to connect additional loyalty programs.",
       "extractionState": "manual",
@@ -3717,6 +3741,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "Copy membership number"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-delete-programs-one": {
+      "comment": "Edit-mode button to delete the selected loyalty programs, singular.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete %1$@ program"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-button-delete-programs-other": {
+      "comment": "Edit-mode button to delete the selected loyalty programs, plural.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete %1$@ programs"
           }
         }
       }
@@ -3861,6 +3909,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "Travel passes"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-confirmation-delete-programs-one": {
+      "comment": "Confirmation before deleting the selected loyalty programs, singular.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to delete\n%1$@ program"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-loyalty-confirmation-delete-programs-other": {
+      "comment": "Confirmation before deleting the selected loyalty programs, plural.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to delete\n%1$@ programs"
           }
         }
       }
