@@ -111,10 +111,7 @@ enum ProfileV3ProgrammeFixtures {
             passID: pass?.id ?? ProfileV3Fixtures.worldPass.id,
             holderName: pass?.holderName ?? "",
             programmes: programmes,
-            connectedCount: pass?.connectedProgrammeCount ?? programmes.count,
-            summary: ProfileV3Strings.programmesSummary(statements: programmes.count),
-            pointsLabel: programmes.isEmpty ? "" : "412K",
-            estimatedValueLabel: programmes.isEmpty ? "" : "\u{20B9} 3.1 Lakh"
+            summary: ProfileV3Strings.programmesSummary(statements: programmes.count)
         )
     }
 }

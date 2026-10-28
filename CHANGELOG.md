@@ -20,6 +20,11 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
+- The loyalty programmes page no longer shows the number of programs connected or the points/miles
+  total and estimated value; only the server's subtitle is left under the pass tabs.
+  `GET …/board/loyalty/page/{profile_id}` is no longer read for `count` or `stats` (`points_total`,
+  `est_value`). `mo-aiprofile-loyalty-label-estimated-value` is now unused and can be deleted from
+  Ditto. The pass back face still shows its own programme count.
 - A phone number stored without a country code is read against the host's residence
   (`ATCoreBaseProvider.userResidencyCode`, from the registered configuration provider) instead of
   the device's region. The device region, then India, are used only when the host gives none.

@@ -93,7 +93,6 @@ enum ProfileV3Strings {
     static var addProgramme: String { ProfileV3L10n.moAiprofileLoyaltyButtonAddProgram }
     static var points: String { ProfileV3L10n.moAiprofileLoyaltyLabelPoints }
     static var pointsMiles: String { ProfileV3L10n.moAiprofileLoyaltyLabelPointsMiles }
-    static var estimatedValue: String { ProfileV3L10n.moAiprofileLoyaltyLabelEstimatedValue }
     static var connectMoreProgrammes: String { ProfileV3L10n.moAiprofileLoyaltyButtonConnectMorePrograms }
     static var editProgrammes: String { ProfileV3L10n.moAiprofileLoyaltyButtonEditPrograms }
     static var doneEditing: String { ProfileV3L10n.moAiprofileLoyaltyButtonDoneEditing }

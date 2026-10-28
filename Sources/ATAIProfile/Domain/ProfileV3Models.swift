@@ -93,10 +93,7 @@ struct ProfileV3ProgrammeOverview: Equatable {
     let passID: String
     let holderName: String
     let programmes: [ProfileV3LoyaltyProgramme]
-    let connectedCount: Int
     let summary: String
-    let pointsLabel: String
-    let estimatedValueLabel: String
     var reorderAction: String?
 
     var featured: [ProfileV3LoyaltyProgramme] { programmes.filter { $0.insight != nil } }
@@ -108,10 +105,7 @@ struct ProfileV3ProgrammeOverview: Equatable {
             passID: passID,
             holderName: holderName,
             programmes: remaining,
-            connectedCount: remaining.count < programmes.count ? max(0, connectedCount - 1) : connectedCount,
             summary: summary,
-            pointsLabel: pointsLabel,
-            estimatedValueLabel: estimatedValueLabel,
             reorderAction: reorderAction
         )
     }
