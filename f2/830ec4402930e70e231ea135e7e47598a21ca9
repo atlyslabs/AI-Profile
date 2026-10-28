@@ -1,0 +1,100 @@
+Sources/ATAIProfile/Data/ProfileV3PassportFixtures.swift
+  s_aca99db70bc6e3::t_5bdc577bd90d26 55-67
+Sources/ATAIProfile/Views/ProfileV3TravelPersonaView.swift
+  s_aca99db70bc6e3::t_dd0647a7cc6f89 66
+Sources/ATAIProfile/Components/ProfileV3PersonaProcessingCard.swift
+  s_aca99db70bc6e3::t_981101d1386e2e 97
+  s_aca99db70bc6e3::t_1b8034720827ce 124-127,195
+  s_aca99db70bc6e3::t_e0981e539d030d 74,177-178,183-194
+  s_aca99db70bc6e3::t_8cf5a674d07581 33,58-73
+  s_aca99db70bc6e3::t_8d7658210e111c 196
+Tests/ATAIProfileTests/ProfileV3PersonaProcessingTests.swift
+  s_aca99db70bc6e3::t_1df8e044a4ffee 37-41,43-60,62-64
+  s_aca99db70bc6e3::t_1befd8aeff021b 61
+  s_aca99db70bc6e3::t_30f46691b019a8 42
+Sources/ATAIProfile/Data/DTOs/ProfileV3PassportDTO.swift
+  s_aca99db70bc6e3::t_68f830d19944d3 50-61
+Sources/ATAIProfile/Components/ProfileV3FormSectionView.swift
+  s_aca99db70bc6e3::t_d4a45b08fab83e 119-120
+Tests/ATAIProfileTests/ProfileV3PassportEmptyStateTests.swift
+  s_aca99db70bc6e3::t_fbfde1550d19d7 1-206
+Sources/ATAIProfile/Presentation/ProfileV3AgentFormViewModel.swift
+  s_aca99db70bc6e3::t_addd9a0c67a817 134-139,146-149
+  s_aca99db70bc6e3::t_4a97274fa7096f 114-115
+  s_aca99db70bc6e3::t_1e2811cf153f51 150-151
+Sources/ATAIProfile/Domain/ProfileV3Passport.swift
+  s_aca99db70bc6e3::t_4adfd870ab8f34 52-53
+  s_aca99db70bc6e3::t_66a723eabd19f6 45-51
+CLAUDE.md
+  s_aca99db70bc6e3::t_d69853e40cdaf0 1139
+  s_aca99db70bc6e3::t_c97f1ae8690d6d 1239
+  s_aca99db70bc6e3::t_25735824ac6794 34
+  s_aca99db70bc6e3::t_ef7b0bce826ef0 1140
+  s_aca99db70bc6e3::t_8a71bb181f1cc3 21
+  s_aca99db70bc6e3::t_3e06a7fd57a7a4 65
+  s_aca99db70bc6e3::t_81fcd053c01be8 1122-1137
+  s_aca99db70bc6e3::t_45db6dab03f425 1194
+  s_aca99db70bc6e3::t_c648eeaf67f8aa 1138
+Tests/ATAIProfileTests/ProfileV3HouseholdScrollTests.swift
+  s_aca99db70bc6e3::t_0e650f3b518d24 26-29
+  s_aca99db70bc6e3::t_556172fb87645d 1-25,30-54
+Sources/ATAIProfile/Views/ProfileV3HubView.swift
+  s_aca99db70bc6e3::t_8dc0e44c7cf0ed 15
+  s_aca99db70bc6e3::t_dab24839b7acb6 147-175,181-187
+  s_aca99db70bc6e3::t_abf1c39c1add66 188-189
+Sources/ATAIProfile/Components/ProfileV3ContinueButton.swift
+  s_aca99db70bc6e3::t_f6aee17ba4224e 39
+  s_aca99db70bc6e3::t_2abcffea2aaf29 8
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_ios_share.imageset/Contents.json
+  s_aca99db70bc6e3::t_3290b1519c2b4a 1-16
+Sources/ATAIProfile/Data/DTOs/ProfileV3AgentDTO.swift
+  s_aca99db70bc6e3::t_6172c51b3de2d0 47,56
+  s_aca99db70bc6e3::t_47b03257fe06dc 72
+Sources/ATAIProfile/Support/ProfileV3Theme+Settings.swift
+  s_aca99db70bc6e3::t_321d61f541ae71 138
+  s_aca99db70bc6e3::t_48d1db261e8eb7 147,150-151,153
+Sources/ATAIProfile/Support/ProfileV3Assets.swift
+  s_aca99db70bc6e3::t_f3f6291cef8cb4 26
+CHANGELOG.md
+  s_aca99db70bc6e3::t_2c0a59f8ac5089 20-28
+  s_aca99db70bc6e3::t_2fd1ef7cf79de8 32-33
+Sources/ATAIProfile/Data/Mappers/ProfileV3PassportMapper.swift
+  s_aca99db70bc6e3::t_6cfa26371de6b6 16-39
+Sources/ATAIProfile/Support/ProfileV3Theme+PersonaProcessing.swift
+  s_aca99db70bc6e3::t_5030eb051db2f5 55
+Sources/ATAIProfile/Data/Mappers/ProfileV3AgentMapper.swift
+  s_aca99db70bc6e3::t_24fc045ba44766 61-65,79
+  s_aca99db70bc6e3::t_b5203c7f6dbe31 92,98-101
+Sources/ATAIProfile/Data/ProfileV3LiveRepository.swift
+  s_aca99db70bc6e3::t_ca64474e470a45 44-49,57-58
+Tests/ATAIProfileTests/ProfileV3TravelPersonaTests.swift
+  s_aca99db70bc6e3::t_e978c694309805 376
+  s_aca99db70bc6e3::t_05bde71a72c798 349,355,359-360
+Sources/ATAIProfile/Components/ProfileV3PassportCard.swift
+  s_aca99db70bc6e3::t_0a926ec8bdf161 7
+  s_aca99db70bc6e3::t_acb93409a1b990 37
+  s_aca99db70bc6e3::t_4170119bc6ff5b 60-63,66-82
+  s_aca99db70bc6e3::t_fdf3fcaed3dc46 169,172-193,197
+  s_aca99db70bc6e3::t_e760d1e0fb18a2 264
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_ios_share.imageset/profile_v3_ios_share.svg
+  s_aca99db70bc6e3::t_c4a9df6f23330e 1-3
+Sources/ATAIProfile/Presentation/ProfileV3TravelPersonaViewModel.swift
+  s_aca99db70bc6e3::t_40a072b04082c7 85
+  s_aca99db70bc6e3::t_0b9bf57b536715 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f2830ec4402930e70e231ea135e7e47598a21ca9",
+  "prompts": {},
+  "sessions": {
+    "s_aca99db70bc6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "af994f3e-966b-4461-9c19-ecffb292ed42",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
