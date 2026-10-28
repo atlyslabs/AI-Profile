@@ -13,6 +13,9 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
+- A phone number stored without a country code is read against the host's residence
+  (`ATCoreBaseProvider.userResidencyCode`, from the registered configuration provider) instead of
+  the device's region. The device region, then India, are used only when the host gives none.
 - The hub's add-traveller sheet closes Settings first when Settings is open, instead of opening a
   second settings presenter.
 - The travel persona radar and its loading dial have no title. The "Traveler profile" heading is
