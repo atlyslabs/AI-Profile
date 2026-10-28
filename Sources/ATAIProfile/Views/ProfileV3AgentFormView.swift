@@ -5,6 +5,8 @@ struct ProfileV3AgentFormView: View {
     @ObservedObject var viewModel: ProfileV3AgentFormViewModel
     @State private var headerPin = ProfileV3HeaderPin()
 
+    private static let customRulesID = "customRules"
+
     private var form: ProfileV3AgentForm { viewModel.form }
 
     var body: some View {
@@ -114,6 +116,12 @@ struct ProfileV3AgentFormView: View {
     }
 
     private var content: some View {
+        ScrollViewReader { proxy in
+            formContent(scrollingWith: proxy)
+        }
+    }
+
+    private func formContent(scrollingWith proxy: ScrollViewProxy) -> some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
                 ProfileV3AvatarOrb(imageURL: viewModel.avatarURL, size: ProfileV3Theme.Sizes.Agent.orbLarge)
@@ -140,7 +148,7 @@ struct ProfileV3AgentFormView: View {
                     )
                     .padding(.top, ProfileV3Theme.Space.s24)
                 }
-                sections
+                sections(scrollingWith: proxy)
                     .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                     .padding(.top, ProfileV3Theme.Space.s50)
             }
@@ -155,7 +163,7 @@ struct ProfileV3AgentFormView: View {
         .background(Color(at: .pureWhite))
     }
 
-    private var sections: some View {
+    private func sections(scrollingWith proxy: ScrollViewProxy) -> some View {
         VStack(spacing: ProfileV3Theme.Space.s32) {
             if let card = form.liveMedicalCard {
                 ProfileV3MedicalCardView(
@@ -190,7 +198,10 @@ struct ProfileV3AgentFormView: View {
                 .equatable()
             }
             if let customRules = viewModel.customRules {
-                ProfileV3CustomRulesSection(model: customRules)
+                ProfileV3CustomRulesSection(model: customRules) {
+                    proxy.scrollTo(Self.customRulesID, anchor: .bottom)
+                }
+                .id(Self.customRulesID)
             }
         }
     }

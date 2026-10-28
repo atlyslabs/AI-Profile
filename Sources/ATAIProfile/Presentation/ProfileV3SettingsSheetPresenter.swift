@@ -6,6 +6,7 @@ import UIKit
 final class ProfileV3SettingsSheetPresenter {
 
     private unowned let navCon: UINavigationController
+    private let onboarding: ProfileV3OnboardingPresentation
     private let repository: any ProfileV3SettingsRepository
     private let kyc: any ProfileV3KYCHost
     private let account: any ProfileV3AccountHost
@@ -31,6 +32,7 @@ final class ProfileV3SettingsSheetPresenter {
 
     init(
         navCon: UINavigationController,
+        onboarding: ProfileV3OnboardingPresentation,
         repository: any ProfileV3SettingsRepository,
         board: (any ProfileV3BoardRepository)?,
         kyc: any ProfileV3KYCHost,
@@ -49,6 +51,7 @@ final class ProfileV3SettingsSheetPresenter {
         onFinish: @escaping (ProfileV3SettingsSheetPresenter) -> Void
     ) {
         self.navCon = navCon
+        self.onboarding = onboarding
         self.repository = repository
         self.kyc = kyc
         self.account = account
@@ -248,7 +251,7 @@ extension ProfileV3SettingsSheetPresenter: ProfileV3ConnectorsRouting {
         let navCon = navCon
         let origin = navCon.topViewController
         isAwaitingOnboarding = true
-        kyc.startOnboarding(on: navCon) { [weak self] _ in
+        ProfileV3OnboardingLauncher.start(onboarding, using: kyc, on: navCon) { [weak self] _ in
             guard let self else { return }
             isAwaitingOnboarding = false
             reportFinish()

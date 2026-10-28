@@ -3,20 +3,33 @@ import SwiftUI
 
 struct ProfileV3CustomRulesSection: View {
     @ObservedObject var model: ProfileV3CustomRulesModel
+    var onReveal: () -> Void = {}
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private typealias Sizes = ProfileV3Theme.Sizes.CustomRules
+    private static let rowStartID = "customRules.rowStart"
 
     var body: some View {
         if !model.rules.isEmpty {
             VStack(alignment: .leading, spacing: 0) {
                 ProfileV3SectionHeader(title: ProfileV3Strings.customRulesTitle, status: .complete)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: Sizes.cardSpacing) {
-                        ForEach(model.rules) { rule in
-                            ProfileV3CustomRuleCard(text: rule.text) { model.startEditing(rule) }
+                ScrollViewReader { row in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: Sizes.cardSpacing) {
+                            ForEach(model.rules) { rule in
+                                ProfileV3CustomRuleCard(text: rule.text) { model.startEditing(rule) }
+                            }
+                        }
+                        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                        .id(Self.rowStartID)
+                    }
+                    .onChange(of: model.revealedRuleID) {
+                        withAnimation(reduceMotion ? nil : ProfileV3Theme.Motion.customRuleReveal) {
+                            row.scrollTo(Self.rowStartID, anchor: .leading)
+                            onReveal()
                         }
                     }
-                    .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 }
                 .padding(.horizontal, -ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.top, Sizes.cardsTop)
@@ -81,10 +94,9 @@ struct ProfileV3CustomRuleNote<Content: View>: View {
             ProfileV3CustomRuleArt.watermark.image
                 .resizable()
                 .frame(width: Sizes.watermark.width, height: Sizes.watermark.height)
-                .position(
-                    x: Sizes.note.width / 2 + Sizes.watermarkCentreOffset.width,
-                    y: Sizes.note.height / 2 + Sizes.watermarkCentreOffset.height
-                )
+                .padding(.trailing, Sizes.watermarkInset.width)
+                .padding(.bottom, Sizes.watermarkInset.height)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 .accessibilityHidden(true)
             Text(ProfileV3Strings.ruleNoteLabel)
                 .font(.system(size: Sizes.noteLabelSize, weight: .bold, design: .monospaced))
@@ -96,11 +108,13 @@ struct ProfileV3CustomRuleNote<Content: View>: View {
                 .accessibilityHidden(true)
             content
                 .frame(width: Sizes.noteTextWidth, alignment: .topLeading)
-                .frame(maxHeight: Sizes.note.height - Sizes.noteTextTop - Sizes.noteTextBottom, alignment: .topLeading)
+                .frame(maxHeight: .infinity, alignment: .topLeading)
                 .padding(.leading, Sizes.noteTextLeading)
                 .padding(.top, Sizes.noteTextTop)
+                .padding(.bottom, Sizes.noteTextBottom)
         }
-        .frame(width: Sizes.note.width, height: Sizes.note.height)
+        .frame(width: Sizes.note.width)
+        .frame(minHeight: Sizes.noteMinHeight, idealHeight: Sizes.note.height, maxHeight: Sizes.note.height)
         .clipShape(shape)
     }
 }
@@ -128,15 +142,12 @@ private struct ProfileV3CustomRuleEditor: View {
     private typealias Sizes = ProfileV3Theme.Sizes.CustomRules
 
     var body: some View {
-        VStack(spacing: 0) {
+        ProfileV3CustomRuleEditorLayout {
             header
             notes
-                .padding(.top, Sizes.noteTop - ProfileV3Theme.Sizes.circleButton)
             bottom
-                .padding(.top, Sizes.pillTop)
-            Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
             Color(at: .pureWhite)
                 .opacity(ProfileV3Theme.Opacity.ruleBackdrop)
@@ -145,8 +156,6 @@ private struct ProfileV3CustomRuleEditor: View {
         }
         .animation(ProfileV3Theme.Motion.saveState, value: model.phase)
         .animation(ProfileV3Theme.Motion.saveState, value: model.canSave)
-        .animation(ProfileV3Theme.Motion.saveState, value: model.dropped)
-        .sensoryFeedback(.success, trigger: model.dropped) { _, dropped in dropped != nil }
         .sensoryFeedback(.success, trigger: model.phase) { _, phase in phase == .saved }
         .sensoryFeedback(.error, trigger: model.errorMessage) { _, message in message != nil }
         .onAppear { isFocused = true }
@@ -181,10 +190,6 @@ private struct ProfileV3CustomRuleEditor: View {
                     .focused($isFocused)
                     .disabled(model.phase != .editing)
                     .accessibilityLabel(ProfileV3Strings.ruleNoteLabel)
-            }
-            if let dropped = model.dropped {
-                ProfileV3CustomRuleDrop(text: dropped.text)
-                    .id(dropped.id)
             }
         }
         .overlay(alignment: .topTrailing) {
@@ -221,7 +226,7 @@ private struct ProfileV3CustomRuleEditor: View {
                     .transition(.opacity)
             }
             if editor.isAdding {
-                if model.showsSavedToast {
+                if model.phase == .saved {
                     ProfileV3CustomRulePill(title: ProfileV3Strings.customRuleSaved)
                         .transition(.opacity)
                         .accessibilityAddTraits(.updatesFrequently)
@@ -287,63 +292,57 @@ private struct ProfileV3CustomRulePill: View {
     }
 }
 
-private struct ProfileV3CustomRuleDropFrame {
-    var glow: Double = 0
-    var y: CGFloat = 0
-    var angle: Double = 0
-    var opacity: Double = 1
+struct ProfileV3CustomRuleEditorFit {
+    let noteGap: CGFloat
+    let noteHeight: CGFloat
+    let pillGap: CGFloat
+
+    init(height: CGFloat, header: CGFloat, bottom: CGFloat) {
+        typealias Sizes = ProfileV3Theme.Sizes.CustomRules
+        var noteGap = Sizes.noteTop - ProfileV3Theme.Sizes.circleButton
+        var noteHeight = Sizes.note.height
+        var pillGap = Sizes.pillTop
+        var overflow = header + noteGap + noteHeight + pillGap + bottom + Sizes.pillMinBottom - height
+        overflow = Self.squeeze(&pillGap, to: Sizes.pillMinTop, by: overflow)
+        overflow = Self.squeeze(&noteGap, to: Sizes.noteMinTop, by: overflow)
+        Self.squeeze(&noteHeight, to: Sizes.noteMinHeight, by: overflow)
+        self.noteGap = noteGap
+        self.noteHeight = noteHeight
+        self.pillGap = pillGap
+    }
+
+    @discardableResult
+    private static func squeeze(_ length: inout CGFloat, to minimum: CGFloat, by overflow: CGFloat) -> CGFloat {
+        let cut = min(max(overflow, 0), max(length - minimum, 0))
+        length -= cut
+        return overflow - cut
+    }
 }
 
-private struct ProfileV3CustomRuleDrop: View {
-    let text: String
+private struct ProfileV3CustomRuleEditorLayout: Layout {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        proposal.replacingUnspecifiedDimensions()
+    }
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    private typealias Sizes = ProfileV3Theme.Sizes.CustomRules
-    private typealias Motion = ProfileV3Theme.Motion
-
-    var body: some View {
-        if !reduceMotion {
-            ProfileV3CustomRuleNote {
-                Text(text)
-                    .typoGraphy(.H7InterMedium16)
-                    .foregroundStyle(ProfileV3Theme.Palette.ruleNoteText)
-            }
-            .keyframeAnimator(initialValue: ProfileV3CustomRuleDropFrame(), repeating: false) { content, frame in
-                content
-                    .overlay {
-                        ProfileV3Theme.ruleGlow
-                            .opacity(frame.glow)
-                            .clipShape(RoundedRectangle(cornerRadius: Sizes.noteRadius, style: .continuous))
-                    }
-                    .rotationEffect(.degrees(frame.angle))
-                    .offset(y: frame.y)
-                    .opacity(frame.opacity)
-            } keyframes: { _ in
-                KeyframeTrack(\.glow) {
-                    LinearKeyframe(ProfileV3Theme.Opacity.ruleGlowPeak, duration: Motion.customRuleGlowIn, timingCurve: .easeInOut)
-                    LinearKeyframe(0, duration: Motion.customRuleGlowOut, timingCurve: .easeInOut)
-                }
-                KeyframeTrack(\.y) {
-                    LinearKeyframe(0, duration: Motion.customRuleHold)
-                    LinearKeyframe(Sizes.dropLift, duration: Motion.customRuleLift, timingCurve: .easeOut)
-                    LinearKeyframe(Sizes.dropMid, duration: Motion.customRuleFallStart, timingCurve: .easeIn)
-                    LinearKeyframe(Sizes.dropFall, duration: Motion.customRuleFallEnd, timingCurve: .easeIn)
-                }
-                KeyframeTrack(\.angle) {
-                    LinearKeyframe(0, duration: Motion.customRuleHold)
-                    LinearKeyframe(Sizes.dropLeanBack, duration: Motion.customRuleLift, timingCurve: .easeOut)
-                    LinearKeyframe(Sizes.dropTiltMid, duration: Motion.customRuleFallStart, timingCurve: .easeInOut)
-                    LinearKeyframe(Sizes.dropTilt, duration: Motion.customRuleFallEnd, timingCurve: .easeIn)
-                }
-                KeyframeTrack(\.opacity) {
-                    LinearKeyframe(1, duration: Motion.customRuleHold + Motion.customRuleLift + Motion.customRuleFallStart)
-                    LinearKeyframe(0, duration: Motion.customRuleFallEnd, timingCurve: .easeIn)
-                }
-            }
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
-        }
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard subviews.count == 3 else { return }
+        let header = subviews[0]
+        let notes = subviews[1]
+        let bottom = subviews[2]
+        let width = ProposedViewSize(width: bounds.width, height: nil)
+        let headerHeight = header.sizeThatFits(width).height
+        let bottomHeight = bottom.sizeThatFits(width).height
+        let fit = ProfileV3CustomRuleEditorFit(height: bounds.height, header: headerHeight, bottom: bottomHeight)
+        var y = bounds.minY
+        header.place(at: CGPoint(x: bounds.minX, y: y), proposal: width)
+        y += headerHeight + fit.noteGap
+        notes.place(
+            at: CGPoint(x: bounds.midX, y: y),
+            anchor: .top,
+            proposal: ProposedViewSize(width: bounds.width, height: fit.noteHeight)
+        )
+        y += fit.noteHeight + fit.pillGap
+        bottom.place(at: CGPoint(x: bounds.midX, y: y), anchor: .top, proposal: width)
     }
 }
 

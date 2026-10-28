@@ -489,14 +489,9 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return ProfileV3PastTripsMapper.addScreen(dto)
     }
 
-    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, date: ProfileV3TripYearMonth?) async throws {
-        let request = ProfileV3PastTripsMapper.addRequest(submit, country: country, date: date)
+    func addPastTrips(_ submit: ProfileV3BoardAction, countries: [String]) async throws {
+        let request = ProfileV3PastTripsMapper.addRequest(submit, countries: countries)
         try await self.submit(try JSONEncoder().encode(request), action: submit.name ?? "add_past_trip")
-    }
-
-    func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws {
-        let request = ProfileV3BoardSubmitRequest(action: submit, extras: ["year": .int(year), "month": .int(month)])
-        try await self.submit(try JSONEncoder().encode(request), action: submit.name ?? "edit_past_trip")
     }
 
     func deletePastTrip(_ submit: ProfileV3BoardAction) async throws {

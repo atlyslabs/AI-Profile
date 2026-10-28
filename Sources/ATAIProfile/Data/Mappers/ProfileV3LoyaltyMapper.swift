@@ -33,10 +33,7 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
             passID: profileID,
             holderName: holder,
             programmes: programmes,
-            connectedCount: dto.count?.intValue ?? programmes.count,
             summary: dto.subtitle ?? "",
-            pointsLabel: dto.stats?.pointsTotal?.stringValue ?? "",
-            estimatedValueLabel: dto.stats?.estValue?.stringValue ?? "",
             reorderAction: text(dto.reorder?.action)
         )
     }

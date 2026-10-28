@@ -92,7 +92,6 @@ final class ProfileV3HubViewModel {
 
     private let repository: any ProfileV3HubRepository
     private let hints: ProfileV3HubHints
-    private let addsTripsWithoutDate: Bool
     private var board: ProfileV3Board?
     private var loadedPassID: String?
     private var isLoadingBoard = false
@@ -120,12 +119,10 @@ final class ProfileV3HubViewModel {
         repository: any ProfileV3HubRepository,
         hints: ProfileV3HubHints = ProfileV3HubHints(),
         userFirstName: String? = nil,
-        addsTripsWithoutDate: Bool = false,
         photoPlaces: ProfileV3PhotoPlacesSync? = nil
     ) {
         self.repository = repository
         self.hints = hints
-        self.addsTripsWithoutDate = addsTripsWithoutDate
         placeholderName = userFirstName?.nonEmpty?.lowercased()
         showsHoldHint = hints.isHoldHintDue
         playsFlipDemo = hints.isFlipDemoDue
@@ -628,7 +625,6 @@ final class ProfileV3HubViewModel {
             pass: pass,
             repository: repository,
             startsAdding: startsAdding,
-            addsTripsWithoutDate: addsTripsWithoutDate,
             onChange: { [weak self] in self?.refreshAfterTripChange() },
             onClose: { [weak self] in self?.dismissPastTrips() }
         )

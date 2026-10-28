@@ -817,8 +817,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileProfileButtonAddPastTrip: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-profile-button-add-past-trip", fallback: "Add past trip") }
   /// Button for adding past travel trips in the user profile.
   internal static var moAiprofileProfileButtonAddPastTrips: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-profile-button-add-past-trips", fallback: "Add past trips") }
-  /// Pill on an undated past trip card that opens the duration picker.
-  internal static var moAiprofileProfileButtonAddTripDates: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-profile-button-add-trip-dates", fallback: "Add dates") }
   /// Cancel action on the delete past trip / delete account confirmations.
   internal static var moAiprofileProfileButtonDontDelete: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-profile-button-dont-delete", fallback: "Don't delete") }
   /// Button to save user changes.

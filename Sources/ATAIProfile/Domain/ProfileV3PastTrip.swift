@@ -7,7 +7,6 @@ struct ProfileV3PastTrip: Identifiable, Equatable, Sendable {
     var imageURL: URL?
     var name: String?
     var monthLabel: String?
-    var edit: ProfileV3TripAction?
     var delete: ProfileV3TripAction?
 
     var sortKey: Int { date.map { $0.year * 100 + $0.month } ?? 0 }
@@ -28,17 +27,12 @@ struct ProfileV3PastTrip: Identifiable, Equatable, Sendable {
     }
 
     func matches(_ draft: ProfileV3PastTripDraft) -> Bool {
-        countryCode == draft.countryCode && date == draft.date
-    }
-
-    func duplicates(_ draft: ProfileV3PastTripDraft) -> Bool {
-        draft.date == nil ? countryCode == draft.countryCode : matches(draft)
+        countryCode == draft.countryCode
     }
 }
 
 struct ProfileV3PastTripDraft: Equatable, Sendable {
     let countryCode: String
-    let date: ProfileV3TripYearMonth?
 }
 
 struct ProfileV3TripAction: Equatable, Sendable {
@@ -51,57 +45,6 @@ struct ProfileV3TripYearMonth: Equatable, Sendable {
     let month: Int
 }
 
-struct ProfileV3TripMonth: Equatable, Sendable {
-    let value: Int
-    let label: String
-}
-
-struct ProfileV3TripDuration: Equatable, Sendable {
-    var title: String
-    var yearLabel: String
-    var monthLabel: String
-    var years: [Int]
-    var months: [ProfileV3TripMonth]
-    var max: ProfileV3TripYearMonth?
-    var defaultValue: ProfileV3TripYearMonth?
-    var ctaLabel: String
-
-    var pickableYears: [Int] {
-        guard let max else { return years }
-        return years.filter { $0 <= max.year }
-    }
-
-    func months(in year: Int?) -> [ProfileV3TripMonth] {
-        guard let max, let year, year >= max.year else { return months }
-        return months.filter { $0.value <= max.month }
-    }
-
-    func label(forMonth value: Int) -> String {
-        months.first { $0.value == value }?.label ?? ProfileV3TripCalendar.shortMonthName(value)
-    }
-
-    static func fallback(
-        now: Date = Date(),
-        calendar: Calendar = Calendar(identifier: .gregorian)
-    ) -> ProfileV3TripDuration {
-        let today = calendar.dateComponents([.year, .month], from: now)
-        let year = today.year ?? 0
-        let month = today.month ?? 1
-        return ProfileV3TripDuration(
-            title: "",
-            yearLabel: "",
-            monthLabel: "",
-            years: Array((year - ProfileV3Theme.Counts.pastTripYears)...year),
-            months: (1...ProfileV3Theme.Counts.monthsInYear).map {
-                ProfileV3TripMonth(value: $0, label: ProfileV3TripCalendar.shortMonthName($0))
-            },
-            max: ProfileV3TripYearMonth(year: year, month: month),
-            defaultValue: ProfileV3TripYearMonth(year: year, month: month),
-            ctaLabel: ""
-        )
-    }
-}
-
 struct ProfileV3TripDeleteConfirm: Equatable, Sendable {
     let title: String
     let confirmLabel: String
@@ -112,7 +55,6 @@ struct ProfileV3PastTripsScreen: Equatable, Sendable {
     var title: String
     var trips: [ProfileV3PastTrip]
     var addDirective: ProfileV3Directive?
-    var duration: ProfileV3TripDuration?
     var deleteConfirm: ProfileV3TripDeleteConfirm?
 }
 
@@ -121,7 +63,6 @@ struct ProfileV3AddTripScreen: Equatable, Sendable {
     var searchPlaceholder: String
     var countryCTA: String
     var countries: [ProfileV3Country]
-    var duration: ProfileV3TripDuration?
     var submit: ProfileV3BoardAction?
 }
 
@@ -139,10 +80,6 @@ enum ProfileV3TripCalendar {
 
     static func monthName(_ month: Int) -> String {
         symbols.standaloneMonthSymbols[safe: month - 1] ?? ""
-    }
-
-    static func shortMonthName(_ month: Int) -> String {
-        (symbols.shortStandaloneMonthSymbols[safe: month - 1] ?? "").uppercased()
     }
 }
 

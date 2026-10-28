@@ -535,7 +535,6 @@ private final class CachedBoardRepository: ProfileV3HubRepository, @unchecked Se
     func loadCoupon(id: String) async throws -> ProfileV3CouponDetail? { nil }
     func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen { throw CancellationError() }
     func loadAddTrip(profileID: String) async throws -> ProfileV3AddTripScreen { throw CancellationError() }
-    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, date: ProfileV3TripYearMonth?) async throws {}
-    func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws {}
+    func addPastTrips(_ submit: ProfileV3BoardAction, countries: [String]) async throws {}
     func deletePastTrip(_ submit: ProfileV3BoardAction) async throws {}
 }

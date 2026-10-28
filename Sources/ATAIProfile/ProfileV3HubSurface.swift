@@ -22,6 +22,7 @@ private struct ProfileV3HubContainer: UIViewControllerRepresentable {
             environment: ProfileV3EntryPoint.environment,
             userFirstName: ProfileV3EntryPoint.environment.account.snapshot().firstName,
             entrySource: .chat,
+            onboarding: .fullScreen,
             onBack: onClose
         )
         navigationController.setViewControllers([hub], animated: false)

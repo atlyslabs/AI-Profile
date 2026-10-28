@@ -543,19 +543,12 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         return ProfileV3PastTripsFixtures.addScreen(profileID: profileID)
     }
 
-    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, date: ProfileV3TripYearMonth?) async throws {
+    func addPastTrips(_ submit: ProfileV3BoardAction, countries: [String]) async throws {
         try await Task.sleep(for: delay)
         let profileID = submit.fields["profile_id"]?.stringValue ?? ""
-        await pastTrips.add(ProfileV3PastTripDraft(countryCode: country, date: date), profileID: profileID)
-    }
-
-    func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws {
-        try await Task.sleep(for: delay)
-        guard let id = submit.fields["trip_id"]?.stringValue,
-              let profileID = submit.fields["profile_id"]?.stringValue else {
-            throw ProfileV3RepositoryError.unavailable
+        for country in countries {
+            await pastTrips.add(ProfileV3PastTripDraft(countryCode: country), profileID: profileID)
         }
-        try await pastTrips.reschedule(id: id, year: year, month: month, profileID: profileID)
     }
 
     func deletePastTrip(_ submit: ProfileV3BoardAction) async throws {

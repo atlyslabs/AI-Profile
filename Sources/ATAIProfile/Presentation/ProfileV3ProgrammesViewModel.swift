@@ -168,7 +168,6 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
         if isEditing {
             ProfileV3Analytics.cardEditClicked(travellerId: pass.id)
         }
-        ProfileV3Analytics.programmeEditToggled(toState: isEditing ? .editing : .done)
     }
 
     func moveProgramme(_ id: String, to targetID: String) {

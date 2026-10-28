@@ -6,7 +6,6 @@ struct ProfileV3PastTripCard: View {
     let reveals: Bool
     let sheenDelay: Double?
     var onRevealEnd: (() -> Void)?
-    var onAddDates: (() -> Void)?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var photoBlur: CGFloat
@@ -26,14 +25,12 @@ struct ProfileV3PastTripCard: View {
         trip: ProfileV3PastTrip,
         reveals: Bool = false,
         sheenDelay: Double? = nil,
-        onRevealEnd: (() -> Void)? = nil,
-        onAddDates: (() -> Void)? = nil
+        onRevealEnd: (() -> Void)? = nil
     ) {
         self.trip = trip
         self.reveals = reveals
         self.sheenDelay = sheenDelay
         self.onRevealEnd = onRevealEnd
-        self.onAddDates = trip.date == nil ? onAddDates : nil
         _photoBlur = State(initialValue: reveals ? ProfileV3Theme.Sizes.PastTrips.revealPhotoBlur : 0)
         _yearBlur = State(initialValue: reveals ? ProfileV3Theme.Sizes.PastTrips.revealYearBlur : 0)
     }
@@ -61,11 +58,6 @@ struct ProfileV3PastTripCard: View {
         .background { glow }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityLabel)
-        .accessibilityActions {
-            if let onAddDates {
-                Button(ProfileV3Strings.pastTripAddDates, action: onAddDates)
-            }
-        }
         .task(id: reveals) { await play() }
     }
 
@@ -133,38 +125,10 @@ struct ProfileV3PastTripCard: View {
                     .foregroundStyle(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.tripMonth))
                     .padding(.top, Sizes.monthTop)
             }
-            if let onAddDates {
-                addDatesPill(onAddDates)
-                    .padding(.top, Sizes.addDatesTop)
-            }
         }
-        .padding(.top, onAddDates == nil ? Sizes.flagTop : Sizes.flagTop + Sizes.undatedDrop)
+        .padding(.top, Sizes.flagTop)
         .padding(.horizontal, ProfileV3Theme.Space.s20)
         .offset(y: -nameHeights.extra)
-    }
-
-    private func addDatesPill(_ action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: Sizes.addDatesGap) {
-                ATIcon.SwiftUIImage.add
-                    .profileV3Icon(Sizes.addDatesIcon)
-                Text(ProfileV3Strings.pastTripAddDates)
-                    .typoGraphy(.B2InterSemibold12)
-            }
-            .foregroundStyle(Color(at: .pureWhite))
-            .padding(.leading, Sizes.addDatesLeading)
-            .padding(.trailing, Sizes.addDatesTrailing)
-            .frame(height: Sizes.addDatesHeight)
-            .background(Capsule().fill(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.tripAddDatesFill)))
-            .overlay(Capsule().strokeBorder(ProfileV3Theme.Palette.tripAddDatesStroke, lineWidth: Sizes.addDatesStroke))
-            .shadow(
-                color: Color.black.opacity(ProfileV3Theme.Opacity.tripAddDatesShadow),
-                radius: Sizes.addDatesShadowRadius,
-                y: Sizes.addDatesShadowY
-            )
-            .contentShape(Capsule())
-        }
-        .buttonStyle(.profileV3Pressable(.selection))
     }
 
     @ViewBuilder

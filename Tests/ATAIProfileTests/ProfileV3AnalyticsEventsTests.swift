@@ -100,7 +100,9 @@ struct ProfileV3AnalyticsEventsTests {
             await viewModel.start()
             try await Self.waitForCatalogue(viewModel)
             let items = viewModel.filteredCatalogue
-            try #require(items.count >= 4)
+            try #require(items.count >= 8)
+            viewModel.selectItem(items[1].id)
+            #expect(recorder.named("profile_connector_program_card_scrolled").map { $0.string("slideDepthPercentage") } == ["25"])
             for item in items.dropFirst() { viewModel.selectItem(item.id) }
             for item in items.reversed() { viewModel.selectItem(item.id) }
 
@@ -125,6 +127,10 @@ struct ProfileV3AnalyticsEventsTests {
             let details = try #require(entered.parameters["loyaltyDetails"] as? [String: Any])
             #expect(details["points"] as? Int == 1200)
             #expect(details["membership_number"] == nil)
+            while viewModel.isSaving { try await Task.sleep(for: .milliseconds(10)) }
+            #expect(viewModel.didAdd)
+            #expect(recorder.named("profile_programme_selected").isEmpty)
+            #expect(recorder.named("profile_programme_added").isEmpty)
             viewModel.close()
         }
     }
@@ -175,6 +181,7 @@ struct ProfileV3AnalyticsEventsTests {
             #expect(insight.string("cardName") == programme.name)
             #expect(insight.string("insightShown")?.isEmpty == false)
             #expect(recorder.named("profile_programme_viewed").isEmpty)
+            #expect(recorder.named("profile_programme_edit_toggled").isEmpty)
         }
     }
 
@@ -221,6 +228,90 @@ struct ProfileV3AnalyticsEventsTests {
         let connectors = recorder.named("screen_view").first { $0.string("screenName") == "aiProfileConnectors" }
         #expect(connectors?.string("travellerId") == "main")
         #expect(recorder.named("profile_settings_row_clicked").isEmpty)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func theCredentialStoreReportsEachStepOfAddingALogin() async throws {
+        let recorder = AnalyticsRecorder()
+        try await ProfileV3Analytics.$scopedReporter.withValue(recorder) {
+            let settings = ProfileV3SettingsViewModel(
+                deps: .preview(),
+                repository: ProfileV3MockRepository(delay: .zero),
+                profileID: "main"
+            )
+            settings.tapCredentialStore()
+            settings.credentialStore.cancelReads()
+
+            let repository = ProfileV3MockRepository(delay: .zero)
+            let store = ProfileV3CredentialStoreModel(repository: repository, unlock: { .unlocked })
+            store.tapAdd()
+            while store.sites == nil { try await Task.sleep(for: .milliseconds(10)) }
+            let site = try #require(store.sites?.first)
+            store.pick(site)
+            let editor = try #require(store.editor)
+            #expect(editor.openWebsite() != nil)
+            editor.credentials.username = "ada@example.com"
+            editor.credentials.password = "secret"
+            editor.submit()
+            while editor.phase != .succeeded { try await Task.sleep(for: .milliseconds(10)) }
+            store.pickOtherWebsite(" www.Example.org/login ")
+
+            let saved = ProfileV3VaultFixtures.entries[0].credential
+            #expect(ProfileV3AppCredentialsViewModel(mode: .vaultEdit(saved), origin: .page, repository: repository).openWebsite() != nil)
+            let app = ProfileV3AppCredentialsViewModel(mode: .newPassword, origin: .page, repository: repository)
+            app.credentials.website = "abc.com"
+            #expect(app.openWebsite() != nil)
+        }
+
+        let vault = recorder.events.filter { $0.name.hasPrefix("pass_vault_") }
+        #expect(vault.map(\.name) == [
+            "pass_vault_clicked",
+            "pass_vault_add_credentials_clicked",
+            "pass_vault_website_selected",
+            "pass_vault_website_clicked",
+            "pass_vault_credentials_added",
+            "pass_vault_website_selected",
+            "pass_vault_website_clicked"
+        ])
+        #expect(vault[0].string("actionSource") == "settings")
+        for event in vault[2...4] {
+            #expect(event.string("website") == "singaporeair.com")
+            #expect(event.string("cardName") == "Singapore Airlines KrisFlyer")
+        }
+        #expect(vault[4].string("emailAdded") == "ada@example.com")
+        #expect(vault[5].string("website") == "example.org")
+        #expect(vault[5].string("cardName") == "other_website")
+        #expect(vault[6].string("website") == "hdfcbank.in")
+        #expect(vault[6].string("cardName") == "myhdfcbank.com")
+    }
+
+    @Test func theGloveBoxReportsOpeningAndEachItemTouched() {
+        let recorder = AnalyticsRecorder()
+        ProfileV3Analytics.$scopedReporter.withValue(recorder) {
+            let settings = ProfileV3SettingsViewModel(
+                deps: .preview(),
+                repository: ProfileV3MockRepository(delay: .zero),
+                profileID: "main"
+            )
+            settings.tapGloveBox()
+
+            let issued = Self.gloveBox(ProfileV3GloveBoxFixtures.home)
+            issued.openList(.emails)
+            issued.open(.call(ProfileV3GloveBoxFixtures.calls[0]))
+            issued.showCardNotice()
+
+            let pending = Self.gloveBox(ProfileV3GloveBoxMapper.home(email: ProfileV3GloveBoxFixtures.email))
+            pending.open(.email(ProfileV3GloveBoxFixtures.emails[0]))
+            pending.copy(.number)
+            pending.open(.call(ProfileV3GloveBoxFixtures.calls[0]))
+            pending.tapAddCard()
+        }
+
+        #expect(recorder.named("glove_box_opened").count == 1)
+        let items = recorder.named("glove_box_item_clicked").map { event in
+            "\(event.string("itemType") ?? "")=\(event.parameters["activated"] as? Bool == true)"
+        }
+        #expect(items == ["mail=true", "phone=true", "card=true", "mail=true", "phone=false", "card=false"])
     }
 
     @Test(.timeLimit(.minutes(1)))
@@ -424,6 +515,10 @@ struct ProfileV3AnalyticsEventsTests {
         while viewModel.isLoadingCatalogue || viewModel.filteredCatalogue.isEmpty {
             try await Task.sleep(for: .milliseconds(10))
         }
+    }
+
+    private static func gloveBox(_ home: ProfileV3GloveBoxHome) -> ProfileV3GloveBoxViewModel {
+        ProfileV3GloveBoxViewModel(gloveBox: ProfileV3GloveBox(title: "", stage: .home(home)))
     }
 
     private static func freshHints() -> ProfileV3HubHints {

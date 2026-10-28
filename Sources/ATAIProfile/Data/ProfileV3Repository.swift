@@ -131,8 +131,7 @@ protocol ProfileV3GloveBoxRepository: Sendable {
 protocol ProfileV3PastTripsRepository: Sendable {
     func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen
     func loadAddTrip(profileID: String) async throws -> ProfileV3AddTripScreen
-    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, date: ProfileV3TripYearMonth?) async throws
-    func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws
+    func addPastTrips(_ submit: ProfileV3BoardAction, countries: [String]) async throws
     func deletePastTrip(_ submit: ProfileV3BoardAction) async throws
 }
 

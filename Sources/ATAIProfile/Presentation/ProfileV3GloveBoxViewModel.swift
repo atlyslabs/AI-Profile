@@ -155,6 +155,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
 
     func copy(_ target: CopyTarget) {
         guard let value = copyValue(for: target) else { return }
+        trackItem(target.analyticsItem)
         UIPasteboard.general.string = value
         copies += 1
         withAnimation(ProfileV3Theme.Motion.selection) { copied = target }
@@ -168,6 +169,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
 
     func openList(_ section: Section) {
         guard home != nil else { return }
+        trackItem(section.analyticsItem)
         withAnimation(ProfileV3Theme.GloveBox.Motion.sheetSwitch) { sheets = [.list(section)] }
         if section == .emails {
             emailPagingFailed = false
@@ -177,6 +179,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
 
     func open(_ entry: Entry) {
         guard home != nil else { return }
+        trackItem(entry.analyticsItem)
         withAnimation(ProfileV3Theme.GloveBox.Motion.sheetSwitch) { sheets.append(.detail(entry)) }
         if case .email(let email) = entry, sampleLabel(for: entry) == nil { loadEmail(email) }
     }
@@ -209,12 +212,14 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
 
     func selectPayOption(_ id: String) {
         guard home?.card.selectedPayOptionID != id else { return }
+        trackItem(.card)
         withAnimation(ProfileV3Theme.Motion.selection) {
             updateCard { $0.selectedPayOptionID = id }
         }
     }
 
     func tapAddCard() {
+        trackItem(.card)
         onAddCard()
     }
 
@@ -226,6 +231,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
 
     func showCardNotice() {
         guard home != nil, !showsCardNotice else { return }
+        trackItem(.card)
         withAnimation(ProfileV3Theme.GloveBox.Motion.notice) { showsCardNotice = true }
     }
 
@@ -235,6 +241,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
 
     func toggleForwarding() {
         guard let repository, let account, account.forwardingEmail != nil, !isUpdatingForwarding else { return }
+        trackItem(.mail)
         let paused = !account.forwardingPaused
         isUpdatingForwarding = true
         forwardingError = nil
@@ -259,6 +266,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
         guard let repository, account?.forwardingEmail == nil, !isUpdatingForwarding else { return }
         let email = forwardingDraft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !email.isEmpty else { return }
+        trackItem(.mail)
         isUpdatingForwarding = true
         forwardingError = nil
         loadTask = Task { [weak self] in
@@ -297,6 +305,17 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
                 replaceNoteError(ProfileV3GloveBoxMapper.message(for: error), messageID: messageID)
             }
         }
+    }
+
+    private func trackItem(_ item: ProfileV3Analytics.GloveBoxItem) {
+        guard let home else { return }
+        let activated: Bool
+        switch item {
+        case .mail: activated = !home.email.address.isEmpty
+        case .phone: activated = home.phone.number.isCopyable
+        case .card: activated = !home.card.card.lastFour.isEmpty
+        }
+        ProfileV3Analytics.gloveBoxItemClicked(item, activated: activated)
     }
 
     private func copyValue(for target: CopyTarget) -> String? {
@@ -468,6 +487,35 @@ extension ProfileV3GloveBoxViewModel.Sheet: Identifiable {
         switch self {
         case .list(let section): return "list-\(section)"
         case .detail(let entry): return "detail-\(entry.id)"
+        }
+    }
+}
+
+private extension ProfileV3GloveBoxViewModel.Entry {
+    var analyticsItem: ProfileV3Analytics.GloveBoxItem {
+        switch self {
+        case .email: return .mail
+        case .call: return .phone
+        case .transaction: return .card
+        }
+    }
+}
+
+private extension ProfileV3GloveBoxViewModel.Section {
+    var analyticsItem: ProfileV3Analytics.GloveBoxItem {
+        switch self {
+        case .emails: return .mail
+        case .calls: return .phone
+        case .transactions: return .card
+        }
+    }
+}
+
+private extension ProfileV3GloveBoxViewModel.CopyTarget {
+    var analyticsItem: ProfileV3Analytics.GloveBoxItem {
+        switch self {
+        case .address: return .mail
+        case .number, .tripNumber: return .phone
         }
     }
 }

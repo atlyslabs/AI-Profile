@@ -276,48 +276,11 @@ struct ProfileV3ProgrammesView: View {
     }
 
     private func summary(_ overview: ProfileV3ProgrammeOverview) -> some View {
-        VStack(spacing: 0) {
-            Text(ProfileV3Strings.programmeCount(overview.connectedCount))
-                .typoGraphy(.H2InterSemibold32)
-                .foregroundStyle(Color(at: .pureBlack))
-                .contentTransition(.numericText())
-            Text(ProfileV3Strings.programmesConnected)
-                .typoGraphy(.B2InterMedium12)
-                .foregroundStyle(Color(at: .neutralGrey600))
-                .padding(.top, ProfileV3Theme.Sizes.Programmes.countToLabel)
-            Text(overview.summary)
-                .typoGraphy(.T1InterMedium11)
-                .foregroundStyle(Color(at: .neutralGrey400))
-                .padding(.top, ProfileV3Theme.Sizes.Programmes.labelToSummary)
-            stats(overview)
-        }
-        .multilineTextAlignment(.center)
-        .frame(maxWidth: ProfileV3Theme.Sizes.Programmes.headerWidth)
-    }
-
-    @ViewBuilder
-    private func stats(_ overview: ProfileV3ProgrammeOverview) -> some View {
-        let points = overview.pointsLabel.nonEmpty
-        let estimated = overview.estimatedValueLabel.nonEmpty
-        if points != nil || estimated != nil {
-            HStack(spacing: ProfileV3Theme.Space.s32) {
-                if let points { stat(points, label: ProfileV3Strings.pointsMiles) }
-                if let estimated { stat(estimated, label: ProfileV3Strings.estimatedValue) }
-            }
-            .padding(.top, ProfileV3Theme.Space.s30)
-        }
-    }
-
-    private func stat(_ value: String, label: String) -> some View {
-        VStack(spacing: ProfileV3Theme.Sizes.Programmes.statValueToLabel) {
-            Text(value)
-                .typoGraphy(.H5InterSemibold20)
-                .foregroundStyle(Color(at: .pureBlack))
-            Text(label)
-                .typoGraphy(.T1InterMedium11)
-                .foregroundStyle(Color(at: .neutralGrey400))
-        }
-        .accessibilityElement(children: .combine)
+        Text(overview.summary)
+            .typoGraphy(.T1InterMedium11)
+            .foregroundStyle(Color(at: .neutralGrey400))
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: ProfileV3Theme.Sizes.Programmes.headerWidth)
     }
 
     private func featuredCarousel(_ programmes: [ProfileV3LoyaltyProgramme]) -> some View {

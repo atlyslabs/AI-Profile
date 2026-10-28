@@ -228,7 +228,7 @@ struct ProfileV3AppCredentialsSheet: View {
                         accessibilityLabel: ProfileV3Strings.openWebsite,
                         isEnabled: viewModel.credentials.websiteURL != nil
                     ) {
-                        if let url = viewModel.credentials.websiteURL { openURL(url) }
+                        if let url = viewModel.openWebsite() { openURL(url) }
                     }
                 }
             }

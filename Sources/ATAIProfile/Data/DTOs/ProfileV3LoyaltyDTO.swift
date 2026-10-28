@@ -102,27 +102,14 @@ struct ProfileV3LoyaltyEnterScreenDTO: Decodable, Equatable {
     }
 }
 
-struct ProfileV3ProgrammesStatsDTO: Decodable, Equatable {
-    let pointsTotal: ProfileV3ScalarDTO?
-    let estValue: ProfileV3ScalarDTO?
-
-    enum CodingKeys: String, CodingKey {
-        case pointsTotal = "points_total"
-        case estValue = "est_value"
-    }
-}
-
 struct ProfileV3ProgrammesPageScreenDTO: Decodable, Equatable {
     let type: String?
     let name: String?
-    let count: ProfileV3ScalarDTO?
     let subtitle: String?
-    private let rawStats: ProfileV3LossyDTO<ProfileV3ProgrammesStatsDTO>?
     private let rawPrograms: [ProfileV3LossyDTO<ProfileV3LoyaltyRowDTO>]?
     private let rawAdd: ProfileV3LossyDTO<ProfileV3NavCTADTO>?
     private let rawReorder: ProfileV3LossyDTO<ProfileV3LoyaltySubmitDTO>?
 
-    var stats: ProfileV3ProgrammesStatsDTO? { rawStats?.value }
     var programs: [ProfileV3LoyaltyRowDTO] { rawPrograms?.compactMap(\.value) ?? [] }
     var add: ProfileV3NavCTADTO? { rawAdd?.value }
     var reorder: ProfileV3LoyaltySubmitDTO? { rawReorder?.value }
@@ -130,9 +117,7 @@ struct ProfileV3ProgrammesPageScreenDTO: Decodable, Equatable {
     enum CodingKeys: String, CodingKey {
         case type
         case name
-        case count
         case subtitle
-        case rawStats = "stats"
         case rawPrograms = "programs"
         case rawAdd = "add"
         case rawReorder = "reorder"

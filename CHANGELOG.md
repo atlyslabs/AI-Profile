@@ -11,13 +11,20 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   `.addLoyaltyProgramme`, for deep links. The hub opens the sheet once it is on screen with its board
   loaded; a loyalty programme is added for the main traveller, behind the usual KYC gate.
 - Agent forms have custom rules: "+ Custom" opens a note editor, saved rules show in a CUSTOM
-  RULES section, and tapping one edits or deletes it. Until the backend supports them, rules are
-  kept on the device per signed-in user, traveler and agent
-  (`ProfileV3FeatureFlags.isAgentCustomRulesEnabled`). Eight new `mo-aiprofile-agents-*` string keys
-  need adding in Ditto.
+  RULES section, and tapping one edits or deletes it. Saving a new rule closes the editor and
+  scrolls the form down to the rule, first in the row. With the keyboard up, the editor keeps
+  Save at least 16pt above it, closing the gaps and then shortening the note on smaller phones.
+  Until the backend supports them, rules are kept on the device per signed-in user, traveler and
+  agent (`ProfileV3FeatureFlags.isAgentCustomRulesEnabled`). Eight new `mo-aiprofile-agents-*`
+  string keys need adding in Ditto.
 
 ### Changed
 
+- The loyalty programmes page no longer shows the number of programs connected or the points/miles
+  total and estimated value; only the server's subtitle is left under the pass tabs.
+  `GET …/board/loyalty/page/{profile_id}` is no longer read for `count` or `stats` (`points_total`,
+  `est_value`). `mo-aiprofile-loyalty-label-estimated-value` is now unused and can be deleted from
+  Ditto. The pass back face still shows its own programme count.
 - A phone number stored without a country code is read against the host's residence
   (`ATCoreBaseProvider.userResidencyCode`, from the registered configuration provider) instead of
   the device's region. The device region, then India, are used only when the host gives none.
@@ -35,13 +42,23 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   "Your Glove box is ready to unlock" with "Complete KYC", which closes Settings and starts KYC
   onboarding. Three new string keys (`mo-aiprofile-glovebox-title-unlock`,
   `-description-unlock`, `-button-complete-kyc`) need adding in Ditto.
-- Past trips: when a host adds trips without dates, the country step selects several countries and
-  "Done" adds them all undated. Adding dates to an undated card ("+ Add dates") is built but off
-  behind `ProfileV3FeatureFlags.isPastTripAddDatesEnabled`. New string key
-  `mo-aiprofile-profile-button-add-trip-dates` needs adding in Ditto.
+- Past trips are added by country only. The add sheet is one step: it selects several countries,
+  and "Done" adds them all, undated, in one `/board/submit` with a `countries` list (ISO-2). The
+  backend saves all of them or none, so a refusal keeps the sheet open with its message and the
+  selection for a retry. The month and year picker, Edit on a dated trip, and "+ Add dates" are
+  gone. Dated trips the server sends still show their month and year, and a trip's actions sheet
+  offers only Delete. `ProfileV3AppHost.addsPastTripsWithoutDate` is removed; a host that still
+  implements it keeps compiling and can drop it.
 - Secure credential store: a Face ID unlock of the vault also covers revealing passwords while the
   vault stays open. Closing the vault or leaving the app ends that, and unlocking with the passcode
   still asks for Face ID on each reveal.
+- KYC onboarding started from the hub surface (`makeHubSurface`), from the hub or from Settings ›
+  Connectors, runs in its own navigation controller presented full screen over the host's tab bar,
+  as the Gmail connector does. It used to be pushed onto the surface's navigation controller, inside
+  the host's tab, so the tab bar stayed on top of it. The host's `startOnboarding(on:)` gets that
+  empty container to push onto; if the flow doesn't close it, the package does before reporting
+  back. `makeHub(navCon:)` and `presentAddTraveller(navCon:)` still push onto the host's own
+  controller.
 
 ### Analytics
 
@@ -72,6 +89,16 @@ Profile events follow the profile analytics spec.
   uploads, from KYC capture and from "Upload new passport". Hosts map it to their
   `passport_front_uploaded`, `passport_back_uploaded` and `selfie_uploaded` events and the
   co-traveller variants. A host whose own KYC screens already send them can skip the `.capture` flow.
+- `profile_connector_program_card_scrolled` reports the quarter the selected card is in, rounded
+  up, so the first swipe sends `"25"`. It used to round down, so a long catalogue sent nothing
+  until a quarter of its cards had gone by.
+- New: the credential store's `pass_vault_clicked` (`actionSource: settings`),
+  `pass_vault_add_credentials_clicked`, `pass_vault_website_selected` (`website`, `cardName`;
+  "Other website" sends `other_website`), `pass_vault_credentials_added` (`website`, `cardName`,
+  `emailAdded`) and `pass_vault_website_clicked`; the glove box's `glove_box_opened` and
+  `glove_box_item_clicked` (`itemType` `mail` / `phone` / `card`, `activated`).
+- Removed: `profile_programme_selected`, `profile_programme_added` and
+  `profile_programme_edit_toggled`.
 
 ### Strings
 

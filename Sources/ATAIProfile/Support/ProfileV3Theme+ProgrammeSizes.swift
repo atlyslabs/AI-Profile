@@ -74,9 +74,6 @@ extension ProfileV3Theme.Sizes {
         static let reorderHintButtonTop: CGFloat = 33
         static let headerTop: CGFloat = 35
         static let headerWidth: CGFloat = 253
-        static let countToLabel: CGFloat = 17
-        static let labelToSummary: CGFloat = 9
-        static let statValueToLabel: CGFloat = 4
         static let cardsTop: CGFloat = 65
         static let bottomFade: CGFloat = 164
         static let barBottom = ProfileV3Theme.Space.s16

@@ -84,6 +84,12 @@ protocol — see "Deliberately out of scope" below.
    sheet straight from a deep link, and `prefetchBoard()` warms the board cache before the hub opens.
    `ProfileV3EntrySource` (`.chat`, `.accountSettings`, `.deepLink`) is sent with the hub's analytics.
 
+   KYC onboarding goes through `ProfileV3KYCHost.startOnboarding(on:completion:)`. With `makeHub`
+   and `presentAddTraveller`, the navigation controller it gets is the one the host passed in. With
+   `makeHubSurface`, whose controller sits inside the host's tab, it gets an empty controller that
+   the package presents full screen over the tab bar. The host pushes its first screen onto it, and
+   the package closes it, if the flow hasn't, before calling `completion`.
+
    `open(_:)` takes a `ProfileV3Destination` (`.addTraveller`, `.addLoyaltyProgramme`) from a deep
    link and leaves it for the hub. The hub on screen opens it once its entrance has played and its
    board has loaded; with no hub on screen, the next one to appear does, so call it as you bring
@@ -110,7 +116,7 @@ dependency; the host only supplies the current token.
 |---|---|---|
 | configuration provider | `ProfileV3ConfigurationProviding` | Base URL, user token, residency, the current user id, and whether the session is a guest |
 | `account` | `ProfileV3AccountHost` | A snapshot of the signed-in user, saving residence, citizenship and contact, the duplicate-contact check, and a notice when a traveller changes |
-| `app` | `ProfileV3AppHost` | Status messages, logout, app restart, and the bottom clearance of a floating tab bar. Optional: `opensChat` and `openChat(prompt:)` for the programme insight's Continue, and `addsPastTripsWithoutDate` (default `false`), which an AYL host turns on so a past trip is added by country alone |
+| `app` | `ProfileV3AppHost` | Status messages, logout, app restart, and the bottom clearance of a floating tab bar. Optional: `opensChat` and `openChat(prompt:)` for the programme insight's Continue |
 | `kyc` | `ProfileV3KYCHost` | KYC onboarding, minimal capture, the Gmail, ITR, passport and selfie step screens, Gmail authorization, KYC events |
 | `identityCapture` | `ProfileV3IdentityCaptureHost` | Passport and photo capture with a `verify` closure, full screen or embedded |
 | `coupons` | `ProfileV3CouponsHost` | Presenting the host's coupons screen |
