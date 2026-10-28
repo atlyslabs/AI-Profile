@@ -4381,18 +4381,6 @@
         }
       }
     },
-    "mo-aiprofile-profile-button-add-trip-dates": {
-      "comment": "Pill on an undated past trip card that opens the duration picker.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add dates"
-          }
-        }
-      }
-    },
     "mo-aiprofile-profile-button-dont-delete": {
       "comment": "Cancel action on the delete past trip / delete account confirmations.",
       "extractionState": "manual",

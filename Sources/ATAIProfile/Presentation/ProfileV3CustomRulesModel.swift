@@ -15,17 +15,12 @@ final class ProfileV3CustomRulesModel: ObservableObject {
         var isAdding: Bool { rule == nil }
     }
 
-    struct Dropped: Identifiable, Equatable {
-        let id: Int
-        let text: String
-    }
-
     @Published private(set) var rules: [ProfileV3CustomRule] = []
     @Published private(set) var editor: Editor?
     @Published var draft = ""
     @Published private(set) var phase: Phase = .editing
-    @Published private(set) var dropped: Dropped?
     @Published private(set) var errorMessage: String?
+    @Published private(set) var revealedRuleID: String?
 
     private let agentID: String
     private let profileID: String?
@@ -33,7 +28,7 @@ final class ProfileV3CustomRulesModel: ObservableObject {
     private var loadTask: Task<Void, Never>?
     private var writeTask: Task<Void, Never>?
     private var settleTask: Task<Void, Never>?
-    private var drops = 0
+    private var addedRuleID: String?
 
     init(agentID: String, profileID: String?, repository: any ProfileV3CustomRulesRepository) {
         self.agentID = agentID
@@ -48,8 +43,6 @@ final class ProfileV3CustomRulesModel: ObservableObject {
         guard let rule = editor.rule else { return true }
         return trimmedDraft != rule.text
     }
-
-    var showsSavedToast: Bool { dropped != nil }
 
     func load() {
         loadTask?.cancel()
@@ -77,10 +70,13 @@ final class ProfileV3CustomRulesModel: ObservableObject {
         guard phase != .saving else { return }
         settleTask?.cancel()
         editor = nil
-        dropped = nil
         phase = .editing
         errorMessage = nil
         draft = ""
+        if let addedRuleID {
+            revealedRuleID = addedRuleID
+            self.addedRuleID = nil
+        }
     }
 
     func save() {
@@ -96,7 +92,7 @@ final class ProfileV3CustomRulesModel: ObservableObject {
         writeTask = Task { [weak self, rule] in
             do {
                 try await repository.saveCustomRule(rule, agentID: agentID, profileID: profileID)
-                self?.didSave(rule, adding: editor.isAdding)
+                self?.didSave(rule)
             } catch {
                 guard let self else { return }
                 phase = .editing
@@ -135,33 +131,23 @@ final class ProfileV3CustomRulesModel: ObservableObject {
 
     private func open(_ editor: Editor, draft: String) {
         settleTask?.cancel()
-        dropped = nil
         phase = .editing
         errorMessage = nil
         self.draft = draft
         self.editor = editor
     }
 
-    private func didSave(_ rule: ProfileV3CustomRule, adding: Bool) {
+    private func didSave(_ rule: ProfileV3CustomRule) {
         if let index = rules.firstIndex(where: { $0.id == rule.id }) {
             rules[index] = rule
         } else {
             rules.insert(rule, at: 0)
+            addedRuleID = rule.id
         }
-        guard adding else {
-            phase = .saved
-            settle(after: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds)) { model in
-                model.phase = .editing
-                model.close()
-            }
-            return
-        }
-        drops += 1
-        dropped = Dropped(id: drops, text: rule.text)
-        draft = ""
-        phase = .editing
-        settle(after: .seconds(ProfileV3Theme.Motion.customRuleDropSeconds)) { model in
-            model.dropped = nil
+        phase = .saved
+        settle(after: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds)) { model in
+            model.phase = .editing
+            model.close()
         }
     }
 

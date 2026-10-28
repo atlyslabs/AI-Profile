@@ -13,7 +13,6 @@ enum ProfileV3Strings {
     static var pastTripDuplicate: String { ProfileV3L10n.moAiprofileProfileErrorPastTripDuplicate }
     static var pastTripSaveFailed: String { ProfileV3L10n.moAiprofileProfileErrorPastTripSaveFailed }
     static var pastTripDeleteFailed: String { ProfileV3L10n.moAiprofileProfileErrorPastTripDeleteFailed }
-    static var pastTripAddDates: String { ProfileV3L10n.moAiprofileProfileButtonAddTripDates }
     static var customRuleButton: String { ProfileV3L10n.moAiprofileAgentsButtonCustomRule }
     static var customRulesTitle: String { ProfileV3L10n.moAiprofileAgentsTitleCustomRules }
     static var addRuleTitle: String { ProfileV3L10n.moAiprofileAgentsTitleAddRule }

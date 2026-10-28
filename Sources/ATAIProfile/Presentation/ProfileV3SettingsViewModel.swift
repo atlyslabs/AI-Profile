@@ -132,6 +132,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     func tapGloveBox() {
+        ProfileV3Analytics.gloveBoxOpened()
         isGloveBoxPresented = true
     }
 
@@ -240,6 +241,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     func tapCredentialStore() {
+        ProfileV3Analytics.passVaultClicked()
         credentialStore.open()
     }
 

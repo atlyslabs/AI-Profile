@@ -15,12 +15,6 @@ enum ProfileV3PastTripsFixtures {
             title: "Your past trips",
             trips: trips.map { trip in
                 var trip = trip
-                if trip.date != nil {
-                    trip.edit = ProfileV3TripAction(
-                        label: "Edit",
-                        submit: action("edit_past_trip", tripID: trip.id, profileID: profileID)
-                    )
-                }
                 trip.delete = ProfileV3TripAction(
                     label: "Delete",
                     submit: action("delete_past_trip", tripID: trip.id, profileID: profileID)
@@ -28,7 +22,6 @@ enum ProfileV3PastTripsFixtures {
                 return trip
             },
             addDirective: ProfileV3Directive(go: "add_trip", profileID: profileID),
-            duration: duration(ctaLabel: "Save"),
             deleteConfirm: ProfileV3TripDeleteConfirm(
                 title: "Are you sure you want to delete your past destination?",
                 confirmLabel: ProfileV3Strings.proceedToDelete,
@@ -37,22 +30,12 @@ enum ProfileV3PastTripsFixtures {
         )
     }
 
-    static func duration(ctaLabel: String) -> ProfileV3TripDuration {
-        var duration = ProfileV3TripDuration.fallback()
-        duration.title = "Select duration"
-        duration.yearLabel = "Year"
-        duration.monthLabel = ProfileV3Strings.tripMonth
-        duration.ctaLabel = ctaLabel
-        return duration
-    }
-
     static func addScreen(profileID: String) -> ProfileV3AddTripScreen {
         ProfileV3AddTripScreen(
             countryTitle: "Search for country",
             searchPlaceholder: ProfileV3Strings.search,
             countryCTA: "Done",
             countries: ProfileV3Countries.all,
-            duration: duration(ctaLabel: "Add country"),
             submit: ProfileV3BoardAction(fields: [
                 "action": .string("add_past_trip"),
                 "profile_id": .string(profileID)

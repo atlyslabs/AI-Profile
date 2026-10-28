@@ -6,7 +6,7 @@ import Testing
 @Suite("Custom rules")
 struct ProfileV3CustomRulesTests {
     @Test(.timeLimit(.minutes(1)))
-    func addingARuleKeepsTheEditorOpenForTheNextOne() async throws {
+    func savingANewRuleClosesTheEditorAndRevealsTheRule() async throws {
         let model = ProfileV3CustomRulesModel(agentID: "food", profileID: nil, repository: ProfileV3MockRepository(delay: .zero))
         model.startAdding()
         #expect(model.editor?.isAdding == true)
@@ -17,19 +17,49 @@ struct ProfileV3CustomRulesTests {
         #expect(model.canSave)
 
         model.save()
-        try await waitUntil { model.dropped != nil }
-
+        try await waitUntil { model.phase == .saved }
         #expect(model.rules.map(\.text) == ["Pick a veg restaurant every time"])
-        #expect(model.dropped?.text == "Pick a veg restaurant every time")
-        #expect(model.showsSavedToast)
+        #expect(model.editor != nil)
+        #expect(model.revealedRuleID == nil)
+
+        try await waitUntil { model.editor == nil }
+        #expect(model.revealedRuleID == model.rules.first?.id)
         #expect(model.draft.isEmpty)
-        #expect(model.editor?.isAdding == true)
         #expect(model.phase == .editing)
 
+        model.startAdding()
         model.draft = "No red-eye flights"
         model.save()
         try await waitUntil { model.rules.count == 2 }
+        model.close()
+        #expect(model.editor == nil)
         #expect(model.rules.first?.text == "No red-eye flights")
+        #expect(model.revealedRuleID == model.rules.first?.id)
+    }
+
+    @Test func theEditorKeepsItsDesignSpacingWhenThereIsRoom() {
+        let fit = ProfileV3CustomRuleEditorFit(height: 894, header: 80, bottom: 40)
+        #expect(fit.noteGap == 52)
+        #expect(fit.noteHeight == 308)
+        #expect(fit.pillGap == 64)
+    }
+
+    @Test func saveStaysAboveTheKeyboardByClosingGapsBeforeShorteningTheNote() {
+        let roomy = ProfileV3CustomRuleEditorFit(height: 538, header: 80, bottom: 40)
+        #expect(roomy.noteGap == 52)
+        #expect(roomy.noteHeight == 308)
+        #expect(roomy.pillGap == 42)
+
+        let tight = ProfileV3CustomRuleEditorFit(height: 377, header: 80, bottom: 40)
+        #expect(tight.pillGap == 24)
+        #expect(tight.noteGap == 24)
+        #expect(tight.noteHeight == 193)
+
+        for height: CGFloat in [538, 457, 377] {
+            let fit = ProfileV3CustomRuleEditorFit(height: height, header: 80, bottom: 40)
+            let saveBottom = 80 + fit.noteGap + fit.noteHeight + fit.pillGap + 40
+            #expect(saveBottom == height - 16)
+        }
     }
 
     @Test(.timeLimit(.minutes(1)))
@@ -52,9 +82,9 @@ struct ProfileV3CustomRulesTests {
         try await waitUntil { model.phase == .saved }
         #expect(model.rules.map(\.text) == ["Aisle seat on long flights"])
         #expect(model.rules.first?.id == rule.id)
-        #expect(model.dropped == nil)
         try await waitUntil { model.editor == nil }
         #expect(model.phase == .editing)
+        #expect(model.revealedRuleID == nil)
         #expect(try await repository.loadCustomRules(agentID: "flight", profileID: "p1").map(\.text) == ["Aisle seat on long flights"])
     }
 

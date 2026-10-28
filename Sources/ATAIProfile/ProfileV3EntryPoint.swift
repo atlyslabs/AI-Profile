@@ -26,6 +26,7 @@ public enum ProfileV3EntryPoint {
         let repository = environment.makeRepository()
         let presenter = ProfileV3SettingsSheetPresenter(
             navCon: navCon,
+            onboarding: .push,
             repository: repository,
             board: repository,
             kyc: environment.kyc,

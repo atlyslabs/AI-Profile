@@ -13,6 +13,7 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
     private var addProgrammePresenter: ProfileV3AddProgrammeSheetPresenter?
     private let programmeSelections = ProfileV3ProgrammeSelectionMemory()
     private let entrySource: ProfileV3Analytics.EntrySource
+    private let onboarding: ProfileV3OnboardingPresentation
 
     init(
         navCon: UINavigationController,
@@ -20,17 +21,18 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
         environment: ProfileV3Environment,
         userFirstName: String?,
         entrySource: ProfileV3Analytics.EntrySource,
+        onboarding: ProfileV3OnboardingPresentation = .push,
         onBack: (() -> Void)? = nil
     ) {
         self.navCon = navCon
         self.entrySource = entrySource
+        self.onboarding = onboarding
         self.onBack = onBack
         self.repository = repository
         self.environment = environment
         let viewModel = ProfileV3HubViewModel(
             repository: repository,
-            userFirstName: userFirstName,
-            addsTripsWithoutDate: environment.app.addsPastTripsWithoutDate
+            userFirstName: userFirstName
         )
         self.viewModel = viewModel
         super.init(rootView: ProfileV3HubRoot(
@@ -73,6 +75,7 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
     private func makeSettingsPresenter(profileID: String?) -> ProfileV3SettingsSheetPresenter {
         let presenter = ProfileV3SettingsSheetPresenter(
             navCon: navCon,
+            onboarding: onboarding,
             repository: repository,
             board: repository,
             kyc: environment.kyc,
@@ -291,7 +294,7 @@ extension ProfileV3HubHostingController {
     }
 
     private func presentOnboardingKYC(resuming: ProfileV3HubViewModel.KYCResumption) {
-        environment.kyc.startOnboarding(on: navCon) { [weak self] outcome in
+        ProfileV3OnboardingLauncher.start(onboarding, using: environment.kyc, on: navCon) { [weak self] outcome in
             self?.returnFromKYC(completed: outcome == .completed, resuming: resuming)
         }
     }

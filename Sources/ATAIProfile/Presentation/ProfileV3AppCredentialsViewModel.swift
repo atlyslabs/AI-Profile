@@ -197,6 +197,20 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
         ProfileV3VaultClipboard.expire(storedPassword)
     }
 
+    func openWebsite() -> URL? {
+        guard let url = credentials.websiteURL else { return nil }
+        switch mode {
+        case .vaultNew(let site, _):
+            let picked = site.flatMap { ProfileV3VaultSite.matching(url, in: [$0]) }
+            ProfileV3Analytics.passVaultWebsiteClicked(url, cardName: picked?.displayName)
+        case .vaultEdit(let entry):
+            ProfileV3Analytics.passVaultWebsiteClicked(url, cardName: entry.displayName)
+        case .add, .newPassword, .edit:
+            break
+        }
+        return url
+    }
+
     func askToDelete() {
         guard canDelete, phase == .editing else { return }
         hidePassword()
@@ -255,6 +269,7 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
                     }
                     let draft = ProfileV3VaultDraft.new(credentials, sites: sites)
                     saved = try await repository.saveVault(draft).id
+                    ProfileV3Analytics.passVaultCredentialsAdded(credentials, sites: sites)
                 case .vaultEdit(let entry):
                     let draft = ProfileV3VaultDraft(
                         username: credentials.username == entry.username ? nil : credentials.username,

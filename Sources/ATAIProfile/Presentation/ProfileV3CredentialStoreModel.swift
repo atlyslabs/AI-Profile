@@ -97,6 +97,7 @@ final class ProfileV3CredentialStoreModel: ObservableObject {
     }
 
     func tapAdd() {
+        ProfileV3Analytics.passVaultAddCredentialsClicked()
         sheet = .picker
         loadSites()
     }
@@ -126,10 +127,12 @@ final class ProfileV3CredentialStoreModel: ObservableObject {
     }
 
     func pick(_ site: ProfileV3VaultSite) {
+        ProfileV3Analytics.passVaultWebsiteSelected(site)
         present(.vaultNew(site: site))
     }
 
     func pickOtherWebsite(_ query: String) {
+        ProfileV3Analytics.passVaultOtherWebsiteSelected(typed: query)
         present(.vaultNew(website: query))
     }
 

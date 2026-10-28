@@ -107,8 +107,7 @@ struct ProfileV3PastTripsView: View {
             trip: trip,
             reveals: viewModel.revealingTripID == trip.id,
             sheenDelay: playsSheen ? Motion.pastTripsSheenDelaySeconds + delay : nil,
-            onRevealEnd: { viewModel.didFinishReveal(trip.id) },
-            onAddDates: ProfileV3FeatureFlags.isPastTripAddDatesEnabled ? { viewModel.tapAddDates(trip) } : nil
+            onRevealEnd: { viewModel.didFinishReveal(trip.id) }
         )
         .id(trip.revision)
         .overlay(alignment: .topTrailing) { moreButton(trip) }

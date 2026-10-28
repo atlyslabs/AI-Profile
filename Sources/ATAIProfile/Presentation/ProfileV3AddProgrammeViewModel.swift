@@ -247,8 +247,9 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
         let items = filteredCatalogue
         guard let index = items.firstIndex(where: { $0.id == id }), index > 0 else { return }
         let step = Self.slideDepthStep
-        let depth = (index + 1) * 100 / items.count / step * step
-        guard depth >= step, depth > slideDepthReached else { return }
+        let bucket = items.count * step
+        let depth = ((index + 1) * 100 + bucket - 1) / bucket * step
+        guard depth > slideDepthReached else { return }
         slideDepthReached = depth
         ProfileV3Analytics.programCardScrolled(
             travellerId: profileID,
@@ -273,7 +274,6 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     func continueFromPick() {
         guard canContinuePick, let item = selectedItem else { return }
         ProfileV3Analytics.loyaltyCardClicked(travellerId: profileID, cardName: item.name, connectorType: connectorType)
-        ProfileV3Analytics.programmeSelected(itemId: item.id)
         saveError = nil
         setStage(.details)
         ProfileV3Analytics.cardDetailScreenViewed(travellerId: profileID, item: item)
@@ -332,7 +332,6 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
             }
             do {
                 try await repository.addProgramme(submission, profileID: profileID)
-                ProfileV3Analytics.programmeAdded(itemId: item.id)
                 if let profileID { selections?.remember(nil, for: profileID) }
                 didAdd = true
                 onAdded()

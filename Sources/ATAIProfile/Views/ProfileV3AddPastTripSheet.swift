@@ -10,17 +10,13 @@ struct ProfileV3AddPastTripSheet: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            switch viewModel.step {
-            case .country:
-                countryStep
-                    .transition(.opacity)
-            case .duration:
-                durationStep
-                    .transition(.opacity)
-            }
-            header
+            countryList
+                .padding(.top, Sizes.countryListTop)
+                .overlay(alignment: .bottom) { ctaBar }
+            ProfileV3TagLabel(text: viewModel.title)
+                .padding(.top, Sizes.titleTop)
         }
-        .frame(height: min(viewModel.step == .country ? Sizes.countryHeight : Sizes.durationHeight, maxHeight))
+        .frame(height: min(Sizes.countryHeight, maxHeight))
         .overlay(alignment: .topTrailing) {
             ProfileV3CircleIconButton.close(size: Sizes.closeButton, action: onClose)
                 .padding(.top, Sizes.closeTop)
@@ -28,24 +24,6 @@ struct ProfileV3AddPastTripSheet: View {
         }
         .disabled(viewModel.isSubmitting)
         .sensoryFeedback(.error, trigger: viewModel.errorMessage) { _, message in message != nil }
-    }
-
-    private var header: some View {
-        VStack(spacing: Sizes.indicatorTop) {
-            ProfileV3TagLabel(text: viewModel.title)
-                .contentTransition(.opacity)
-            Button(action: viewModel.backToCountry) {
-                ProfileV3StepIndicator(count: viewModel.stepCount, current: viewModel.stepIndex, style: .currentOnly)
-                    .padding(.vertical, ProfileV3Theme.Space.s8)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .padding(.vertical, -ProfileV3Theme.Space.s8)
-            .disabled(!viewModel.canGoBack)
-            .accessibilityLabel(ProfileV3Strings.back)
-            .accessibilityHidden(!viewModel.canGoBack)
-        }
-        .padding(.top, Sizes.titleTop)
     }
 
     @ViewBuilder
@@ -56,9 +34,8 @@ struct ProfileV3AddPastTripSheet: View {
         } else {
             ProfileV3CountryList(
                 query: $viewModel.query,
-                selection: viewModel.selectedCountry,
-                selections: viewModel.selectsMany ? viewModel.selectedCountries : nil,
-                pinned: viewModel.pinnedCountry,
+                selection: nil,
+                selections: viewModel.selectedCountries,
                 countries: viewModel.countries,
                 searchPlaceholder: viewModel.searchPlaceholder,
                 focusesSearch: false,
@@ -68,69 +45,7 @@ struct ProfileV3AddPastTripSheet: View {
         }
     }
 
-    private var countryStep: some View {
-        countryList
-            .padding(.top, Sizes.countryListTop)
-            .overlay(alignment: .bottom) {
-                ctaBar(title: viewModel.countryCTA, isEnabled: viewModel.canConfirmCountry, fades: true) {
-                    viewModel.confirmCountry()
-                }
-            }
-    }
-
-    private var durationStep: some View {
-        ZStack(alignment: .top) {
-            wheelLabel(viewModel.duration.yearLabel)
-                .padding(.top, Sizes.yearLabelTop)
-            ProfileV3DurationWheel(
-                values: viewModel.years,
-                selection: $viewModel.selectedYear,
-                pitch: Sizes.yearPitch,
-                accessibilityTitle: viewModel.duration.yearLabel
-            ) { String($0) }
-            .padding(.top, Sizes.yearWheelTop)
-            ProfileV3NotchedDivider()
-                .stroke(
-                    ProfileV3Theme.Palette.tripNotch.opacity(ProfileV3Theme.Opacity.tripNotch),
-                    style: StrokeStyle(lineWidth: ProfileV3Theme.Stroke.hairline, lineCap: .round, lineJoin: .round)
-                )
-                .frame(height: Sizes.notchDepth + ProfileV3Theme.Stroke.hairline)
-                .padding(.horizontal, Sizes.notchInset)
-                .padding(.top, Sizes.notchTop)
-                .accessibilityHidden(true)
-            wheelLabel(viewModel.duration.monthLabel)
-                .padding(.top, Sizes.monthLabelTop)
-            ProfileV3DurationWheel(
-                values: viewModel.months,
-                selection: $viewModel.selectedMonth,
-                pitch: Sizes.monthPitch,
-                accessibilityTitle: viewModel.duration.monthLabel,
-                label: viewModel.monthLabel
-            )
-            .padding(.top, Sizes.monthWheelTop)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .overlay(alignment: .bottom) {
-            ctaBar(title: viewModel.submitTitle, isEnabled: viewModel.canSubmit, fades: false) {
-                viewModel.submit()
-            }
-        }
-    }
-
-    private func wheelLabel(_ text: String) -> some View {
-        Text(text)
-            .typoGraphy(.T1InterBold11)
-            .textCase(.uppercase)
-            .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.tripLabel))
-            .accessibilityHidden(true)
-    }
-
-    private func ctaBar(
-        title: String,
-        isEnabled: Bool,
-        fades: Bool,
-        action: @escaping () -> Void
-    ) -> some View {
+    private var ctaBar: some View {
         VStack(spacing: Sizes.errorBottom) {
             if let error = viewModel.errorMessage {
                 Text(error)
@@ -139,12 +54,12 @@ struct ProfileV3AddPastTripSheet: View {
                     .multilineTextAlignment(.center)
                     .transition(.opacity)
             }
-            if !title.isEmpty {
+            if !viewModel.countryCTA.isEmpty {
                 ProfileV3TripSheetButton(
-                    title: title,
-                    isEnabled: isEnabled,
+                    title: viewModel.countryCTA,
+                    isEnabled: viewModel.canSubmit,
                     isLoading: viewModel.isSubmitting,
-                    action: action
+                    action: viewModel.submit
                 )
             }
         }
@@ -152,11 +67,9 @@ struct ProfileV3AddPastTripSheet: View {
         .padding(.bottom, Sizes.ctaBottom)
         .frame(maxWidth: .infinity)
         .background(alignment: .bottom) {
-            if fades {
-                ProfileV3Theme.clearToWhiteFade
-                    .frame(height: Sizes.fadeHeight)
-                    .allowsHitTesting(false)
-            }
+            ProfileV3Theme.clearToWhiteFade
+                .frame(height: Sizes.fadeHeight)
+                .allowsHitTesting(false)
         }
     }
 }
@@ -194,71 +107,34 @@ private struct ProfileV3TripSheetButton: View {
 }
 
 struct ProfileV3PastTripActionsSheet: View {
-    let editTitle: String
     let deleteTitle: String
-    let onEdit: () -> Void
     let onDelete: () -> Void
 
     private typealias Sizes = ProfileV3Theme.Sizes.TripSheet
 
-    private var height: CGFloat {
-        editTitle.isEmpty || deleteTitle.isEmpty ? Sizes.actionsSingleHeight : Sizes.actionsHeight
-    }
-
     var body: some View {
         VStack(spacing: 0) {
-            if !editTitle.isEmpty {
-                row(icon: ATIcon.SwiftUIImage.edit, title: editTitle, action: onEdit)
-            }
-            if !editTitle.isEmpty, !deleteTitle.isEmpty {
-                Line()
-                    .stroke(
-                        Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.tripDivider),
-                        style: StrokeStyle(
-                            lineWidth: ProfileV3Theme.Stroke.hairline,
-                            lineCap: .round,
-                            dash: Sizes.dividerDash
-                        )
-                    )
-                    .frame(height: ProfileV3Theme.Stroke.hairline)
-                    .padding(.top, Sizes.actionsDividerGap)
-                    .accessibilityHidden(true)
-            }
             if !deleteTitle.isEmpty {
-                row(icon: ATIcon.SwiftUIImage.delete, title: deleteTitle, action: onDelete)
-                    .padding(.top, editTitle.isEmpty ? 0 : Sizes.actionsSecondGap)
+                Button(action: onDelete) {
+                    HStack(spacing: Sizes.actionGap) {
+                        ATIcon.SwiftUIImage.delete
+                            .profileV3Icon(Sizes.actionIcon)
+                            .foregroundStyle(ProfileV3Theme.Palette.tripActionIcon)
+                            .accessibilityHidden(true)
+                        Text(deleteTitle)
+                            .typoGraphy(.H7InterMedium16)
+                            .foregroundStyle(Color(at: .pureBlack))
+                        Spacer(minLength: 0)
+                    }
+                    .frame(height: Sizes.actionRowHeight)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.profileV3Pressable(.selection))
+                .accessibilityLabel(deleteTitle)
             }
         }
         .padding(.horizontal, Sizes.inset)
         .padding(.top, Sizes.actionsTop)
-        .frame(height: height, alignment: .top)
-    }
-
-    private func row(icon: Image, title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: Sizes.actionGap) {
-                icon
-                    .profileV3Icon(Sizes.actionIcon)
-                    .foregroundStyle(ProfileV3Theme.Palette.tripActionIcon)
-                    .accessibilityHidden(true)
-                Text(title)
-                    .typoGraphy(.H7InterMedium16)
-                    .foregroundStyle(Color(at: .pureBlack))
-                Spacer(minLength: 0)
-            }
-            .frame(height: Sizes.actionRowHeight)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.profileV3Pressable(.selection))
-        .accessibilityLabel(title)
-    }
-}
-
-private struct Line: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: rect.minX, y: rect.midY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
-        return path
+        .frame(height: Sizes.actionsHeight, alignment: .top)
     }
 }

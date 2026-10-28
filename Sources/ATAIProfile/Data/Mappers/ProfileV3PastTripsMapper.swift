@@ -8,7 +8,6 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
             title: text(dto.title) ?? "",
             trips: dto.trips.compactMap(trip),
             addDirective: dto.add?.directive,
-            duration: dto.duration.map(duration),
             deleteConfirm: dto.deleteConfirm.map(deleteConfirm)
         )
     }
@@ -20,22 +19,12 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
             searchPlaceholder: text(step?.searchPlaceholder) ?? "",
             countryCTA: text(step?.ctaLabel) ?? "",
             countries: (step?.countries ?? []).compactMap(country),
-            duration: dto.duration.map(duration),
             submit: action(dto.submit)
         )
     }
 
-    static func addRequest(
-        _ submit: ProfileV3BoardAction,
-        country: String,
-        date: ProfileV3TripYearMonth?
-    ) -> ProfileV3BoardSubmitRequest {
-        var extras: [String: ProfileV3ScalarDTO] = ["country": .string(country)]
-        if let date {
-            extras["year"] = .int(date.year)
-            extras["month"] = .int(date.month)
-        }
-        return ProfileV3BoardSubmitRequest(action: submit, extras: extras)
+    static func addRequest(_ submit: ProfileV3BoardAction, countries: [String]) -> ProfileV3BoardSubmitRequest {
+        ProfileV3BoardSubmitRequest(action: submit, lists: ["countries": countries])
     }
 
     static func entry(_ dto: ProfileV3GlobeDTO?) -> ProfileV3TripsEntry? {
@@ -70,7 +59,6 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
             imageURL: remoteURL(dto.imageURL),
             name: text(dto.name),
             monthLabel: text(dto.monthLabel),
-            edit: tripAction(dto.edit),
             delete: tripAction(dto.delete)
         )
     }
@@ -83,32 +71,6 @@ enum ProfileV3PastTripsMapper: ProfileV3DTOReading {
     private static func action(_ dto: ProfileV3BoardActionDTO?) -> ProfileV3BoardAction? {
         guard let fields = dto?.fields, !fields.isEmpty else { return nil }
         return ProfileV3BoardAction(fields: fields)
-    }
-
-    private static func duration(_ dto: ProfileV3TripDurationDTO) -> ProfileV3TripDuration {
-        let fallback = ProfileV3TripDuration.fallback()
-        let years = dto.years.compactMap(\.intValue)
-        let months = dto.months.compactMap { month -> ProfileV3TripMonth? in
-            guard let value = month.value?.intValue, monthRange.contains(value) else { return nil }
-            return ProfileV3TripMonth(value: value, label: text(month.label) ?? ProfileV3TripCalendar.shortMonthName(value))
-        }
-        return ProfileV3TripDuration(
-            title: text(dto.title) ?? "",
-            yearLabel: text(dto.yearLabel) ?? "",
-            monthLabel: text(dto.monthLabel) ?? "",
-            years: years.isEmpty ? fallback.years : years,
-            months: months.isEmpty ? fallback.months : months,
-            max: yearMonth(dto.max) ?? fallback.max,
-            defaultValue: yearMonth(dto.defaultValue) ?? fallback.defaultValue,
-            ctaLabel: text(dto.ctaLabel) ?? ""
-        )
-    }
-
-    private static func yearMonth(_ dto: ProfileV3TripYearMonthDTO?) -> ProfileV3TripYearMonth? {
-        guard let year = dto?.year?.intValue, let month = dto?.month?.intValue, monthRange.contains(month) else {
-            return nil
-        }
-        return ProfileV3TripYearMonth(year: year, month: month)
     }
 
     private static func deleteConfirm(_ dto: ProfileV3TripDeleteConfirmDTO) -> ProfileV3TripDeleteConfirm {

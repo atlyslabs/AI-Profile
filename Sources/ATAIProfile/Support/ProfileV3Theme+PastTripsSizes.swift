@@ -16,16 +16,6 @@ extension ProfileV3Theme.Sizes {
         static let nameTop = ProfileV3Theme.Space.s24
         static let nameLines = 2
         static let monthTop = ProfileV3Theme.Space.s8
-        static let undatedDrop: CGFloat = 25
-        static let addDatesTop: CGFloat = 20.5
-        static let addDatesHeight: CGFloat = 32
-        static let addDatesLeading: CGFloat = 14.4
-        static let addDatesTrailing = ProfileV3Theme.Space.s16
-        static let addDatesGap = ProfileV3Theme.Space.s4
-        static let addDatesIcon: CGFloat = 16
-        static let addDatesStroke: CGFloat = 0.5
-        static let addDatesShadowRadius: CGFloat = 15
-        static let addDatesShadowY: CGFloat = 4
         static let yearTop: CGFloat = 260.5
         static let yearSize: CGFloat = 80
         static let yearTracking: CGFloat = -3.2
@@ -69,37 +59,18 @@ extension ProfileV3Theme.Sizes {
         static let closeButton = ProfileV3Theme.Control.regular
         static let closeTop = titleTop + titleLine / 2 - closeButton / 2
         static let closeTrailing = ProfileV3Theme.Space.s16
-        static let indicatorTop: CGFloat = 13
         static let countryListTop: CGFloat = 80
         static let fadeHeight: CGFloat = 139
         static let ctaHeight: CGFloat = 40
         static let ctaInset: CGFloat = 21.5
         static let ctaBottom = ProfileV3Theme.Space.s20
         static let countryHeight: CGFloat = 612
-        static let durationHeight: CGFloat = 473
-        static let yearLabelTop: CGFloat = 131
-        static let yearWheelTop: CGFloat = 162
-        static let notchTop: CGFloat = 241
-        static let monthLabelTop: CGFloat = 282
-        static let monthWheelTop: CGFloat = 311
-        static let wheelHeight: CGFloat = 28
-        static let yearPitch: CGFloat = 104
-        static let monthPitch: CGFloat = 94
-        static let selectedWheelSize: CGFloat = 28
-        static let notchWidth: CGFloat = 9.6
-        static let notchDepth: CGFloat = 4
-        static let notchInset: CGFloat = 22
         static let errorBottom = ProfileV3Theme.Space.s12
-        static let actionsHeight: CGFloat = 182
+        static let actionsHeight: CGFloat = 116
         static let actionRowHeight = ProfileV3Theme.Control.tapTarget
         static let actionsTop: CGFloat = 51.5
-        static let actionsDividerGap: CGFloat = 7.5
-        static let actionsSecondGap: CGFloat = 13.5
-        static let actionsSingleHeight = actionsHeight - actionRowHeight - actionsDividerGap
-            - ProfileV3Theme.Stroke.hairline - actionsSecondGap
         static let actionIcon = ProfileV3Theme.Icon.md
         static let actionGap = ProfileV3Theme.Space.s10
-        static let dividerDash: [CGFloat] = [2, 2]
     }
 
     enum PastTripsPill {
@@ -115,12 +86,10 @@ extension ProfileV3Theme.Sizes {
 }
 
 extension ProfileV3Theme.Counts {
-    static let pastTripYears = 80
     static let monthsInYear = 12
 }
 
 extension ProfileV3Theme.Typography {
-    static let tripWheelSize: CGFloat = 16
     static let tripNameMinScale: CGFloat = 0.7
 }
 
@@ -128,10 +97,8 @@ extension ProfileV3Theme.Palette {
     static let pastTripsBackground = Color(hex: "100F0F")
     static let tripScrim = Color(hex: "051528")
     static let tripSheetGrabber = Color(hex: "A9A9A9")
-    static let tripNotch = Color(hex: "BFBFBF")
     static let tripActionIcon = Color(hex: "C2C2C2")
     static let tripPhotoPlaceholder = Color(hex: "1E1E1E")
-    static let tripAddDatesStroke = Color(hex: "E5E5E5")
 }
 
 extension ProfileV3Theme.Opacity {
@@ -141,17 +108,10 @@ extension ProfileV3Theme.Opacity {
     static let tripScrim: Double = 0.64
     static let tripYear: Double = 0.2
     static let tripBackdrop: Double = 0.4
-    static let tripLabel: Double = 0.5
-    static let tripNotch: Double = 0.5
-    static let tripDivider: Double = 0.1
-    static let tripWheelNear: Double = 0.3
-    static let tripWheelFar: Double = 0.1
     static let tripSheen: Double = 0.45
     static let tripRing: Double = 0.6
     static let tripRingStroke: Double = 0.4
     static let tripGlowSettled: Double = 0.3
-    static let tripAddDatesFill: Double = 0.19
-    static let tripAddDatesShadow: Double = 0.05
 }
 
 extension ProfileV3Theme.Motion {
@@ -174,7 +134,6 @@ extension ProfileV3Theme.Motion {
     static let pastTripsDelete: Animation = .easeInOut(duration: 0.5)
     static let pastTripsReflow: Animation = .easeInOut(duration: 0.6).delay(0.2)
     static let tripSheet: Animation = .spring(response: 0.35, dampingFraction: 0.9)
-    static let tripStep: Animation = .spring(response: 0.5, dampingFraction: 0.86)
     static let pastTripsAutoAddMilliseconds = 350
     static let pulseCycleSeconds: Double = 3
     static let pulseRingSeconds: Double = 2

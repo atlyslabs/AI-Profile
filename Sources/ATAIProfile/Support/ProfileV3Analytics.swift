@@ -52,11 +52,6 @@ enum ProfileV3Analytics {
         case list
     }
 
-    enum ProgrammeEditState: String {
-        case editing
-        case done
-    }
-
     enum CTAOrigin: String {
         case settings
         case agentCard = "agent_card"
@@ -76,6 +71,12 @@ enum ProfileV3Analytics {
     enum SettingsConnector: String {
         case information
         case app
+    }
+
+    enum GloveBoxItem: String {
+        case mail
+        case phone
+        case card
     }
 
     private enum EventName {
@@ -120,6 +121,13 @@ enum ProfileV3Analytics {
         static let termsClicked = "settings_terms_clicked"
         static let logoutClicked = "settings_logout_clicked"
         static let loggedOut = "settings_logged_out"
+        static let passVaultClicked = "pass_vault_clicked"
+        static let passVaultAddCredentialsClicked = "pass_vault_add_credentials_clicked"
+        static let passVaultWebsiteSelected = "pass_vault_website_selected"
+        static let passVaultCredentialsAdded = "pass_vault_credentials_added"
+        static let passVaultWebsiteClicked = "pass_vault_website_clicked"
+        static let gloveBoxOpened = "glove_box_opened"
+        static let gloveBoxItemClicked = "glove_box_item_clicked"
         static let fieldSaveFailed = "profile_field_save_failed"
         static let contactSaveFailed = "profile_contact_save_failed"
         static let gmailActivateClicked = "gmail_connector_activate_clicked"
@@ -144,13 +152,10 @@ enum ProfileV3Analytics {
         static let agentFormSaveFailed = "profile_agent_form_save_failed"
         static let carSelected = "profile_car_selected"
         static let programmeInsightOpened = "profile_programme_insight_opened"
-        static let programmeEditToggled = "profile_programme_edit_toggled"
         static let programmeRemoved = "profile_programme_removed"
         static let programmeRemoveFailed = "profile_programme_remove_failed"
         static let programmeScanStarted = "profile_programme_scan_started"
         static let programmeScanFinished = "profile_programme_scan_finished"
-        static let programmeSelected = "profile_programme_selected"
-        static let programmeAdded = "profile_programme_added"
         static let programmeAddFailed = "profile_programme_add_failed"
         static let completeKYCClicked = "complete_kyc_clicked"
         static let kycScreenSeen = "kyc_screen_seen"
@@ -187,7 +192,6 @@ enum ProfileV3Analytics {
         static let kycDone = "kycDone"
         static let kycTotal = "kycTotal"
         static let direction = "direction"
-        static let toState = "toState"
         static let actionType = "actionType"
         static let isActive = "isActive"
         static let foundCount = "foundCount"
@@ -231,6 +235,10 @@ enum ProfileV3Analytics {
         static let ctaAction = "ctaAction"
         static let hasPayload = "hasPayload"
         static let urlPath = "urlPath"
+        static let website = "website"
+        static let emailAdded = "emailAdded"
+        static let itemType = "itemType"
+        static let activated = "activated"
     }
 
     private enum DetailKey {
@@ -244,6 +252,8 @@ enum ProfileV3Analytics {
     }
 
     static let profileSource = "profile"
+    private static let settingsSource = "settings"
+    private static let otherWebsiteCardName = "other_website"
     static let travelPersonaAgentName = "travel_person_agent"
 
     // MARK: - Screens
@@ -453,10 +463,6 @@ enum ProfileV3Analytics {
         log(EventName.programmeInsightOpened, [ParamKey.programmeId: programmeId])
     }
 
-    static func programmeEditToggled(toState: ProgrammeEditState) {
-        log(EventName.programmeEditToggled, [ParamKey.toState: toState.rawValue])
-    }
-
     static func programmeRemoved(programmeId: String) {
         log(EventName.programmeRemoved, [ParamKey.programmeId: programmeId])
     }
@@ -471,14 +477,6 @@ enum ProfileV3Analytics {
 
     static func programmeScanFinished(foundCount: Int) {
         log(EventName.programmeScanFinished, [ParamKey.foundCount: foundCount])
-    }
-
-    static func programmeSelected(itemId: String) {
-        log(EventName.programmeSelected, [ParamKey.itemId: itemId])
-    }
-
-    static func programmeAdded(itemId: String) {
-        log(EventName.programmeAdded, [ParamKey.itemId: itemId])
     }
 
     static func programmeAddFailed(itemId: String, error: Error) {
@@ -604,6 +602,59 @@ enum ProfileV3Analytics {
             ParamKey.connectorName: connectorName,
             ParamKey.errorKind: errorKind(error)
         ])
+    }
+
+    // MARK: - Credential store
+
+    static func passVaultClicked() {
+        log(EventName.passVaultClicked, [ParamKey.actionSource: settingsSource])
+    }
+
+    static func passVaultAddCredentialsClicked() {
+        log(EventName.passVaultAddCredentialsClicked)
+    }
+
+    static func passVaultWebsiteSelected(_ site: ProfileV3VaultSite) {
+        log(EventName.passVaultWebsiteSelected, [
+            ParamKey.website: vaultWebsite(site.loginURL),
+            ParamKey.cardName: site.displayName
+        ])
+    }
+
+    static func passVaultOtherWebsiteSelected(typed: String) {
+        log(EventName.passVaultWebsiteSelected, [
+            ParamKey.website: vaultWebsite(typed),
+            ParamKey.cardName: otherWebsiteCardName
+        ])
+    }
+
+    static func passVaultCredentialsAdded(_ credentials: ProfileV3AppCredentials, sites: [ProfileV3VaultSite]) {
+        let url = credentials.websiteURL
+        let website = url.flatMap(ProfileV3VaultSite.bareHost)
+        log(EventName.passVaultCredentialsAdded, [
+            ParamKey.website: website,
+            ParamKey.cardName: url.flatMap { ProfileV3VaultSite.matching($0, in: sites) }?.displayName ?? website,
+            ParamKey.emailAdded: credentials.username
+        ])
+    }
+
+    static func passVaultWebsiteClicked(_ url: URL, cardName: String?) {
+        let website = ProfileV3VaultSite.bareHost(url)
+        log(EventName.passVaultWebsiteClicked, [ParamKey.website: website, ParamKey.cardName: cardName ?? website])
+    }
+
+    private static func vaultWebsite(_ address: String?) -> String? {
+        address.flatMap { ProfileV3AppCredentials(website: $0).websiteURL }.flatMap(ProfileV3VaultSite.bareHost)
+    }
+
+    // MARK: - Glove box
+
+    static func gloveBoxOpened() {
+        log(EventName.gloveBoxOpened)
+    }
+
+    static func gloveBoxItemClicked(_ item: GloveBoxItem, activated: Bool) {
+        log(EventName.gloveBoxItemClicked, [ParamKey.itemType: item.rawValue, ParamKey.activated: activated])
     }
 
     // MARK: - Travellers

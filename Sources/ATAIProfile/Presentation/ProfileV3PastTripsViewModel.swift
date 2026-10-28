@@ -29,7 +29,6 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
     let pass: ProfileV3WorldPass
 
     private let repository: any ProfileV3PastTripsRepository
-    private let addsTripsWithoutDate: Bool
     private let onChange: () -> Void
     private let onClose: () -> Void
     private var startsAdding: Bool
@@ -46,14 +45,12 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         pass: ProfileV3WorldPass,
         repository: any ProfileV3PastTripsRepository,
         startsAdding: Bool,
-        addsTripsWithoutDate: Bool = false,
         onChange: @escaping () -> Void,
         onClose: @escaping () -> Void
     ) {
         self.pass = pass
         self.repository = repository
         self.startsAdding = startsAdding
-        self.addsTripsWithoutDate = addsTripsWithoutDate
         self.onChange = onChange
         self.onClose = onClose
     }
@@ -92,29 +89,15 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
 
     func tapAdd() {
         guard sheet == nil else { return }
-        let editor = makeEditor(.add)
-        editor.load()
-        self.editor = editor
-        present(.add)
-    }
-
-    func tapAddDates(_ trip: ProfileV3PastTrip) {
-        guard sheet == nil, revealingTripID == nil, trip.date == nil else { return }
-        let editor = makeEditor(.addDates(trip))
+        let editor = makeEditor()
         editor.load()
         self.editor = editor
         present(.add)
     }
 
     func tapMore(_ trip: ProfileV3PastTrip) {
-        guard sheet == nil, revealingTripID == nil, trip.edit != nil || trip.delete != nil else { return }
+        guard sheet == nil, revealingTripID == nil, trip.delete != nil else { return }
         present(.actions(trip.id))
-    }
-
-    func tapEdit() {
-        guard let trip = actionsTrip, trip.edit != nil else { return }
-        editor = makeEditor(.edit(trip))
-        present(.add)
     }
 
     func tapDelete() {
@@ -262,15 +245,12 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         }
     }
 
-    private func makeEditor(_ mode: ProfileV3AddPastTripViewModel.Mode) -> ProfileV3AddPastTripViewModel {
+    private func makeEditor() -> ProfileV3AddPastTripViewModel {
         ProfileV3AddPastTripViewModel(
-            mode: mode,
             profileID: pass.id,
             existing: trips,
             repository: repository,
-            screen: addScreen,
-            editDuration: screen?.duration,
-            addsWithoutDate: addsTripsWithoutDate
+            screen: addScreen
         ) { [weak self] drafts in
             self?.saved(drafts)
         } onFailed: { [weak self] in
@@ -289,8 +269,5 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         completions += 1
         onChange()
         reload(revealing: drafts)
-        if let message = editor?.errorMessage {
-            showNotice(message)
-        }
     }
 }
