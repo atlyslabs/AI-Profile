@@ -30,6 +30,11 @@ struct ProfileV3AgentFormView: View {
                 }
                 .toolbar(.hidden, for: .navigationBar)
         }
+        .overlay {
+            if let customRules = viewModel.customRules {
+                ProfileV3CustomRuleEditorHost(model: customRules)
+            }
+        }
         .fullScreenCover(isPresented: showsPassportReason) {
             passportReason
         }
@@ -183,6 +188,9 @@ struct ProfileV3AgentFormView: View {
                     onOpenNoteLink: viewModel.openNoteLink
                 )
                 .equatable()
+            }
+            if let customRules = viewModel.customRules {
+                ProfileV3CustomRulesSection(model: customRules)
             }
         }
     }

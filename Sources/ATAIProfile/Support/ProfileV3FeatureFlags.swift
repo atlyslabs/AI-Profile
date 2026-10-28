@@ -19,4 +19,6 @@ enum ProfileV3FeatureFlags {
     static let isEmptyProgrammeSlotEnabled = false
     static let isGloveBoxPhoneNumberEnabled = true
     static let isGloveBoxVirtualCardEnabled = true
+    static let isPastTripAddDatesEnabled = false
+    static let isAgentCustomRulesEnabled = true
 }

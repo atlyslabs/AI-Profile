@@ -41,9 +41,9 @@ struct ProfileV3AddPastTripSheet: View {
             }
             .buttonStyle(.plain)
             .padding(.vertical, -ProfileV3Theme.Space.s8)
-            .disabled(viewModel.step == .country)
+            .disabled(!viewModel.canGoBack)
             .accessibilityLabel(ProfileV3Strings.back)
-            .accessibilityHidden(viewModel.step == .country)
+            .accessibilityHidden(!viewModel.canGoBack)
         }
         .padding(.top, Sizes.titleTop)
     }
@@ -57,6 +57,7 @@ struct ProfileV3AddPastTripSheet: View {
             ProfileV3CountryList(
                 query: $viewModel.query,
                 selection: viewModel.selectedCountry,
+                selections: viewModel.selectsMany ? viewModel.selectedCountries : nil,
                 pinned: viewModel.pinnedCountry,
                 countries: viewModel.countries,
                 searchPlaceholder: viewModel.searchPlaceholder,

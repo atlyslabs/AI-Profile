@@ -2,16 +2,27 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3CountryRow: View {
+    enum Mark {
+        case radio
+        case checkbox
+    }
+
     let name: String
     let isoCode: String
     var trailing: String?
     let isSelected: Bool
+    var mark = Mark.radio
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: ProfileV3Theme.Space.s12) {
-                ProfileV3RadioMark(isSelected: isSelected, size: ProfileV3Theme.Icon.xl, tint: Color(at: .pureBlack))
+                switch mark {
+                case .radio:
+                    ProfileV3RadioMark(isSelected: isSelected, size: ProfileV3Theme.Icon.xl, tint: Color(at: .pureBlack))
+                case .checkbox:
+                    ProfileV3CheckboxMark(isSelected: isSelected, tint: Color(at: .pureBlack))
+                }
                 flag
                     .frame(width: ProfileV3Theme.Icon.xl, height: ProfileV3Theme.Icon.xl)
                     .clipShape(Circle())

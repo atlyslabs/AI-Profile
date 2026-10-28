@@ -16,6 +16,16 @@ extension ProfileV3Theme.Sizes {
         static let nameTop = ProfileV3Theme.Space.s24
         static let nameLines = 2
         static let monthTop = ProfileV3Theme.Space.s8
+        static let undatedDrop: CGFloat = 25
+        static let addDatesTop: CGFloat = 20.5
+        static let addDatesHeight: CGFloat = 32
+        static let addDatesLeading: CGFloat = 14.4
+        static let addDatesTrailing = ProfileV3Theme.Space.s16
+        static let addDatesGap = ProfileV3Theme.Space.s4
+        static let addDatesIcon: CGFloat = 16
+        static let addDatesStroke: CGFloat = 0.5
+        static let addDatesShadowRadius: CGFloat = 15
+        static let addDatesShadowY: CGFloat = 4
         static let yearTop: CGFloat = 260.5
         static let yearSize: CGFloat = 80
         static let yearTracking: CGFloat = -3.2
@@ -121,6 +131,7 @@ extension ProfileV3Theme.Palette {
     static let tripNotch = Color(hex: "BFBFBF")
     static let tripActionIcon = Color(hex: "C2C2C2")
     static let tripPhotoPlaceholder = Color(hex: "1E1E1E")
+    static let tripAddDatesStroke = Color(hex: "E5E5E5")
 }
 
 extension ProfileV3Theme.Opacity {
@@ -139,6 +150,8 @@ extension ProfileV3Theme.Opacity {
     static let tripRing: Double = 0.6
     static let tripRingStroke: Double = 0.4
     static let tripGlowSettled: Double = 0.3
+    static let tripAddDatesFill: Double = 0.19
+    static let tripAddDatesShadow: Double = 0.05
 }
 
 extension ProfileV3Theme.Motion {

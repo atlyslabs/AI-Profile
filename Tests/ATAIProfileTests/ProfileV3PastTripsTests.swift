@@ -373,7 +373,9 @@ struct ProfileV3PastTripsTests {
         let editor = try #require(viewModel.editor)
         try await waitUntil { editor.screen != nil }
         #expect(!editor.asksForDate)
-        #expect(editor.stepCount == 1)
+        #expect(editor.selectsMany)
+        #expect(editor.stepCount == 2)
+        #expect(editor.stepIndex == 0)
         #expect(!editor.canConfirmCountry)
         editor.select(ProfileV3Country(code: "MU", name: "Mauritius"))
         #expect(editor.canConfirmCountry)
@@ -441,12 +443,122 @@ struct ProfileV3PastTripsTests {
         let editor = try #require(viewModel.editor)
         try await waitUntil { editor.screen != nil }
         #expect(!editor.asksForDate)
-        #expect(editor.stepCount == 1)
+        #expect(editor.stepCount == 2)
         editor.select(ProfileV3Country(code: "MU", name: "Mauritius"))
         editor.confirmCountry()
         try await waitUntil { !repository.added.isEmpty }
 
         #expect(repository.added.first?.date == nil)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func severalCountriesAreAddedInOneGo() async throws {
+        let repository = TripsRepositoryStub()
+        let viewModel = ProfileV3PastTripsViewModel(
+            pass: ProfileV3Fixtures.worldPass,
+            repository: repository,
+            startsAdding: false,
+            addsTripsWithoutDate: true,
+            onChange: {},
+            onClose: {}
+        )
+        viewModel.start()
+        try await waitUntil { viewModel.phase == .loaded }
+
+        viewModel.tapAdd()
+        let editor = try #require(viewModel.editor)
+        try await waitUntil { editor.screen != nil }
+        let mauritius = ProfileV3Country(code: "MU", name: "Mauritius")
+        let france = ProfileV3Country(code: "FR", name: "France")
+        editor.select(mauritius)
+        editor.select(france)
+        editor.select(mauritius)
+        #expect(editor.selectedCountries == [france])
+        editor.select(mauritius)
+        #expect(editor.selectedCountries == [france, mauritius])
+        editor.confirmCountry()
+        try await waitUntil { viewModel.focus != nil }
+
+        #expect(repository.added.map(\.country) == ["FR", "MU"])
+        #expect(repository.added.allSatisfy { $0.date == nil })
+        #expect(viewModel.sheet == nil)
+        #expect(viewModel.trips.map(\.id) == ["41", "country:FR", "country:MU"])
+        #expect(viewModel.revealingTripID == "country:FR")
+        #expect(viewModel.notice == nil)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func aFailedCountryKeepsTheOnesAlreadyAdded() async throws {
+        let repository = TripsRepositoryStub(failingAdds: ["MU"])
+        let viewModel = ProfileV3PastTripsViewModel(
+            pass: ProfileV3Fixtures.worldPass,
+            repository: repository,
+            startsAdding: false,
+            addsTripsWithoutDate: true,
+            onChange: {},
+            onClose: {}
+        )
+        viewModel.start()
+        try await waitUntil { viewModel.phase == .loaded }
+
+        viewModel.tapAdd()
+        let editor = try #require(viewModel.editor)
+        try await waitUntil { editor.screen != nil }
+        editor.select(ProfileV3Country(code: "FR", name: "France"))
+        editor.select(ProfileV3Country(code: "MU", name: "Mauritius"))
+        editor.confirmCountry()
+        try await waitUntil { viewModel.notice != nil }
+
+        #expect(viewModel.notice == "Couldn't add that country.")
+        #expect(viewModel.sheet == nil)
+        #expect(repository.added.map(\.country) == ["FR"])
+        try await waitUntil { viewModel.trips.contains { $0.id == "country:FR" } }
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func addingDatesTurnsAnUndatedCountryIntoADatedTrip() async throws {
+        let repository = TripsRepositoryStub(trips: [
+            ProfileV3PastTrip(id: "41", countryCode: "JP", date: .init(year: 2025, month: 3)),
+            ProfileV3PastTrip(id: "country:MU", countryCode: "MU", date: nil)
+        ])
+        let viewModel = ProfileV3PastTripsViewModel(
+            pass: ProfileV3Fixtures.worldPass,
+            repository: repository,
+            startsAdding: false,
+            addsTripsWithoutDate: true,
+            onChange: {},
+            onClose: {}
+        )
+        viewModel.start()
+        try await waitUntil { viewModel.phase == .loaded }
+        let dated = try #require(viewModel.trips.first)
+        let undated = try #require(viewModel.trips.last)
+        #expect(undated.date == nil)
+
+        viewModel.tapAddDates(dated)
+        #expect(viewModel.sheet == nil)
+        viewModel.tapAddDates(undated)
+        #expect(viewModel.sheet == .add)
+        let editor = try #require(viewModel.editor)
+        #expect(editor.mode == .addDates(undated))
+        #expect(editor.step == .duration)
+        #expect(editor.stepIndex == 1)
+        #expect(editor.stepCount == 2)
+        #expect(!editor.canGoBack)
+        #expect(editor.pinnedCountry?.code == "MU")
+        try await waitUntil { editor.screen != nil }
+        #expect(editor.submitTitle == "Add country")
+        editor.selectedYear = 2024
+        editor.selectedMonth = 5
+        editor.submit()
+        try await waitUntil { viewModel.focus != nil }
+
+        #expect(repository.added.count == 1)
+        #expect(repository.added.first?.country == "MU")
+        #expect(repository.added.first?.date == ProfileV3TripYearMonth(year: 2024, month: 5))
+        #expect(!viewModel.trips.contains { $0.id == "country:MU" })
+        #expect(viewModel.trips.map(\.countryCode) == ["JP", "MU"])
+        #expect(viewModel.revealingTripID == viewModel.trips.last?.id)
     }
 
     private func decode<T: Decodable>(_ type: T.Type, _ text: String) throws -> T {
@@ -481,13 +593,16 @@ private final class TripsRepositoryStub: ProfileV3PastTripsRepository, @unchecke
     private let lock = NSLock()
     private var trips: [ProfileV3PastTrip]
     private let servesDuration: Bool
+    private let failingAdds: Set<String>
 
     init(
         trips: [ProfileV3PastTrip] = [ProfileV3PastTrip(id: "41", countryCode: "JP", date: .init(year: 2025, month: 3))],
-        servesDuration: Bool = true
+        servesDuration: Bool = true,
+        failingAdds: Set<String> = []
     ) {
         self.trips = trips
         self.servesDuration = servesDuration
+        self.failingAdds = failingAdds
     }
     private var _added: [Added] = []
     private var _edited: [Edited] = []
@@ -525,13 +640,20 @@ private final class TripsRepositoryStub: ProfileV3PastTripsRepository, @unchecke
             countryTitle: "SEARCH FOR COUNTRY",
             searchPlaceholder: "Search",
             countryCTA: "Done",
-            countries: [ProfileV3Country(code: "MU", name: "Mauritius"), ProfileV3Country(code: "JP", name: "Japan")],
+            countries: [
+                ProfileV3Country(code: "MU", name: "Mauritius"),
+                ProfileV3Country(code: "JP", name: "Japan"),
+                ProfileV3Country(code: "FR", name: "France")
+            ],
             duration: servesDuration ? Self.duration(cta: "Add country") : nil,
             submit: ProfileV3BoardAction(fields: ["action": .string("add_past_trip"), "profile_id": .string(profileID)])
         )
     }
 
     func addPastTrip(_ submit: ProfileV3BoardAction, country: String, date: ProfileV3TripYearMonth?) async throws {
+        if failingAdds.contains(country) {
+            throw ProfileV3Error.transient(message: "Couldn't add that country.")
+        }
         lock.withLock {
             _added.append(Added(submit: submit, country: country, date: date))
             let id = date == nil ? "country:\(country)" : "new-\(_added.count)"

@@ -8,6 +8,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     private let agentResiduals = ProfileV3AgentResidualStore()
     private let vault: ProfileV3VaultClient
     private let gloveBox: ProfileV3GloveBoxClient
+    private let customRules = ProfileV3CustomRulesStore(defaults: .standard)
 
     init(
         client: ProfileV3NetworkClient,
@@ -641,6 +642,22 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
             try await client.perform(.submit(body: body))
         }
         await store.invalidate()
+    }
+}
+
+extension ProfileV3LiveRepository: ProfileV3CustomRulesRepository {
+    private var rulesOwner: String { session.currentUserID ?? "signed-out" }
+
+    func loadCustomRules(agentID: String, profileID: String?) async throws -> [ProfileV3CustomRule] {
+        customRules.rules(owner: rulesOwner, agentID: agentID, profileID: profileID)
+    }
+
+    func saveCustomRule(_ rule: ProfileV3CustomRule, agentID: String, profileID: String?) async throws {
+        customRules.save(rule, owner: rulesOwner, agentID: agentID, profileID: profileID)
+    }
+
+    func deleteCustomRule(id: String, agentID: String, profileID: String?) async throws {
+        customRules.delete(id: id, owner: rulesOwner, agentID: agentID, profileID: profileID)
     }
 }
 
