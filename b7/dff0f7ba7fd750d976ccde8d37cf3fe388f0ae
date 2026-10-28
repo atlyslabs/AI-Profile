@@ -1,0 +1,75 @@
+Sources/ATAIProfile/Support/ProfileV3Theme+Settings.swift
+  s_aca99db70bc6e3::t_8d88468f9b0835 44-45
+Sources/ATAIProfile/Resources/ProfileV3Localizable.xcstrings
+  s_aca99db70bc6e3::t_def9306c94e04c 2116-2127,3688-3699,3724-3747,3892-3915
+CLAUDE.md
+  s_aca99db70bc6e3::t_40dc5247087dae 21
+  s_aca99db70bc6e3::t_6b597529b2ddf0 1106-1116
+  s_aca99db70bc6e3::t_2d90f2df485c9e 34
+  s_aca99db70bc6e3::t_9ce61d290b80a9 1117-1121
+  s_aca99db70bc6e3::t_2f826ac2d09f1b 1175
+  s_aca99db70bc6e3::t_e8ed42a2a6eb67 65
+Sources/ATAIProfile/Generated/ProfileV3L10n+Generated.swift
+  s_aca99db70bc6e3::t_def9306c94e04c 386-387,684-685,690-697,724-731
+CHANGELOG.md
+  s_aca99db70bc6e3::t_35e77746a54f7b 112-113
+  s_aca99db70bc6e3::t_1fe39cf0a5bd5e 23-32
+Sources/ATAIProfile/Views/ProfileV3ProgrammesView.swift
+  s_aca99db70bc6e3::t_676c2f5728b800 44-45
+  s_aca99db70bc6e3::t_c2ec2f69ffa7d7 154-155,157-161,163-168,170-171,177-202
+  s_aca99db70bc6e3::t_93f94076a2af77 384-411
+  s_aca99db70bc6e3::t_bc61e32ca5f363 203,498-511
+  s_aca99db70bc6e3::t_9984377da530f2 204
+Sources/ATAIProfile/Support/ProfileV3Theme+ProgrammeSizes.swift
+  s_aca99db70bc6e3::t_fdd6375b2150b3 81-83,86-88
+  s_aca99db70bc6e3::t_5d6eeedb056ecd 89
+Sources/ATAIProfile/Support/ProfileV3Strings.swift
+  s_aca99db70bc6e3::t_edb101b0729a6c 226-233
+  s_aca99db70bc6e3::t_98e1ccb7ff835b 98-99
+Sources/ATAIProfile/Components/ProfileV3ProgrammeTile.swift
+  s_aca99db70bc6e3::t_adb9af9c461480 409
+Tests/ATAIProfileTests/ProfileV3AnalyticsEventsTests.swift
+  s_aca99db70bc6e3::t_dfc2e373ddc7dc 167-169
+Sources/ATAIProfile/Views/ProfileV3ConfirmationView.swift
+  s_aca99db70bc6e3::t_256377dbdfebcb 236-239
+  s_aca99db70bc6e3::t_c76b263eb05d2c 126
+  s_aca99db70bc6e3::t_b0b54e91d9f97e 62-64
+  s_aca99db70bc6e3::t_cf690648158e81 201-220
+  s_aca99db70bc6e3::t_097d72d70480d2 24
+  s_aca99db70bc6e3::t_a2d6fc097d65d0 51-54
+Sources/ATAIProfile/Presentation/ProfileV3ProgrammesViewModel.swift
+  s_aca99db70bc6e3::t_48e8e364642c1d 382-383
+  s_aca99db70bc6e3::t_9ac598fd573953 351-359,361-371,373,375-380
+  s_aca99db70bc6e3::t_3a0d2d707041eb 84-91
+  s_aca99db70bc6e3::t_a4462fcb33fac6 30-33
+  s_aca99db70bc6e3::t_a0ad226013b624 114,121
+  s_aca99db70bc6e3::t_5ab3e17fd0d4d1 181,186-187,190-233
+  s_aca99db70bc6e3::t_5479fafcc3c0ad 167-173
+  s_aca99db70bc6e3::t_58ef08c7cb5752 13-14
+Sources/ATAIProfile/ProfileV3ProgrammesHostingController.swift
+  s_aca99db70bc6e3::t_38f8026a2e9588 200
+  s_aca99db70bc6e3::t_857db103335804 185-188,190-199,201-209
+  s_aca99db70bc6e3::t_13c523a4bf5c8c 189
+  s_aca99db70bc6e3::t_76f6ad44d98055 22
+Tests/ATAIProfileTests/ProfileV3ProgrammeDeleteTests.swift
+  s_aca99db70bc6e3::t_0050328dd9b110 1-68,70,74-124,127-166,168-169,172-209
+  s_aca99db70bc6e3::t_175927fe2032e7 125-126
+  s_aca99db70bc6e3::t_395e054caa3507 69,71-73
+  s_aca99db70bc6e3::t_e5e84b2861e16e 167,170-171
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b7dff0f7ba7fd750d976ccde8d37cf3fe388f0ae",
+  "prompts": {},
+  "sessions": {
+    "s_aca99db70bc6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "af994f3e-966b-4461-9c19-ecffb292ed42",
+        "model": "unknown"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
