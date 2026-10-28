@@ -1,0 +1,41 @@
+Sources/ATAIProfile/Views/ProfileV3ProgrammesView.swift
+  s_aca99db70bc6e3::t_e21ff970ecbca0 279-283
+CLAUDE.md
+  s_aca99db70bc6e3::t_ba76de056a9128 34
+  s_aca99db70bc6e3::t_c4dfafc7f96c6c 65
+  s_aca99db70bc6e3::t_6df1ee523887ee 1059
+  s_aca99db70bc6e3::t_935ec9d04be711 1074
+  s_d749f1a1d70bda::t_f6540ebe4041a9 21,1159
+  s_aca99db70bc6e3::t_3d2b0c2c4cea6a 1104
+  s_aca99db70bc6e3::t_d1394fbbc658af 1105
+  s_aca99db70bc6e3::t_aaf9bf19bbc4c1 1082,1088,1098
+  s_aca99db70bc6e3::t_e0436aa576e3e6 1099-1103
+CHANGELOG.md
+  s_aca99db70bc6e3::t_db27f7a65197bc 23-27
+Sources/ATAIProfile/Data/ProfileV3ProgrammeFixtures.swift
+  s_aca99db70bc6e3::t_807bb877072499 114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "55e2cff94f0d779bbcc6d13ce2ee12e27dad2b4e",
+  "prompts": {},
+  "sessions": {
+    "s_aca99db70bc6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "af994f3e-966b-4461-9c19-ecffb292ed42",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    },
+    "s_d749f1a1d70bda": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1ab84227-1d68-41a4-a899-c380ba71e624",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
