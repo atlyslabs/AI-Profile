@@ -44,6 +44,7 @@ struct ProfileV3PreviousPassportsView: View {
                         content: .details(passport),
                         showsStatusBadge: true
                     )
+                    .trackRow(index, of: screen.passports.count)
                     if index == 0, screen.passports.count > 1 {
                         ProfileV3HorizontalRule()
                             .stroke(
@@ -62,6 +63,7 @@ struct ProfileV3PreviousPassportsView: View {
         }
         .profileV3HeaderFade(headerPin)
         .scrollBounceBehavior(.basedOnSize)
+        .trackScroll(.previousPassportsList)
     }
 
     private var emptyState: some View {

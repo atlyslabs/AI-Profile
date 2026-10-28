@@ -9,6 +9,8 @@ struct ProfileV3OfferDetailScaffold<Meter: View>: View {
     let isDepleted: Bool
     let footer: (title: String, action: () -> Void)?
     let onClose: () -> Void
+    var scrollComponent: ScrollComponent?
+    var scrollItemId: String?
     @ViewBuilder let meter: () -> Meter
 
     @State private var isRevealed = false
@@ -51,6 +53,7 @@ struct ProfileV3OfferDetailScaffold<Meter: View>: View {
                 .padding(.bottom, ProfileV3Theme.Space.s32)
             }
             .scrollBounceBehavior(.basedOnSize)
+            .trackScroll(ifNamed: scrollComponent, id: scrollItemId)
             ProfileV3CloseBar(action: onClose)
                 .modifier(entry(0))
         }

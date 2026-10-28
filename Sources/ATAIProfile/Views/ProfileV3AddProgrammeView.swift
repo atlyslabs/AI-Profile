@@ -244,6 +244,7 @@ struct ProfileV3AddProgrammeView: View {
                 }
                 .scrollBounceBehavior(.basedOnSize)
                 .scrollDismissesKeyboard(.interactively)
+                .trackScroll(.addProgramme)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             } else {
                 stack
@@ -347,7 +348,8 @@ struct ProfileV3AddProgrammeView: View {
                     }
                 }
             ),
-            revealOffset: ProfileV3Theme.Motion.entryOffsetY
+            revealOffset: ProfileV3Theme.Motion.entryOffsetY,
+            scrollComponent: .programmeCardCarousel
         ) {
             ForEach(viewModel.filteredCatalogue) { item in
                 Button {

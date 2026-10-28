@@ -55,7 +55,7 @@ struct ProfileV3AddTravellerView: View {
     }
 
     private func content(_ screen: ProfileV3AddTravellerScreen) -> some View {
-        ProfileV3FocusScroll(focused: focusedKey) {
+        ProfileV3FocusScroll(focused: focusedKey, scrollComponent: .addTraveller) {
             VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s40) {
                 if !screen.subtitle.isEmpty {
                     Text(screen.subtitle)

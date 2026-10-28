@@ -39,6 +39,7 @@ struct ProfileV3InformationAccessView: View {
             }
         }
         .scrollBounceBehavior(.basedOnSize)
+        .trackScroll(.informationAccess)
         .background(Color(at: .pureWhite))
         .sensoryFeedback(.success, trigger: model.disconnectCompletions)
     }

@@ -41,10 +41,12 @@ struct ProfileV3AgentGrid: View {
 
     var body: some View {
         LazyVGrid(columns: Self.columns, spacing: ProfileV3Theme.Space.s18) {
-            ForEach(agents) { agent in
+            ForEach(agents.indexed) { row in
+                let agent = row.element
                 ProfileV3AgentGridCard(agent: agent, isKYCComplete: isKYCComplete) {
                     onActivate(agent)
                 }
+                .trackSection(.agentTile, id: agent.id, at: row.index + 1)
             }
         }
     }

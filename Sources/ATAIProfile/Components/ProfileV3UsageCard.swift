@@ -105,6 +105,8 @@ struct ProfileV3SeparatorDot: View {
 struct ProfileV3UsageRail<Item: Identifiable>: View {
     let items: [Item]
     let usage: (Item) -> ProfileV3Usage
+    var scrollComponent: ScrollComponent?
+    var scrollPosition: Int?
     let onSelect: (Item) -> Void
 
     @State private var width = ProfileV3Theme.Canvas.width
@@ -131,6 +133,7 @@ struct ProfileV3UsageRail<Item: Identifiable>: View {
         .contentMargins(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin, for: .scrollContent)
         .scrollClipDisabled()
         .scrollDisabled(items.count < 2)
+        .trackScroll(ifNamed: scrollComponent, at: scrollPosition)
         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
     }
 }

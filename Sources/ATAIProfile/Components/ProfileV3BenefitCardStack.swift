@@ -68,6 +68,7 @@ struct ProfileV3BenefitCardStack: View {
         .allowsHitTesting(isFront)
         .accessibilityHidden(!isFront)
         .zIndex(Double(-position))
+        .trackSection(.benefitCard, id: benefit.id, at: position % benefits.count + 1)
         .transition(.asymmetric(insertion: entrance, removal: exit))
     }
 

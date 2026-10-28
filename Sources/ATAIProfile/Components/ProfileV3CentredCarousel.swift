@@ -1,3 +1,4 @@
+import ATUIKit
 import SwiftUI
 
 struct ProfileV3CentredCarousel<SelectionID: Hashable, Content: View>: View {
@@ -7,6 +8,8 @@ struct ProfileV3CentredCarousel<SelectionID: Hashable, Content: View>: View {
     @Binding var selection: SelectionID?
     var isScrollDisabled = false
     var revealOffset: CGFloat = 0
+    var scrollComponent: ScrollComponent?
+    var scrollPosition: Int?
     @ViewBuilder var content: () -> Content
 
     @State private var width: CGFloat = 0
@@ -25,6 +28,7 @@ struct ProfileV3CentredCarousel<SelectionID: Hashable, Content: View>: View {
             .contentMargins(.horizontal, max((width - itemWidth) / 2, 0), for: .scrollContent)
             .scrollClipDisabled()
             .scrollDisabled(isScrollDisabled)
+            .trackScroll(ifNamed: scrollComponent, at: scrollPosition)
             .frame(height: height)
             .opacity(isPositioned ? 1 : 0)
             .offset(y: isPositioned ? 0 : revealOffset)

@@ -7,6 +7,7 @@ struct ProfileV3OfferListScaffold<Header: View, Rows: View, Overlay: View>: View
     let isScrollDisabled: Bool
     let onRetry: (() -> Void)?
     let onClose: () -> Void
+    var scrollComponent: ScrollComponent?
     @ViewBuilder let header: () -> Header
     @ViewBuilder let rows: () -> Rows
     @ViewBuilder let overlay: () -> Overlay
@@ -48,8 +49,11 @@ struct ProfileV3OfferListScaffold<Header: View, Rows: View, Overlay: View>: View
             }
             .opacity(phase == .loaded ? 1 : 0)
             .scrollDisabled(isScrollDisabled)
+            .trackScroll(ifNamed: scrollComponent)
             ProfileV3CloseBar(action: onClose)
             overlay()
+                // The detail it opens tracks its own visit while this list's is paused.
+                .scrollTracking(active: true)
         }
         .coordinateSpace(.named(ProfileV3HeroSpace.name))
     }

@@ -35,7 +35,7 @@ struct ProfileV3EditTravellerFormView: View {
                 onBack: onBack,
                 onClose: onClose
             )
-            ProfileV3FocusScroll(focused: focusedField, fillsViewport: true) {
+            ProfileV3FocusScroll(focused: focusedField, fillsViewport: true, scrollComponent: .editTraveller) {
                 VStack(spacing: 0) {
                     Text(traveller.shortName)
                         .typoGraphy(.H6InterMedium18)

@@ -216,7 +216,9 @@ struct ProfileV3HubView: View {
             if !home.giftCards.isEmpty {
                 ProfileV3UsageRail(
                     items: home.giftCards,
-                    usage: ProfileV3Usage.init(benefit:)
+                    usage: ProfileV3Usage.init(benefit:),
+                    scrollComponent: .giftCardsRail,
+                    scrollPosition: 2
                 ) { benefit in
                     viewModel.trackBenefitClick(benefit, origin: .giftCard, routedToGate: false)
                     presentBenefit(benefit)
@@ -226,7 +228,9 @@ struct ProfileV3HubView: View {
             if home.featuredCoupon != nil {
                 ProfileV3UsageRail(
                     items: viewModel.allCoupons,
-                    usage: ProfileV3Usage.init(coupon:)
+                    usage: ProfileV3Usage.init(coupon:),
+                    scrollComponent: .couponsRail,
+                    scrollPosition: 3
                 ) { coupon in
                     ProfileV3Analytics.couponClicked(couponId: coupon.id, origin: .rail)
                     ProfileV3Analytics.screen(.coupons)

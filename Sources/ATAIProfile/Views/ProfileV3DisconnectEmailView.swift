@@ -41,6 +41,7 @@ struct ProfileV3DisconnectEmailView: View {
                 .padding(.bottom, ProfileV3Theme.Sizes.Disconnect.scrollBottom)
             }
             .scrollDisabled(isDisconnecting)
+            .trackScroll(.disconnectEmail)
             HStack {
                 ProfileV3CircleIconButton.back(action: onBack)
                 Spacer()

@@ -27,7 +27,9 @@ struct ProfileV3WorldPassCarousel: View {
             height: ProfileV3Theme.Sizes.worldPassHeight,
             spacing: ProfileV3Theme.Sizes.worldPassSpacing,
             selection: $selectedID,
-            isScrollDisabled: collapseProgress >= ProfileV3Theme.Motion.collapseInteractionLimit
+            isScrollDisabled: collapseProgress >= ProfileV3Theme.Motion.collapseInteractionLimit,
+            scrollComponent: .worldPassCarousel,
+            scrollPosition: 1
         ) {
             ForEach(passes) { pass in
                 ProfileV3WorldPassCarouselItem(

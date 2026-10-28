@@ -147,6 +147,9 @@ struct ProfileV3AgentFormView: View {
             .profileV3ScrollOffsetAnchor(headerOffset)
         }
         .profileV3ScrollOffset(headerOffset)
+        .trackScroll(.agentForm, id: form.agentID)
+        // Previous passports covers the form without unmounting it.
+        .scrollTracking(active: !viewModel.showsPreviousPassports)
         .overlay(alignment: .top) {
             ProfileV3AgentStickyHeader(tag: form.agentTag, pin: headerPin, onBack: viewModel.tapBack)
         }

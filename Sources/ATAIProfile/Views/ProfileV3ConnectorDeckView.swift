@@ -66,6 +66,7 @@ struct ProfileV3ConnectorDeckView: View {
             }
             .scrollTargetBehavior(.viewAligned)
             .contentMargins(.horizontal, deckInset, for: .scrollContent)
+            .trackScroll(.connectorDeck)
             .padding(.top, (Deck.deckTop - Deck.headerTitleTop - ProfileV3Theme.Space.s16) * canvasScale)
             Spacer(minLength: 0)
         }

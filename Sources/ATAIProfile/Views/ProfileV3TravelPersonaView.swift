@@ -54,6 +54,7 @@ struct ProfileV3TravelPersonaView: View {
                 }
                 .profileV3ScrollOffset(headerOffset)
                 .scrollDisabled(viewModel.isDragging)
+                .trackScroll(.travelPersona)
                 .transition(.opacity)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)

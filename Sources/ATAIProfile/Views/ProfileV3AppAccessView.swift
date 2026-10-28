@@ -11,6 +11,7 @@ struct ProfileV3AppAccessView: View {
             ProfileV3AppAccessContent(model: model, showsConnected: model.canOpenConnected, onBack: onBack)
         }
         .scrollBounceBehavior(.basedOnSize)
+        .trackScroll(.appAccess)
         .background(Color(at: .pureWhite))
         .overlay(alignment: .bottom) {
             if model.phase == .loaded {
@@ -117,6 +118,7 @@ struct ProfileV3AppAccessContent: View {
                 autoConnectedCards
             }
             .contentMargins(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin, for: .scrollContent)
+            .trackScroll(.autoConnectedAppsRail, at: 1)
         } else {
             autoConnectedCards
                 .padding(.leading, ProfileV3Theme.Sizes.screenHorizontalMargin)

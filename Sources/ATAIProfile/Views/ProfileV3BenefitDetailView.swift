@@ -28,7 +28,9 @@ struct ProfileV3BenefitDetailView: View {
             terms: benefit.terms ?? "",
             isDepleted: benefit.isDepleted,
             footer: footer,
-            onClose: onClose
+            onClose: onClose,
+            scrollComponent: .benefitDetail,
+            scrollItemId: benefit.id
         ) {
             ProfileV3BenefitMeter(status: benefit.status)
         }

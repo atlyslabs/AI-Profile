@@ -15,6 +15,7 @@ struct ProfileV3ProgrammeSourcesView: View {
                 ScrollView(showsIndicators: false) {
                     loaded(content)
                 }
+                .trackScroll(.programmeSources)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
                     .frame(maxHeight: .infinity)

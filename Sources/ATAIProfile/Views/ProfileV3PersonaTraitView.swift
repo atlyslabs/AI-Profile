@@ -16,6 +16,7 @@ struct ProfileV3PersonaTraitView: View {
                         .profileV3ScrollOffsetAnchor(headerOffset)
                 }
                 .profileV3ScrollOffset(headerOffset)
+                .trackScroll(.personaTrait)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
                     .padding(.top, ProfileV3AgentSheetHeader.height(showsOrb: false))

@@ -46,6 +46,9 @@ struct ProfileV3SettingsView: View {
                 .profileV3ScrollOffsetAnchor(headerOffset)
             }
             .profileV3ScrollOffset(headerOffset)
+            .trackScroll(.settingsMenu)
+            // The glove box covers the menu without unmounting it.
+            .scrollTracking(active: !viewModel.isGloveBoxPresented)
             ProfileV3SettingsPageHeader(title: viewModel.title, pin: headerPin, onBack: viewModel.tapBack)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -188,6 +191,8 @@ private struct ProfileV3SettingsPremeasure: View {
         .opacity(0)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+        // Built offscreen only to measure sheet heights: never a visit.
+        .scrollTracking(active: false)
     }
 }
 

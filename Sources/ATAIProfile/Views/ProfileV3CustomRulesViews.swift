@@ -18,6 +18,7 @@ struct ProfileV3CustomRulesSection: View {
                     }
                     .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 }
+                .trackScroll(.customRulesRail)
                 .padding(.horizontal, -ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.top, Sizes.cardsTop)
             }
