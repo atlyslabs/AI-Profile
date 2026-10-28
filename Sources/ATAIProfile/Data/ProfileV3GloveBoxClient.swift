@@ -41,29 +41,45 @@ struct ProfileV3GloveBoxMessagesDTO: Decodable, Equatable {
     }
 }
 
+struct ProfileV3GloveBoxAttentionDTO: Decodable, Equatable {
+    let type: String?
+    let title: String?
+    let detail: String?
+}
+
 struct ProfileV3GloveBoxMessageItemDTO: Decodable, Equatable {
     let id: String
     let fromName: String?
     let senderDomain: String?
+    let senderLogoURL: String?
     let subject: String?
     let receivedAt: String?
     let toPreviousAddress: Bool?
     let status: String?
+    private let rawAttention: ProfileV3LossyDTO<ProfileV3GloveBoxAttentionDTO>?
+    private let rawAction: ProfileV3LossyDTO<String>?
+
+    var attention: ProfileV3GloveBoxAttentionDTO? { rawAttention?.value }
+    var action: String? { rawAction?.value }
 
     enum CodingKeys: String, CodingKey {
         case id
         case fromName = "from_name"
         case senderDomain = "sender_domain"
+        case senderLogoURL = "sender_logo_url"
         case subject
         case receivedAt = "received_at"
         case toPreviousAddress = "to_previous_address"
         case status
+        case rawAttention = "attention"
+        case rawAction = "action"
     }
 }
 
 struct ProfileV3GloveBoxMessageDTO: Decodable, Equatable {
     let id: String
     let fromName: String?
+    let senderLogoURL: String?
     let subject: String?
     let receivedAt: String?
     let toPreviousAddress: Bool?
@@ -71,10 +87,16 @@ struct ProfileV3GloveBoxMessageDTO: Decodable, Equatable {
     let html: String?
     let text: String?
     let attachments: [ProfileV3GloveBoxAttachmentDTO]?
+    private let rawAttention: ProfileV3LossyDTO<ProfileV3GloveBoxAttentionDTO>?
+    private let rawAction: ProfileV3LossyDTO<String>?
+
+    var attention: ProfileV3GloveBoxAttentionDTO? { rawAttention?.value }
+    var action: String? { rawAction?.value }
 
     enum CodingKeys: String, CodingKey {
         case id
         case fromName = "from_name"
+        case senderLogoURL = "sender_logo_url"
         case subject
         case receivedAt = "received_at"
         case toPreviousAddress = "to_previous_address"
@@ -82,6 +104,8 @@ struct ProfileV3GloveBoxMessageDTO: Decodable, Equatable {
         case html
         case text
         case attachments
+        case rawAttention = "attention"
+        case rawAction = "action"
     }
 }
 

@@ -26,16 +26,16 @@ struct ProfileV3AppCredentialsView: View {
                 .ignoresSafeArea(.keyboard)
                 .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
         }
-        .presentationDetents(detents)
+        .profileV3FittedDetent(fittedHeight, until: .large)
         .presentationCornerRadius(ProfileV3Theme.Sizes.AppCredentials.cornerRadius)
         .presentationDragIndicator(.hidden)
         .interactiveDismissDisabled(viewModel.phase == .submitting)
         .onDisappear(perform: viewModel.cancel)
     }
 
-    private var detents: Set<PresentationDetent> {
-        guard measured.content > 0, measured.bar > 0 else { return [.large] }
-        return [.height(measured.content + measured.bar + measured.bottomInset)]
+    private var fittedHeight: CGFloat? {
+        guard measured.content > 0, measured.bar > 0 else { return nil }
+        return measured.content + measured.bar + measured.bottomInset
     }
 }
 
@@ -64,15 +64,15 @@ struct ProfileV3DeleteLoginSheet: View {
             Color.clear
                 .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
         }
-        .presentationDetents(detents)
+        .profileV3FittedDetent(fittedHeight)
         .presentationCornerRadius(ProfileV3Theme.Sizes.AppCredentials.cornerRadius)
         .presentationDragIndicator(.hidden)
         .interactiveDismissDisabled(viewModel.isDeleting)
     }
 
-    private var detents: Set<PresentationDetent> {
-        guard measured.content > 0 else { return [.medium] }
-        return [.height(measured.content + measured.bottomInset)]
+    private var fittedHeight: CGFloat? {
+        guard measured.content > 0 else { return nil }
+        return measured.content + measured.bottomInset
     }
 }
 

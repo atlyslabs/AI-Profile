@@ -98,9 +98,12 @@ extension ProfileV3SettingsCardHeader where Accessory == EmptyView {
 }
 
 extension View {
-    func profileV3SettingsCard(cornerRadius: CGFloat = ProfileV3Theme.Sizes.SettingsPage.cardRadius) -> some View {
+    func profileV3SettingsCard(
+        cornerRadius: CGFloat = ProfileV3Theme.Sizes.SettingsPage.cardRadius,
+        fill: Color = ProfileV3Theme.Palette.background
+    ) -> some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-        return background(shape.fill(ProfileV3Theme.Palette.background))
+        return background(shape.fill(fill))
             .overlay(
                 shape.strokeBorder(ProfileV3Theme.Palette.settingsCardBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
             )

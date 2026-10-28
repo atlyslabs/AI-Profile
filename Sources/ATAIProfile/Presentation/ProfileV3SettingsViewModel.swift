@@ -7,7 +7,12 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     var pagePath: [ProfileV3SettingsDestination] = []
     var sheetPath: [ProfileV3SettingsDestination] = []
     private(set) var sheetEntry: ProfileV3SettingsDestination?
-    var isAccountExpanded = false
+    var isAccountExpanded = false {
+        didSet {
+            guard isAccountExpanded != oldValue else { return }
+            ProfileV3Analytics.accountCenterTapped(isOpening: isAccountExpanded)
+        }
+    }
     private(set) var menu: ProfileV3SettingsMenu?
     private(set) var menuPhase: ProfileV3LoadPhase = .loading
 
@@ -19,6 +24,8 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     let account: ProfileV3AccountSettingsModel
     let permissions: ProfileV3PermissionsSettingsModel
     private(set) var monogram: String?
+    var isGloveBoxPresented = false
+    private(set) var gloveBoxHasAddress: Bool?
     @ObservationIgnored var sheetHeights: [ProfileV3SettingsDestination: CGFloat] = [:]
 
     @ObservationIgnored weak var router: (any ProfileV3SettingsRouter)? {
@@ -37,6 +44,8 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     @ObservationIgnored private var menuTask: Task<Void, Never>?
     @ObservationIgnored private var presentTask: Task<Void, Never>?
     @ObservationIgnored private var monogramTask: Task<Void, Never>?
+    @ObservationIgnored private var gloveBoxTask: Task<Void, Never>?
+    @ObservationIgnored private var startsKYCAfterGloveBox = false
 
     init(
         deps: ProfileV3SettingsDependencies,
@@ -53,7 +62,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
             ?? Self.monogram(from: board?.cachedBoard()?.mainProfile?.name)
         let fields = ProfileV3ProfileFieldsModel(deps: deps, repository: repository, profileID: profileID)
         self.fields = fields
-        let connectors = ProfileV3ConnectorsSettingsModel(repository: repository)
+        let connectors = ProfileV3ConnectorsSettingsModel(repository: repository, travellerID: profileID)
         self.connectors = connectors
         appAccess = ProfileV3AppAccessModel(repository: repository, connectors: connectors)
         credentialStore = ProfileV3CredentialStoreModel(repository: repository)
@@ -114,6 +123,53 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         }
     }
 
+    var hasGloveBox: Bool { gloveBoxRepository != nil }
+    var showsGloveBoxActivate: Bool { gloveBoxHasAddress == false }
+
+    func loadGloveBoxStatusIfNeeded() {
+        guard gloveBoxHasAddress == nil, gloveBoxTask == nil else { return }
+        loadGloveBoxStatus()
+    }
+
+    func tapGloveBox() {
+        isGloveBoxPresented = true
+    }
+
+    func gloveBoxDidClose() {
+        guard startsKYCAfterGloveBox else {
+            loadGloveBoxStatus()
+            return
+        }
+        startsKYCAfterGloveBox = false
+        router?.presentConnectorOnboarding()
+    }
+
+    func completeKYCFromGloveBox() {
+        startsKYCAfterGloveBox = true
+        isGloveBoxPresented = false
+    }
+
+    func isMainTravellerKYCComplete() async -> Bool {
+        guard let board else { return true }
+        if let main = board.cachedBoard()?.mainProfile {
+            return main.home.kycStatus.isComplete
+        }
+        return (try? await board.loadLatestBoard().mainProfile?.home.kycStatus.isComplete) ?? true
+    }
+
+    private func loadGloveBoxStatus() {
+        guard let gloveBoxRepository else { return }
+        gloveBoxTask?.cancel()
+        gloveBoxTask = Task { [weak self] in
+            let account = try? await gloveBoxRepository.loadGloveBoxCard()
+            guard let self, !Task.isCancelled else { return }
+            gloveBoxTask = nil
+            if let account {
+                gloveBoxHasAddress = account.hasAddress
+            }
+        }
+    }
+
     static func monogram(from name: String?) -> String? {
         name?.trimmingCharacters(in: .whitespacesAndNewlines).first.map { String($0).lowercased() }
     }
@@ -137,24 +193,28 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     func tap(_ row: ProfileV3SettingsRowItem) {
-        ProfileV3Analytics.settingsRowClicked(rowKey: row.key)
         ProfileV3Analytics.cta(row.directive, origin: .settings)
         switch row.route {
         case .editField(let key):
             if let field = ProfileV3ProfileField(rawValue: key) {
+                ProfileV3Analytics.settingsFieldClicked(field)
                 fields.open(field)
             }
         case .connectors:
+            ProfileV3Analytics.settingsConnectorClicked(.information)
             connectors.open()
         case .editTraveler:
             travellers.open()
         case .permissions:
+            ProfileV3Analytics.permissionClicked()
             permissions.open()
         case .coupons:
+            ProfileV3Analytics.couponsClicked()
             router?.presentCoupons()
         case .loyaltyAdd:
             router?.presentLoyaltyProgrammes()
         case .termsOfService:
+            ProfileV3Analytics.termsClicked()
             router?.presentTermsOfService()
         case .logout:
             account.tapLogout()
@@ -166,12 +226,12 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     func tapInformationAccess() {
-        ProfileV3Analytics.settingsRowClicked(rowKey: "information_access")
+        ProfileV3Analytics.settingsConnectorClicked(.information)
         connectors.open()
     }
 
     func tapAppAccess() {
-        ProfileV3Analytics.settingsRowClicked(rowKey: "app_access")
+        ProfileV3Analytics.settingsConnectorClicked(.app)
         guard ProfileV3FeatureFlags.isAppAccessEnabled else {
             push(.appAccess)
             return
@@ -180,16 +240,17 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     func tapCredentialStore() {
-        ProfileV3Analytics.settingsRowClicked(rowKey: "credential_store")
         credentialStore.open()
     }
 
     func tapConcierge(_ concierge: ProfileV3Concierge) {
-        ProfileV3Analytics.settingsRowClicked(rowKey: "concierge")
         router?.openExternalURL(concierge.openURL)
     }
 
-    func tapBack() { router?.dismissSettings() }
+    func tapBack() {
+        ProfileV3Analytics.settingsBackClicked()
+        router?.dismissSettings()
+    }
     func tapClose() { path = pagePath }
 
     func sheetDidDismiss() {
@@ -203,6 +264,8 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         presentTask?.cancel()
         monogramTask?.cancel()
         monogramTask = nil
+        gloveBoxTask?.cancel()
+        gloveBoxTask = nil
         fields.cancelReads()
         connectors.cancelReads()
         appAccess.cancelReads()

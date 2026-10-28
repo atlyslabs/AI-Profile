@@ -105,6 +105,7 @@ enum ProfileV3ConnectorGlyph: String {
     case addCircle = "profile_v3_add_circle"
     case editStroke = "profile_v3_edit_stroke"
     case vaultLock = "profile_v3_vault_lock"
+    case credentialCardArt = "profile_v3_credential_card_art"
     case reserveGlyph = "reserve_logo_clear"
 
     var image: Image {
@@ -135,6 +136,9 @@ enum ProfileV3GloveBoxArt: String {
     case noticeGlow = "profile_v3_glovebox_notice_glow"
     case addCardGlow = "profile_v3_glovebox_add_card_glow"
     case emptyCard = "profile_v3_glovebox_empty_card"
+    case dialMail = "profile_v3_glovebox_dial_mail"
+    case dialCall = "profile_v3_glovebox_dial_call"
+    case dialCreditCard = "profile_v3_glovebox_dial_credit_card"
 
     var image: Image { Image(rawValue, bundle: .module) }
 }

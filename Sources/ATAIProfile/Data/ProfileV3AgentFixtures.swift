@@ -53,7 +53,12 @@ enum ProfileV3AgentFixtures {
                 options: ["Cheapest"], selected: ["Singapore Airlines", "Emirates"],
                 picker: ProfileV3OptionPicker(title: "+Add preferred airlines", catalogue: airlines),
                 note: "...I will scan flights 24x7 and get you the best deals",
-                source: ProfileV3SectionSource(iconURL: gmailSourceIcon, agentType: "flight", fieldKey: "airlines")
+                source: ProfileV3SectionSource(
+                    icons: [ProfileV3SourceIcon(url: gmailSourceIcon), ProfileV3SourceIcon(url: emiratesSourceIcon)],
+                    count: 3,
+                    agentType: "flight",
+                    fieldKey: "airlines"
+                )
             ),
             chips(
                 "class", "Class",
@@ -366,7 +371,7 @@ enum ProfileV3AgentFixtures {
             passport(
                 "passport", ProfileV3Strings.passportDetails,
                 passport: ProfileV3PassportFixtures.active,
-                hasHistory: true
+                previous: ProfileV3PassportFixtures.previousEntry
             ),
             chips(
                 "travelling-with", "Traveling with", status: .complete,
@@ -554,14 +559,14 @@ enum ProfileV3AgentFixtures {
         _ id: String,
         _ title: String,
         passport: ProfileV3Passport?,
-        hasHistory: Bool
+        previous: ProfileV3PassportPrevious?
     ) -> ProfileV3FormSection {
         let field = ProfileV3PassportField(
             holderName: passport?.holderName ?? "alex r.",
             countryName: passport?.countryName ?? ProfileV3Strings.passportCountryIndia,
             countryNativeName: passport?.countryNativeName ?? ProfileV3Strings.passportCountryIndiaNative,
             passport: passport,
-            hasHistory: hasHistory,
+            previous: previous,
             rescan: ProfileV3PassportFixtures.rescan,
             howUsed: ProfileV3PassportFixtures.howUsedDirective
         )
@@ -599,6 +604,7 @@ enum ProfileV3AgentFixtures {
     }
 
     static let gmailSourceIcon = URL(string: "https://media.atlys.com/b2c/ai-native/icons/kyc/gmail.png")
+    static let emiratesSourceIcon = URL(string: "https://media.atlys.com/b2c/ai-native/loyalty/flights/emirates_skywards.png")
 
     static let airlineSources = ProfileV3PreferenceSources(
         title: "Your preferred airlines",

@@ -93,6 +93,22 @@ extension ProfileV3Theme {
                 }
             }
 
+            static let settingsCardHeight: CGFloat = 186
+            static let settingsCardInset: CGFloat = 30
+            static let settingsTitleTop: CGFloat = 26
+            static let settingsTitleLine: CGFloat = 20
+            static let settingsSubtitleTop: CGFloat = 13
+            static let settingsSubtitleLine: CGFloat = 19
+            static let settingsBodyTop: CGFloat = 5
+            static let settingsBodyLines: CGFloat = 32
+            static let settingsBodyWidth: CGFloat = 282
+            static let settingsPillTop: CGFloat = 19
+            static let settingsDials: [(fromTrailing: CGFloat, centreY: CGFloat, diameter: CGFloat)] = [
+                (14.56, 33.64, 47.12),
+                (85.65, 25.35, 62.693),
+                (49.36, 91.64, 55.284)
+            ]
+
             static let homeSheetTop: CGFloat = 409.31
             static let sheetRadius: CGFloat = 44
             static let sheetShadowRadius: CGFloat = 15
@@ -113,6 +129,10 @@ extension ProfileV3Theme {
             static let sectionAboutTop: CGFloat = 16
             static let sectionAboutWidth: CGFloat = 303
             static let forwardingTop: CGFloat = 18
+            static let forwardingNoticeTop: CGFloat = 16
+            static let forwardingNoticePadding = EdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 14)
+            static let forwardingNoticeRadius: CGFloat = 16
+            static let forwardingNoticeIcon: CGFloat = 14
             static let previewTop: CGFloat = 27
             static let phoneAboutTop: CGFloat = 20
             static let headlineTop: CGFloat = 16
@@ -139,6 +159,7 @@ extension ProfileV3Theme {
             static let sampleInset = EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10)
             static let sampleTop: CGFloat = 11
             static let sampleTrailing: CGFloat = 11
+            static let sampleClearance: CGFloat = 12
 
             static let previewRadius: CGFloat = 20
             static let previewPadding = EdgeInsets(top: 28, leading: 22, bottom: 28, trailing: 22)
@@ -264,6 +285,14 @@ extension ProfileV3Theme {
             static let detailDividerTop: CGFloat = 37
             static let detailNoteTop: CGFloat = 43
             static let detailNoteWidth: CGFloat = 260
+            static let detailNoteOrbGap: CGFloat = 16
+            static let detailAttachmentsTop: CGFloat = 41
+            static let attachmentPadding = EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 16)
+            static let attachmentRadius: CGFloat = 20
+            static let attachmentIcon: CGFloat = 20
+            static let attachmentIconGap: CGFloat = 4
+            static let attachmentSpacing: CGFloat = 16
+            static let attachmentRowSpacing: CGFloat = 12
             static let detailCTATop: CGFloat = 48
             static let detailEmptyBottom: CGFloat = 120
 
@@ -311,6 +340,7 @@ extension ProfileV3Theme {
             static let sectionBorder = Color(hex: "E5E5E5")
             static let sectionShadow = Color(at: .pureBlack).opacity(0.02)
             static let preview = Color(hex: "F9F9F9")
+            static let settingsSubtitleOpacity = 0.8
             static let sectionTitleOpacity = 0.5
             static let aboutOpacity = 0.5
             static let forwardingOpacity = 0.9
@@ -393,6 +423,18 @@ extension ProfileV3Theme {
             colors: [Palette.pillTop, Palette.pillBottom],
             startPoint: .top,
             endPoint: .bottom
+        )
+
+        static let pillSpectrum = ProfileV3BoxGradient(
+            stops: [
+                .init(color: Color(at: .pureBlack), location: 0),
+                .init(color: Color(hex: "5057EA"), location: 0.192),
+                .init(color: Color(hex: "EF4646"), location: 0.66),
+                .init(color: Color(hex: "EDD758"), location: 0.99)
+            ],
+            atOrigin: 0.021,
+            perWidth: 0.918,
+            perHeight: 0.067
         )
 
         static let cardWash = LinearGradient(

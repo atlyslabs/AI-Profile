@@ -78,9 +78,7 @@ struct ProfileV3AgentFormView: View {
                 onHowUsed: viewModel.openPassportHowUsed
             )
             .sheet(item: $viewModel.passportHowUsed, onDismiss: viewModel.passportHowUsedDismissed) { howUsed in
-                ProfileV3PassportHowUsedView(viewModel: howUsed, onScan: viewModel.scanFromPassportHowUsed)
-                    .presentationDetents([.medium, .large])
-                    .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
+                ProfileV3PassportHowUsedSheet(viewModel: howUsed, onScan: viewModel.scanFromPassportHowUsed)
             }
         }
     }
@@ -171,6 +169,7 @@ struct ProfileV3AgentFormView: View {
                     onSliderChange: { viewModel.setSliderValue($0, in: section.id) },
                     onOptOut: { viewModel.setOptOut($0, in: section.id) },
                     onTextChange: { viewModel.setText($0, in: section.id) },
+                    onTextCommit: { viewModel.commitText(in: section.id) },
                     onDateChange: { viewModel.setDate($0, in: section.id) },
                     onAdd: { viewModel.openPicker(for: section.id) },
                     onOpenSources: { viewModel.openSources(for: section.id) },
@@ -183,23 +182,19 @@ struct ProfileV3AgentFormView: View {
                     onStepBaggage: { viewModel.stepBaggage($0, by: $1, in: section.id) },
                     onOpenNoteLink: viewModel.openNoteLink
                 )
+                .equatable()
             }
         }
     }
 
-    @ViewBuilder
     private var previousPassports: some View {
-        if let field = viewModel.passportField {
-            ProfileV3PreviousPassportsView(
-                holderName: field.holderName,
-                countryName: field.countryName,
-                countryNativeName: field.countryNativeName,
-                passports: viewModel.passportHistory,
-                phase: viewModel.passportHistoryPhase,
-                onBack: { viewModel.showsPreviousPassports = false },
-                onRetry: viewModel.loadPassportHistory
-            )
-        }
+        ProfileV3PreviousPassportsView(
+            title: viewModel.previousPassportsTitle,
+            screen: viewModel.previousPassports,
+            phase: viewModel.previousPassportsPhase,
+            onBack: { viewModel.showsPreviousPassports = false },
+            onRetry: viewModel.loadPreviousPassports
+        )
     }
 }
 

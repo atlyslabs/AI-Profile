@@ -117,6 +117,7 @@ extension ProfileV3Theme.Sizes {
     }
 
     enum Passport {
+        static let sectionTop: CGFloat = 28
         static let controlSpacing: CGFloat = 20
         static let cardWidth: CGFloat = 380
         static let cardHeight: CGFloat = 292
@@ -126,12 +127,16 @@ extension ProfileV3Theme.Sizes {
         static let stripSpacing: CGFloat = 10
         static let guillocheSize: CGFloat = 162
         static let guillocheOrigin = CGPoint(x: 25, y: -108)
+        static let pageEdgeHeight: CGFloat = 7
+        static let pageEdgeDrop: CGFloat = 8
+        static let upperPageEdge = EdgeInsets(top: 289, leading: 10, bottom: 0, trailing: 6)
+        static let lowerPageEdge = EdgeInsets(top: 293, leading: 19, bottom: 0, trailing: 15)
         static let contentInset: CGFloat = 36
         static let nameTop: CGFloat = 70
         static let fieldsTop: CGFloat = 113
         static let labelSpacing: CGFloat = 12
         static let datesTop: CGFloat = 24
-        static let dateSpacing: CGFloat = 20
+        static let dateSpacing: CGFloat = 44
         static let badgeWidth: CGFloat = 81
         static let badgeHeight: CGFloat = 32
         static let badgeTrailing: CGFloat = 22
@@ -142,8 +147,9 @@ extension ProfileV3Theme.Sizes {
         static let promptWidth: CGFloat = 223
         static let headerTop: CGFloat = 10
         static let stepTop: CGFloat = 10
-        static let listTop: CGFloat = 32
-        static let listSpacing: CGFloat = 38
+        static let listTop: CGFloat = 40
+        static let listSpacing: CGFloat = 30
+        static let listDividerDash: [CGFloat] = [2, 2]
         static let listBottom: CGFloat = 40
         static let reasonTitleWidth: CGFloat = 234
         static let reasonTitleTop: CGFloat = 30
@@ -190,8 +196,9 @@ extension ProfileV3Theme.Sizes {
 extension ProfileV3Theme.Palette {
     static let passportCard = Color(hex: "F6F7F7")
     static let passportStripDivider = Color(hex: "C0C4C3").opacity(0.2)
-    static let passportHeaderShade = Color(at: .pureBlack).opacity(0.1)
-    static let passportHeaderShadeEnd = Color(hex: "666666").opacity(0)
+    static let passportPageEdgeShade = Color(at: .pureBlack).opacity(0.2)
+    static let passportPageEdgeShadeEnd = Color(hex: "666666").opacity(0)
+    static let passportListDivider = Color(at: .pureBlack).opacity(0.2)
     static let passportGlowUpload = Color(hex: "FFD9EE")
     static let passportGlowActive = Color(hex: "D9FAFF").opacity(0.8)
     static let passportGlowExpired = Color(hex: "E4E4E4").opacity(0.8)

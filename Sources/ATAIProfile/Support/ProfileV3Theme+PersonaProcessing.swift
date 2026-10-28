@@ -38,8 +38,8 @@ extension ProfileV3Theme.Palette {
     static let personaKnobEdgeBottom = Color(hex: "747373")
     static let personaKnobShadow = Color(hex: "0A0A0A")
     static let personaLoaderShadow = Color(hex: "B4B4B4")
-    static let personaShimmerEdge = Color(hex: "C2C2C2")
-    static let personaShimmerMid = Color(hex: "E0E0E0")
+    static let personaCaptionEdge = Color(hex: "C2C2C2")
+    static let personaCaptionMid = Color(hex: "838383")
 }
 
 extension ProfileV3Theme.Opacity {
@@ -94,18 +94,5 @@ extension ProfileV3Theme {
         colors: [Color(at: .pureWhite), Palette.personaKnobEdgeBottom],
         startPoint: .top,
         endPoint: .bottom
-    )
-
-    static let personaProcessingShimmer = LinearGradient(
-        stops: [
-            .init(color: Palette.personaShimmerEdge, location: 0),
-            .init(color: Palette.personaShimmerMid, location: 0.32),
-            .init(color: Color(at: .pureWhite), location: 0.47),
-            .init(color: Color(at: .pureWhite), location: 0.57),
-            .init(color: Palette.personaShimmerMid, location: 0.72),
-            .init(color: Palette.personaShimmerEdge, location: 1),
-        ],
-        startPoint: .leading,
-        endPoint: .trailing
     )
 }

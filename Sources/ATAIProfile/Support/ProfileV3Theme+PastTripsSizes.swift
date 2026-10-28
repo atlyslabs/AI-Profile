@@ -14,6 +14,7 @@ extension ProfileV3Theme.Sizes {
         static let flag: CGFloat = 28
         static let flagTop: CGFloat = 149.5
         static let nameTop = ProfileV3Theme.Space.s24
+        static let nameLines = 2
         static let monthTop = ProfileV3Theme.Space.s8
         static let yearTop: CGFloat = 260.5
         static let yearSize: CGFloat = 80
@@ -54,6 +55,10 @@ extension ProfileV3Theme.Sizes {
         static let grabberHeight: CGFloat = 2
         static let grabberTop: CGFloat = 9
         static let titleTop: CGFloat = 40
+        static let titleLine: CGFloat = 14
+        static let closeButton = ProfileV3Theme.Control.regular
+        static let closeTop = titleTop + titleLine / 2 - closeButton / 2
+        static let closeTrailing = ProfileV3Theme.Space.s16
         static let indicatorTop: CGFloat = 13
         static let countryListTop: CGFloat = 80
         static let fadeHeight: CGFloat = 139
@@ -80,6 +85,8 @@ extension ProfileV3Theme.Sizes {
         static let actionsTop: CGFloat = 51.5
         static let actionsDividerGap: CGFloat = 7.5
         static let actionsSecondGap: CGFloat = 13.5
+        static let actionsSingleHeight = actionsHeight - actionRowHeight - actionsDividerGap
+            - ProfileV3Theme.Stroke.hairline - actionsSecondGap
         static let actionIcon = ProfileV3Theme.Icon.md
         static let actionGap = ProfileV3Theme.Space.s10
         static let dividerDash: [CGFloat] = [2, 2]
@@ -140,6 +147,7 @@ extension ProfileV3Theme.Motion {
         .opacity.animation(.easeInOut(duration: pastTripsPageSeconds))
     }
     static let pastTripsEntrance: Animation = .timingCurve(0.16, 1, 0.3, 1, duration: 0.6)
+    static let pastTripsFocus: Animation = .easeInOut(duration: 0.4)
     static let pastTripsStaggerSeconds: Double = 0.25
     static let pastTripsEntranceWindowSeconds: Double = 2
     static let pastTripsSheenDelaySeconds: Double = 0.7

@@ -1,7 +1,5 @@
 import Foundation
 
-/// Screens, events, and account writes the package cannot do itself. The country list is the one
-/// value that can be left unset; it then comes from ATUIKit.
 @MainActor
 public struct ProfileV3HostActions {
     public var account: any ProfileV3AccountHost

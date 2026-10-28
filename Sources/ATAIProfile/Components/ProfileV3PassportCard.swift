@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3PassportCard: View {
@@ -10,11 +11,25 @@ struct ProfileV3PassportCard: View {
     let holderName: String
     let countryName: String
     var countryNativeName: String?
+    var labels: ProfileV3PassportLabels = .card
     let content: Content
     var showsStatusBadge = false
     var onUpload: (() -> Void)?
 
+    private typealias Sizes = ProfileV3Theme.Sizes.Passport
+
     var body: some View {
+        ZStack(alignment: .top) {
+            pageEdge(Sizes.lowerPageEdge)
+            pageEdge(Sizes.upperPageEdge)
+            card
+        }
+        .frame(maxWidth: Sizes.cardWidth)
+        .frame(height: Sizes.cardHeight + Sizes.pageEdgeDrop, alignment: .top)
+        .accessibilityElement(children: .contain)
+    }
+
+    private var card: some View {
         ZStack(alignment: .topLeading) {
             glow
             countryStrip
@@ -22,21 +37,27 @@ struct ProfileV3PassportCard: View {
             Text(holderName)
                 .typoGraphy(.B1InterMedium14)
                 .foregroundStyle(Color(at: .pureBlack))
-                .padding(.leading, ProfileV3Theme.Sizes.Passport.contentInset)
-                .padding(.top, ProfileV3Theme.Sizes.Passport.nameTop)
+                .padding(.leading, Sizes.contentInset)
+                .padding(.top, Sizes.nameTop)
             statusBadge
             cardContent
         }
-        .frame(maxWidth: ProfileV3Theme.Sizes.Passport.cardWidth)
-        .frame(height: ProfileV3Theme.Sizes.Passport.cardHeight, alignment: .top)
-        .background {
-            ZStack {
-                ProfileV3Theme.Palette.passportCard
-                ProfileV3Theme.passportHeaderShade
-            }
-        }
+        .frame(height: Sizes.cardHeight, alignment: .top)
+        .background(ProfileV3Theme.Palette.passportCard)
         .clipShape(RoundedRectangle(cornerRadius: ProfileV3Theme.Radius.sm, style: .continuous))
-        .accessibilityElement(children: .contain)
+    }
+
+    private func pageEdge(_ insets: EdgeInsets) -> some View {
+        let shape = UnevenRoundedRectangle(
+            bottomLeadingRadius: Sizes.pageEdgeHeight,
+            bottomTrailingRadius: Sizes.pageEdgeHeight
+        )
+        return shape
+            .fill(Color(at: .pureWhite))
+            .overlay(shape.fill(ProfileV3Theme.passportPageEdgeShade))
+            .frame(height: Sizes.pageEdgeHeight)
+            .padding(insets)
+            .accessibilityHidden(true)
     }
 
     @ViewBuilder
@@ -49,8 +70,8 @@ struct ProfileV3PassportCard: View {
                 fields(for: passport)
             }
             .opacity(passport.status == .expired ? ProfileV3Theme.Motion.passportExpiredOpacity : 1)
-            .padding(.horizontal, ProfileV3Theme.Sizes.Passport.contentInset)
-            .padding(.top, ProfileV3Theme.Sizes.Passport.fieldsTop)
+            .padding(.horizontal, Sizes.contentInset)
+            .padding(.top, Sizes.fieldsTop)
         }
     }
 
@@ -58,8 +79,8 @@ struct ProfileV3PassportCard: View {
     private var statusBadge: some View {
         if showsStatusBadge, case .details(let passport) = content {
             badge(passport.status)
-                .padding(.top, ProfileV3Theme.Sizes.Passport.badgeTop)
-                .padding(.trailing, ProfileV3Theme.Sizes.Passport.badgeTrailing)
+                .padding(.top, Sizes.badgeTop)
+                .padding(.trailing, Sizes.badgeTrailing)
                 .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
@@ -74,9 +95,9 @@ struct ProfileV3PassportCard: View {
             startPoint: .top,
             endPoint: .bottom
         )
-        .frame(height: ProfileV3Theme.Sizes.Passport.glowHeight)
+        .frame(height: Sizes.glowHeight)
         .opacity(ProfileV3Theme.Motion.passportGlowOpacity)
-        .padding(.top, ProfileV3Theme.Sizes.Passport.glowTop)
+        .padding(.top, Sizes.glowTop)
         .frame(maxWidth: .infinity)
         .accessibilityHidden(true)
     }
@@ -94,7 +115,7 @@ struct ProfileV3PassportCard: View {
 
     private var countryStrip: some View {
         VStack(spacing: 0) {
-            HStack(spacing: ProfileV3Theme.Sizes.Passport.stripSpacing) {
+            HStack(spacing: Sizes.stripSpacing) {
                 if let countryNativeName {
                     Text(countryNativeName)
                         .typoGraphy(.H7InterMedium16)
@@ -109,8 +130,8 @@ struct ProfileV3PassportCard: View {
             .minimumScaleFactor(ProfileV3Theme.Typography.passportCountryMinScale)
             .foregroundStyle(Color(at: .pureBlack))
             .opacity(ProfileV3Theme.Motion.passportStripOpacity)
-            .frame(height: ProfileV3Theme.Sizes.Passport.stripHeight)
-            .padding(.horizontal, ProfileV3Theme.Sizes.Passport.contentInset)
+            .frame(height: Sizes.stripHeight)
+            .padding(.horizontal, Sizes.contentInset)
             .frame(maxWidth: .infinity)
             Rectangle()
                 .fill(ProfileV3Theme.Palette.passportStripDivider)
@@ -120,8 +141,8 @@ struct ProfileV3PassportCard: View {
     }
 
     private var guilloche: some View {
-        let size = ProfileV3Theme.Sizes.Passport.guillocheSize
-        let origin = ProfileV3Theme.Sizes.Passport.guillocheOrigin
+        let size = Sizes.guillocheSize
+        let origin = Sizes.guillocheOrigin
         return ProfileV3RemoteImage(url: ProfileV3PlaceholderArt.passportGuilloche.url, placeholder: .clear)
             .frame(width: size, height: size)
             .opacity(ProfileV3Theme.Motion.passportGuillocheOpacity)
@@ -131,15 +152,15 @@ struct ProfileV3PassportCard: View {
     }
 
     private var uploadPrompt: some View {
-        VStack(spacing: ProfileV3Theme.Sizes.Passport.promptSpacing) {
-            VStack(spacing: ProfileV3Theme.Sizes.Passport.promptTitleSpacing) {
+        VStack(spacing: Sizes.promptSpacing) {
+            VStack(spacing: Sizes.promptTitleSpacing) {
                 Text(ProfileV3Strings.uploadPassport)
                     .typoGraphy(.H7InterMedium16)
                     .foregroundStyle(ProfileV3Theme.Palette.passportPromptTitle)
                 Text(ProfileV3Strings.uploadPassportBlurb)
                     .typoGraphy(.B2InterMedium12)
                     .foregroundStyle(Color(at: .neutralGrey400))
-                    .frame(width: ProfileV3Theme.Sizes.Passport.promptWidth)
+                    .frame(width: Sizes.promptWidth)
             }
             ProfileV3ContinueButton(
                 title: ProfileV3Strings.upload,
@@ -150,31 +171,42 @@ struct ProfileV3PassportCard: View {
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.top, ProfileV3Theme.Sizes.Passport.promptTop)
+        .padding(.top, Sizes.promptTop)
     }
 
     @ViewBuilder
     private func fields(for passport: ProfileV3Passport) -> some View {
-        labelled(ProfileV3Strings.passportNumber, value: passport.number)
-        HStack(alignment: .top, spacing: ProfileV3Theme.Sizes.Passport.dateSpacing) {
-            labelled(ProfileV3Strings.passportIssueDate, value: passport.issuedOn)
-            labelled(ProfileV3Strings.passportExpiryDate, value: passport.expiresOn)
+        labelled(labels.number, value: passport.number)
+            .postHogMask()
+        HStack(alignment: .top, spacing: Sizes.dateSpacing) {
+            labelled(labels.issueDate, value: passport.issuedOn, showsCalendar: passport.status == .active)
+            labelled(labels.expiryDate, value: passport.expiresOn, showsCalendar: passport.status == .active)
         }
-        .padding(.top, ProfileV3Theme.Sizes.Passport.datesTop)
+        .padding(.top, Sizes.datesTop)
     }
 
-    private func labelled(_ label: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: ProfileV3Theme.Sizes.Passport.labelSpacing) {
-            ProfileV3TagLabel(text: label)
-            Text(value)
-                .typoGraphy(.B1InterMedium14)
-                .foregroundStyle(Color(at: .pureBlack))
-                .frame(maxWidth: .infinity, minHeight: ProfileV3Theme.Icon.lg, alignment: .leading)
+    private func labelled(_ label: String, value: String, showsCalendar: Bool = false) -> some View {
+        VStack(alignment: .leading, spacing: Sizes.labelSpacing) {
+            if !label.isEmpty {
+                ProfileV3TagLabel(text: label)
+            }
+            HStack(spacing: ProfileV3Theme.Space.s8) {
+                Text(value)
+                    .typoGraphy(.B1InterMedium14)
+                    .foregroundStyle(Color(at: .pureBlack))
+                Spacer(minLength: 0)
+                if showsCalendar {
+                    ATIcon.SwiftUIImage.calendarToday
+                        .profileV3Icon(ProfileV3Theme.Icon.md)
+                        .foregroundStyle(Color(at: .neutralGrey800))
+                }
+            }
+            .frame(maxWidth: .infinity, minHeight: ProfileV3Theme.Icon.lg, alignment: .leading)
             ProfileV3DashedDivider()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(label), \(value)")
+        .accessibilityLabel(label.isEmpty ? value : "\(label), \(value)")
     }
 
     private func badge(_ status: ProfileV3Passport.Status) -> some View {
@@ -184,8 +216,8 @@ struct ProfileV3PassportCard: View {
                 status == .active ? Color(at: .pureBlack) : ProfileV3Theme.Palette.passportBadgeExpiredText
             )
             .frame(
-                width: ProfileV3Theme.Sizes.Passport.badgeWidth,
-                height: ProfileV3Theme.Sizes.Passport.badgeHeight
+                width: Sizes.badgeWidth,
+                height: Sizes.badgeHeight
             )
             .background(
                 Capsule().fill(

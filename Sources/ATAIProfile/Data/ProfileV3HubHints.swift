@@ -4,6 +4,7 @@ struct ProfileV3HubHints {
     static let holdHintShowLimit = 3
     static let flipDemoShowLimit = 5
     static let programmeReorderHintShowLimit = 5
+    static let personaLoaderShowLimit = 5
 
     private let defaults: UserDefaults
 
@@ -48,11 +49,27 @@ struct ProfileV3HubHints {
         nonmutating set { defaults.set(newValue, forKey: Keys.connectedAppsHintSeen) }
     }
 
+    var personaLoaderShows: Int {
+        get { defaults.integer(forKey: Keys.personaLoaderShows) }
+        nonmutating set { defaults.set(newValue, forKey: Keys.personaLoaderShows) }
+    }
+
+    var isPersonaLoaderDue: Bool {
+        personaLoaderShows < Self.personaLoaderShowLimit
+    }
+
+    var hasSeenPersonaCoach: Bool {
+        get { defaults.bool(forKey: Keys.personaCoachSeen) }
+        nonmutating set { defaults.set(newValue, forKey: Keys.personaCoachSeen) }
+    }
+
     private enum Keys {
         static let holdHintSeen = "profileV3.holdToExploreSeen"
         static let holdHintShows = "profileV3.holdToExploreShows"
         static let flipDemoShows = "profileV3.flipDemoShows"
         static let programmeReorderHintShows = "profileV3.programmeReorderHintShows"
         static let connectedAppsHintSeen = "profileV3.connectedAppsHintSeen"
+        static let personaCoachSeen = "profileV3.personaCoachSeen"
+        static let personaLoaderShows = "profileV3.personaLoaderShows"
     }
 }

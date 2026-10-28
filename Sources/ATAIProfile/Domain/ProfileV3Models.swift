@@ -41,6 +41,7 @@ struct ProfileV3LoyaltyProgramme: Identifiable, Equatable {
     var tier: String? = nil
     var updatedLine: String? = nil
     var artAspect: CGFloat? = nil
+    var category: ProfileV3ProgrammeCategory? = nil
 
     var displayNumber: String? { membershipNumber ?? maskedNumber.nonEmpty }
 }

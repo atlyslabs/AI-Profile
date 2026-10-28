@@ -7,6 +7,7 @@ final class ProfileV3PersonaTraitViewModel: ObservableObject {
     @Published private(set) var phase: ProfileV3LoadPhase = .loading
     @Published private(set) var content: ProfileV3PersonaTrait?
     @Published private(set) var isLoadingMore = false
+    @Published private(set) var loadMoreFailed = false
     @Published private(set) var busyActionIDs: Set<String> = []
     @Published private(set) var toast: String?
 
@@ -40,6 +41,7 @@ final class ProfileV3PersonaTraitViewModel: ObservableObject {
     func load() {
         moreTask?.cancel()
         isLoadingMore = false
+        loadMoreFailed = false
         let repository = repository
         let traitID = traitID
         let profileID = profileID
@@ -55,7 +57,7 @@ final class ProfileV3PersonaTraitViewModel: ObservableObject {
     }
 
     func loadMore() {
-        guard !isLoadingMore,
+        guard !isLoadingMore, !loadMoreFailed,
               let next = content?.nextPage,
               case .personaTrait(let trait, let pageProfileID, let page) = next.route(fallbackProfileID: profileID) else {
             return
@@ -65,13 +67,22 @@ final class ProfileV3PersonaTraitViewModel: ObservableObject {
             let result = try? await repository.loadPersonaTrait(trait, profileID: pageProfileID, page: page)
             guard let self, !Task.isCancelled else { return }
             isLoadingMore = false
-            guard let result, var merged = content else { return }
+            guard let result else {
+                loadMoreFailed = true
+                return
+            }
+            guard var merged = content else { return }
             let known = Set(merged.rows.map(\.id))
             merged.rows += result.rows.filter { !known.contains($0.id) }
             merged.nextPage = result.nextPage
             merged.startingPoint = result.startingPoint ?? merged.startingPoint
             content = merged
         }
+    }
+
+    func retryLoadMore() {
+        loadMoreFailed = false
+        loadMore()
     }
 
     func perform(_ action: ProfileV3PersonaTrait.Action, id: String) {

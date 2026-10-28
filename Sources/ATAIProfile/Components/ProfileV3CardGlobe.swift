@@ -27,7 +27,7 @@ struct ProfileV3CardGlobe: View {
 
     var body: some View {
         let landReady = isLandReady
-        SwiftUI.TimelineView(.profileV3Ambient(paused: !animates)) { timeline in
+        SwiftUI.TimelineView(ProfileV3AmbientSchedule(isPaused: !animates)) { timeline in
             let yaw = rotation(at: timeline.date)
             Canvas { context, size in
                 if let pose {

@@ -10,11 +10,17 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         case confirmDelete(String)
     }
 
+    struct Focus: Equatable {
+        let tripID: String
+        let request: Int
+    }
+
     @Published private(set) var screen: ProfileV3PastTripsScreen?
     @Published private(set) var phase: ProfileV3LoadPhase = .loading
     @Published private(set) var sheet: Sheet?
     @Published private(set) var editor: ProfileV3AddPastTripViewModel?
     @Published private(set) var revealingTripID: String?
+    @Published private(set) var focus: Focus?
     @Published private(set) var isDeleting = false
     @Published private(set) var notice: String?
     @Published private(set) var canRetryNotice = false
@@ -23,6 +29,7 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
     let pass: ProfileV3WorldPass
 
     private let repository: any ProfileV3PastTripsRepository
+    private let addsTripsWithoutDate: Bool
     private let onChange: () -> Void
     private let onClose: () -> Void
     private var startsAdding: Bool
@@ -39,12 +46,14 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         pass: ProfileV3WorldPass,
         repository: any ProfileV3PastTripsRepository,
         startsAdding: Bool,
+        addsTripsWithoutDate: Bool = false,
         onChange: @escaping () -> Void,
         onClose: @escaping () -> Void
     ) {
         self.pass = pass
         self.repository = repository
         self.startsAdding = startsAdding
+        self.addsTripsWithoutDate = addsTripsWithoutDate
         self.onChange = onChange
         self.onClose = onClose
     }
@@ -209,6 +218,9 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
                     self.screen = screen
                 }
                 phase = .loaded
+                if let revealed {
+                    focus = Focus(tripID: revealed.id, request: (focus?.request ?? 0) + 1)
+                }
             } catch is CancellationError {
                 return
             } catch {
@@ -249,7 +261,8 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
             existing: trips,
             repository: repository,
             screen: addScreen,
-            editDuration: screen?.duration
+            editDuration: screen?.duration,
+            addsWithoutDate: addsTripsWithoutDate
         ) { [weak self] draft in
             self?.saved(draft)
         } onFailed: { [weak self] in

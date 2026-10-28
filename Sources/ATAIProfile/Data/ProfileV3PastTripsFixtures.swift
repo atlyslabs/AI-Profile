@@ -3,8 +3,9 @@ import Foundation
 #if DEBUG
 enum ProfileV3PastTripsFixtures {
     static let trips = [
-        ProfileV3PastTrip(id: "trip-mu-2026", countryCode: "MU", year: 2026, month: 3),
-        ProfileV3PastTrip(id: "trip-jp-2025", countryCode: "JP", year: 2025, month: 3)
+        ProfileV3PastTrip(id: "trip-mu-2026", countryCode: "MU", date: ProfileV3TripYearMonth(year: 2026, month: 3)),
+        ProfileV3PastTrip(id: "trip-jp-2025", countryCode: "JP", date: ProfileV3TripYearMonth(year: 2025, month: 3)),
+        ProfileV3PastTrip(id: "country:IT", countryCode: "IT", date: nil)
     ]
 
     static let byProfile = [ProfileV3Fixtures.worldPass.id: trips]
@@ -14,10 +15,12 @@ enum ProfileV3PastTripsFixtures {
             title: "Your past trips",
             trips: trips.map { trip in
                 var trip = trip
-                trip.edit = ProfileV3TripAction(
-                    label: "Edit",
-                    submit: action("edit_past_trip", tripID: trip.id, profileID: profileID)
-                )
+                if trip.date != nil {
+                    trip.edit = ProfileV3TripAction(
+                        label: "Edit",
+                        submit: action("edit_past_trip", tripID: trip.id, profileID: profileID)
+                    )
+                }
                 trip.delete = ProfileV3TripAction(
                     label: "Delete",
                     submit: action("delete_past_trip", tripID: trip.id, profileID: profileID)

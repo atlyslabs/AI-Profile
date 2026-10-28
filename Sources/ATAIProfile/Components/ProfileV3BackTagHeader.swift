@@ -13,7 +13,7 @@ struct ProfileV3BackTagHeader: View {
                 .overlay(alignment: .bottom) {
                     if let step {
                         ProfileV3StepIndicator(count: step.count, current: step.current, style: .currentOnly)
-                            .alignmentGuide(.bottom) { $0[.top] - ProfileV3Theme.Sizes.Passport.stepTop }
+                            .offset(y: ProfileV3Theme.Sizes.Passport.stepTop + ProfileV3Theme.Sizes.stepBarHeight)
                     }
                 }
             HStack {
@@ -28,7 +28,7 @@ struct ProfileV3BackTagHeader: View {
 
 #if DEBUG
 #Preview("Back and tag header") {
-    ProfileV3BackTagHeader(title: ProfileV3Strings.previousPassports) {}
+    ProfileV3BackTagHeader(title: "PREVIOUS PASSPORTS") {}
         .background(Color(at: .pureWhite))
 }
 #endif

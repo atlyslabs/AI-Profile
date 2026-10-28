@@ -57,7 +57,9 @@ struct ProfileV3FormSection: Identifiable, Equatable {
 }
 
 struct ProfileV3SectionSource: Equatable {
-    let iconURL: URL?
+    let icons: [ProfileV3SourceIcon]
+    var count: Int? = nil
+    var label: String? = nil
     let agentType: String
     let fieldKey: String
 }

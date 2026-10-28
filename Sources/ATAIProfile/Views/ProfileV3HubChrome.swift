@@ -8,8 +8,13 @@ final class ProfileV3HubScroll {
         didSet { update() }
     }
 
+    @ObservationIgnored var kycTagBottom: CGFloat? {
+        didSet { update() }
+    }
+
     private(set) var collapse: CGFloat = 0
     private(set) var pinOffset: CGFloat = 0
+    private(set) var notchReveal: Double = 0
 
     private func update() {
         let collapse = min(max(offset / ProfileV3Theme.Sizes.Collapse.distance, 0), 1)
@@ -20,6 +25,20 @@ final class ProfileV3HubScroll {
         if pinOffset != self.pinOffset {
             self.pinOffset = pinOffset
         }
+        let notchReveal = min(
+            ProfileV3Theme.ramp(collapse, from: ProfileV3Theme.Motion.collapseTabFadeStart, to: 1),
+            Self.tagCoverage(kycTagBottom)
+        )
+        if notchReveal != self.notchReveal {
+            self.notchReveal = notchReveal
+        }
+    }
+
+    private static func tagCoverage(_ tagBottom: CGFloat?) -> Double {
+        guard let tagBottom else { return 0 }
+        let fadeBottom = ProfileV3Theme.Sizes.Collapse.backdropFadeBottom
+        let fadeHeight = fadeBottom - ProfileV3Theme.Sizes.Collapse.backdropSolidBottom
+        return ProfileV3Theme.ramp(fadeBottom - tagBottom, from: 0, to: fadeHeight)
     }
 }
 
@@ -112,15 +131,14 @@ struct ProfileV3HubPodiumSlot: View {
 }
 
 struct ProfileV3HubPinnedBlock: View {
-    @ObservedObject var viewModel: ProfileV3HubViewModel
+    let viewModel: ProfileV3HubViewModel
     @ObservedObject var stage: ProfileV3HubStage
     let scroll: ProfileV3HubScroll
-    let isKYCTagUnderBackdrop: Bool
     let onExpand: (ProfileV3WorldPass, CGRect, ProfileV3GlobePose) -> Void
 
     var body: some View {
         let collapse = scroll.collapse
-        let showsNotch = collapse >= 1 && isKYCTagUnderBackdrop
+        let notchReveal = scroll.notchReveal
         ZStack(alignment: .top) {
             backdrop
                 .offset(y: pinnedY(ProfileV3Theme.Sizes.Collapse.backdropTop))
@@ -130,9 +148,9 @@ struct ProfileV3HubPinnedBlock: View {
             if let notch = viewModel.home?.kycStatusText(showsExpiryDate: false) {
                 ProfileV3KYCNotch(text: notch)
                     .offset(y: pinnedY(ProfileV3Theme.Sizes.Collapse.notchTop))
-                    .opacity(showsNotch ? 1 : 0)
-                    .animation(ProfileV3Theme.Motion.selection, value: showsNotch)
+                    .opacity(notchReveal)
                     .allowsHitTesting(false)
+                    .accessibilityHidden(notchReveal < 1)
             }
         }
         .padding(.top, ProfileV3Theme.Sizes.carouselTop)
@@ -167,10 +185,11 @@ struct ProfileV3HubPinnedBlock: View {
             flipAffordancePassIDs: viewModel.kycAnnouncedPassIDs,
             onLongPress: onExpand,
             onAddProgramme: viewModel.tapAddProgramme,
-            onOpenProgrammes: viewModel.tapOpenProgrammes,
+            onOpenProgrammes: viewModel.tapAddedCards,
             onAddHousehold: viewModel.home == nil ? nil : { viewModel.tapAddTraveller() },
             onFlipSeen: viewModel.markFlipSeen,
-            onHintShown: viewModel.holdHintDidAppear
+            onHintShown: viewModel.holdHintDidAppear,
+            onFlip: viewModel.tapWorldPass
         )
     }
 

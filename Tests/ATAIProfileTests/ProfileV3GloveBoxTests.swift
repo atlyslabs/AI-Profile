@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import Testing
 @testable import ATAIProfile
 
@@ -64,35 +65,173 @@ struct ProfileV3GloveBoxTests {
             {"items":[{"id":"8f2c1e4a-1111-4111-8111-111111111111","from_name":"IndiGo",
               "sender_domain":"goindigo.in","subject":"Your booking is confirmed",
               "received_at":"2026-10-16T08:30:00Z","to_address":"sarvajit.4821@ayl.email",
-              "to_previous_address":true,"status":"failed","has_attachments":false}],
+              "to_previous_address":true,"status":"forwarded","has_attachments":false}],
              "next_cursor":"cursor"}
             """#.utf8)
         )
         let email = try #require(ProfileV3GloveBoxMapper.page(page).emails.first)
         #expect(email.sender == "IndiGo")
         #expect(email.summary == "Your booking is confirmed")
-        #expect(email.attention == ProfileV3GloveBoxCopy.failed)
+        #expect(email.delivery == .forwarded)
+        #expect(email.meta?.glyphs == [.tick, .mail])
         #expect(email.meta?.label == ProfileV3GloveBoxCopy.oldAddress)
         #expect(email.meta?.dateLabel == "16 Oct, 2026")
         #expect(ProfileV3GloveBoxMapper.page(page).nextCursor == "cursor")
 
         let detail = ProfileV3GloveBoxMapper.detail(
-            ProfileV3GloveBoxMessageDTO(
-                id: email.id,
-                fromName: "IndiGo",
-                subject: "Your booking is confirmed",
-                receivedAt: "2026-10-16T08:30:00Z",
-                toPreviousAddress: true,
-                status: "failed",
-                html: "<p>Hello<br>there</p>",
-                text: nil,
-                attachments: [ProfileV3GloveBoxAttachmentDTO(filename: "ticket.pdf", contentType: "application/pdf", size: 10, url: "/gateway/jaqen/v1/messages/id/attachments/1")]
+            try JSONDecoder().decode(
+                ProfileV3GloveBoxMessageDTO.self,
+                from: Data(#"""
+                {"id":"8f2c1e4a-1111-4111-8111-111111111111","from_name":"IndiGo",
+                 "subject":"Your booking is confirmed","received_at":"2026-10-16T08:30:00Z",
+                 "to_previous_address":true,"status":"forwarded","html":"<p>Hello<br>there</p>","text":null,
+                 "attachments":[{"filename":"ticket.pdf","content_type":"application/pdf","size":10,
+                   "url":"/gateway/jaqen/v1/messages/id/attachments/1"}]}
+                """#.utf8)
             ),
             listItem: email
         )
         #expect(detail.note == "Hello\nthere")
         #expect(detail.attachments.map(\.filename) == ["ticket.pdf"])
         #expect(detail.attachments.map(\.index) == [1])
+    }
+
+    @Test func inboxRowsReadTheStatusAttentionFooterAndSenderLogo() throws {
+        let page = try JSONDecoder().decode(
+            ProfileV3GloveBoxMessagesDTO.self,
+            from: Data(#"""
+            {"items":[
+              {"id":"a","from_name":"Emirates","subject":"Your flight now leaves 40 min later",
+               "received_at":"2026-10-16T08:30:00Z","status":"forwarded","attention":null,"action":null,
+               "sender_logo_url":"https://logos.example/emirates.png"},
+              {"id":"b","from_name":"Marriott Dubai","subject":"Free upgrade available",
+               "received_at":"2026-10-16T08:30:00Z","status":"handled",
+               "attention":{"type":"payment_due","title":"Payment due","detail":"Pay AED 420 by 14 Oct to keep the room."},
+               "action":"Added to trip","sender_logo_url":null},
+              {"id":"c","from_name":"VFS Global","subject":"Booking confirmed","status":"added_to_thread",
+               "attention":"needs a look","action":{"label":"Calendar updated"},"sender_logo_url":"/gateway/jaqen/v1/logos/vfs"},
+              {"id":"d","from_name":" ","sender_domain":"goindigo.in","subject":"Receipt","status":"not_forwarded"},
+              {"id":"e","from_name":"Air India","subject":"Check in now","status":null}
+            ],"next_cursor":null}
+            """#.utf8)
+        )
+        let emails = ProfileV3GloveBoxMapper.page(page).emails
+        try #require(emails.count == 5)
+
+        #expect(emails[0].delivery == .forwarded)
+        #expect(emails[0].meta == ProfileV3GloveBoxMeta(glyphs: [.tick], label: ProfileV3GloveBoxCopy.sentToInbox, dateLabel: "16 Oct, 2026"))
+        #expect(emails[0].logoURL?.absoluteString == "https://logos.example/emirates.png")
+        #expect(emails[0].attention == nil)
+        #expect(emails[0].badge == nil)
+
+        #expect(emails[1].attention == ProfileV3GloveBoxEmail.Attention(title: "Payment due", detail: "Pay AED 420 by 14 Oct to keep the room."))
+        #expect(emails[1].meta == ProfileV3GloveBoxMeta(glyphs: [.tick], label: "Added to trip", dateLabel: "16 Oct, 2026"))
+        #expect(emails[1].logoURL == nil)
+        #expect(emails[1].initials == "MD")
+
+        #expect(emails[2].attention == nil)
+        #expect(emails[2].meta == ProfileV3GloveBoxMeta(glyphs: [.tick], label: ProfileV3GloveBoxCopy.inTheThread))
+        #expect(emails[2].logoURL == nil)
+        #expect(emails[2].initials == "VG")
+
+        #expect(emails[3].sender == "goindigo.in")
+        #expect(emails[3].delivery == .notForwarded)
+        #expect(emails[3].meta == nil)
+        #expect(emails[3].initials == "G")
+
+        #expect(emails[4].delivery == nil)
+        #expect(emails[4].meta == nil)
+        #expect(emails[4].initials == "AI")
+    }
+
+    @Test func anUntitledAttentionAndALogolessSenderFallBack() throws {
+        let page = try JSONDecoder().decode(
+            ProfileV3GloveBoxMessagesDTO.self,
+            from: Data(#"""
+            {"items":[
+              {"id":"a","from_name":"Emirates","attention":{"type":"payment_due"}},
+              {"id":"b","from_name":"Emirates","attention":{}}
+            ]}
+            """#.utf8)
+        )
+        let emails = ProfileV3GloveBoxMapper.page(page).emails
+        #expect(emails.first?.attention == ProfileV3GloveBoxEmail.Attention(title: ProfileV3GloveBoxCopy.needsAttention))
+        #expect(emails.last?.attention == nil)
+
+        #expect(ProfileV3GloveBoxEmail(id: "x", sender: "booking@marriott.com", summary: "").initials == "M")
+        #expect(ProfileV3GloveBoxEmail(id: "x", sender: "The Ritz-Carlton, Dubai", summary: "").initials == "TR")
+        #expect(ProfileV3GloveBoxEmail(id: "x", sender: "  ", summary: "").initials.isEmpty)
+    }
+
+    @Test func notForwardedEmailsExplainTheForwardingStateOnceOnTheSection() {
+        let held = ProfileV3GloveBoxEmail(id: "held", sender: "Emirates", summary: "", delivery: .notForwarded)
+        let sent = ProfileV3GloveBoxEmail(id: "sent", sender: "Emirates", summary: "", delivery: .forwarded)
+        func notice(_ account: ProfileV3GloveBoxAccount, _ emails: [ProfileV3GloveBoxEmail]) -> String? {
+            ProfileV3GloveBoxMapper.section(account: account, emails: emails, hasMore: false).forwardingNotice
+        }
+        let paused = ProfileV3GloveBoxAccount(address: "me@ayl.email", forwardingEmail: "me@example.org", forwardingPaused: true)
+        let pending = ProfileV3GloveBoxAccount(address: "me@ayl.email", pendingEmail: "me@example.org")
+        let none = ProfileV3GloveBoxAccount(address: "me@ayl.email")
+        let active = ProfileV3GloveBoxAccount(address: "me@ayl.email", forwardingEmail: "me@example.org")
+        #expect(notice(paused, [sent, held]) == ProfileV3GloveBoxCopy.notForwardedPaused)
+        #expect(notice(pending, [held]) == ProfileV3GloveBoxCopy.notForwardedPending)
+        #expect(notice(none, [held]) == ProfileV3GloveBoxCopy.notForwardedNoAddress)
+        #expect(notice(active, [held]) == nil)
+        #expect(notice(paused, [sent]) == nil)
+    }
+
+    @Test func anOpenedEmailKeepsItsRowHeaderAndFillsWhatTheRowLacked() throws {
+        let rows = try JSONDecoder().decode(
+            ProfileV3GloveBoxMessagesDTO.self,
+            from: Data(#"""
+            {"items":[{"id":"a","from_name":"Emirates","subject":"Flight change","received_at":"2026-10-16T08:30:00Z",
+              "status":"forwarded","attention":{"type":"document","title":"Send your passport"},
+              "sender_logo_url":"https://logos.example/emirates.png"}]}
+            """#.utf8)
+        )
+        let row = try #require(ProfileV3GloveBoxMapper.page(rows).emails.first)
+        let body = try JSONDecoder().decode(
+            ProfileV3GloveBoxMessageDTO.self,
+            from: Data(#"{"id":"a","from_name":"Emirates","subject":"Flight change","received_at":"2026-10-16T08:30:00Z","text":"Body"}"#.utf8)
+        )
+        let opened = ProfileV3GloveBoxMapper.detail(body, listItem: row)
+        #expect(opened.logoURL == row.logoURL)
+        #expect(opened.attention == row.attention)
+        #expect(opened.delivery == .forwarded)
+        #expect(opened.meta == row.meta)
+        #expect(opened.note == "Body")
+
+        let full = try JSONDecoder().decode(
+            ProfileV3GloveBoxMessageDTO.self,
+            from: Data(#"""
+            {"id":"b","from_name":"VFS Global","subject":"Booking","status":"handled",
+             "attention":{"title":"Pay the fee","detail":"INR 1,200 due before the slot."},
+             "sender_logo_url":"https://logos.example/vfs.png","text":"Body"}
+            """#.utf8)
+        )
+        let filled = ProfileV3GloveBoxMapper.detail(full, listItem: ProfileV3GloveBoxEmail(id: "b", sender: "VFS Global", summary: "Booking"))
+        #expect(filled.logoURL?.absoluteString == "https://logos.example/vfs.png")
+        #expect(filled.delivery == .handled)
+        #expect(filled.meta == ProfileV3GloveBoxMeta(glyphs: [.tick], label: ProfileV3GloveBoxCopy.handledForYou))
+        #expect(filled.attention == ProfileV3GloveBoxEmail.Attention(title: "Pay the fee", detail: "INR 1,200 due before the slot."))
+    }
+
+    @Test func aLongNoteWrapsBesideTheOrbOnlyAndAttachmentsKnowTheirKind() {
+        let body = String(repeating: "Visa: apply by October 25 and keep a copy of the hotel booking. ", count: 10)
+        let width: CGFloat = 342
+        let orb = CGSize(width: 84, height: 68)
+        func height(_ text: String, width: CGFloat, exclusion: CGSize) -> CGFloat {
+            let view = ProfileV3FlowingTextView()
+            view.configure(text: text, style: .H7InterMedium16, color: .black, exclusion: exclusion)
+            return view.fittingHeight(for: width)
+        }
+        let flowing = height(body, width: width, exclusion: orb)
+        #expect(flowing < height(body, width: width - orb.width, exclusion: .zero))
+        #expect(flowing > height(body, width: width, exclusion: .zero))
+        #expect(height("Hi", width: width, exclusion: orb) == orb.height)
+
+        #expect(ProfileV3GloveBoxAttachment(index: 0, filename: "ayl.png", contentType: "image/png").isImage)
+        #expect(ProfileV3GloveBoxAttachment(index: 1, filename: "confirmation.pdf", contentType: "application/pdf").isImage == false)
     }
 
     @Test func theIntroButtonReportsItsAction() {
@@ -212,5 +351,140 @@ struct ProfileV3GloveBoxTests {
         #expect(sample.card.transactions.isEmpty)
         #expect(sample.card.linkedCard == nil)
         #expect(Fixtures.home.card.viewAllTitle != nil)
+    }
+
+    @Test func anEmptyInboxShowsSampleEmailsUntilARealOneArrives() {
+        let account = ProfileV3GloveBoxAccount(address: "priya@trips.atlys.com", forwardingEmail: "priya@gmail.com", eligible: true)
+        let empty = ProfileV3GloveBoxMapper.section(account: account, emails: [], hasMore: false)
+        #expect(empty.sampleLabel == ProfileV3GloveBoxCopy.sample)
+        #expect(empty.emails == ProfileV3GloveBoxSamples.emails)
+        #expect(empty.viewAllTitle == nil)
+        #expect(empty.forwardingNotice == nil)
+
+        let real = ProfileV3GloveBoxEmail(id: "m1", sender: "IndiGo", summary: "Your web check-in is open")
+        let filled = ProfileV3GloveBoxMapper.section(account: account, emails: [real], hasMore: false)
+        #expect(filled.sampleLabel == nil)
+        #expect(filled.emails == [real])
+
+        let home = ProfileV3GloveBoxMapper.home(email: filled)
+        #expect(home.phone.calls == ProfileV3GloveBoxSamples.calls)
+        #expect(home.phone.sampleLabel == ProfileV3GloveBoxCopy.sample)
+        #expect(home.card.transactions == ProfileV3GloveBoxSamples.transactions)
+        #expect(home.card.sampleLabel == ProfileV3GloveBoxCopy.sample)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func sampleEntriesNeverReachTheServerAndStaySamples() async throws {
+        let repository = EmptyInboxStub()
+        let viewModel = ProfileV3GloveBoxViewModel(repository: repository)
+        while viewModel.home == nil { try await Task.sleep(for: .milliseconds(10)) }
+        let home = try #require(viewModel.home)
+        #expect(home.email.sampleLabel == ProfileV3GloveBoxCopy.sample)
+        #expect(viewModel.sampleLabel(for: .transaction(home.card.transactions[0])) == ProfileV3GloveBoxCopy.sample)
+
+        viewModel.open(.email(home.email.emails[0]))
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(repository.openedMessages == 0)
+        viewModel.dismissSheets()
+
+        viewModel.toggleForwarding()
+        while viewModel.isUpdatingForwarding { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(viewModel.home?.email.forwardingPaused == true)
+        #expect(viewModel.home?.email.sampleLabel == ProfileV3GloveBoxCopy.sample)
+        #expect(viewModel.home?.email.emails == ProfileV3GloveBoxSamples.emails)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func withoutKYCTheIntroIsLockedAndAsksForKYC() async throws {
+        let repository = EmptyInboxStub(account: ProfileV3GloveBoxAccount(eligible: true))
+        let viewModel = ProfileV3GloveBoxViewModel(repository: repository, isKYCComplete: { false })
+        var actions: [ProfileV3GloveBoxIntro.Action] = []
+        viewModel.onIntroAction = { actions.append($0) }
+        while viewModel.isResolvingScreen { try await Task.sleep(for: .milliseconds(10)) }
+
+        guard case .intro(let intro) = viewModel.gloveBox.stage else {
+            Issue.record("expected the intro")
+            return
+        }
+        #expect(intro.title == ProfileV3GloveBoxCopy.unlockTitle)
+        #expect(intro.subtitle == ProfileV3GloveBoxCopy.unlockSubtitle)
+        #expect(intro.status == .locked)
+        #expect(intro.statusLabel == ProfileV3GloveBoxCopy.activateButton)
+        #expect(intro.actionTitle == ProfileV3GloveBoxCopy.completeKYC)
+
+        viewModel.tapIntroAction()
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(actions == [.completeKYC])
+        #expect(repository.createdAddresses == 0)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func withKYCTheIntroOffersToActivate() async throws {
+        let repository = EmptyInboxStub(account: ProfileV3GloveBoxAccount(eligible: true))
+        let viewModel = ProfileV3GloveBoxViewModel(repository: repository, isKYCComplete: { true })
+        while viewModel.isResolvingScreen { try await Task.sleep(for: .milliseconds(10)) }
+
+        guard case .intro(let intro) = viewModel.gloveBox.stage else {
+            Issue.record("expected the intro")
+            return
+        }
+        #expect(intro.title == ProfileV3GloveBoxCopy.activateTitle)
+        #expect(intro.action == .activate)
+
+        viewModel.tapIntroAction()
+        while repository.createdAddresses == 0 { try await Task.sleep(for: .milliseconds(10)) }
+    }
+}
+
+private final class EmptyInboxStub: ProfileV3GloveBoxRepository, @unchecked Sendable {
+    private let lock = NSLock()
+    private var account: ProfileV3GloveBoxAccount
+    private var _openedMessages = 0
+    private var _createdAddresses = 0
+
+    init(account: ProfileV3GloveBoxAccount = ProfileV3GloveBoxAccount(
+        address: "priya@trips.atlys.com",
+        forwardingEmail: "priya@gmail.com",
+        eligible: true
+    )) {
+        self.account = account
+    }
+
+    var openedMessages: Int { lock.withLock { _openedMessages } }
+    var createdAddresses: Int { lock.withLock { _createdAddresses } }
+
+    func loadGloveBoxCard() async throws -> ProfileV3GloveBoxAccount {
+        lock.withLock { account }
+    }
+
+    func createGloveBoxAddress() async throws -> ProfileV3GloveBoxAccount {
+        lock.withLock {
+            _createdAddresses += 1
+            return account
+        }
+    }
+
+    func setGloveBoxForwardingPaused(_ paused: Bool) async throws -> ProfileV3GloveBoxAccount {
+        lock.withLock {
+            account.forwardingPaused = paused
+            return account
+        }
+    }
+
+    func addGloveBoxForwardingAddress(_ email: String) async throws -> ProfileV3GloveBoxAccount {
+        lock.withLock { account }
+    }
+
+    func loadGloveBoxMessages(cursor _: String?) async throws -> ProfileV3GloveBoxInboxPage {
+        ProfileV3GloveBoxInboxPage(emails: [], nextCursor: nil)
+    }
+
+    func loadGloveBoxMessage(_ listed: ProfileV3GloveBoxEmail) async throws -> ProfileV3GloveBoxEmail {
+        lock.withLock { _openedMessages += 1 }
+        return listed
+    }
+
+    func loadGloveBoxAttachment(messageID _: String, index _: Int) async throws -> Data {
+        Data()
     }
 }

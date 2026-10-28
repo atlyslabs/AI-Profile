@@ -16,6 +16,7 @@ struct ProfileV3WorldPassCarousel: View {
     var onAddHousehold: (() -> Void)?
     var onFlipSeen: (() -> Void)?
     var onHintShown: (() -> Void)?
+    var onFlip: ((ProfileV3WorldPass, _ showingBenefits: Bool) -> Void)?
 
     @State private var hintPassID: String?
     @State private var tapSelections = 0
@@ -43,7 +44,8 @@ struct ProfileV3WorldPassCarousel: View {
                     onAddProgramme: onAddProgramme,
                     onOpenProgrammes: onOpenProgrammes.map { open in { open(pass) } },
                     onFlipSeen: onFlipSeen,
-                    onHintShown: onHintShown
+                    onHintShown: onHintShown,
+                    onFlip: onFlip.map { flip in { flip(pass, $0) } }
                 )
             }
             if let onAddHousehold {
@@ -111,6 +113,7 @@ private struct ProfileV3WorldPassCarouselItem: View {
     var onOpenProgrammes: (() -> Void)?
     var onFlipSeen: (() -> Void)?
     var onHintShown: (() -> Void)?
+    var onFlip: ((_ showingBenefits: Bool) -> Void)?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isPressed = false
@@ -271,6 +274,7 @@ private struct ProfileV3WorldPassCarouselItem: View {
     }
 
     private func flip() {
+        onFlip?(isFlipped)
         flips += 1
         withAnimation(ProfileV3Theme.Motion.flip) {
             isFlipped.toggle()

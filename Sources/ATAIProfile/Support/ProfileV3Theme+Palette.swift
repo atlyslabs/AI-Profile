@@ -12,6 +12,7 @@ extension ProfileV3Theme {
         static let floatingControlInk = Color(red: 0.09, green: 0.09, blue: 0.11)
         static let accessAction = Color(at: .primaryBrandBlue500)
         static let accessChipText = Color(at: .neutralGrey500)
+        static let accessCardShadow = Color.black.opacity(0.05)
         static let sourceTile = Color(hex: "EFEFEF")
         static let optionTileBorder = Color(hex: "EDEDED")
         static let rideRegionBorder = Color(hex: "EEEEEE")

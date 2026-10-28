@@ -17,8 +17,8 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     @Published var pickerSectionID: String?
     @Published private(set) var sources: ProfileV3PreferenceSourcesViewModel?
     @Published private(set) var pickerOptions: [ProfileV3ChipOption] = []
-    @Published private(set) var passportHistory: [ProfileV3Passport] = []
-    @Published private(set) var passportHistoryPhase: ProfileV3LoadPhase = .loading
+    @Published private(set) var previousPassports: ProfileV3PreviousPassports?
+    @Published private(set) var previousPassportsPhase: ProfileV3LoadPhase = .loading
     @Published var showsPreviousPassports = false
     @Published private(set) var passportReason: ProfileV3PassportReasonViewModel?
     @Published var passportHowUsed: ProfileV3PassportHowUsedViewModel?
@@ -36,13 +36,17 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     private let onSaved: () -> Void
     private let onFinish: () -> Void
     private let presentPassportScan: ((ProfileV3PassportScanRequest) -> Void)?
+    private let onPassportUploaded: ((ProfileV3PassportSide, _ profileID: String?) -> Void)?
     private var saveTask: Task<Void, Never>?
     private var didFinish = false
-    private var historyTask: Task<Void, Never>?
+    private var previousPassportsTask: Task<Void, Never>?
+    private var previousPassportsProfileID: String?
     private var passportScanTask: Task<Void, Never>?
     private var ridePickerTask: Task<Void, Never>?
+    private var refreshTask: Task<Void, Never>?
     private var pendingPassportScan: ProfileV3Directive?
-    private let savedValues: ProfileV3AgentFormValues
+    private var savedValues: ProfileV3AgentFormValues
+    private var reportedTexts: [String: String] = [:]
 
     init(
         form: ProfileV3AgentForm,
@@ -51,6 +55,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         repository: any ProfileV3AgentRepository,
         residenceCode: @escaping @MainActor () -> String? = { nil },
         presentPassportScan: ((ProfileV3PassportScanRequest) -> Void)? = nil,
+        onPassportUploaded: ((ProfileV3PassportSide, _ profileID: String?) -> Void)? = nil,
         onSaved: @escaping () -> Void = {},
         onFinish: @escaping () -> Void
     ) {
@@ -61,6 +66,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         self.repository = repository
         self.residenceCode = residenceCode
         self.presentPassportScan = presentPassportScan
+        self.onPassportUploaded = onPassportUploaded
         self.onSaved = onSaved
         self.onFinish = onFinish
         prefetchRidePicker()
@@ -100,6 +106,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         let scanProfileID = directive?.profileID ?? passportField?.rescan?.profileID
         let repository = repository
         let avatarURL = avatarURL
+        let onUploaded = onPassportUploaded
         passportScanTask = Task { [weak self] in
             let scan = (try? await repository.loadPassportScan(profileID: scanProfileID)) ?? .fallback
             guard let self else { return }
@@ -110,7 +117,9 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
                     scan: scan,
                     avatarURL: avatarURL,
                     upload: { side, data in
-                        try await repository.uploadPassportScan(side, data: data, profileID: scanProfileID)
+                        let result = try await repository.uploadPassportScan(side, data: data, profileID: scanProfileID)
+                        onUploaded?(side, scanProfileID)
+                        return result
                     },
                     onFinish: { [weak self] field, completed in
                         self?.finishPassportScan(field, completed: completed, next: scan.next, profileID: scanProfileID)
@@ -153,13 +162,18 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
             applyPassportField(field)
             ProfileV3Analytics.passportScanned(agentKey: agentKey, sectionId: passportSection?.id ?? "")
         }
-        guard completed, next?.route() == .passportReason else { return }
+        guard completed else { return }
+        guard next?.route() == .passportReason else {
+            refresh()
+            return
+        }
         openPassportReason(profileID: profileID)
     }
 
     private func applyPassportField(_ field: ProfileV3PassportField) {
         guard let section = passportSection, case .passport(let current) = section.control else { return }
         var merged = field
+        merged.previous = field.previous ?? current.previous
         merged.rescan = field.rescan ?? current.rescan
         merged.howUsed = field.howUsed ?? current.howUsed
         if merged.countryName.isEmpty {
@@ -173,34 +187,43 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         guard passportReason == nil else { return }
         let reason = ProfileV3PassportReasonViewModel(repository: repository, profileID: profileID) { [weak self] in
             self?.passportReason = nil
+            self?.refresh()
         }
         reason.load()
         passportReason = reason
     }
 
-    func loadPassportHistory() {
-        historyTask?.cancel()
-        passportHistoryPhase = passportHistory.isEmpty ? .loading : .loaded
-        historyTask = Task { [weak self] in
-            guard let self else { return }
+    var previousPassportsTitle: String {
+        previousPassports?.title.nonEmpty ?? passportField?.previous?.title ?? ""
+    }
+
+    func loadPreviousPassports() {
+        previousPassportsTask?.cancel()
+        previousPassportsPhase = previousPassports == nil ? .loading : .loaded
+        let repository = repository
+        let profileID = previousPassportsProfileID
+        previousPassportsTask = Task { [weak self] in
             do {
-                let history = try await repository.loadPassportHistory(profileID: profileID)
-                guard !Task.isCancelled else { return }
-                passportHistory = history
-                passportHistoryPhase = .loaded
+                let screen = try await repository.loadPreviousPassports(profileID: profileID)
+                guard let self, !Task.isCancelled else { return }
+                previousPassports = screen
+                previousPassportsPhase = .loaded
             } catch is CancellationError {
                 return
             } catch {
-                guard !Task.isCancelled else { return }
-                passportHistoryPhase = passportHistory.isEmpty ? .failed : .loaded
+                guard let self, !Task.isCancelled else { return }
+                previousPassportsPhase = previousPassports == nil ? .failed : .loaded
             }
         }
     }
 
     func tapViewPreviousPassports() {
+        guard let previous = passportField?.previous,
+              case .passportPrevious(let profileID) = previous.next.route() else { return }
         ProfileV3Analytics.previousPassportsOpened(agentKey: agentKey)
+        previousPassportsProfileID = profileID
         showsPreviousPassports = true
-        loadPassportHistory()
+        loadPreviousPassports()
     }
 
     var pickerSection: ProfileV3FormSection? {
@@ -234,22 +257,18 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
                 break
             }
         }
-        ProfileV3Analytics.agentOptionToggled(
-            agentKey: agentKey,
-            sectionId: sectionID,
-            optionId: optionID,
-            isSelected: isSelected(optionID, in: sectionID)
-        )
+        trackChange(in: sectionID)
     }
 
     private var agentKey: String { ProfileV3Analytics.agentKey(form.agentID) }
 
-    private func isSelected(_ optionID: String, in sectionID: String) -> Bool {
-        switch form.sections.first(where: { $0.id == sectionID })?.control {
-        case .chips(let field): return field.selection.contains(optionID)
-        case .cards(let field): return field.selection.contains(optionID)
-        default: return false
-        }
+    private func trackChange(in sectionID: String) {
+        ProfileV3Analytics.agentPreferenceChanged(
+            agentID: form.agentID,
+            travellerId: profileID,
+            sectionName: sectionID,
+            changedValue: ProfileV3AgentFormValues(form).analyticsValues(for: [sectionID])[sectionID]
+        )
     }
 
     func selectCar(_ carID: String, in sectionID: String) {
@@ -258,12 +277,21 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     }
 
     private func applyCar(_ carID: String, in sectionID: String) {
+        let previous = carSelection(in: sectionID)
         update(sectionID) { section in
             guard case .cars(var field) = section.control, field.selection != carID else { return }
             field.selection = carID
             section.control = .cars(field)
         }
         ProfileV3Analytics.carSelected(carId: carID, agentKey: agentKey)
+        if previous != carID {
+            trackChange(in: sectionID)
+        }
+    }
+
+    private func carSelection(in sectionID: String) -> String? {
+        guard case .cars(let field) = form.sections.first(where: { $0.id == sectionID })?.control else { return nil }
+        return field.selection
     }
 
     private func presentAirportPickup(for sectionID: String) {
@@ -289,23 +317,22 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     }
 
     func toggleBaggage(_ itemID: String, in sectionID: String) {
-        var isSelected = false
         updateBaggage(in: sectionID) { tab in
-            isSelected = tab.quantity(of: itemID) == 0
-            tab.setQuantity(isSelected ? 1 : 0, of: itemID)
+            tab.setQuantity(tab.quantity(of: itemID) == 0 ? 1 : 0, of: itemID)
         }
-        ProfileV3Analytics.agentOptionToggled(
-            agentKey: agentKey,
-            sectionId: sectionID,
-            optionId: itemID,
-            isSelected: isSelected
-        )
+        trackChange(in: sectionID)
     }
 
     func stepBaggage(_ itemID: String, by delta: Int, in sectionID: String) {
+        var changed = false
         updateBaggage(in: sectionID) { tab in
-            let next = min(max(tab.quantity(of: itemID) + delta, 0), ProfileV3Theme.Sizes.Baggage.maxCount)
+            let current = tab.quantity(of: itemID)
+            let next = min(max(current + delta, 0), ProfileV3Theme.Sizes.Baggage.maxCount)
+            changed = next != current
             tab.setQuantity(next, of: itemID)
+        }
+        if changed {
+            trackChange(in: sectionID)
         }
     }
 
@@ -324,6 +351,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
             field.value = value
             section.control = .slider(field)
         }
+        trackChange(in: sectionID)
     }
 
     func setOptOut(_ isOn: Bool, in sectionID: String) {
@@ -333,6 +361,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
             field.optOut = optOut
             section.control = .slider(field)
         }
+        trackChange(in: sectionID)
     }
 
     func setText(_ text: String, in sectionID: String) {
@@ -343,12 +372,27 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         }
     }
 
+    func commitText(in sectionID: String) {
+        guard case .text(let field) = form.sections.first(where: { $0.id == sectionID })?.control else { return }
+        let baseline = reportedTexts[sectionID] ?? savedValues.text(for: sectionID) ?? ""
+        guard field.value != baseline else { return }
+        reportedTexts[sectionID] = field.value
+        trackChange(in: sectionID)
+    }
+
+    private func commitTexts() {
+        for section in form.sections {
+            if case .text = section.control { commitText(in: section.id) }
+        }
+    }
+
     func setDate(_ date: Date, in sectionID: String) {
         update(sectionID) { section in
             guard case .date(var field) = section.control else { return }
             field.value = date
             section.control = .date(field)
         }
+        trackChange(in: sectionID)
     }
 
     func setShowsOnLockScreen(_ isOn: Bool) {
@@ -360,6 +404,12 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         if saveState == .failed {
             saveState = .idle
         }
+        ProfileV3Analytics.agentPreferenceChanged(
+            agentID: form.agentID,
+            travellerId: profileID,
+            sectionName: ProfileV3AgentFormValues.lockScreenKey,
+            changedValue: isOn
+        )
     }
 
     func openPicker(for sectionID: String) {
@@ -403,6 +453,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
 
     func save() {
         guard saveState == .idle || saveState == .failed else { return }
+        commitTexts()
         if let household = form.household, householdApply == nil {
             householdApply = ProfileV3HouseholdApplySession(prompt: household)
             return
@@ -434,9 +485,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         let finished = householdApply?.phase == .saved
         if finished { saveTask?.cancel() }
         householdApply = nil
-        if finished {
-            finish()
-        } else if saveState == .failed {
+        if finished || saveState == .failed {
             saveState = .idle
         }
     }
@@ -458,29 +507,40 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         saveTask = Task { [weak self] in
             guard let self else { return }
             let snapshot = form
-            let changedSections = ProfileV3AgentFormValues(snapshot).changedKeys(from: savedValues)
+            let values = ProfileV3AgentFormValues(snapshot)
+            let changedKeys = values.changedKeys(from: savedValues)
+            let changes = ProfileV3AgentFormChanges(
+                agentID: snapshot.agentID,
+                changedSections: values.analyticsValues(for: changedKeys),
+                oldSections: savedValues.analyticsValues(for: changedKeys)
+            )
+            let travellerIDs = profileIDs?.map { Optional($0) } ?? [profileID]
             do {
                 let doneLabel = try await repository.saveAgentForm(
                     snapshot,
                     profileID: profileID,
                     profileIDs: profileIDs
                 )
-                ProfileV3Analytics.agentFormSaved(agentKey: agentKey, changedSections: changedSections)
+                changes.trackSaved(for: travellerIDs)
                 onSaved()
                 guard !Task.isCancelled else { return }
+                savedValues = values
+                reportedTexts = [:]
                 if var session = householdApply {
                     session.phase = .saved
                     session.doneLabel = doneLabel?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
                     householdApply = session
                 }
                 self.saveState = .saved
+                refresh()
                 try await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds))
                 guard !Task.isCancelled else { return }
-                finish()
+                householdApply = nil
+                self.saveState = .idle
             } catch is CancellationError {
                 return
             } catch {
-                ProfileV3Analytics.agentFormSaveFailed(agentKey: agentKey, error: error)
+                changes.trackFailure(error, for: travellerIDs)
                 guard !Task.isCancelled else { return }
                 if householdApply != nil {
                     recordHouseholdFailure(error)
@@ -507,14 +567,31 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     }
 
     func tapBack() {
+        commitTexts()
         saveTask?.cancel()
         finish()
     }
 
+    private func refresh() {
+        refreshTask?.cancel()
+        let repository = repository
+        let agentID = form.agentID
+        let profileID = profileID
+        refreshTask = Task { [weak self] in
+            guard case .preferences(let fresh)? = try? await repository.loadAgentFlow(agentID: agentID, profileID: profileID),
+                  let self, !Task.isCancelled, ProfileV3AgentFormValues(form) == savedValues else { return }
+            form = fresh
+            savedValues = ProfileV3AgentFormValues(fresh)
+            reportedTexts = [:]
+        }
+    }
+
     func cancelPendingWork() {
         saveTask?.cancel()
+        refreshTask?.cancel()
         passportScanTask?.cancel()
         passportScanTask = nil
+        previousPassportsTask?.cancel()
         ridePickerTask?.cancel()
         airportPickup?.cancelPendingWork()
         rideRegions?.cancel()
@@ -591,7 +668,37 @@ struct ProfileV3HouseholdApplySession: Identifiable, Equatable {
     }
 }
 
+private struct ProfileV3AgentFormChanges {
+    let agentID: String
+    let changedSections: [String: Any]
+    let oldSections: [String: Any]
+
+    func trackSaved(for travellerIDs: [String?]) {
+        for travellerID in travellerIDs {
+            ProfileV3Analytics.agentFormSaved(
+                agentID: agentID,
+                travellerId: travellerID,
+                changedSections: changedSections,
+                oldSections: oldSections
+            )
+        }
+    }
+
+    func trackFailure(_ error: Error, for travellerIDs: [String?]) {
+        var failedIDs = travellerIDs
+        if case ProfileV3Error.partialSave(_, let failed, let saved) = error, !failed.isEmpty || !saved.isEmpty {
+            trackSaved(for: saved.map { Optional($0) })
+            failedIDs = failed.isEmpty ? travellerIDs.filter { !saved.contains($0 ?? "") } : failed.map { Optional($0) }
+        }
+        for travellerID in failedIDs {
+            ProfileV3Analytics.agentFormSaveFailed(agentID: agentID, travellerId: travellerID, error: error)
+        }
+    }
+}
+
 private struct ProfileV3AgentFormValues: Equatable {
+    static let lockScreenKey = "lock_screen"
+
     let controls: [String: ProfileV3FormControl]
     let showsOnLockScreen: Bool?
 
@@ -607,8 +714,25 @@ private struct ProfileV3AgentFormValues: Equatable {
 
     func changedKeys(from saved: ProfileV3AgentFormValues) -> [String] {
         let sectionKeys = Set(controls.keys).union(saved.controls.keys).filter { controls[$0] != saved.controls[$0] }
-        let lockScreen = showsOnLockScreen != saved.showsOnLockScreen ? ["lock_screen"] : []
+        let lockScreen = showsOnLockScreen != saved.showsOnLockScreen ? [Self.lockScreenKey] : []
         return sectionKeys.sorted() + lockScreen
+    }
+
+    func text(for sectionID: String) -> String? {
+        guard case .text(let field) = controls[sectionID] else { return nil }
+        return field.value
+    }
+
+    func analyticsValues(for keys: [String]) -> [String: Any] {
+        var values: [String: Any] = [:]
+        for key in keys {
+            if key == Self.lockScreenKey {
+                values[key] = showsOnLockScreen
+            } else if let value = controls[key].flatMap(ProfileV3AgentSubmission.analyticsValue(of:)) {
+                values[key] = value
+            }
+        }
+        return values
     }
 }
 

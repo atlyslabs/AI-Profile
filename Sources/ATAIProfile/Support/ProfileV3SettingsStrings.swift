@@ -32,7 +32,24 @@ extension ProfileV3Strings {
     static var credentialDelete: String { ProfileV3L10n.moAiprofileAgentsButtonDeleteCredentials }
     static var credentialDeleteConfirm: String { ProfileV3L10n.moAiprofileAgentsConfirmationDeleteCredentials }
     static var personaUpdated: String { ProfileV3L10n.moAiprofileAgentsToastPersonaUpdated }
+    static var personaCoachDrag: String { ProfileV3L10n.moAiprofileAgentsHintPersonaDrag }
+    static var personaCoachTap: String { ProfileV3L10n.moAiprofileAgentsHintPersonaTap }
+    static var personaEditHint: String { ProfileV3L10n.moAiprofileAgentsHintPersonaEdit }
     static var personaProcessing: String { ProfileV3L10n.moAiprofileAgentsStatusPersonaProcessing }
+    static var personaLoaderTraits: [String] {
+        [
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaAdventure,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaNewPlaces,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaOutdoors,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaSocial,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaNightlife,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaPace,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaLocal,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaCultureHistory,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaComfort,
+            ProfileV3L10n.moAiprofileAgentsLabelPersonaPlanning,
+        ]
+    }
     static var disconnectApp: String { ProfileV3L10n.moAiprofileAgentsButtonDisconnectApp }
     static var editConnector: String { ProfileV3L10n.moAiprofileGeneralButtonEdit }
     static var showPassword: String { ProfileV3L10n.moAiprofileGeneralAccessibilityShowPassword }
@@ -60,8 +77,6 @@ extension ProfileV3Strings {
     static var upload: String { ProfileV3L10n.moAiprofileDocumentsButtonUpload }
     static var uploadNewPassport: String { ProfileV3L10n.moAiprofileDocumentsButtonUploadNewPassport }
     static var passportDetails: String { ProfileV3L10n.moAiprofileDocumentsHeaderPassportDetails }
-    static var viewPrevious: String { ProfileV3L10n.moAiprofileDocumentsButtonViewPrevious }
-    static var previousPassports: String { ProfileV3L10n.moAiprofileDocumentsHeaderPreviousPassports }
     static var noPreviousPassportsTitle: String { ProfileV3L10n.moAiprofileDocumentsEmptyStateNoPreviousPassports }
     static var noPreviousPassportsSubtitle: String { ProfileV3L10n.moAiprofileDocumentsEmptyStateNoPreviousPassportsDescription }
     static var newPassport: String { ProfileV3L10n.moAiprofileDocumentsHeaderNewPassport }

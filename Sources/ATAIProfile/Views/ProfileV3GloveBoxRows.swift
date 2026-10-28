@@ -7,9 +7,14 @@ struct ProfileV3GloveBoxEmailRow: View {
 
     var body: some View {
         Button(action: onTap) {
-            ProfileV3GloveBoxRowLayout(logoURL: email.logoURL, title: email.sender, summary: email.summary) {
-                if let attention = email.attention, !attention.isEmpty {
-                    ProfileV3GloveBoxAttention(label: attention)
+            ProfileV3GloveBoxRowLayout(
+                logoURL: email.logoURL,
+                initials: email.initials,
+                title: email.sender,
+                summary: email.summary
+            ) {
+                if let attention = email.attention {
+                    ProfileV3GloveBoxAttention(label: attention.title)
                 }
                 if let meta = email.meta {
                     ProfileV3GloveBoxMetaLine(meta: meta)
@@ -108,6 +113,7 @@ struct ProfileV3GloveBoxAmount: View {
 
 private struct ProfileV3GloveBoxRowLayout<Status: View>: View {
     let logoURL: URL?
+    var initials = ""
     let title: String
     let summary: String
     @ViewBuilder let status: Status
@@ -116,7 +122,7 @@ private struct ProfileV3GloveBoxRowLayout<Status: View>: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: Layout.rowGap) {
-            ProfileV3GloveBoxLogo(url: logoURL)
+            ProfileV3GloveBoxLogo(url: logoURL, initials: initials)
             VStack(alignment: .leading, spacing: Layout.rowTextSpacing) {
                 VStack(alignment: .leading, spacing: Layout.rowTitleSpacing) {
                     Text(title)
@@ -143,18 +149,30 @@ private struct ProfileV3GloveBoxRowLayout<Status: View>: View {
 
 struct ProfileV3GloveBoxLogo: View {
     let url: URL?
+    var initials = ""
     var size = ProfileV3Theme.GloveBox.Layout.logo
 
+    @State private var isLoaded = false
+
     var body: some View {
-        Group {
-            if let url {
-                ProfileV3RemoteImage(url: url, contentMode: .fill, placeholder: Color(at: .neutralGrey100))
-                    .clipShape(Circle())
+        ZStack {
+            if isLoaded || initials.isEmpty {
+                Color(at: .neutralGrey100)
+                    .opacity(url == nil ? 0 : 1)
             } else {
-                Color.clear
+                Color(at: .neutralGrey100)
+                Text(initials)
+                    .typoGraphy(.T3InterBold9)
+                    .foregroundStyle(ProfileV3Theme.GloveBox.Palette.icon.opacity(ProfileV3Theme.GloveBox.Palette.metaIconOpacity))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+            }
+            if let url {
+                ProfileV3RemoteImage(url: url, contentMode: .fill, placeholder: .clear) { _ in isLoaded = true }
             }
         }
         .frame(width: size, height: size)
+        .clipShape(Circle())
         .accessibilityHidden(true)
     }
 }
@@ -177,7 +195,7 @@ struct ProfileV3GloveBoxMetaLine: View {
                     Text(meta.label)
                 }
                 if let dateLabel = meta.dateLabel {
-                    Text(ProfileV3Strings.gloveBoxDated(dateLabel))
+                    Text(meta.label.isEmpty ? dateLabel : ProfileV3Strings.gloveBoxDated(dateLabel))
                 }
             }
             .typoGraphy(.T1InterMedium11)
@@ -192,6 +210,7 @@ struct ProfileV3GloveBoxMetaLine: View {
         case .seen: return ATIcon.SwiftUIImage.visibility
         case .calendar: return ATIcon.SwiftUIImage.calendarToday
         case .done: return ATIcon.SwiftUIImage.doneAll
+        case .tick: return ATIcon.SwiftUIImage.check
         }
     }
 }

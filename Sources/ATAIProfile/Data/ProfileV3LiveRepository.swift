@@ -292,8 +292,13 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return ProfileV3ConnectorsMapper.disconnectConfirm(dto, fallback: connector)
     }
 
-    func loadPassportHistory(profileID _: String?) async throws -> [ProfileV3Passport] {
-        throw ProfileV3Error.notImplemented(action: "passport_history")
+    func loadPreviousPassports(profileID: String?) async throws -> ProfileV3PreviousPassports {
+        let dto: ProfileV3PreviousPassportsScreenDTO = try await request(
+            ProfileV3API.passportPrevious(profileID: profileID),
+            action: "passport_previous"
+        )
+        let country = await accountCountry(for: profileID)
+        return ProfileV3PassportMapper.previousPassports(dto, accountCountry: country)
     }
 
     func loadPassportScan(profileID: String?) async throws -> ProfileV3PassportScan {
@@ -479,11 +484,8 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return ProfileV3PastTripsMapper.addScreen(dto)
     }
 
-    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, year: Int, month: Int) async throws {
-        let request = ProfileV3BoardSubmitRequest(
-            action: submit,
-            extras: ["country": .string(country), "year": .int(year), "month": .int(month)]
-        )
+    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, date: ProfileV3TripYearMonth?) async throws {
+        let request = ProfileV3PastTripsMapper.addRequest(submit, country: country, date: date)
         try await self.submit(try JSONEncoder().encode(request), action: submit.name ?? "add_past_trip")
     }
 
@@ -663,20 +665,8 @@ extension ProfileV3LiveRepository: ProfileV3GloveBoxRepository {
         try await gloveBox.messages(cursor: cursor)
     }
 
-    func loadGloveBoxMessage(id: String) async throws -> ProfileV3GloveBoxEmail {
-        let dto = try await gloveBox.message(id: id)
-        let listed = ProfileV3GloveBoxMapper.email(
-            ProfileV3GloveBoxMessageItemDTO(
-                id: dto.id,
-                fromName: dto.fromName,
-                senderDomain: nil,
-                subject: dto.subject,
-                receivedAt: dto.receivedAt,
-                toPreviousAddress: dto.toPreviousAddress,
-                status: dto.status
-            )
-        )
-        return ProfileV3GloveBoxMapper.detail(dto, listItem: listed)
+    func loadGloveBoxMessage(_ listed: ProfileV3GloveBoxEmail) async throws -> ProfileV3GloveBoxEmail {
+        ProfileV3GloveBoxMapper.detail(try await gloveBox.message(id: listed.id), listItem: listed)
     }
 
     func loadGloveBoxAttachment(messageID: String, index: Int) async throws -> Data {

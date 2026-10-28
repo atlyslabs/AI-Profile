@@ -37,6 +37,18 @@ enum ProfileV3PassportFixtures {
         )
     ]
 
+    static let previous = ProfileV3PreviousPassports(
+        title: "PREVIOUS PASSPORTS",
+        labels: ProfileV3PassportLabels(number: "PASSPORT NUMBER", issueDate: "ISSUE DATE", expiryDate: "EXPIRY DATE"),
+        passports: history
+    )
+
+    static let previousEntry = ProfileV3PassportPrevious(
+        label: "VIEW PREVIOUS",
+        title: "PREVIOUS PASSPORTS",
+        next: ProfileV3Directive(go: ProfileV3PassportRoute.previous)
+    )
+
     static let rescan = ProfileV3Directive(go: ProfileV3PassportRoute.update)
     static let howUsedDirective = ProfileV3Directive(go: ProfileV3PassportRoute.howUsed)
 

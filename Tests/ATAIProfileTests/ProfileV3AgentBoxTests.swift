@@ -68,6 +68,31 @@ struct ProfileV3AgentBoxTests {
         #expect(router.openedAgentProfileIDs == ["co", "main", "main"])
     }
 
+    @Test func loyaltyCardOpensTheListUnlessTheServerSendsAKYCStep() throws {
+        func tap(next: String) throws -> AgentRouterSpy {
+            let json = #"""
+            {"profiles":[{"profile_id":"main","is_main":true,"worldpass_card":{"kyc_complete":false},
+                          "loyalty_card":{"next":\#(next)}}]}
+            """#
+            let board = ProfileV3BoardMapper.board(try JSONDecoder().decode(ProfileV3BoardDTO.self, from: Data(json.utf8)))
+            let pass = try #require(board.mainProfile?.pass)
+            #expect(!pass.kycStatus.isComplete)
+            let router = AgentRouterSpy()
+            let viewModel = ProfileV3HubViewModel(repository: CachedBoardRepository(board: board))
+            viewModel.router = router
+            viewModel.tapOpenProgrammes(pass)
+            return router
+        }
+
+        let list = try tap(next: #"{"go":"programs_page","profile_id":"main"}"#)
+        #expect(list.openedProgrammeIDs == ["main"])
+        #expect(list.openedAddProgrammesRequiringKYC.isEmpty)
+
+        let gated = try tap(next: #"{"go":"kyc_gate"}"#)
+        #expect(gated.openedProgrammeIDs.isEmpty)
+        #expect(gated.openedAddProgrammesRequiringKYC == [true])
+    }
+
     @Test func carPickupAssistLinkUnderlinesItsRunAndOpensRideRegions() throws {
         let mapped = try Self.flow(agentType: "airport_logistics", fields: #"""
         [{"key":"car_pickup","label":"PICK YOUR RIDE","input":"car_pickup",
@@ -172,6 +197,109 @@ struct ProfileV3AgentBoxTests {
         while failed.saveState == .saving { await Task.yield() }
         #expect(failed.saveState == .failed)
         #expect(events.isEmpty)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func savingKeepsTheAgentOpenAndClearsTheSaveBar() async throws {
+        var events: [String] = []
+        let viewModel = ProfileV3AgentFormViewModel(
+            form: ProfileV3AgentFixtures.flight,
+            avatarURL: nil,
+            repository: ProfileV3MockRepository(delay: .zero),
+            onSaved: { events.append("saved") },
+            onFinish: { events.append("closed") }
+        )
+        let change = try #require(viewModel.form.sections.lazy.compactMap { section -> (section: String, option: String)? in
+            guard case .chips(let field) = section.control,
+                  let option = field.allOptions.first(where: { !field.selection.contains($0.id) }) else { return nil }
+            return (section.id, option.id)
+        }.first)
+        viewModel.toggleOption(change.option, in: change.section)
+        #expect(viewModel.showsSaveBar)
+
+        viewModel.save()
+        while viewModel.saveState == .saving || viewModel.saveState == .idle { await Task.yield() }
+        #expect(viewModel.saveState == .saved)
+        while viewModel.saveState == .saved { try await Task.sleep(for: .milliseconds(50)) }
+        #expect(viewModel.saveState == .idle)
+        #expect(!viewModel.showsSaveBar)
+        #expect(events == ["saved"])
+
+        viewModel.tapBack()
+        #expect(events == ["saved", "closed"])
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func applyingToTheHouseholdClosesOnlyItsSheet() async throws {
+        var form = ProfileV3AgentFixtures.flight
+        form.household = ProfileV3HouseholdPrompt(
+            eyebrow: "",
+            iconURL: nil,
+            title: "Apply to",
+            travellers: [ProfileV3HouseholdPrompt.Traveller(id: "main", name: "Me", passNumber: "", isSelected: true)],
+            confirmLabel: "Apply"
+        )
+        var events: [String] = []
+        func makeViewModel() -> ProfileV3AgentFormViewModel {
+            ProfileV3AgentFormViewModel(
+                form: form,
+                avatarURL: nil,
+                repository: ProfileV3MockRepository(delay: .zero),
+                onSaved: { events.append("saved") },
+                onFinish: { events.append("closed") }
+            )
+        }
+
+        let waited = makeViewModel()
+        waited.save()
+        waited.confirmHousehold()
+        while waited.householdApply?.phase != .saved { await Task.yield() }
+        while waited.householdApply != nil { try await Task.sleep(for: .milliseconds(50)) }
+        #expect(waited.saveState == .idle)
+        #expect(events == ["saved"])
+
+        events = []
+        let closed = makeViewModel()
+        closed.save()
+        closed.confirmHousehold()
+        while closed.householdApply?.phase != .saved { await Task.yield() }
+        closed.closeHousehold()
+        #expect(closed.householdApply == nil)
+        #expect(closed.saveState == .idle)
+        #expect(events == ["saved"])
+    }
+
+    @Test func fieldSourcesCarryTheServerCountLabelAndLogos() throws {
+        let mapped = try Self.flow(agentType: "airport_logistics", fields: #"""
+        [{"key":"pickup_type","label":"PICK UP TYPE","input":"multi_select","options":[{"value":"public","label":"Public"}],
+          "source":{"icon":"https://media.atlys.com/gmail.png","count":3,"label":"sources",
+                    "icons":[{"image_url":"https://media.atlys.com/ek.png"},"https://media.atlys.com/ai.png","gmail"],
+                    "next":{"go":"preference_sources","field_key":"pickup_type"}}},
+         {"key":"bags","label":"BAGS","input":"multi_select","options":[{"value":"cabin","label":"Cabin"}],
+          "source":{"icon":"https://media.atlys.com/gmail.png","count":0,"label":" ",
+                    "next":{"go":"preference_sources","agent_type":"flight","field_key":"bags"}}}]
+        """#)
+        let sections = mapped.form.sections
+        try #require(sections.count == 2)
+        let logo: (String) -> ProfileV3SourceIcon = { ProfileV3SourceIcon(url: URL(string: "https://media.atlys.com/\($0).png")) }
+
+        let counted = try #require(sections[0].source)
+        #expect(counted == ProfileV3SectionSource(
+            icons: [logo("ek"), logo("ai")],
+            count: 3,
+            label: "sources",
+            agentType: "airport_logistics",
+            fieldKey: "pickup_type"
+        ))
+        #expect(ProfileV3SectionSourcesRow.caption(for: counted) == ProfileV3Strings.sourcesCount(3, label: "sources"))
+
+        let bare = try #require(sections[1].source)
+        #expect(bare == ProfileV3SectionSource(icons: [logo("gmail")], agentType: "flight", fieldKey: "bags"))
+        #expect(ProfileV3SectionSourcesRow.caption(for: bare) == nil)
+
+        var unlabelled = bare
+        unlabelled.count = 2
+        #expect(ProfileV3SectionSourcesRow.caption(for: unlabelled) == ProfileV3Strings.sourcesCount(2))
     }
 
     @Test func imperialHeightReadsAsFeetAndInchesAndSavesTheInchValue() throws {
@@ -363,6 +491,8 @@ private final class AgentRouterSpy: ProfileV3HubRouter {
     private(set) var openedAgentsRequiringKYC: [Bool] = []
     private(set) var openedAgentProfileIDs: [String?] = []
     private(set) var openedTravelPersonaIDs: [String?] = []
+    private(set) var openedProgrammeIDs: [String] = []
+    private(set) var openedAddProgrammesRequiringKYC: [Bool] = []
 
     func openAgent(_ agent: ProfileV3Agent, requiresKYC: Bool, profileID: String?) {
         openedAgentsRequiringKYC.append(requiresKYC)
@@ -376,8 +506,13 @@ private final class AgentRouterSpy: ProfileV3HubRouter {
     func goBack() {}
     func openSettings(profileID: String?) {}
     func openKnowMore(_ directive: ProfileV3Directive?) {}
-    func openAddProgramme(requiresKYC: Bool, profileID: String?) {}
-    func openProgrammes(for pass: ProfileV3WorldPass, passes: [ProfileV3WorldPass]) {}
+    func openAddProgramme(requiresKYC: Bool, profileID: String?) {
+        openedAddProgrammesRequiringKYC.append(requiresKYC)
+    }
+
+    func openProgrammes(for pass: ProfileV3WorldPass, passes: [ProfileV3WorldPass]) {
+        openedProgrammeIDs.append(pass.id)
+    }
     func openKYC() {}
     func openBenefitKYC(_ benefit: ProfileV3Benefit) {}
     func openAddTraveller() {}
@@ -400,7 +535,7 @@ private final class CachedBoardRepository: ProfileV3HubRepository, @unchecked Se
     func loadCoupon(id: String) async throws -> ProfileV3CouponDetail? { nil }
     func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen { throw CancellationError() }
     func loadAddTrip(profileID: String) async throws -> ProfileV3AddTripScreen { throw CancellationError() }
-    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, year: Int, month: Int) async throws {}
+    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, date: ProfileV3TripYearMonth?) async throws {}
     func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws {}
     func deletePastTrip(_ submit: ProfileV3BoardAction) async throws {}
 }

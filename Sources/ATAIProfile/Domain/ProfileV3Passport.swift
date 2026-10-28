@@ -39,9 +39,35 @@ struct ProfileV3PassportField: Equatable {
     var countryName: String
     var countryNativeName: String?
     var passport: ProfileV3Passport?
-    var hasHistory = false
+    var previous: ProfileV3PassportPrevious?
     var rescan: ProfileV3Directive?
     var howUsed: ProfileV3Directive?
+}
+
+struct ProfileV3PassportPrevious: Equatable {
+    let label: String
+    var title: String
+    let next: ProfileV3Directive
+}
+
+struct ProfileV3PassportLabels: Equatable {
+    var number: String
+    var issueDate: String
+    var expiryDate: String
+
+    static var card: ProfileV3PassportLabels {
+        ProfileV3PassportLabels(
+            number: ProfileV3Strings.passportNumber,
+            issueDate: ProfileV3Strings.passportIssueDate,
+            expiryDate: ProfileV3Strings.passportExpiryDate
+        )
+    }
+}
+
+struct ProfileV3PreviousPassports: Equatable {
+    var title: String
+    var labels: ProfileV3PassportLabels
+    var passports: [ProfileV3Passport]
 }
 
 struct ProfileV3PassportScanResult: Equatable {
@@ -114,4 +140,5 @@ enum ProfileV3PassportRoute {
     static let update = "passport_update"
     static let reason = "passport_reason"
     static let howUsed = "passport_how_used"
+    static let previous = "passport_previous"
 }

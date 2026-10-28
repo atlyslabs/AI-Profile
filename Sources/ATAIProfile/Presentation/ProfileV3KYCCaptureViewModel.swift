@@ -30,6 +30,7 @@ final class ProfileV3KYCCaptureViewModel: ObservableObject {
     let capture: ProfileV3KYCCapture
     private let repository: any ProfileV3KYCCaptureRepository
     let kyc: any ProfileV3KYCHost
+    private let isCoTraveller: Bool
     private let onFinish: ([String]) -> Void
     private var completedSteps: [String] = []
     private var task: Swift.Task<Void, Never>?
@@ -44,11 +45,13 @@ final class ProfileV3KYCCaptureViewModel: ObservableObject {
         capture: ProfileV3KYCCapture,
         repository: any ProfileV3KYCCaptureRepository,
         kyc: any ProfileV3KYCHost,
+        isCoTraveller: Bool = false,
         onFinish: @escaping ([String]) -> Void
     ) {
         self.capture = capture
         self.repository = repository
         self.kyc = kyc
+        self.isCoTraveller = isCoTraveller
         self.onFinish = onFinish
     }
 
@@ -369,6 +372,7 @@ final class ProfileV3KYCCaptureViewModel: ObservableObject {
         case .coTraveller:
             try await repository.uploadCoTravellerImage(image, data: data, profileID: capture.profileID)
         }
+        trackUpload(image)
     }
 
     func passportCompleted() {
@@ -412,6 +416,7 @@ final class ProfileV3KYCCaptureViewModel: ObservableObject {
                 try await repository.uploadCoTravellerImage(.selfie, data: data, profileID: capture.profileID)
             }
             selfieUploaded = true
+            trackUpload(.selfie)
             return nil
         } catch {
             return ProfileV3Error.message(for: error)
@@ -482,6 +487,16 @@ final class ProfileV3KYCCaptureViewModel: ObservableObject {
     private func trackScreen(title: String?) {
         guard !capture.isConnector else { return }
         ProfileV3Analytics.kycScreenSeen(screenTitle: title, screenNumber: completedSteps.count + 1)
+    }
+
+    private func trackUpload(_ photo: ProfileV3CaptureImage) {
+        kyc.track(.photoUploaded(ProfileV3KYC.PhotoUpload(
+            photo: photo,
+            travellerID: capture.profileID,
+            isCoTraveller: isCoTraveller,
+            flow: .capture,
+            actionSource: ProfileV3Analytics.profileSource
+        )))
     }
 
     private func markCompleted(_ step: String) {

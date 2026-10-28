@@ -36,6 +36,8 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     @Published private(set) var forwardingError: String?
     @Published private(set) var openingAttachmentID: String?
     @Published private(set) var isResolvingScreen = false
+    @Published private(set) var hasMoreEmails = false
+    @Published private(set) var emailPagingFailed = false
 
     var onIntroAction: (ProfileV3GloveBoxIntro.Action) -> Void = { _ in }
     var onFollowUp: (Entry) -> Void = { _ in }
@@ -44,17 +46,25 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     private var copiedTask: Task<Void, Never>?
     private var loadTask: Task<Void, Never>?
     private let repository: (any ProfileV3GloveBoxRepository)?
+    private let isKYCComplete: @MainActor () async -> Bool
     private var account: ProfileV3GloveBoxAccount?
-    private var nextCursor: String?
+    private var nextCursor: String? {
+        didSet { hasMoreEmails = nextCursor != nil }
+    }
     private var isPaging = false
 
     init(gloveBox: ProfileV3GloveBox) {
         self.gloveBox = gloveBox
         repository = nil
+        isKYCComplete = { true }
     }
 
-    init(repository: any ProfileV3GloveBoxRepository) {
+    init(
+        repository: any ProfileV3GloveBoxRepository,
+        isKYCComplete: @escaping @MainActor () async -> Bool = { true }
+    ) {
         self.repository = repository
+        self.isKYCComplete = isKYCComplete
         isResolvingScreen = true
         gloveBox = ProfileV3GloveBox(
             title: ProfileV3GloveBoxCopy.title,
@@ -78,7 +88,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
 
     func tapIntroAction() {
         guard case .intro(let intro) = gloveBox.stage else { return }
-        guard repository != nil else {
+        guard repository != nil, intro.action != .completeKYC else {
             onIntroAction(intro.action)
             return
         }
@@ -101,7 +111,13 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
                 guard !Task.isCancelled else { return }
                 self.account = account
                 guard account.hasAddress else {
-                    showIntro()
+                    let kycDone = await isKYCComplete()
+                    guard !Task.isCancelled else { return }
+                    if kycDone {
+                        showIntro()
+                    } else {
+                        show(.intro(Self.lockedIntro))
+                    }
                     return
                 }
                 let page = try await repository.loadGloveBoxMessages(cursor: nil)
@@ -153,13 +169,16 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     func openList(_ section: Section) {
         guard home != nil else { return }
         withAnimation(ProfileV3Theme.GloveBox.Motion.sheetSwitch) { sheets = [.list(section)] }
-        if section == .emails { loadMoreEmails() }
+        if section == .emails {
+            emailPagingFailed = false
+            loadMoreEmails()
+        }
     }
 
     func open(_ entry: Entry) {
         guard home != nil else { return }
         withAnimation(ProfileV3Theme.GloveBox.Motion.sheetSwitch) { sheets.append(.detail(entry)) }
-        if case .email(let email) = entry { loadEmail(email) }
+        if case .email(let email) = entry, sampleLabel(for: entry) == nil { loadEmail(email) }
     }
 
     func back() {
@@ -184,7 +203,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
         switch entry {
         case .email: return home?.email.sampleLabel
         case .call: return home?.phone.sampleLabel
-        case .transaction: return nil
+        case .transaction: return home?.card.sampleLabel
         }
     }
 
@@ -302,7 +321,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     private func showInbox(_ page: ProfileV3GloveBoxInboxPage, replacing: Bool) {
         guard let account, account.hasAddress else { return }
         nextCursor = page.nextCursor
-        let emails = replacing ? page.emails : (home?.email.emails ?? []) + page.emails
+        let emails = replacing ? page.emails : (home.map(Self.realEmails) ?? []) + page.emails
         let section = ProfileV3GloveBoxMapper.section(
             account: account,
             emails: emails,
@@ -311,8 +330,13 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
         show(.home(ProfileV3GloveBoxMapper.home(email: section)))
     }
 
-    private func loadMoreEmails() {
-        guard let repository, let cursor = nextCursor, !isPaging else { return }
+    func retryLoadMoreEmails() {
+        emailPagingFailed = false
+        loadMoreEmails()
+    }
+
+    func loadMoreEmails() {
+        guard let repository, let cursor = nextCursor, !isPaging, !emailPagingFailed else { return }
         isPaging = true
         loadTask = Task { [weak self] in
             guard let self else { return }
@@ -324,19 +348,22 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
             } catch is CancellationError {
                 return
             } catch {
-                return
+                guard !Task.isCancelled else { return }
+                emailPagingFailed = true
             }
         }
     }
 
     private func append(_ page: ProfileV3GloveBoxInboxPage) {
         guard let account, case .home(var home) = gloveBox.stage else { return }
-        let known = Set(home.email.emails.map(\.id))
-        home.email.emails.append(contentsOf: page.emails.filter { known.contains($0.id) == false })
+        let current = Self.realEmails(in: home)
+        let known = Set(current.map(\.id))
         nextCursor = page.nextCursor
-        home.email.viewAllTitle = home.email.emails.count > 3 || page.nextCursor != nil
-            ? ProfileV3GloveBoxCopy.viewAll
-            : nil
+        home.email = ProfileV3GloveBoxMapper.section(
+            account: account,
+            emails: current + page.emails.filter { known.contains($0.id) == false },
+            hasMore: page.nextCursor != nil
+        )
         gloveBox.stage = .home(home)
     }
 
@@ -344,7 +371,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
         guard let repository else { return }
         loadTask = Task { [weak self] in
             guard let self else { return }
-            guard let detailed = try? await repository.loadGloveBoxMessage(id: email.id) else { return }
+            guard let detailed = try? await repository.loadGloveBoxMessage(email) else { return }
             guard !Task.isCancelled else { return }
             replace(detailed)
         }
@@ -354,7 +381,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
         guard let account, case .home(var home) = gloveBox.stage else { return }
         home.email = ProfileV3GloveBoxMapper.section(
             account: account,
-            emails: home.email.emails,
+            emails: Self.realEmails(in: home),
             hasMore: nextCursor != nil
         )
         gloveBox.stage = .home(home)
@@ -363,7 +390,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     private func replaceNoteError(_ message: String, messageID: String) {
         guard case .home(var home) = gloveBox.stage,
               let index = home.email.emails.firstIndex(where: { $0.id == messageID }) else { return }
-        home.email.emails[index].attention = message
+        home.email.emails[index].attention = ProfileV3GloveBoxEmail.Attention(title: message)
         let email = home.email.emails[index]
         gloveBox.stage = .home(home)
         sheets = sheets.map { sheet in
@@ -391,6 +418,21 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
             guard case .detail(.email(let shown)) = sheet, shown.id == email.id else { return sheet }
             return .detail(.email(email))
         }
+    }
+
+    private static func realEmails(in home: ProfileV3GloveBoxHome) -> [ProfileV3GloveBoxEmail] {
+        home.email.sampleLabel == nil ? home.email.emails : []
+    }
+
+    private static var lockedIntro: ProfileV3GloveBoxIntro {
+        ProfileV3GloveBoxIntro(
+            title: ProfileV3GloveBoxCopy.unlockTitle,
+            subtitle: ProfileV3GloveBoxCopy.unlockSubtitle,
+            status: .locked,
+            statusLabel: ProfileV3GloveBoxCopy.activateButton,
+            actionTitle: ProfileV3GloveBoxCopy.completeKYC,
+            action: .completeKYC
+        )
     }
 
     private static func intro(subtitle: String, button: String) -> ProfileV3GloveBoxIntro {

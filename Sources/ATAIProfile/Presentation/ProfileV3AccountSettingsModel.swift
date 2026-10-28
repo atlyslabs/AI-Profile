@@ -29,6 +29,7 @@ final class ProfileV3AccountSettingsModel: ObservableObject {
     }
 
     func tapLogout() {
+        ProfileV3Analytics.logoutClicked()
         navigator?.push(.logout)
     }
 
@@ -74,7 +75,6 @@ final class ProfileV3AccountSettingsModel: ObservableObject {
     func confirmLogout() {
         guard !isLoggingOut else { return }
         isLoggingOut = true
-        ProfileV3Analytics.logout()
         let repository = repository
         let router = router
         logoutTask = Task {
@@ -83,6 +83,7 @@ final class ProfileV3AccountSettingsModel: ObservableObject {
                 for: acknowledgement,
                 timeout: .seconds(ProfileV3Theme.Motion.logoutAcknowledgeTimeoutSeconds)
             )
+            ProfileV3Analytics.loggedOut()
             router?.performLogout()
         }
     }

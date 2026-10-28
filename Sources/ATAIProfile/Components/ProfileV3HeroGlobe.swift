@@ -107,8 +107,6 @@ struct ProfileV3HeroGlobe: View, Animatable {
         )
     }
 
-    /// The card and the open globe sample different land. Crossfade the two fields with the flight so
-    /// the last frame is the field the settled globe draws, instead of swapping it on afterwards.
     private func drawLand(in context: GraphicsContext, projection: ProfileV3Globe.Projection, blend: Double) {
         if blend < 1 {
             var card = context

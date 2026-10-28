@@ -8,15 +8,14 @@ struct ProfileV3BenefitCardStack: View {
     var onSelect: ((ProfileV3Benefit) -> Void)?
     var expandedID: String?
     let onViewAll: () -> Void
-    var onFrontImpression: ((ProfileV3Benefit, Int) -> Void)?
 
     @State private var frontPosition = 0
-    @State private var isOnScreen = false
     @State private var width: CGFloat = ProfileV3Theme.Sizes.stackFallbackWidth
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.profileV3PausesAnimations) private var isPaused
 
     private var layerCount: Int { min(benefits.count, ProfileV3Theme.Counts.stackLayers) }
-    private var isRotating: Bool { benefits.count > 1 && expandedID == nil && isVisible }
+    private var isRotating: Bool { benefits.count > 1 && expandedID == nil && isVisible && !isPaused }
 
     private var rotation: ProfileV3StackRotation {
         ProfileV3StackRotation(benefitIDs: benefits.map(\.id), isRotating: isRotating)
@@ -42,13 +41,6 @@ struct ProfileV3BenefitCardStack: View {
                 ProfileV3PillButton(title: viewAllLabel, action: onViewAll)
             }
         }
-        .profileV3OnImpression {
-            isOnScreen = true
-            reportFront()
-        }
-        .onChange(of: frontPosition) { _, _ in
-            if isOnScreen { reportFront() }
-        }
         .onChange(of: rotation.benefitIDs) { _, _ in frontPosition = 0 }
         .task(id: rotation) {
             guard rotation.isRotating else { return }
@@ -60,12 +52,6 @@ struct ProfileV3BenefitCardStack: View {
                 }
             }
         }
-    }
-
-    private func reportFront() {
-        guard !benefits.isEmpty else { return }
-        let index = frontPosition % benefits.count
-        onFrontImpression?(benefits[index], index)
     }
 
     private func card(at position: Int) -> some View {

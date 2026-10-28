@@ -1,8 +1,6 @@
 import Foundation
 import Moya
 
-/// The package's launch entry. A host registers its configuration provider and its host actions
-/// once; the profile environment is built from those the first time a screen asks for it.
 @MainActor
 public enum ProfileV3Runtime {
     private static var configurationProvider: (() -> any ProfileV3ConfigurationProviding)?

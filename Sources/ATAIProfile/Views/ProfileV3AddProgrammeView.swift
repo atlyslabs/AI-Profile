@@ -263,7 +263,7 @@ struct ProfileV3AddProgrammeView: View {
         )
         .frame(width: ProfileV3Theme.Sizes.emptyStateTextWidth)
         .frame(maxWidth: .infinity)
-        .frame(height: ProfileV3Theme.Sizes.Picker.cardHeight)
+        .frame(height: ProfileV3Theme.Sizes.Picker.carouselHeight)
         .padding(.top, ProfileV3Theme.Sizes.AddProgramme.cardsTop)
     }
 
@@ -314,7 +314,7 @@ struct ProfileV3AddProgrammeView: View {
         ProfileV3Spinner()
             .accessibilityLabel(ProfileV3Strings.loading)
             .frame(maxWidth: .infinity)
-            .frame(height: ProfileV3Theme.Sizes.Picker.cardHeight)
+            .frame(height: ProfileV3Theme.Sizes.Picker.carouselHeight)
             .padding(.top, ProfileV3Theme.Sizes.AddProgramme.cardsTop)
             .transition(.opacity)
     }
@@ -327,7 +327,7 @@ struct ProfileV3AddProgrammeView: View {
             action: viewModel.retry
         )
         .frame(maxWidth: .infinity)
-        .frame(minHeight: ProfileV3Theme.Sizes.Picker.cardHeight)
+        .frame(minHeight: ProfileV3Theme.Sizes.Picker.carouselHeight)
         .padding(.top, ProfileV3Theme.Sizes.AddProgramme.cardsTop)
         .transition(.opacity)
     }
@@ -335,9 +335,18 @@ struct ProfileV3AddProgrammeView: View {
     private var cardCarousel: some View {
         ProfileV3CentredCarousel(
             itemWidth: ProfileV3Theme.Sizes.Picker.cardWidth,
-            height: ProfileV3Theme.Sizes.Picker.cardHeight,
+            height: ProfileV3Theme.Sizes.Picker.carouselHeight,
             spacing: ProfileV3Theme.Sizes.Picker.cardSpacing,
-            selection: $viewModel.selectedItemID,
+            selection: Binding(
+                get: { viewModel.selectedItemID },
+                set: { id in
+                    if let id {
+                        viewModel.selectItem(id)
+                    } else {
+                        viewModel.selectedItemID = nil
+                    }
+                }
+            ),
             revealOffset: ProfileV3Theme.Motion.entryOffsetY
         ) {
             ForEach(viewModel.filteredCatalogue) { item in

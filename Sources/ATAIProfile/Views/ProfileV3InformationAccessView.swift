@@ -148,7 +148,7 @@ private struct ProfileV3EmailConnectorCard: View {
             }
         }
         .frame(minHeight: Layout.cardHeight, alignment: .top)
-        .profileV3SettingsCard(cornerRadius: Layout.cardRadius)
+        .profileV3AccessCard()
         .accessibilityElement(children: .contain)
         .accessibilityValue(connector.status.accessibilityValue)
     }
@@ -172,7 +172,7 @@ private struct ProfileV3ConnectorCardRow: View {
             }
         }
         .frame(height: ProfileV3Theme.Sizes.InformationAccess.cardHeight, alignment: .top)
-        .profileV3SettingsCard(cornerRadius: ProfileV3Theme.Sizes.InformationAccess.cardRadius)
+        .profileV3AccessCard()
         .accessibilityElement(children: .combine)
         .accessibilityValue(connector.status.accessibilityValue)
     }
@@ -260,7 +260,21 @@ private struct ProfileV3ConnectedEmailChip: View {
                 .lineLimit(1)
         }
         .padding(.vertical, Layout.chipPadding)
+        .padding(.leading, Layout.chipPadding)
+        .padding(.trailing, Layout.chipTrailing)
+        .background(Capsule().fill(ProfileV3Theme.Palette.background))
         .accessibilityElement(children: .combine)
+    }
+}
+
+extension View {
+    func profileV3AccessCard() -> some View {
+        profileV3SettingsCard(cornerRadius: ProfileV3Theme.Sizes.InformationAccess.cardRadius, fill: Color(at: .pureWhite))
+            .shadow(
+                color: ProfileV3Theme.Palette.accessCardShadow,
+                radius: ProfileV3Theme.Sizes.InformationAccess.cardShadowRadius,
+                y: ProfileV3Theme.Sizes.InformationAccess.cardShadowY
+            )
     }
 }
 

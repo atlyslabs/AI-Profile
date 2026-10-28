@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 import SwiftUI
 
@@ -17,7 +16,8 @@ protocol ProfileV3HubRouter: AnyObject {
 }
 
 @MainActor
-final class ProfileV3HubViewModel: ObservableObject {
+@Observable
+final class ProfileV3HubViewModel {
 
     struct KYCGlowCue: Equatable {
         let tone: ProfileV3KYCGlowTone
@@ -53,71 +53,75 @@ final class ProfileV3HubViewModel: ObservableObject {
         }
     }
 
-    @Published private(set) var phase: Phase = .loading {
+    private(set) var phase: Phase = .loading {
         didSet { refreshStackBenefits() }
     }
 
     private(set) var stackBenefits: [ProfileV3Benefit] = []
-    @Published private(set) var kycGlowPlays: [String: Int] = [:]
-    @Published private(set) var kycGlowCue: KYCGlowCue?
-    @Published private(set) var kycAnnouncedPassIDs: Set<String> = []
-    @Published private(set) var selectedPassID: String?
-    @Published private(set) var isHouseholdSelected = false
-    @Published private(set) var contentVersion = 0
-    @Published private(set) var showsHoldHint: Bool
-    @Published private(set) var playsFlipDemo: Bool
-    @Published private(set) var redeemError: String?
-    @Published private(set) var benefitRedemption: ProfileV3BenefitRedemption?
-    @Published private(set) var showsAllBenefits = false
-    @Published private(set) var benefitsSheet = ProfileV3BenefitsSheet.empty {
+    private(set) var kycGlowPlays: [String: Int] = [:]
+    private(set) var kycGlowCue: KYCGlowCue?
+    private(set) var kycAnnouncedPassIDs: Set<String> = []
+    private(set) var selectedPassID: String?
+    private(set) var isHouseholdSelected = false
+    private(set) var contentVersion = 0
+    private(set) var showsHoldHint: Bool
+    private(set) var playsFlipDemo: Bool
+    private(set) var redeemError: String?
+    private(set) var benefitRedemption: ProfileV3BenefitRedemption?
+    private(set) var showsAllBenefits = false
+    private(set) var benefitsSheet = ProfileV3BenefitsSheet.empty {
         didSet { refreshStackBenefits() }
     }
-    @Published private(set) var allBenefitsPhase: ProfileV3LoadPhase = .loading
-    @Published private(set) var isFetchingBenefits = false
-    @Published private(set) var showsAllCoupons = false
-    @Published private(set) var pastTrips: ProfileV3PastTripsViewModel?
-    @Published private(set) var couponsSheet = ProfileV3CouponsSheet.empty
-    @Published private(set) var allCouponsPhase: ProfileV3LoadPhase = .loading
-    @Published private(set) var isFetchingCoupons = false
-    @Published private(set) var notice: String?
-    @Published private(set) var pendingBenefit: ProfileV3Benefit?
-    @Published private(set) var isSyncingKYC = false
-    @Published private(set) var kycStepCompletions = 0
+    private(set) var allBenefitsPhase: ProfileV3LoadPhase = .loading
+    private(set) var isFetchingBenefits = false
+    private(set) var showsAllCoupons = false
+    private(set) var pastTrips: ProfileV3PastTripsViewModel?
+    private(set) var couponsSheet = ProfileV3CouponsSheet.empty
+    private(set) var allCouponsPhase: ProfileV3LoadPhase = .loading
+    private(set) var isFetchingCoupons = false
+    private(set) var notice: String?
+    private(set) var pendingBenefit: ProfileV3Benefit?
+    private(set) var isSyncingKYC = false
+    private(set) var kycStepCompletions = 0
 
-    weak var router: ProfileV3HubRouter?
+    @ObservationIgnored weak var router: ProfileV3HubRouter?
 
     let placeholderName: String?
 
     private let repository: any ProfileV3HubRepository
     private let hints: ProfileV3HubHints
+    private let addsTripsWithoutDate: Bool
     private var board: ProfileV3Board?
     private var loadedPassID: String?
     private var isLoadingBoard = false
     private var needsRevalidation = false
     private var pendingResumption: KYCResumption = .none
     private var benefitsSheetProfileID: String?
-    private var afterOverlaysClose: (() -> Void)?
+    @ObservationIgnored private var afterOverlaysClose: (() -> Void)?
+    @ObservationIgnored private var awaitsBenefitsScreenView = false
     private let impressions = ProfileV3ImpressionLog()
     private var isKYCGlowArmed = false
     private var hasCountedHoldHint = false
     private var pendingKYCGlowPassIDs: Set<String> = []
-    private var kycAnnounceTasks: [String: Task<Void, Never>] = [:]
+    @ObservationIgnored private var kycAnnounceTasks: [String: Task<Void, Never>] = [:]
     private var kycSyncGeneration = 0
-    private var loadTask: Task<Void, Never>?
-    private var refreshTask: Task<Void, Never>?
-    private var kycSyncTask: Task<Void, Never>?
-    private var revalidateTask: Task<Void, Never>?
-    private var benefitsTask: Task<Void, Never>?
-    private var couponsTask: Task<Void, Never>?
-    private var redeemTask: Task<Void, Never>?
+    @ObservationIgnored private var loadTask: Task<Void, Never>?
+    @ObservationIgnored private var refreshTask: Task<Void, Never>?
+    @ObservationIgnored private var kycSyncTask: Task<Void, Never>?
+    @ObservationIgnored private var revalidateTask: Task<Void, Never>?
+    @ObservationIgnored private var benefitsTask: Task<Void, Never>?
+    @ObservationIgnored private var couponsTask: Task<Void, Never>?
+    @ObservationIgnored private var redeemTask: Task<Void, Never>?
 
     init(
         repository: any ProfileV3HubRepository,
         hints: ProfileV3HubHints = ProfileV3HubHints(),
-        userFirstName: String? = nil
+        userFirstName: String? = nil,
+        addsTripsWithoutDate: Bool = false
     ) {
         self.repository = repository
         self.hints = hints
+        self.addsTripsWithoutDate = addsTripsWithoutDate
         placeholderName = userFirstName?.nonEmpty?.lowercased()
         showsHoldHint = hints.isHoldHintDue
         playsFlipDemo = hints.isFlipDemoDue
@@ -369,7 +373,7 @@ final class ProfileV3HubViewModel: ObservableObject {
         }
         let passIDs = home?.worldPasses.map(\.id) ?? []
         if let from = passIDs.firstIndex(where: { $0 == selectedPassID }), let to = passIDs.firstIndex(of: passID) {
-            ProfileV3Analytics.passSwitched(passId: passID, direction: to > from ? .next : .previous)
+            ProfileV3Analytics.passSwitched(travellerId: passID, direction: to > from ? .next : .previous)
         }
         selectedPassID = passID
         guard passID != loadedPassID else { return }
@@ -393,43 +397,27 @@ final class ProfileV3HubViewModel: ObservableObject {
         return selectedPassID == ids[next]
     }
 
-    // MARK: - Impressions
+    // MARK: - Analytics
 
-    func trackSelectedPass() {
-        guard let home, let index = home.worldPasses.firstIndex(where: { $0.id == selectedPassID }) else { return }
-        let pass = home.worldPasses[index]
-        impressions.once("pass:\(pass.id)") {
-            ProfileV3Analytics.passViewed(passId: pass.id, passIndex: index, kycStatus: pass.kycStatus.analyticsValue)
-        }
+    func isCoTraveller(_ profileID: String?) -> Bool {
+        guard let profileID, let mainProfileID else { return false }
+        return profileID != mainProfileID
     }
 
-    func trackAgentCard(_ agent: ProfileV3Agent, index: Int) {
-        impressions.once("agent:\(selectedPassID ?? ""):\(agent.id)") {
-            ProfileV3Analytics.agentCardViewed(
-                agentId: agent.id,
-                agentIndex: index,
-                agentKey: ProfileV3Analytics.agentKey(agent.id),
-                isActive: agent.isActive,
-                foundCount: agent.foundCount,
-                totalCount: agent.totalCount
-            )
-        }
+    func tapWorldPass(_ pass: ProfileV3WorldPass, showingBenefits: Bool) {
+        ProfileV3Analytics.worldPassTapped(
+            travellerId: pass.id,
+            travellerName: pass.holderName,
+            tapOn: showingBenefits ? .benefits : .profile
+        )
     }
 
-    func trackBenefit(_ benefit: ProfileV3Benefit, index: Int) {
-        impressions.once("benefit:\(benefit.id)") {
-            ProfileV3Analytics.benefitViewed(
-                benefitId: benefit.id,
-                benefitIndex: index,
-                status: benefit.status.analyticsValue
-            )
-        }
+    func trackBenefitClick(_ benefit: ProfileV3Benefit, origin: ProfileV3Analytics.BenefitOrigin, routedToGate: Bool) {
+        ProfileV3Analytics.benefitClicked(benefit, travellerId: selectedPassID, origin: origin, routedToGate: routedToGate)
     }
 
-    func trackCoupon(_ coupon: ProfileV3Coupon, index: Int) {
-        impressions.once("coupon:\(coupon.id)") {
-            ProfileV3Analytics.couponViewed(couponId: coupon.id, couponIndex: index)
-        }
+    func trackBenefitScreen(_ benefit: ProfileV3Benefit) {
+        ProfileV3Analytics.benefitScreen(benefitId: benefit.id, travellerId: selectedPassID)
     }
 
     func trackKYCNudge(_ home: ProfileV3Home) {
@@ -483,14 +471,18 @@ final class ProfileV3HubViewModel: ObservableObject {
     func tapAgent(_ agent: ProfileV3Agent) {
         guard let home else { return }
         let requiresKYC = gatesKYC(agent.next, fallback: !home.kycStatus.isComplete)
+        let route = agent.next?.route(fallbackProfileID: selectedPassID)
+        let opensPersona = if case .travelPersona = route { true } else { false }
         ProfileV3Analytics.agentClicked(
             agentId: agent.id,
-            agentKey: ProfileV3Analytics.agentKey(agent.id),
+            agentIndex: home.agents.firstIndex { $0.id == agent.id },
+            agentName: opensPersona ? ProfileV3Analytics.travelPersonaAgentName : ProfileV3Analytics.agentName(agent.id),
+            travellerId: selectedPassID,
             isActive: agent.isActive,
             requiresKYC: requiresKYC
         )
         ProfileV3Analytics.cta(agent.next, origin: .agentCard)
-        switch agent.next?.route(fallbackProfileID: selectedPassID) {
+        switch route {
         case .agent(_, let profileID):
             router?.openAgent(agent, requiresKYC: false, profileID: profileID ?? selectedPassID)
         case .travelPersona(let profileID):
@@ -508,14 +500,20 @@ final class ProfileV3HubViewModel: ObservableObject {
 
     func tapAddProgramme() {
         guard home != nil else { return }
+        ProfileV3Analytics.cardConnectClicked(travellerId: selectedPassID, actionSource: .card)
         ProfileV3Analytics.cta(selectedPass?.addProgrammeDirective, origin: .addProgramme)
         router?.openAddProgramme(requiresKYC: addProgrammeRequiresKYC(for: selectedPass), profileID: selectedPassID)
+    }
+
+    func tapAddedCards(_ pass: ProfileV3WorldPass) {
+        ProfileV3Analytics.addedCardClicked(travellerId: pass.id, cardsName: pass.programmes.map(\.name))
+        tapOpenProgrammes(pass)
     }
 
     func tapOpenProgrammes(_ pass: ProfileV3WorldPass) {
         if case .unsupported = pass.programmesDirective?.route() { return }
         ProfileV3Analytics.cta(pass.programmesDirective, origin: .programmes)
-        guard gatesKYC(pass.programmesDirective, fallback: !pass.kycStatus.isComplete) else {
+        guard gatesKYC(pass.programmesDirective, fallback: false) else {
             router?.openProgrammes(for: pass, passes: home?.worldPasses ?? [pass])
             return
         }
@@ -527,6 +525,17 @@ final class ProfileV3HubViewModel: ObservableObject {
         guard let pass = board?.mainProfile?.pass else { return }
         withAnimation(ProfileV3Theme.Motion.selection) { selectPass(id: pass.id) }
         tapOpenProgrammes(pass)
+    }
+
+    func open(_ destination: ProfileV3Destination) {
+        switch destination {
+        case .addTraveller:
+            router?.openAddTraveller()
+        case .addLoyaltyProgramme:
+            guard let pass = board?.mainProfile?.pass else { return }
+            withAnimation(ProfileV3Theme.Motion.selection) { selectPass(id: pass.id) }
+            router?.openAddProgramme(requiresKYC: addProgrammeRequiresKYC(for: pass), profileID: pass.id)
+        }
     }
 
     func addProgrammeRequiresKYC(for pass: ProfileV3WorldPass?) -> Bool {
@@ -561,10 +570,16 @@ final class ProfileV3HubViewModel: ObservableObject {
     // MARK: - Offers
 
     func tapViewAllBenefits() {
+        ProfileV3Analytics.viewBenefitsClicked(travellerId: selectedPassID)
+        showAllBenefits()
+    }
+
+    func showAllBenefits() {
         if benefitsSheetProfileID != loadedPassID {
             benefitsSheet = .empty
             benefitsSheetProfileID = nil
         }
+        awaitsBenefitsScreenView = true
         withAnimation(ProfileV3Theme.Motion.entry) { showsAllBenefits = true }
         retryAllBenefits()
     }
@@ -597,6 +612,7 @@ final class ProfileV3HubViewModel: ObservableObject {
             pass: pass,
             repository: repository,
             startsAdding: startsAdding,
+            addsTripsWithoutDate: addsTripsWithoutDate,
             onChange: { [weak self] in self?.refreshAfterTripChange() },
             onClose: { [weak self] in self?.dismissPastTrips() }
         )
@@ -615,6 +631,7 @@ final class ProfileV3HubViewModel: ObservableObject {
     }
 
     func dismissAllBenefits() {
+        awaitsBenefitsScreenView = false
         withAnimation(ProfileV3Theme.Motion.contentFade) { showsAllBenefits = false }
     }
 
@@ -658,10 +675,10 @@ final class ProfileV3HubViewModel: ObservableObject {
                     benefitID: benefit.id,
                     sequence: (benefitRedemption?.sequence ?? 0) + 1
                 )
-                ProfileV3Analytics.benefitRedeemed(benefitId: benefit.id)
+                ProfileV3Analytics.benefitRedeemed(benefitId: benefit.id, travellerId: loadedPassID)
             } catch {
                 redeemError = ProfileV3Strings.redeemFailed
-                ProfileV3Analytics.benefitRedeemFailed(benefitId: benefit.id, error: error)
+                ProfileV3Analytics.benefitRedeemFailed(benefitId: benefit.id, travellerId: loadedPassID, error: error)
             }
         }
     }
@@ -714,6 +731,9 @@ final class ProfileV3HubViewModel: ObservableObject {
                 benefitsSheet = sheet
             }
         )
+        guard !Task.isCancelled, awaitsBenefitsScreenView, showsAllBenefits, allBenefitsPhase == .loaded else { return }
+        awaitsBenefitsScreenView = false
+        ProfileV3Analytics.benefitsScreenViewed(travellerId: profileID, benefitList: allBenefits.map(\.title))
     }
 
     private func loadAllCoupons() async {

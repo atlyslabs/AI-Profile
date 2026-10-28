@@ -21,7 +21,6 @@ struct ProfileV3TravelPersonaTests {
         let persona = ProfileV3PersonaMapper.persona(dto)
         #expect(persona.title == "Travel persona")
         #expect(persona.foundLabel == "Found 1/10 traits")
-        #expect(persona.profileTitle == "Traveler profile")
         #expect(persona.iconURL == ProfileV3PlaceholderArt.agentPersonal.url)
         #expect(persona.traits.map(\.id) == ["adventure", "new_places"])
         #expect(persona.traits.map(\.score) == [72, 100])
@@ -84,60 +83,95 @@ struct ProfileV3TravelPersonaTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func draggingOnlyDraftsAndTheSaveButtonSubmits() async throws {
+    func releasingADragSavesThatTraitAtOnce() async throws {
         let repository = PersonaRepositoryStub()
         let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
-        viewModel.load()
-        while viewModel.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+        try await loaded(viewModel)
 
-        viewModel.preview("adventure", score: 130)
-        #expect(viewModel.drafts["adventure"] == 100)
         viewModel.preview("adventure", score: 64)
-        #expect(viewModel.showsSaveBar)
+        #expect(viewModel.drafts["adventure"] == 64)
         #expect(repository.submitted.isEmpty)
-        #expect(viewModel.score(of: try #require(viewModel.content?.traits.first)) == 64)
 
-        viewModel.save()
-        #expect(viewModel.savePhase == .saving)
-        while viewModel.savePhase != .saved { try await Task.sleep(for: .milliseconds(10)) }
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 130)
+        #expect(viewModel.drafts["adventure"] == 100)
+        #expect(viewModel.score(of: try #require(viewModel.content?.traits.first)) == 100)
+        while viewModel.notice == nil { try await Task.sleep(for: .milliseconds(10)) }
 
-        #expect(repository.submitted.map(\.score) == [64])
-        #expect(viewModel.content?.traits.first?.score == 64)
+        #expect(viewModel.notice == .saved)
+        #expect(viewModel.notice?.message == ProfileV3Strings.personaUpdated)
+        #expect(repository.submitted.map(\.score) == [100])
+        #expect(viewModel.content?.traits.first?.score == 100)
         #expect(viewModel.drafts.isEmpty)
-        #expect(viewModel.saveError == nil)
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func aRefusedSaveKeepsTheDraftAndSaysWhy() async throws {
+    func aRefusedSaveSnapsBackAndSaysWhy() async throws {
         let repository = PersonaRepositoryStub(submitError: ProfileV3Error.notImplemented(action: "set_persona_score"))
         let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
-        viewModel.load()
-        while viewModel.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+        try await loaded(viewModel)
 
-        viewModel.preview("adventure", score: 80)
-        viewModel.save()
-        while viewModel.saveError == nil { try await Task.sleep(for: .milliseconds(10)) }
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 80)
+        while viewModel.notice == nil { try await Task.sleep(for: .milliseconds(10)) }
 
-        #expect(viewModel.savePhase == .idle)
-        #expect(viewModel.saveError == ProfileV3Strings.actionUnavailable)
-        #expect(viewModel.drafts["adventure"] == 80)
+        #expect(viewModel.notice == .failed(ProfileV3Strings.actionUnavailable))
+        #expect(viewModel.notice?.isError == true)
+        #expect(viewModel.drafts.isEmpty)
         #expect(viewModel.content?.traits.first?.score == 50)
-        #expect(viewModel.showsSaveBar)
     }
 
-    @Test func draggingBackToTheSavedScoreLeavesNothingToSave() async throws {
+    @Test(.timeLimit(.minutes(1)))
+    func aDragReleasedDuringASaveIsSavedNext() async throws {
+        let repository = PersonaRepositoryStub(scores: Self.board, submitDelay: .milliseconds(200))
+        let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
+        try await loaded(viewModel)
+
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 70)
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(viewModel.canEdit(try #require(viewModel.content?.traits.first(where: { $0.id == "planning" }))))
+        viewModel.beginDrag("planning")
+        viewModel.endDrag("planning", score: 40)
+        while repository.submitted.count < 2 || !viewModel.drafts.isEmpty {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        #expect(repository.submitted.map(\.score) == [70, 40])
+        #expect(viewModel.content?.traits.first(where: { $0.id == "adventure" })?.score == 70)
+        #expect(viewModel.content?.traits.first(where: { $0.id == "planning" })?.score == 40)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func voiceOverStepsSaveOnceTheyStop() async throws {
         let repository = PersonaRepositoryStub()
         let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
-        viewModel.load()
-        while viewModel.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+        try await loaded(viewModel)
+
+        viewModel.adjust("adventure", by: 5)
+        viewModel.adjust("adventure", by: 5)
+        #expect(viewModel.drafts["adventure"] == 60)
+        try await Task.sleep(for: .milliseconds(200))
+        #expect(repository.submitted.isEmpty)
+        while viewModel.notice == nil { try await Task.sleep(for: .milliseconds(10)) }
+
+        #expect(repository.submitted.map(\.score) == [60])
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func draggingBackToTheSavedScoreSavesNothing() async throws {
+        let repository = PersonaRepositoryStub()
+        let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
+        try await loaded(viewModel)
 
         viewModel.preview("adventure", score: 64)
-        viewModel.preview("adventure", score: 50)
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 50)
         #expect(viewModel.drafts.isEmpty)
-        #expect(!viewModel.showsSaveBar)
-        viewModel.save()
-        #expect(viewModel.savePhase == .idle)
+        try await Task.sleep(for: .milliseconds(100))
+
         #expect(repository.submitted.isEmpty)
+        #expect(viewModel.notice == nil)
     }
 
     @Test func theClientConfigBlocksEveryEdit() async throws {
@@ -152,10 +186,11 @@ struct ProfileV3TravelPersonaTests {
 
         viewModel.preview("adventure", score: 80)
         viewModel.adjust("adventure", by: 5)
-        viewModel.save()
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 80)
         #expect(viewModel.drafts.isEmpty)
-        #expect(!viewModel.showsSaveBar)
-        #expect(viewModel.savePhase == .idle)
+        #expect(!viewModel.isDragging)
+        #expect(viewModel.notice == nil)
 
         viewModel.open("adventure")
         let trait = try #require(viewModel.trait)
@@ -167,6 +202,238 @@ struct ProfileV3TravelPersonaTests {
         #expect(trait.busyActionIDs.isEmpty)
         #expect(repository.submitted.isEmpty)
     }
+
+    @Test(.timeLimit(.minutes(1)))
+    func theFirstRunTipsPlayOnceOnTheHighestTraitInTheTopHalf() async throws {
+        let hints = try freshHints()
+        let repository = PersonaRepositoryStub(scores: Self.board)
+        let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true, hints: hints)
+        try await loaded(viewModel)
+
+        viewModel.startCoach()
+        #expect(viewModel.coach?.traitID == "planning")
+        #expect(viewModel.coach?.steps == [.drag, .tap])
+        #expect(viewModel.highlightedTraitID == "planning")
+        #expect(hints.hasSeenPersonaCoach)
+
+        viewModel.advanceCoach()
+        #expect(viewModel.coach?.step == .tap)
+        viewModel.advanceCoach()
+        #expect(viewModel.coach == nil)
+
+        let again = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true, hints: hints)
+        try await loaded(again)
+        again.startCoach()
+        #expect(again.coach == nil)
+        #expect(again.highlightedTraitID == nil)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func draggingTheTippedKnobMovesToTheTapTipAndATapOpensIt() async throws {
+        let repository = PersonaRepositoryStub(scores: Self.board)
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: repository,
+            isEditable: true,
+            hints: try freshHints()
+        )
+        try await loaded(viewModel)
+        viewModel.startCoach()
+
+        viewModel.beginDrag("planning")
+        #expect(viewModel.isDragging)
+        #expect(viewModel.coach?.step == .drag)
+        #expect(viewModel.drafts.isEmpty)
+
+        viewModel.endDrag("planning", score: 70)
+        #expect(!viewModel.isDragging)
+        #expect(viewModel.drafts["planning"] == 70)
+        #expect(viewModel.coach?.step == .tap)
+
+        viewModel.tap("planning")
+        #expect(viewModel.trait != nil)
+        #expect(viewModel.coach == nil)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func touchingAnotherKnobEndsTheTips() async throws {
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(scores: Self.board),
+            isEditable: true,
+            hints: try freshHints()
+        )
+        try await loaded(viewModel)
+        viewModel.startCoach()
+        viewModel.tap("adventure")
+        #expect(viewModel.coach == nil)
+        #expect(viewModel.highlightedTraitID == "adventure")
+        #expect(viewModel.trait == nil)
+
+        viewModel.tap("adventure")
+        #expect(viewModel.trait != nil)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func aKnobTouchedBeforeTheTipsKeepsItsSelectionAndTheTipsWait() async throws {
+        let hints = try freshHints()
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(scores: Self.board),
+            isEditable: true,
+            hints: hints
+        )
+        try await loaded(viewModel)
+        viewModel.tap("adventure")
+        viewModel.startCoach()
+        #expect(viewModel.coach == nil)
+        #expect(viewModel.highlightedTraitID == "adventure")
+        #expect(!hints.hasSeenPersonaCoach)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func withEditingOffTheTipsOnlyTeachTheTapAndKnobsDoNotDrag() async throws {
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(scores: Self.board),
+            isEditable: false,
+            hints: try freshHints()
+        )
+        try await loaded(viewModel)
+        viewModel.startCoach()
+        #expect(viewModel.coach?.steps == [.tap])
+
+        viewModel.beginDrag("planning")
+        #expect(!viewModel.isDragging)
+        viewModel.endDrag("planning", score: 70)
+        #expect(viewModel.drafts.isEmpty)
+        #expect(viewModel.coach?.step == .tap)
+    }
+
+    @Test func theRippleRestsOnTheDesignRingsAndLoops() {
+        typealias Persona = ProfileV3Theme.Sizes.Persona
+        let still = (0 ..< Persona.rippleRings).map { ProfileV3PersonaRipple.ring($0, at: nil) }
+        #expect(still == [
+            ProfileV3PersonaRipple.Ring(diameter: 35, opacity: 0.1),
+            ProfileV3PersonaRipple.Ring(diameter: 53, opacity: 0.05)
+        ])
+
+        let period = ProfileV3Theme.Motion.personaRippleSeconds
+        #expect(ProfileV3PersonaRipple.ring(0, at: 0).diameter == Persona.handleHighlighted)
+        #expect(ProfileV3PersonaRipple.ring(0, at: 0).opacity == 0)
+        #expect(ProfileV3PersonaRipple.ring(1, at: period / 4).opacity == 0)
+
+        let innerProgress = Double((Persona.rippleInner - Persona.rippleStart) / (Persona.rippleEnd - Persona.rippleStart))
+        let atRest = period * (1 + innerProgress)
+        let inner = ProfileV3PersonaRipple.ring(0, at: atRest)
+        let outer = ProfileV3PersonaRipple.ring(1, at: atRest)
+        #expect(abs(inner.diameter - 35) < 0.001)
+        #expect(abs(inner.opacity - 0.1) < 0.001)
+        #expect(abs(outer.diameter - 53) < 0.001)
+        #expect(abs(outer.opacity - 0.05) < 0.001)
+        #expect(ProfileV3PersonaRipple.ring(0, at: period * 0.999).opacity < 0.01)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func theLoaderHoldsTheResponseUntilALoopEnds() async throws {
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(),
+            isEditable: true,
+            hints: try freshHints()
+        )
+        viewModel.load()
+        #expect(viewModel.isDecoding)
+        viewModel.finishDecodingLoop()
+        #expect(viewModel.isDecoding)
+
+        while viewModel.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(viewModel.isDecoding)
+        viewModel.finishDecodingLoop()
+        #expect(!viewModel.isDecoding)
+
+        viewModel.load()
+        #expect(!viewModel.isDecoding)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func aFailedLoadWaitsForTheLoopAndARetryDecodesAgain() async throws {
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(loadError: ProfileV3RepositoryError.unavailable),
+            isEditable: true,
+            hints: try freshHints()
+        )
+        viewModel.load()
+        while viewModel.phase != .failed { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(viewModel.isDecoding)
+        viewModel.finishDecodingLoop()
+        #expect(!viewModel.isDecoding)
+
+        viewModel.load()
+        #expect(viewModel.isDecoding)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func theDelightLoaderShowsFiveTimesThenTheNormalLoader() async throws {
+        let hints = try freshHints()
+        for show in 1 ... ProfileV3HubHints.personaLoaderShowLimit {
+            let viewModel = ProfileV3TravelPersonaViewModel(
+                profileID: "main",
+                repository: PersonaRepositoryStub(),
+                isEditable: true,
+                hints: hints
+            )
+            viewModel.load()
+            #expect(viewModel.isDecoding)
+            #expect(hints.personaLoaderShows == show)
+        }
+
+        let sixth = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(),
+            isEditable: true,
+            hints: hints
+        )
+        sixth.load()
+        #expect(!sixth.isDecoding)
+        #expect(sixth.phase == .loading)
+        while sixth.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(hints.personaLoaderShows == ProfileV3HubHints.personaLoaderShowLimit)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func openingADraggedKnobFetchesItsTraitAfterTheSave() async throws {
+        let repository = PersonaRepositoryStub(submitDelay: .milliseconds(200))
+        let viewModel = ProfileV3TravelPersonaViewModel(profileID: "main", repository: repository, isEditable: true)
+        try await loaded(viewModel)
+
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 70)
+        viewModel.tap("adventure")
+        let trait = try #require(viewModel.trait)
+        #expect(repository.events.isEmpty)
+        while trait.phase == .loading { try await Task.sleep(for: .milliseconds(10)) }
+
+        #expect(repository.events == ["submit:adventure", "trait:adventure"])
+    }
+
+    private static let board = [
+        ("adventure", 56), ("new_places", 85), ("outdoors", 47), ("social", 56), ("nightlife", 60),
+        ("pace", 50), ("local", 32), ("culture", 95), ("comfort", 50), ("planning", 90)
+    ]
+
+    private func freshHints() throws -> ProfileV3HubHints {
+        let suite = "profileV3.tests.persona.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defaults.removePersistentDomain(forName: suite)
+        return ProfileV3HubHints(defaults: defaults)
+    }
+
+    private func loaded(_ viewModel: ProfileV3TravelPersonaViewModel) async throws {
+        viewModel.load()
+        while viewModel.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+    }
 }
 
 private final class PersonaRepositoryStub: ProfileV3PersonaRepository, @unchecked Sendable {
@@ -176,12 +443,25 @@ private final class PersonaRepositoryStub: ProfileV3PersonaRepository, @unchecke
     }
 
     private let lock = NSLock()
-    private var scores = ["adventure": 50]
+    private let order: [String]
+    private var scores: [String: Int]
     private var _submitted: [Submission] = []
+    private var _events: [String] = []
     private let submitError: Error?
+    private let loadError: Error?
+    private let submitDelay: Duration
 
-    init(submitError: Error? = nil) {
+    init(
+        submitError: Error? = nil,
+        scores: [(String, Int)] = [("adventure", 50)],
+        loadError: Error? = nil,
+        submitDelay: Duration = .zero
+    ) {
         self.submitError = submitError
+        self.loadError = loadError
+        self.submitDelay = submitDelay
+        order = scores.map(\.0)
+        self.scores = Dictionary(uniqueKeysWithValues: scores)
     }
 
     var submitted: [Submission] {
@@ -191,39 +471,46 @@ private final class PersonaRepositoryStub: ProfileV3PersonaRepository, @unchecke
     }
 
     func loadTravelPersona(profileID: String?) async throws -> ProfileV3TravelPersona {
-        let score = lock.withLock { scores["adventure"] ?? 50 }
+        if let loadError { throw loadError }
+        let scores = lock.withLock { self.scores }
         return ProfileV3TravelPersona(
             title: "Travel persona",
             iconURL: nil,
-            foundLabel: "Found 0/1 traits",
+            foundLabel: "Found 0/\(order.count) traits",
             subtitle: "",
-            profileTitle: "Traveler profile",
             range: 0 ... 100,
-            traits: [
+            traits: order.map { id in
                 ProfileV3TravelPersona.Trait(
-                    id: "adventure",
-                    name: "Adventure",
-                    score: score,
-                    detail: ProfileV3Directive(go: "persona_trait", profileID: profileID, trait: "adventure"),
+                    id: id,
+                    name: id.capitalized,
+                    score: scores[id] ?? 50,
+                    detail: ProfileV3Directive(go: "persona_trait", profileID: profileID, trait: id),
                     submit: ProfileV3BoardAction(fields: [
                         "action": .string("set_persona_score"),
-                        "trait": .string("adventure"),
+                        "trait": .string(id),
                         "profile_id": .string(profileID ?? "")
                     ])
                 )
-            ]
+            }
         )
     }
 
-    func loadPersonaTrait(_: String, profileID _: String?, page _: Int) async throws -> ProfileV3PersonaTrait {
+    var events: [String] {
+        lock.withLock { _events }
+    }
+
+    func loadPersonaTrait(_ trait: String, profileID _: String?, page _: Int) async throws -> ProfileV3PersonaTrait {
+        lock.withLock { _events.append("trait:\(trait)") }
         throw ProfileV3RepositoryError.unavailable
     }
 
     func submitPersonaAction(_ action: ProfileV3BoardAction, score: Int?) async throws {
+        if submitDelay > .zero { try await Task.sleep(for: submitDelay) }
         if let submitError { throw submitError }
         lock.withLock {
             _submitted.append(Submission(action: action, score: score))
-            if let score { scores["adventure"] = score }
+            if case .string(let id)? = action.fields["trait"] { _events.append("submit:\(id)") }
+            if let score, case .string(let id)? = action.fields["trait"] { scores[id] = score }
         }
     }
 }

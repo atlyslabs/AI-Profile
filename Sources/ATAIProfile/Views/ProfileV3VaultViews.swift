@@ -38,25 +38,23 @@ struct ProfileV3CredentialStoreCard: View {
     }
 
     private var art: some View {
-        ZStack(alignment: .topTrailing) {
-            ProfileV3ShieldShape()
-                .fill(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.credentialCardBigShield))
-                .frame(width: Layout.cardBigShield.width, height: Layout.cardBigShield.height)
-                .padding(.trailing, Layout.cardBigShieldTrailing)
-                .padding(.top, Layout.cardBigShieldTop)
-            ProfileV3ShieldShape()
-                .fill(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.credentialCardShield))
-                .frame(width: Layout.cardShield.width, height: Layout.cardShield.height)
-                .padding(.trailing, Layout.cardShieldTrailing)
-                .padding(.top, Layout.cardShieldTop)
-            ProfileV3CredentialLock(size: Layout.cardLock, box: Layout.cardLockBox)
-                .opacity(ProfileV3Theme.Opacity.credentialCardLock)
-                .padding(.trailing, Layout.cardLockTrailing)
-                .padding(.top, Layout.cardLockTop)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
+        ProfileV3ConnectorGlyph.credentialCardArt.image
+            .resizable()
+            .frame(width: Layout.cardArt.width, height: Layout.cardArt.height)
+            .mask {
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: Layout.cardArtFade / Layout.cardArt.width),
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            .mask { shape.offset(y: -Layout.cardInsetShadow) }
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 
     private var bottomEdge: some View {
@@ -125,7 +123,7 @@ struct ProfileV3CredentialStoreSheet: View {
             Color.clear
                 .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
         }
-        .presentationDetents(detents)
+        .profileV3FittedDetent(fittedHeight, until: .large)
         .presentationCornerRadius(Credentials.cornerRadius)
         .presentationDragIndicator(.hidden)
         .sheet(item: route) { route in
@@ -141,9 +139,9 @@ struct ProfileV3CredentialStoreSheet: View {
         .sensoryFeedback(.success, trigger: model.deleteCompletions)
     }
 
-    private var detents: Set<PresentationDetent> {
-        guard measured.content > 0, measured.bar > 0 else { return [.large] }
-        return [.height(measured.content + measured.bar + measured.bottomInset)]
+    private var fittedHeight: CGFloat? {
+        guard measured.content > 0, measured.bar > 0 else { return nil }
+        return measured.content + measured.bar + measured.bottomInset
     }
 
     private var measuredContent: some View {
@@ -233,24 +231,25 @@ struct ProfileV3VaultSitePicker: View {
     @ObservedObject var model: ProfileV3CredentialStoreModel
     var scrolls = true
     @State private var query = ""
+    @State private var headerPin = ProfileV3HeaderPin()
 
     private typealias Layout = ProfileV3Theme.Sizes.CredentialStore
     private typealias Credentials = ProfileV3Theme.Sizes.AppCredentials
 
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
+            ProfileV3VaultSheetHeader(title: ProfileV3Strings.appCredentialsTitle, onClose: model.closeSheet)
             if scrolls {
                 ScrollView(showsIndicators: false) {
                     content
+                        .profileV3HeaderFadeAnchor(headerPin)
                 }
+                .profileV3HeaderFade(headerPin)
                 .scrollBounceBehavior(.basedOnSize)
                 .scrollDismissesKeyboard(.interactively)
             } else {
                 content
             }
-        }
-        .overlay(alignment: .top) {
-            ProfileV3VaultSheetHeader(onClose: model.closeSheet)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())
@@ -261,19 +260,12 @@ struct ProfileV3VaultSitePicker: View {
 
     private var content: some View {
         VStack(spacing: 0) {
-            Text(ProfileV3Strings.appCredentialsTitle)
-                .typoGraphy(.H5InterMedium20)
-                .foregroundStyle(Color(at: .pureBlack))
-                .multilineTextAlignment(.center)
-                .frame(width: Credentials.titleWidth)
-                .accessibilityAddTraits(.isHeader)
             ProfileV3CredentialField(
                 label: ProfileV3Strings.appCredentialsWebsite,
                 text: $query,
                 keyboard: .URL,
                 contentType: .URL
             )
-            .padding(.top, Layout.pickerSearchTop)
             VStack(spacing: Layout.rowSpacing) {
                 if model.sites == nil, model.sitesPhase == .loading {
                     ProfileV3Spinner(size: ProfileV3Theme.Icon.xl, lineWidth: ProfileV3Theme.Stroke.regular)
@@ -293,12 +285,13 @@ struct ProfileV3VaultSitePicker: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-        .padding(.top, Layout.pickerTitleTop)
+        .padding(.top, Layout.pickerSearchTop)
         .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
     }
 }
 
 private struct ProfileV3VaultSheetHeader: View {
+    var title: String?
     let onClose: () -> Void
 
     var body: some View {
@@ -308,9 +301,19 @@ private struct ProfileV3VaultSheetHeader: View {
                 color: Color(at: .neutralGrey200),
                 top: ProfileV3Theme.Space.s10
             )
-            HStack {
-                Spacer()
-                ProfileV3CircleIconButton.close(action: onClose)
+            ZStack {
+                if let title {
+                    Text(title)
+                        .typoGraphy(.H5InterMedium20)
+                        .foregroundStyle(Color(at: .pureBlack))
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: ProfileV3Theme.Sizes.AppCredentials.titleWidth)
+                        .accessibilityAddTraits(.isHeader)
+                }
+                HStack {
+                    Spacer()
+                    ProfileV3CircleIconButton.close(action: onClose)
+                }
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)

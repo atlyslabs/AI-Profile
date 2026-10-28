@@ -27,7 +27,7 @@ struct ProfileV3InteractiveGlobe: View {
 
     var body: some View {
         let landReady = isLandReady
-        SwiftUI.TimelineView(.profileV3Ambient(paused: !isRunning || isPaused)) { timeline in
+        SwiftUI.TimelineView(ProfileV3AmbientSchedule(isPaused: !isRunning || isPaused)) { timeline in
             Canvas { context, size in
                 frameClock.date = timeline.date
                 _ = landReady
@@ -125,8 +125,6 @@ struct ProfileV3InteractiveGlobe: View {
             }
     }
 
-    /// Until this globe takes over, follow the flying globe's pose. The spin captured at appear is the
-    /// card's, and painting that once the card has finished is the flash.
     private func orientation(at date: Date) -> (yaw: Double, pitch: Double) {
         if hasTakenHandoff {
             publishPose(at: date)

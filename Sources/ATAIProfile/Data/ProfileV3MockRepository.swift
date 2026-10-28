@@ -76,6 +76,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
     private let persona: ProfileV3PersonaStore
     private let appAccess: ProfileV3AppAccessStore
     private let vault: ProfileV3VaultStore
+    private let gloveBox: ProfileV3GloveBoxStore
     private let settingsCitizenship: String?
 
     init(
@@ -87,6 +88,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         persona: ProfileV3PersonaStore = ProfileV3PersonaStore(),
         appAccess: ProfileV3AppAccessStore = ProfileV3AppAccessStore(),
         vault: ProfileV3VaultStore = ProfileV3VaultStore(),
+        gloveBox: ProfileV3GloveBoxStore = ProfileV3GloveBoxStore(),
         settingsCitizenship: String? = nil
     ) {
         self.delay = delay
@@ -95,6 +97,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         self.persona = persona
         self.appAccess = appAccess
         self.vault = vault
+        self.gloveBox = gloveBox
         self.settingsCitizenship = settingsCitizenship
     }
 
@@ -322,9 +325,9 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         return ProfileV3Fixtures.disconnectConfirm(connector)
     }
 
-    func loadPassportHistory(profileID _: String?) async throws -> [ProfileV3Passport] {
+    func loadPreviousPassports(profileID _: String?) async throws -> ProfileV3PreviousPassports {
         try await Task.sleep(for: delay)
-        return ProfileV3PassportFixtures.history
+        return ProfileV3PassportFixtures.previous
     }
 
     func loadPassportScan(profileID _: String?) async throws -> ProfileV3PassportScan {
@@ -533,10 +536,10 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         return ProfileV3PastTripsFixtures.addScreen(profileID: profileID)
     }
 
-    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, year: Int, month: Int) async throws {
+    func addPastTrip(_ submit: ProfileV3BoardAction, country: String, date: ProfileV3TripYearMonth?) async throws {
         try await Task.sleep(for: delay)
         let profileID = submit.fields["profile_id"]?.stringValue ?? ""
-        await pastTrips.add(ProfileV3PastTripDraft(countryCode: country, year: year, month: month), profileID: profileID)
+        await pastTrips.add(ProfileV3PastTripDraft(countryCode: country, date: date), profileID: profileID)
     }
 
     func editPastTrip(_ submit: ProfileV3BoardAction, year: Int, month: Int) async throws {
@@ -588,6 +591,42 @@ struct ProfileV3MockRepository: ProfileV3Repository {
 
     func reorderProgrammes(_: [String], profileID _: String, action _: String) async throws {
         try await Task.sleep(for: delay)
+    }
+}
+
+extension ProfileV3MockRepository: ProfileV3GloveBoxRepository {
+    func loadGloveBoxCard() async throws -> ProfileV3GloveBoxAccount {
+        try await Task.sleep(for: delay)
+        return gloveBox.snapshot()
+    }
+
+    func createGloveBoxAddress() async throws -> ProfileV3GloveBoxAccount {
+        try await Task.sleep(for: delay)
+        return gloveBox.update { $0.address = ProfileV3GloveBoxFixtures.email.address }
+    }
+
+    func setGloveBoxForwardingPaused(_ paused: Bool) async throws -> ProfileV3GloveBoxAccount {
+        try await Task.sleep(for: delay)
+        return gloveBox.update { $0.forwardingPaused = paused }
+    }
+
+    func addGloveBoxForwardingAddress(_ email: String) async throws -> ProfileV3GloveBoxAccount {
+        try await Task.sleep(for: delay)
+        return gloveBox.update { $0.pendingEmail = email }
+    }
+
+    func loadGloveBoxMessages(cursor _: String?) async throws -> ProfileV3GloveBoxInboxPage {
+        try await Task.sleep(for: delay)
+        return ProfileV3GloveBoxInboxPage(emails: ProfileV3GloveBoxFixtures.emails, nextCursor: nil)
+    }
+
+    func loadGloveBoxMessage(_ listed: ProfileV3GloveBoxEmail) async throws -> ProfileV3GloveBoxEmail {
+        try await Task.sleep(for: delay)
+        return listed
+    }
+
+    func loadGloveBoxAttachment(messageID _: String, index _: Int) async throws -> Data {
+        throw ProfileV3Error.notImplemented(action: "glovebox_attachment")
     }
 }
 

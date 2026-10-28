@@ -347,9 +347,9 @@ struct ProfileV3ProgrammesView: View {
                 }
             },
             onAction: { viewModel.tapInsight(programme) },
-            onRemove: { viewModel.remove(programme) }
+            onRemove: { viewModel.remove(programme) },
+            onCopy: { viewModel.copiedNumber(of: programme) }
         )
-        .profileV3OnImpression { viewModel.trackProgramme(programme, index: order) }
         .profileV3EntryReveal(
             revealsTiles,
             scale: ProfileV3Theme.Motion.tileEntryScale,

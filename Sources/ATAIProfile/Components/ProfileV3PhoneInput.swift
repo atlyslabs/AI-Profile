@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3FieldLabel: View {
@@ -36,6 +37,7 @@ struct ProfileV3PhoneInput: View {
                 .foregroundStyle(Color(at: .pureBlack))
                 .keyboardType(.numberPad)
                 .textContentType(.telephoneNumber)
+                .postHogNoMask()
                 .focused(isFocused)
         }
         .padding(.bottom, ProfileV3Theme.Space.s8)

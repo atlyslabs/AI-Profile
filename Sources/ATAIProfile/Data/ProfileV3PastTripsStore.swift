@@ -9,15 +9,18 @@ actor ProfileV3PastTripsStore {
     }
 
     func trips(profileID: String) -> [ProfileV3PastTrip] {
-        (tripsByProfile[profileID] ?? []).newestFirst
+        (tripsByProfile[profileID] ?? []).listed
     }
 
     func add(_ draft: ProfileV3PastTripDraft, profileID: String) {
+        let trips = tripsByProfile[profileID] ?? []
+        guard draft.date != nil || !trips.contains(where: { $0.date == nil && $0.countryCode == draft.countryCode }) else {
+            return
+        }
         let trip = ProfileV3PastTrip(
-            id: UUID().uuidString,
+            id: draft.date == nil ? "country:\(draft.countryCode)" : UUID().uuidString,
             countryCode: draft.countryCode,
-            year: draft.year,
-            month: draft.month
+            date: draft.date
         )
         tripsByProfile[profileID, default: []].append(trip)
     }
@@ -30,8 +33,7 @@ actor ProfileV3PastTripsStore {
         tripsByProfile[profileID]?[index] = ProfileV3PastTrip(
             id: id,
             countryCode: trip.countryCode,
-            year: year,
-            month: month
+            date: ProfileV3TripYearMonth(year: year, month: month)
         )
     }
 

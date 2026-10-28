@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3GloveBoxCardSectionView: View {
@@ -27,10 +28,14 @@ struct ProfileV3GloveBoxCardSectionView: View {
             }
             .buttonStyle(.profileV3Pressable(.selection))
             .padding(.top, Layout.cardTop)
-            stats
-                .padding(.top, Layout.statsTop)
-            facts
-                .padding(.top, Layout.factsTop)
+            if !section.stats.isEmpty {
+                stats
+                    .padding(.top, Layout.statsTop)
+            }
+            if !section.facts.isEmpty {
+                facts
+                    .padding(.top, Layout.factsTop)
+            }
             ProfileV3DashedDivider()
                 .padding(.top, Layout.payDividerTop)
             if !section.payTitle.isEmpty {
@@ -49,12 +54,14 @@ struct ProfileV3GloveBoxCardSectionView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, Layout.payBodyTop)
             }
-            VStack(spacing: Layout.optionSpacing) {
-                ForEach(section.payOptions) { option in
-                    payOption(option)
+            if !section.payOptions.isEmpty {
+                VStack(spacing: Layout.optionSpacing) {
+                    ForEach(section.payOptions) { option in
+                        payOption(option)
+                    }
                 }
+                .padding(.top, Layout.optionsTop)
             }
-            .padding(.top, Layout.optionsTop)
             ProfileV3DashedDivider()
                 .padding(.top, Layout.transactionsDividerTop)
             transactions
@@ -239,7 +246,7 @@ struct ProfileV3GloveBoxCardSectionView: View {
                     .frame(minHeight: Layout.emptyHeight)
             }
         } else {
-            ProfileV3GloveBoxPreviewCard(padding: Layout.transactionsPadding) {
+            ProfileV3GloveBoxPreviewCard(sampleLabel: section.sampleLabel, padding: transactionsPadding) {
                 VStack(spacing: Layout.rowSpacing) {
                     ForEach(Array(rows.enumerated()), id: \.element.id) { index, transaction in
                         if index > 0 {
@@ -250,6 +257,12 @@ struct ProfileV3GloveBoxCardSectionView: View {
                 }
             }
         }
+    }
+
+    private var transactionsPadding: EdgeInsets {
+        var padding = Layout.transactionsPadding
+        if section.sampleLabel != nil { padding.top += Layout.sampleClearance }
+        return padding
     }
 
     private var empty: some View {
@@ -331,6 +344,7 @@ struct ProfileV3GloveBoxVirtualCard: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(card.holder)
         .accessibilityValue(card.lastFour)
+        .postHogMask()
     }
 
     private var art: some View {

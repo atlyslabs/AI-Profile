@@ -105,7 +105,6 @@ struct ProfileV3SeparatorDot: View {
 struct ProfileV3UsageRail<Item: Identifiable>: View {
     let items: [Item]
     let usage: (Item) -> ProfileV3Usage
-    var onImpression: ((Item, Int) -> Void)?
     let onSelect: (Item) -> Void
 
     @State private var width = ProfileV3Theme.Canvas.width
@@ -120,10 +119,9 @@ struct ProfileV3UsageRail<Item: Identifiable>: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: ProfileV3Theme.Sizes.Coupon.railSpacing) {
-                ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                ForEach(items) { item in
                     ProfileV3UsageCard(usage: usage(item)) { onSelect(item) }
                         .frame(width: cardWidth)
-                        .profileV3OnImpression { onImpression?(item, index) }
                 }
             }
             .fixedSize(horizontal: false, vertical: true)

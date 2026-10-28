@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3ContactInfoView: View {
@@ -81,6 +82,7 @@ struct ProfileV3ContactInfoView: View {
                 .foregroundStyle(Color(at: .pureBlack))
                 .keyboardType(.emailAddress)
                 .textContentType(.emailAddress)
+                .postHogNoMask()
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled(true)
                 .focused($focusedField, equals: .email)
@@ -112,6 +114,7 @@ struct ProfileV3ContactInfoView: View {
                     .foregroundStyle(Color(at: .pureBlack))
                     .keyboardType(.numberPad)
                     .textContentType(.telephoneNumber)
+                    .postHogNoMask()
                     .focused($focusedField, equals: .phone)
             }
             .padding(.bottom, ProfileV3Theme.Space.s8)

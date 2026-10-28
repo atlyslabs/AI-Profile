@@ -17,7 +17,7 @@ struct ProfileV3HoldToExploreHint: View {
             if showsPill {
                 pill
             }
-            SwiftUI.TimelineView(.profileV3Ambient(paused: !nudges || isPaused)) { context in
+            SwiftUI.TimelineView(ProfileV3AmbientSchedule(isPaused: !nudges || isPaused)) { context in
                 joystick
                     .padding(.leading, showsPill ? ProfileV3Theme.Space.s24 : 0)
                     .offset(nudge(at: context.date))

@@ -27,7 +27,11 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
         self.onBack = onBack
         self.repository = repository
         self.environment = environment
-        let viewModel = ProfileV3HubViewModel(repository: repository, userFirstName: userFirstName)
+        let viewModel = ProfileV3HubViewModel(
+            repository: repository,
+            userFirstName: userFirstName,
+            addsTripsWithoutDate: environment.app.addsPastTripsWithoutDate
+        )
         self.viewModel = viewModel
         super.init(rootView: ProfileV3HubRoot(
             viewModel: viewModel,
@@ -44,6 +48,10 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(Color(at: .pureWhite))
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         ProfileV3Analytics.screen(.hub, entrySource: entrySource)
     }
 }
@@ -106,6 +114,8 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
                     profileID: profileID,
                     repository: repository,
                     identityCapture: environment.identityCapture,
+                    kyc: environment.kyc,
+                    isCoTraveller: viewModel.isCoTraveller(profileID),
                     residenceCode: { [account = environment.account] in account.snapshot().residenceCode },
                     onSaved: { [weak viewModel] in viewModel?.requestRefresh() }
                 ),
@@ -162,7 +172,7 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
             onPassChanged: { [weak viewModel] in viewModel?.selectPass(id: $0.id) },
             onUseInsight: { [weak self] in self?.afterSettings { self?.viewModel.useInsight() } },
             onOpenChat: app.opensChat ? { app.openChat(prompt: $0) } : nil,
-            onOpenBenefits: { [weak self] in self?.afterSettings { self?.viewModel.tapViewAllBenefits() } },
+            onOpenBenefits: { [weak self] in self?.afterSettings { self?.viewModel.showAllBenefits() } },
             onRequestKYC: { [weak self] in
                 self?.dismiss(animated: true) {
                     self?.startKYC(resuming: .addProgramme)
@@ -198,7 +208,10 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
     }
 
     func openAddTraveller() {
-        makeSettingsPresenter(profileID: viewModel.mainProfileID).presentAddTraveller()
+        afterSettings { [weak self] in
+            guard let self else { return }
+            makeSettingsPresenter(profileID: viewModel.mainProfileID).presentAddTraveller()
+        }
     }
 }
 
@@ -250,6 +263,8 @@ extension ProfileV3HubHostingController {
             capture: capture,
             repository: repository,
             kyc: environment.kyc,
+            isCoTraveller: capture.route == .coTraveller
+                || (!capture.establishesMain && viewModel.isCoTraveller(capture.profileID)),
             onFinish: { [weak self] completedSteps in
                 let refresh: () -> Void = {
                     self?.viewModel.refreshAfterCapture(profileID: capture.profileID, completedSteps: completedSteps)

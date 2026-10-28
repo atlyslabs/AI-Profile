@@ -21,7 +21,7 @@ struct ProfileV3SectionHeader: View {
                     .typoGraphy(.H7InterMedium16)
                 if let onTrailingTap {
                     Button(action: onTrailingTap) {
-                        HStack(spacing: ProfileV3Theme.Space.s4) {
+                        HStack(spacing: ProfileV3Theme.Space.s8) {
                             ProfileV3TagLabel(text: trailing)
                             ATIcon.SwiftUIImage.chevronRight
                                 .profileV3Icon(ProfileV3Theme.Icon.md)
