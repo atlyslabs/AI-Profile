@@ -162,10 +162,11 @@ struct ProfileV3AnalyticsEventsTests {
 
             viewModel.tapConnectMore()
             viewModel.tapEdit()
-            viewModel.tapEdit()
             viewModel.copiedNumber(of: programme)
             viewModel.tapInsight(programme)
-            viewModel.remove(programme)
+            viewModel.toggleSelection(programme)
+            viewModel.tapDeleteSelected()
+            viewModel.confirmDelete()
 
             let cardEvents = recorder.names.filter { $0.hasPrefix("profile_connector_") || $0 == "profile_card_connect_clicked" }
             #expect(cardEvents == [

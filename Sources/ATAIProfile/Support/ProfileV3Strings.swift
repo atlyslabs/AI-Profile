@@ -95,8 +95,8 @@ enum ProfileV3Strings {
     static var pointsMiles: String { ProfileV3L10n.moAiprofileLoyaltyLabelPointsMiles }
     static var connectMoreProgrammes: String { ProfileV3L10n.moAiprofileLoyaltyButtonConnectMorePrograms }
     static var editProgrammes: String { ProfileV3L10n.moAiprofileLoyaltyButtonEditPrograms }
-    static var doneEditing: String { ProfileV3L10n.moAiprofileLoyaltyButtonDoneEditing }
-    static var removeProgramme: String { ProfileV3L10n.moAiprofileLoyaltyButtonRemoveProgram }
+    static var confirmDeleteProgrammes: String { ProfileV3L10n.moAiprofileLoyaltyButtonConfirmDelete }
+    static var cancel: String { ProfileV3L10n.moAiprofileGeneralButtonCancel }
     static var copyMembershipNumber: String { ProfileV3L10n.moAiprofileLoyaltyButtonCopyMembershipNumber }
     static var membershipNumberCopied: String { ProfileV3L10n.moAiprofileLoyaltyToastMembershipNumberCopied }
     static var reorderProgrammesHint: String { ProfileV3L10n.moAiprofileLoyaltyInstructionReorderCards }
@@ -222,5 +222,13 @@ enum ProfileV3Strings {
     }
     static func foundProgrammesLine(_ count: Int) -> String {
         count == 1 ? ProfileV3L10n.moAiprofileLoyaltyFoundProgramsLineOne(count) : ProfileV3L10n.moAiprofileLoyaltyFoundProgramsLineOther(count)
+    }
+    static func deleteProgrammes(_ count: Int) -> String {
+        count == 1 ? ProfileV3L10n.moAiprofileLoyaltyButtonDeleteProgramsOne(count) : ProfileV3L10n.moAiprofileLoyaltyButtonDeleteProgramsOther(count)
+    }
+    static func deleteProgrammesConfirm(_ count: Int) -> String {
+        count == 1
+            ? ProfileV3L10n.moAiprofileLoyaltyConfirmationDeleteProgramsOne(count)
+            : ProfileV3L10n.moAiprofileLoyaltyConfirmationDeleteProgramsOther(count)
     }
 }

@@ -19,6 +19,7 @@ final class ProfileV3ProgrammesHostingController: UIHostingController<ProfileV3P
     private let selections: ProfileV3ProgrammeSelectionMemory?
     private let events: ProfileV3ProgrammesEvents
     private var addProgrammePresenter: ProfileV3AddProgrammeSheetPresenter?
+    private var isDeleteConfirmationPresented = false
     private let pageTransition = ProfileV3PushTransition()
     private let cover = ProfileV3ScreenCoverToken()
 
@@ -180,5 +181,30 @@ extension ProfileV3ProgrammesHostingController: ProfileV3ProgrammesRouter {
 
     func passChanged(to pass: ProfileV3WorldPass) {
         events.onPassChanged(pass)
+    }
+
+    func presentDeleteConfirmation() {
+        guard !isDeleteConfirmationPresented else { return }
+        isDeleteConfirmationPresented = true
+        let count = viewModel.selectedIDs.count
+        ProfileV3SheetWindow.present(
+            cornerRadius: ProfileV3Theme.Sizes.Programmes.deleteSheetRadius,
+            dimOpacity: ProfileV3Theme.Opacity.programmesDeleteBackdrop,
+            dismissOnBackdropTap: true,
+            onDismiss: { [weak self] in
+                guard let self, isDeleteConfirmationPresented else { return }
+                isDeleteConfirmationPresented = false
+                viewModel.deleteConfirmationDidDismiss()
+            }
+        ) { [viewModel] _, bottomInset in
+            ProfileV3ProgrammesDeleteSheet(viewModel: viewModel, count: count)
+                .padding(.bottom, bottomInset)
+        }
+    }
+
+    func dismissDeleteConfirmation() {
+        guard isDeleteConfirmationPresented else { return }
+        isDeleteConfirmationPresented = false
+        ProfileV3SheetWindow.dismiss()
     }
 }

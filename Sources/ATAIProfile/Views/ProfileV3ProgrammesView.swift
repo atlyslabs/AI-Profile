@@ -41,9 +41,8 @@ struct ProfileV3ProgrammesView: View {
         .sensoryFeedback(.impact(weight: .light), trigger: tileTaps)
         .sensoryFeedback(.impact(weight: .light), trigger: passSwipes)
         .sensoryFeedback(.selection, trigger: viewModel.listOrder) { _, order in !order.isEmpty }
-        .sensoryFeedback(.impact(weight: .medium), trigger: viewModel.removingIDs) { old, new in
-            new.count > old.count
-        }
+        .sensoryFeedback(.selection, trigger: viewModel.selectedIDs)
+        .sensoryFeedback(.impact(weight: .medium), trigger: viewModel.deletions)
         .sensoryFeedback(.error, trigger: viewModel.actionFailures)
         .task { await viewModel.load(reducesMotion: reduceMotion) }
         .task(id: viewModel.showsReorderHint) { await playReorderDemo() }
@@ -152,21 +151,55 @@ struct ProfileV3ProgrammesView: View {
             if overview.programmes.isEmpty {
                 emptyState
             }
-            if !overview.featured.isEmpty {
-                featuredCarousel(overview.featured)
+            if viewModel.isEditing {
+                selectionList
                     .padding(.top, ProfileV3Theme.Sizes.Programmes.cardsTop)
-                    .profileV3ReorderShift(viewModel.showsReorderHint)
-                if !overview.others.isEmpty {
-                    ProfileV3DashedDivider()
-                        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                        .padding(.vertical, ProfileV3Theme.Space.s40)
+                    .transition(.opacity)
+            } else {
+                if !overview.featured.isEmpty {
+                    featuredCarousel(overview.featured)
+                        .padding(.top, ProfileV3Theme.Sizes.Programmes.cardsTop)
                         .profileV3ReorderShift(viewModel.showsReorderHint)
+                    if !overview.others.isEmpty {
+                        ProfileV3DashedDivider()
+                            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                            .padding(.vertical, ProfileV3Theme.Space.s40)
+                            .profileV3ReorderShift(viewModel.showsReorderHint)
+                    }
                 }
+                programmeList(firstOrder: overview.featured.count)
+                    .padding(.top, overview.featured.isEmpty ? ProfileV3Theme.Sizes.Programmes.cardsTop : 0)
             }
-            programmeList(firstOrder: overview.featured.count)
-                .padding(.top, overview.featured.isEmpty ? ProfileV3Theme.Sizes.Programmes.cardsTop : 0)
         }
         .onAppear { revealsTiles = true }
+    }
+
+    private var selectionList: some View {
+        VStack(spacing: ProfileV3Theme.Sizes.Programmes.listSpacing) {
+            ForEach(viewModel.editingProgrammes) { programme in
+                selectableTile(programme)
+            }
+        }
+    }
+
+    private func selectableTile(_ programme: ProfileV3LoyaltyProgramme) -> some View {
+        let isSelected = viewModel.selectedIDs.contains(programme.id)
+        return Button {
+            viewModel.toggleSelection(programme)
+        } label: {
+            HStack(spacing: ProfileV3Theme.Sizes.Programmes.checkboxGap) {
+                ProfileV3CheckboxMark(isSelected: isSelected)
+                ProfileV3ProgrammeTile(programme: programme, width: tileWidth)
+                    .allowsHitTesting(false)
+            }
+            .padding(.leading, ProfileV3Theme.Sizes.Programmes.checkboxLeading)
+            .frame(width: width, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(viewModel.isDeleting)
+        .accessibilityLabel(programme.name)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private func programmeList(firstOrder: Int) -> some View {
@@ -310,7 +343,6 @@ struct ProfileV3ProgrammesView: View {
                 }
             },
             onAction: { viewModel.tapInsight(programme) },
-            onRemove: { viewModel.remove(programme) },
             onCopy: { viewModel.copiedNumber(of: programme) }
         )
         .profileV3EntryReveal(
@@ -327,9 +359,6 @@ struct ProfileV3ProgrammesView: View {
     }
 
     private func pill(for programme: ProfileV3LoyaltyProgramme) -> ProfileV3ProgrammeTile.Pill {
-        if viewModel.isEditing {
-            return .remove(isRemoving: viewModel.removingIDs.contains(programme.id))
-        }
         guard viewModel.showsInsights else { return .none }
         return .insight(isLoading: viewModel.loadingInsightID == programme.id)
     }
@@ -352,21 +381,34 @@ struct ProfileV3ProgrammesView: View {
     }
 
     private var bottomBar: some View {
-        HStack {
-            ProfileV3BarButton(
-                title: ProfileV3Strings.connectMoreProgrammes,
-                icon: ATIcon.SwiftUIImage.insertLink,
-                action: viewModel.tapConnectMore
-            )
-            Spacer()
-            ProfileV3BarButton(
-                icon: viewModel.isEditing ? ATIcon.SwiftUIImage.check : ATIcon.SwiftUIImage.edit,
-                accessibilityLabel: viewModel.isEditing
-                    ? ProfileV3Strings.doneEditing
-                    : ProfileV3Strings.editProgrammes,
-                action: viewModel.tapEdit
-            )
-            .disabled(viewModel.overview?.programmes.isEmpty ?? true)
+        ZStack(alignment: .bottom) {
+            if viewModel.isEditing {
+                if !viewModel.selectedIDs.isEmpty {
+                    ProfileV3ContinueButton(
+                        title: ProfileV3Strings.deleteProgrammes(viewModel.selectedIDs.count),
+                        tint: ProfileV3Theme.Palette.destructive,
+                        isEnabled: !viewModel.isDeleting,
+                        action: viewModel.tapDeleteSelected
+                    )
+                    .transition(.opacity.combined(with: .offset(y: ProfileV3Theme.Motion.insightRevealOffset)))
+                }
+            } else {
+                HStack {
+                    ProfileV3BarButton(
+                        title: ProfileV3Strings.connectMoreProgrammes,
+                        icon: ATIcon.SwiftUIImage.insertLink,
+                        action: viewModel.tapConnectMore
+                    )
+                    Spacer()
+                    ProfileV3BarButton(
+                        icon: ATIcon.SwiftUIImage.edit,
+                        accessibilityLabel: ProfileV3Strings.editProgrammes,
+                        action: viewModel.tapEdit
+                    )
+                    .disabled(viewModel.overview?.programmes.isEmpty ?? true)
+                }
+                .transition(.opacity)
+            }
         }
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
         .padding(.bottom, ProfileV3Theme.Sizes.Programmes.barBottom)
@@ -450,6 +492,20 @@ private struct ProfileV3BarButton: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(accessibilityLabel ?? title ?? "")
+    }
+}
+
+struct ProfileV3ProgrammesDeleteSheet: View {
+    @ObservedObject var viewModel: ProfileV3ProgrammesViewModel
+    let count: Int
+
+    var body: some View {
+        ProfileV3ConfirmationView.deleteProgrammes(
+            count: count,
+            isDeleting: viewModel.isDeleting,
+            onBack: viewModel.cancelDelete,
+            onConfirm: viewModel.confirmDelete
+        )
     }
 }
 

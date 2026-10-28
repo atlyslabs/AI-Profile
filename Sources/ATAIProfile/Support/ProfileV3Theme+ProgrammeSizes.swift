@@ -78,5 +78,12 @@ extension ProfileV3Theme.Sizes {
         static let bottomFade: CGFloat = 164
         static let barBottom = ProfileV3Theme.Space.s16
         static let editButtonWidth: CGFloat = 65
+        static let checkboxLeading = ProfileV3Theme.Space.s24
+        static let checkboxGap = ProfileV3Theme.Space.s20
+        static let deleteSheetRadius: CGFloat = 44
     }
+}
+
+extension ProfileV3Theme.Opacity {
+    static let programmesDeleteBackdrop: Double = 0.8
 }
