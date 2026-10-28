@@ -346,14 +346,18 @@ struct ProfileV3TravelPersonaTests {
         #expect(viewModel.isDecoding)
         viewModel.finishDecodingLoop()
         #expect(viewModel.isDecoding)
+        #expect(viewModel.decodedReveals == 0)
 
         while viewModel.content == nil { try await Task.sleep(for: .milliseconds(10)) }
         #expect(viewModel.isDecoding)
         viewModel.finishDecodingLoop()
         #expect(!viewModel.isDecoding)
+        #expect(viewModel.decodedReveals == 1)
 
         viewModel.load()
         #expect(!viewModel.isDecoding)
+        viewModel.finishDecodingLoop()
+        #expect(viewModel.decodedReveals == 1)
     }
 
     @Test(.timeLimit(.minutes(1)))
@@ -369,6 +373,7 @@ struct ProfileV3TravelPersonaTests {
         #expect(viewModel.isDecoding)
         viewModel.finishDecodingLoop()
         #expect(!viewModel.isDecoding)
+        #expect(viewModel.decodedReveals == 0)
 
         viewModel.load()
         #expect(viewModel.isDecoding)

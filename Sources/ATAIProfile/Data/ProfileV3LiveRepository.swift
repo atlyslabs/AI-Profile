@@ -41,6 +41,12 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return account.snapshot().passportNationality
     }
 
+    @MainActor private func travellerName(for profileID: String?) -> String? {
+        guard let board = store.cachedBoard() else { return nil }
+        guard let profileID else { return board.mainProfile?.name }
+        return board.profiles.first { $0.profileID == profileID }?.name
+    }
+
     func loadAgentFlow(agentID: String, profileID: String?) async throws -> ProfileV3AgentFlow {
         guard let agent = ProfileV3AgentID(rawValue: agentID) else {
             throw ProfileV3RepositoryError.agentNotFound
@@ -48,7 +54,8 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         let endpoint = ProfileV3API.agent(type: agent, profileID: profileID)
         let dto: ProfileV3AgentScreenDTO = try await request(endpoint, action: "agent")
         let country = await accountCountry(for: profileID)
-        let mapped = ProfileV3AgentMapper.flow(from: dto, accountCountry: country)
+        let name = await travellerName(for: profileID)
+        let mapped = ProfileV3AgentMapper.flow(from: dto, accountCountry: country, holderName: name)
         agentResiduals.record(mapped.residuals, agentID: mapped.agentID, profileID: profileID)
         return mapped.flow
     }

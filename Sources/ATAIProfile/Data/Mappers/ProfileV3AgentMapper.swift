@@ -58,7 +58,11 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
     private static let preferenceSourcesRoute = "preference_sources"
     private static let viewSourceEmailsAction = "view_source_emails"
 
-    static func flow(from dto: ProfileV3AgentScreenDTO, accountCountry: ProfileV3Country? = nil) -> ProfileV3MappedAgentFlow {
+    static func flow(
+        from dto: ProfileV3AgentScreenDTO,
+        accountCountry: ProfileV3Country? = nil,
+        holderName: String? = nil
+    ) -> ProfileV3MappedAgentFlow {
         let apiAgentType = text(dto.save?.agentType) ?? text(dto.agentType) ?? text(dto.id)
         let agentType = apiAgentType ?? ""
         let agentID = ProfileV3AgentID(apiValue: agentType)?.rawValue ?? agentType
@@ -72,6 +76,7 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
                 agentID: agentID,
                 agentType: apiAgentType,
                 accountCountry: accountCountry,
+                holderName: holderName,
                 residuals: &residuals
             )
         )
@@ -84,11 +89,16 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
         agentID: String,
         agentType: String?,
         accountCountry: ProfileV3Country?,
+        holderName: String?,
         residuals: inout ProfileV3AgentResiduals
     ) -> ProfileV3AgentForm {
         var sections: [ProfileV3FormSection] = []
         if let passport = dto.passport {
             sections.append(ProfileV3PassportMapper.section(passport, accountCountry: accountCountry))
+        } else if let empty = dto.passportEmpty {
+            sections.append(
+                ProfileV3PassportMapper.emptySection(empty, holderName: holderName, accountCountry: accountCountry)
+            )
         }
         for field in fields {
             if field.inputKind == .baggageGrid {

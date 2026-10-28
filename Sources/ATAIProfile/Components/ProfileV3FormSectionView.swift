@@ -116,7 +116,8 @@ struct ProfileV3FormSectionView: View {
                     holderName: field.holderName,
                     countryName: field.countryName,
                     countryNativeName: field.countryNativeName,
-                    content: field.passport.map(ProfileV3PassportCard.Content.details) ?? .upload,
+                    content: field.passport.map(ProfileV3PassportCard.Content.details)
+                        ?? .upload(field.emptyState ?? .blank),
                     onUpload: onUploadPassport
                 )
                 if field.passport != nil {

@@ -13,6 +13,30 @@ enum ProfileV3PassportMapper: ProfileV3DTOReading {
         )
     }
 
+    static func emptySection(
+        _ dto: ProfileV3AgentPassportEmptyDTO,
+        holderName: String?,
+        accountCountry: ProfileV3Country?
+    ) -> ProfileV3FormSection {
+        let country = accountCountry.map(ProfileV3PassportCountry.init)
+        let field = ProfileV3PassportField(
+            holderName: text(holderName) ?? "",
+            countryName: country?.name ?? "",
+            countryNativeName: country?.nativeName,
+            emptyState: ProfileV3PassportEmptyState(
+                title: text(dto.title) ?? "",
+                body: text(dto.body) ?? "",
+                ctaLabel: text(dto.ctaLabel) ?? ""
+            )
+        )
+        return ProfileV3FormSection(
+            id: sectionID,
+            title: ProfileV3Strings.passportDetails,
+            status: .pending,
+            control: .passport(field)
+        )
+    }
+
     static func field(_ dto: ProfileV3AgentPassportDTO, accountCountry: ProfileV3Country?) -> ProfileV3PassportField {
         let rescan = dto.rescan?.directive
         let accountFallback = rescan?.profileID == nil ? accountCountry.map(ProfileV3PassportCountry.init) : nil

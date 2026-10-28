@@ -5,6 +5,7 @@ struct ProfileV3ContinueButton: View {
     var title = ProfileV3Strings.continueTitle
     var icon: Image?
     var iconSize = ProfileV3Theme.Sizes.pillIcon
+    var horizontalPadding: CGFloat = 0
     var tint: Color = Color(at: .pureBlack)
     var disabledTint: Color?
     var isLoading = false
@@ -35,6 +36,7 @@ struct ProfileV3ContinueButton: View {
                     .typoGraphy(.B1InterSemibold14)
             }
             .foregroundStyle(foreground)
+            .padding(.horizontal, horizontalPadding)
             .frame(maxWidth: .infinity)
             .frame(height: ProfileV3Theme.Sizes.Save.buttonHeight)
             .profileV3CapsuleChrome()

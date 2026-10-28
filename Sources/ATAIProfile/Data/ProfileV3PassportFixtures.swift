@@ -52,6 +52,19 @@ enum ProfileV3PassportFixtures {
     static let rescan = ProfileV3Directive(go: ProfileV3PassportRoute.update)
     static let howUsedDirective = ProfileV3Directive(go: ProfileV3PassportRoute.howUsed)
 
+    static let emptyState = ProfileV3PassportEmptyState(
+        title: "Upload passport",
+        body: "Your details are ready whenever you need a visa. No forms, no retyping.",
+        ctaLabel: "Upload"
+    )
+
+    static let emptyField = ProfileV3PassportField(
+        holderName: active.holderName,
+        countryName: active.countryName,
+        countryNativeName: active.countryNativeName,
+        emptyState: emptyState
+    )
+
     static let field = ProfileV3PassportField(
         holderName: active.holderName,
         countryName: active.countryName,

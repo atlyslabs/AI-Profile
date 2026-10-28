@@ -111,7 +111,8 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
             directive ?? passportField?.rescan ?? ProfileV3Directive(go: ProfileV3PassportRoute.update),
             origin: .passport
         )
-        let scanProfileID = directive?.profileID ?? passportField?.rescan?.profileID
+        let scanProfileID = passportScanProfileID(directive)
+        let replacesPassport = passportField?.passport != nil
         let repository = repository
         let avatarURL = avatarURL
         let onUploaded = onPassportUploaded
@@ -130,11 +131,22 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
                         return result
                     },
                     onFinish: { [weak self] field, completed in
-                        self?.finishPassportScan(field, completed: completed, next: scan.next, profileID: scanProfileID)
+                        self?.finishPassportScan(
+                            field,
+                            completed: completed,
+                            next: replacesPassport ? scan.next : nil,
+                            profileID: scanProfileID
+                        )
                     }
                 )
             )
         }
+    }
+
+    private func passportScanProfileID(_ directive: ProfileV3Directive?) -> String? {
+        if let directed = directive?.profileID { return directed }
+        guard let rescan = passportField?.rescan else { return profileID }
+        return rescan.profileID
     }
 
     func closePassportReason() {

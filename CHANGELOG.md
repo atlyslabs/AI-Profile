@@ -17,9 +17,20 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   Until the backend supports them, rules are kept on the device per signed-in user, traveler and
   agent (`ProfileV3FeatureFlags.isAgentCustomRulesEnabled`). Eight new `mo-aiprofile-agents-*`
   string keys need adding in Ditto.
+- The personal agent shows a passport placeholder when no passport is on file. The agent screen
+  sends `passport_empty` (`title`, `body`, `cta_label`) instead of `passport`, and the card shows
+  that copy under the traveler's name, with an Upload button that scans a passport for that
+  traveler. A first passport skips "What happened to your old passport" and the card refreshes.
+  The client strings `mo-aiprofile-documents-button-upload-passport`,
+  `mo-aiprofile-documents-text-upload-blurb-start` and `mo-aiprofile-documents-button-upload` are
+  now unused and can be deleted from Ditto.
+- The travel persona's loading dial plays a soft tap each time its colour wave lights a trait
+  label, and a success tap when the radar replaces it.
 
 ### Changed
 
+- The hub doesn't scroll while the "Build your household" card is selected, and scrolls back to
+  the top if it was partway down. The pass carousel still swipes.
 - Loyalty programmes: edit mode selects programs to delete. Every card gets a checkbox and slides
   right, a "Delete N program(s)" bar appears once one is selected, and a confirmation sheet
   ("Are you sure you want to delete N program(s)", Confirm / Cancel) removes them one by one. A

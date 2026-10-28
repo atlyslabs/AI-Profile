@@ -135,6 +135,7 @@ extension ProfileV3Theme.Sizes {
         static let lowerPageEdge = EdgeInsets(top: 293, leading: 19, bottom: 0, trailing: 15)
         static let contentInset: CGFloat = 36
         static let nameTop: CGFloat = 70
+        static let emptyNameTop: CGFloat = 72
         static let fieldsTop: CGFloat = 113
         static let labelSpacing: CGFloat = 12
         static let datesTop: CGFloat = 24
@@ -143,10 +144,13 @@ extension ProfileV3Theme.Sizes {
         static let badgeHeight: CGFloat = 32
         static let badgeTrailing: CGFloat = 22
         static let badgeTop: CGFloat = 69
-        static let promptTop: CGFloat = 34
+        static let promptTop: CGFloat = 105.5
         static let promptSpacing: CGFloat = 20
         static let promptTitleSpacing: CGFloat = 9
+        static let promptTitleWidth: CGFloat = 253
+        static let promptTitleLineHeight: CGFloat = 26
         static let promptWidth: CGFloat = 223
+        static let promptButtonPadding: CGFloat = 24
         static let headerTop: CGFloat = 10
         static let stepTop: CGFloat = 10
         static let listTop: CGFloat = 40

@@ -63,6 +63,7 @@ struct ProfileV3TravelPersonaView: View {
             ProfileV3AgentStickyHeader(tag: viewModel.content?.title ?? "", pin: headerPin, onBack: viewModel.close)
         }
         .animation(ProfileV3Theme.Motion.contentSwitch, value: viewModel.isDecoding)
+        .sensoryFeedback(.success, trigger: viewModel.decodedReveals)
         .overlay(alignment: .bottom) {
             if let notice = viewModel.notice {
                 ProfileV3Toast(message: notice.message, isError: notice.isError)

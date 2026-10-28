@@ -42,6 +42,15 @@ struct ProfileV3PassportField: Equatable {
     var previous: ProfileV3PassportPrevious?
     var rescan: ProfileV3Directive?
     var howUsed: ProfileV3Directive?
+    var emptyState: ProfileV3PassportEmptyState?
+}
+
+struct ProfileV3PassportEmptyState: Equatable {
+    var title: String
+    var body: String
+    var ctaLabel: String
+
+    static let blank = ProfileV3PassportEmptyState(title: "", body: "", ctaLabel: "")
 }
 
 struct ProfileV3PassportPrevious: Equatable {
