@@ -163,6 +163,7 @@ struct ProfileV3HubView: View {
         }
         .contentMargins(.bottom, floatingBarClearance, for: .scrollContent)
         .profileV3ScrollOffset(scrollOffset)
+        .trackScroll(.profileHub)
         .scrollDisabled(
             viewModel.home == nil
                 || stage.expandedPass != nil
@@ -170,6 +171,9 @@ struct ProfileV3HubView: View {
                 || couponPresenter.isPresenting
         )
         .environment(\.profileV3PausesAnimations, pausesAnimations || hidesHub)
+        // A detail, the full benefits or coupons list, or past trips covers the hub without
+        // unmounting it; the visit ends when one opens and a new one starts when it closes.
+        .scrollTracking(active: !hidesHub)
     }
 
     private var scrollOffset: Binding<CGFloat> {
