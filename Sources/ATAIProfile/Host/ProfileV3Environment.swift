@@ -34,6 +34,7 @@ final class ProfileV3Environment {
         ProfileV3Analytics.install(actions.analytics)
         ProfileV3FieldValidation.install(actions.validation)
         ProfileV3Countries.install(actions.countries ?? Self.defaultCountries)
+        PhoneCodeResolver.install { [provider] in provider.userResidencyCode }
     }
 
     func makeRepository() -> any ProfileV3Repository {
