@@ -87,12 +87,20 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
     }
 
     func load() {
-        reload(revealing: nil)
+        reload(revealing: [])
     }
 
     func tapAdd() {
         guard sheet == nil else { return }
         let editor = makeEditor(.add)
+        editor.load()
+        self.editor = editor
+        present(.add)
+    }
+
+    func tapAddDates(_ trip: ProfileV3PastTrip) {
+        guard sheet == nil, revealingTripID == nil, trip.date == nil else { return }
+        let editor = makeEditor(.addDates(trip))
         editor.load()
         self.editor = editor
         present(.add)
@@ -134,7 +142,7 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
                 }
                 completions += 1
                 onChange()
-                reload(revealing: nil)
+                reload(revealing: [])
             } catch {
                 guard let self else { return }
                 isDeleting = false
@@ -199,7 +207,7 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         isDeleting || editor?.isSubmitting == true
     }
 
-    private func reload(revealing draft: ProfileV3PastTripDraft?) {
+    private func reload(revealing drafts: [ProfileV3PastTripDraft]) {
         loadTask?.cancel()
         if screen == nil, phase == .failed {
             phase = .loading
@@ -210,7 +218,7 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
             do {
                 let screen = try await repository.loadPastTrips(profileID: profileID)
                 guard let self, !Task.isCancelled else { return }
-                let revealed = draft.flatMap { draft in screen.trips.first { $0.matches(draft) } }
+                let revealed = screen.trips.first { trip in drafts.contains { trip.matches($0) } }
                 if let revealed {
                     revealingTripID = revealed.id
                     withAnimation(ProfileV3Theme.Motion.pastTripsEntrance) { self.screen = screen }
@@ -230,7 +238,7 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
                 } else {
                     showNotice(
                         ProfileV3Error.message(for: error, fallback: ProfileV3Strings.loadFailed),
-                        retry: ProfileV3Error.isRetryable(error) ? { [weak self] in self?.reload(revealing: draft) } : nil
+                        retry: ProfileV3Error.isRetryable(error) ? { [weak self] in self?.reload(revealing: drafts) } : nil
                     )
                 }
             }
@@ -263,8 +271,8 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
             screen: addScreen,
             editDuration: screen?.duration,
             addsWithoutDate: addsTripsWithoutDate
-        ) { [weak self] draft in
-            self?.saved(draft)
+        ) { [weak self] drafts in
+            self?.saved(drafts)
         } onFailed: { [weak self] in
             self?.saveFailed()
         }
@@ -276,10 +284,13 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         showNotice(editor?.errorMessage ?? ProfileV3Strings.pastTripSaveFailed)
     }
 
-    private func saved(_ draft: ProfileV3PastTripDraft) {
+    private func saved(_ drafts: [ProfileV3PastTripDraft]) {
         present(nil)
         completions += 1
         onChange()
-        reload(revealing: draft)
+        reload(revealing: drafts)
+        if let message = editor?.errorMessage {
+            showNotice(message)
+        }
     }
 }

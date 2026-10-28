@@ -8,6 +8,17 @@ struct ProfileV3AgentSaveBar: View {
         if viewModel.showsSaveBar {
             controls
                 .transition(.move(edge: .bottom).combined(with: .opacity))
+        } else if let customRules = viewModel.customRules {
+            ZStack(alignment: .bottom) {
+                ProfileV3SaveBarFade()
+                HStack {
+                    ProfileV3CustomRuleButton(action: customRules.startAdding)
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
+            }
+            .transition(.opacity)
         }
     }
 

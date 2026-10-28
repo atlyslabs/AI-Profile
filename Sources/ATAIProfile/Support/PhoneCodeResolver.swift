@@ -11,6 +11,18 @@ enum PhoneCodeResolver {
     private static let indiaRegion = "IN"
 
     nonisolated(unsafe) private static let kit = PhoneNumberKit()
+    nonisolated(unsafe) private static var hostResidency: (@Sendable () -> String)?
+
+    /// The host's residence, used to read a number typed without a country code.
+    static func install(residency: @escaping @Sendable () -> String) {
+        hostResidency = residency
+    }
+
+    /// The host's residence when it gave one, else the device region, else India.
+    static var defaultRegion: String {
+        if let code = hostResidency?(), let region = normalisedRegion(code) { return region }
+        return Locale.current.region?.identifier ?? indiaRegion
+    }
 
     static func dialCode(forRegion isoCode: String) -> String? {
         let normalised = isoCode.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
@@ -20,7 +32,7 @@ enum PhoneCodeResolver {
 
     static func resolve(
         _ raw: String?,
-        fallbackRegion: String = Locale.current.region?.identifier ?? indiaRegion
+        fallbackRegion: String = defaultRegion
     ) -> ResolvedPhone {
         let fallback = normalisedRegion(fallbackRegion) ?? indiaRegion
         var region = fallback

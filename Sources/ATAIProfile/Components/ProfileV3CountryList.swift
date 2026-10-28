@@ -4,6 +4,7 @@ import SwiftUI
 struct ProfileV3CountryList: View {
     @Binding var query: String
     let selection: ProfileV3Country?
+    var selections: [ProfileV3Country]?
     var pinned: ProfileV3Country?
     var countries: [ProfileV3Country]?
     var searchPlaceholder = ProfileV3Strings.search
@@ -49,7 +50,8 @@ struct ProfileV3CountryList: View {
                         name: country.name,
                         isoCode: country.code,
                         trailing: trailing?(country),
-                        isSelected: country == selection
+                        isSelected: selections.map { $0.contains(country) } ?? (country == selection),
+                        mark: selections == nil ? .radio : .checkbox
                     ) {
                         onSelect(country)
                     }

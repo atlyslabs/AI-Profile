@@ -157,14 +157,20 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsButtonAddStoredCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-add-stored-credentials", fallback: "+ Add credentials") }
   /// Button to trigger the flow for adding additional email accounts.
   internal static var moAiprofileAgentsButtonConnectEmails: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-connect-emails", fallback: "Connect other emails") }
+  /// Floating button on an agent form that opens the custom rule editor.
+  internal static var moAiprofileAgentsButtonCustomRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-custom-rule", fallback: "Custom") }
   /// Saved login row that deletes the stored credentials.
   internal static var moAiprofileAgentsButtonDeleteCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-delete-credentials", fallback: "Delete account") }
+  /// Accessibility label of the delete button in the custom rule editor.
+  internal static var moAiprofileAgentsButtonDeleteRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-delete-rule", fallback: "Delete rule") }
   /// Connectors deck action that disconnects a connected app.
   internal static var moAiprofileAgentsButtonDisconnectApp: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-disconnect-app", fallback: "Disconnect app") }
   /// Household apply sheet confirm button, used when the server sends no label.
   internal static var moAiprofileAgentsButtonHouseholdConfirm: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-household-confirm", fallback: "Confirm") }
   /// Website picker row for a site that isn't listed.
   internal static var moAiprofileAgentsButtonOtherWebsite: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-other-website", fallback: "Other website") }
+  /// Button that saves a new custom rule.
+  internal static var moAiprofileAgentsButtonSaveRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-save-rule", fallback: "Save") }
   /// Confirmation title before deleting a saved login.
   internal static var moAiprofileAgentsConfirmationDeleteCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-confirmation-delete-credentials", fallback: "Are you sure you want to delete your password credentials?") }
   /// Description for the app connector vault feature.
@@ -243,6 +249,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelPreferenceSlider: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-preference-slider", fallback: "Preference") }
   /// Call to action text related to agent access.
   internal static var moAiprofileAgentsLabelRegainAccess: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-regain-access", fallback: "Regain access to agents and benefits.") }
+  /// Label at the top of the custom rule note card.
+  internal static var moAiprofileAgentsLabelRuleNote: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-rule-note", fallback: "Note") }
   /// Credentials form field label for the username or email address.
   internal static var moAiprofileAgentsLabelUsernameEmail: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-username-email", fallback: "Username/Email address") }
   /// Credentials form field label for the website.
@@ -269,12 +277,20 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsTitleAddCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-credentials", fallback: "Add credentials") }
   /// Title of the add new password sheet.
   internal static var moAiprofileAgentsTitleAddNewPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-new-password", fallback: "Add new password") }
+  /// Title of the custom rule editor when adding a rule.
+  internal static var moAiprofileAgentsTitleAddRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-rule", fallback: "Add a rule") }
   /// Heading for the connector integration management screen.
   internal static var moAiprofileAgentsTitleConnectors: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-connectors", fallback: "Connectors") }
+  /// Agent form section listing the traveler's custom rules.
+  internal static var moAiprofileAgentsTitleCustomRules: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-custom-rules", fallback: "Custom rules") }
+  /// Title of the custom rule editor when editing a rule.
+  internal static var moAiprofileAgentsTitleEditRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-edit-rule", fallback: "Edit a rule") }
   /// Travel persona loader card title.
   internal static var moAiprofileAgentsTitleTravelerProfile: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-traveler-profile", fallback: "Traveler profile") }
   /// Toast after saving edited credentials.
   internal static var moAiprofileAgentsToastCredentialsUpdated: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-credentials-updated", fallback: "Credentials updated") }
+  /// Confirmation after a custom rule is saved.
+  internal static var moAiprofileAgentsToastCustomRuleSaved: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-custom-rule-saved", fallback: "Custom rule saved") }
   /// Toast after adding a password.
   internal static var moAiprofileAgentsToastPasswordAdded: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-password-added", fallback: "Password added successfully") }
   /// Toast after saving travel persona changes.
@@ -801,6 +817,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileProfileButtonAddPastTrip: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-profile-button-add-past-trip", fallback: "Add past trip") }
   /// Button for adding past travel trips in the user profile.
   internal static var moAiprofileProfileButtonAddPastTrips: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-profile-button-add-past-trips", fallback: "Add past trips") }
+  /// Pill on an undated past trip card that opens the duration picker.
+  internal static var moAiprofileProfileButtonAddTripDates: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-profile-button-add-trip-dates", fallback: "Add dates") }
   /// Cancel action on the delete past trip / delete account confirmations.
   internal static var moAiprofileProfileButtonDontDelete: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-profile-button-dont-delete", fallback: "Don't delete") }
   /// Button to save user changes.

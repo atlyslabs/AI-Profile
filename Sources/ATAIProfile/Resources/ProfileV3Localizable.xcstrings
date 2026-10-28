@@ -805,6 +805,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-button-custom-rule": {
+      "comment": "Floating button on an agent form that opens the custom rule editor.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-button-delete-credentials": {
       "comment": "Saved login row that deletes the stored credentials.",
       "extractionState": "manual",
@@ -813,6 +825,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete account"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-button-delete-rule": {
+      "comment": "Accessibility label of the delete button in the custom rule editor.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete rule"
           }
         }
       }
@@ -849,6 +873,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Other website"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-button-save-rule": {
+      "comment": "Button that saves a new custom rule.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
           }
         }
       }
@@ -1321,6 +1357,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-label-rule-note": {
+      "comment": "Label at the top of the custom rule note card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-label-username-email": {
       "comment": "Credentials form field label for the username or email address.",
       "extractionState": "manual",
@@ -1477,6 +1525,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-title-add-rule": {
+      "comment": "Title of the custom rule editor when adding a rule.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a rule"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-title-connectors": {
       "comment": "Heading for the connector integration management screen.",
       "extractionState": "manual",
@@ -1485,6 +1545,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "Connectors"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-custom-rules": {
+      "comment": "Agent form section listing the traveler's custom rules.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom rules"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-edit-rule": {
+      "comment": "Title of the custom rule editor when editing a rule.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit a rule"
           }
         }
       }
@@ -1509,6 +1593,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Credentials updated"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-toast-custom-rule-saved": {
+      "comment": "Confirmation after a custom rule is saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom rule saved"
           }
         }
       }
@@ -4305,6 +4401,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Add past trips"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-profile-button-add-trip-dates": {
+      "comment": "Pill on an undated past trip card that opens the duration picker.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add dates"
           }
         }
       }

@@ -10,9 +10,17 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 - `ProfileV3EntryPoint.open(_:)` with `ProfileV3Destination.addTraveller` and
   `.addLoyaltyProgramme`, for deep links. The hub opens the sheet once it is on screen with its board
   loaded; a loyalty programme is added for the main traveller, behind the usual KYC gate.
+- Agent forms have custom rules: "+ Custom" opens a note editor, saved rules show in a CUSTOM
+  RULES section, and tapping one edits or deletes it. Until the backend supports them, rules are
+  kept on the device per signed-in user, traveler and agent
+  (`ProfileV3FeatureFlags.isAgentCustomRulesEnabled`). Eight new `mo-aiprofile-agents-*` string keys
+  need adding in Ditto.
 
 ### Changed
 
+- A phone number stored without a country code is read against the host's residence
+  (`ATCoreBaseProvider.userResidencyCode`, from the registered configuration provider) instead of
+  the device's region. The device region, then India, are used only when the host gives none.
 - The hub's add-traveller sheet closes Settings first when Settings is open, instead of opening a
   second settings presenter.
 - The travel persona radar and its loading dial have no title. The "Traveler profile" heading is
@@ -27,6 +35,10 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   "Your Glove box is ready to unlock" with "Complete KYC", which closes Settings and starts KYC
   onboarding. Three new string keys (`mo-aiprofile-glovebox-title-unlock`,
   `-description-unlock`, `-button-complete-kyc`) need adding in Ditto.
+- Past trips: when a host adds trips without dates, the country step selects several countries and
+  "Done" adds them all undated. Adding dates to an undated card ("+ Add dates") is built but off
+  behind `ProfileV3FeatureFlags.isPastTripAddDatesEnabled`. New string key
+  `mo-aiprofile-profile-button-add-trip-dates` needs adding in Ditto.
 - Secure credential store: a Face ID unlock of the vault also covers revealing passwords while the
   vault stays open. Closing the vault or leaving the app ends that, and unlocking with the passcode
   still asks for Face ID on each reveal.

@@ -143,6 +143,12 @@ enum ProfileV3GloveBoxArt: String {
     var image: Image { Image(rawValue, bundle: .module) }
 }
 
+enum ProfileV3CustomRuleArt: String {
+    case watermark = "profile_v3_custom_rule_watermark"
+
+    var image: Image { Image(rawValue, bundle: .module) }
+}
+
 enum ProfileV3AgentArt: String {
     case sourceGoogle = "profile_v3_source_google"
     case sourceEmail = "profile_v3_source_email"

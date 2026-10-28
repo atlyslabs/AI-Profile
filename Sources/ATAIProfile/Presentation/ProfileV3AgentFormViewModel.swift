@@ -29,6 +29,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     @Published private(set) var selectedTabs: [String: String] = [:]
 
     let avatarURL: URL?
+    let customRules: ProfileV3CustomRulesModel?
 
     private let profileID: String?
     private let repository: any ProfileV3AgentRepository
@@ -69,6 +70,13 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         self.onPassportUploaded = onPassportUploaded
         self.onSaved = onSaved
         self.onFinish = onFinish
+        if ProfileV3FeatureFlags.isAgentCustomRulesEnabled,
+           let rulesRepository = repository as? any ProfileV3CustomRulesRepository {
+            customRules = ProfileV3CustomRulesModel(agentID: form.agentID, profileID: profileID, repository: rulesRepository)
+        } else {
+            customRules = nil
+        }
+        customRules?.load()
         prefetchRidePicker()
     }
 
@@ -595,6 +603,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         ridePickerTask?.cancel()
         airportPickup?.cancelPendingWork()
         rideRegions?.cancel()
+        customRules?.cancel()
     }
 
     private func update(_ sectionID: String, _ mutate: (inout ProfileV3FormSection) -> Void) {

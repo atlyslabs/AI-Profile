@@ -77,6 +77,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
     private let appAccess: ProfileV3AppAccessStore
     private let vault: ProfileV3VaultStore
     private let gloveBox: ProfileV3GloveBoxStore
+    private let customRules: ProfileV3CustomRulesStore
     private let settingsCitizenship: String?
 
     init(
@@ -89,6 +90,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         appAccess: ProfileV3AppAccessStore = ProfileV3AppAccessStore(),
         vault: ProfileV3VaultStore = ProfileV3VaultStore(),
         gloveBox: ProfileV3GloveBoxStore = ProfileV3GloveBoxStore(),
+        customRules: ProfileV3CustomRulesStore = ProfileV3CustomRulesStore(),
         settingsCitizenship: String? = nil
     ) {
         self.delay = delay
@@ -98,6 +100,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         self.appAccess = appAccess
         self.vault = vault
         self.gloveBox = gloveBox
+        self.customRules = customRules
         self.settingsCitizenship = settingsCitizenship
     }
 
@@ -595,6 +598,20 @@ struct ProfileV3MockRepository: ProfileV3Repository {
 
     func reorderProgrammes(_: [String], profileID _: String, action _: String) async throws {
         try await Task.sleep(for: delay)
+    }
+}
+
+extension ProfileV3MockRepository: ProfileV3CustomRulesRepository {
+    func loadCustomRules(agentID: String, profileID: String?) async throws -> [ProfileV3CustomRule] {
+        customRules.rules(owner: "mock", agentID: agentID, profileID: profileID)
+    }
+
+    func saveCustomRule(_ rule: ProfileV3CustomRule, agentID: String, profileID: String?) async throws {
+        customRules.save(rule, owner: "mock", agentID: agentID, profileID: profileID)
+    }
+
+    func deleteCustomRule(id: String, agentID: String, profileID: String?) async throws {
+        customRules.delete(id: id, owner: "mock", agentID: agentID, profileID: profileID)
     }
 }
 
