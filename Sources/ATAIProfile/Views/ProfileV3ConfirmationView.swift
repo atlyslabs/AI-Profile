@@ -218,6 +218,26 @@ extension ProfileV3ConfirmationView {
             onSecondary: onBack
         )
     }
+
+    static func deleteRule(
+        _ confirm: ProfileV3CustomRulesField.DeleteConfirm,
+        isDeleting: Bool,
+        onBack: @escaping () -> Void,
+        onConfirm: @escaping () -> Void
+    ) -> ProfileV3ConfirmationView {
+        ProfileV3ConfirmationView(
+            icon: nil,
+            style: .destructive,
+            title: confirm.title,
+            primaryTitle: confirm.confirmLabel,
+            secondaryTitle: confirm.cancelLabel,
+            isPrimaryLoading: isDeleting,
+            metrics: .plain,
+            onBack: onBack,
+            onPrimary: onConfirm,
+            onSecondary: onBack
+        )
+    }
 }
 
 #if DEBUG

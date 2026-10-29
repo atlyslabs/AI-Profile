@@ -10,13 +10,20 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 - `ProfileV3EntryPoint.open(_:)` with `ProfileV3Destination.addTraveller` and
   `.addLoyaltyProgramme`, for deep links. The hub opens the sheet once it is on screen with its board
   loaded; a loyalty programme is added for the main traveller, behind the usual KYC gate.
-- Agent forms have custom rules: "+ Custom" opens a note editor, saved rules show in a CUSTOM
-  RULES section, and tapping one edits or deletes it. Saving a new rule closes the editor and
-  scrolls the form down to the rule, first in the row. With the keyboard up, the editor keeps
-  Save at least 16pt above it, closing the gaps and then shortening the note on smaller phones.
-  Until the backend supports them, rules are kept on the device per signed-in user, traveler and
-  agent (`ProfileV3FeatureFlags.isAgentCustomRulesEnabled`). Eight new `mo-aiprofile-agents-*`
-  string keys need adding in Ditto.
+- Agent forms have custom rules, from the agent screen's `custom_rules` field (flight, stay,
+  airport logistics, food and itinerary). The rules show as note cards, newest first, under the
+  field's label; "+ Custom" (`add_label`) stays at the bottom left, next to "save changes" when
+  there are unsaved edits, and hides once the list has `max_rules`. Tapping a card edits it, and
+  its delete button asks first (`delete_confirm`). The editor's titles, note label, Save label and
+  saved toast come from `editor`, and its text stops at `max_chars`. Adding, editing or deleting a
+  rule saves like any other field: the list goes into the agent's `save_agent_preferences` with
+  the whole form, through the household sheet when `save.household` is served. A refusal (422
+  `invalid_custom_rules`) shows the server's message in the editor. Saving a new rule closes the
+  editor and scrolls the form down to the rule, first in the row. With the keyboard up, the editor
+  keeps Save at least 16pt above it, closing the gaps and then shortening the note on smaller
+  phones. `ProfileV3FeatureFlags.isAgentCustomRulesEnabled` turns the section off. Only
+  `mo-aiprofile-agents-button-delete-rule` (the delete button's accessibility label) is client
+  copy; the other seven custom rule keys added earlier are unused and don't need adding to Ditto.
 - The personal agent shows a passport placeholder when no passport is on file. The agent screen
   sends `passport_empty` (`title`, `body`, `cta_label`) instead of `passport`, and the card shows
   that copy under the traveler's name, with an Upload button that scans a passport for that

@@ -9,61 +9,72 @@ final class ProfileV3CustomRulesModel: ObservableObject {
         case saved
     }
 
-    struct Editor: Equatable {
-        let rule: ProfileV3CustomRule?
-
-        var isAdding: Bool { rule == nil }
+    enum Commit: Equatable {
+        case saved
+        case handedOff
     }
 
-    @Published private(set) var rules: [ProfileV3CustomRule] = []
+    struct Editor: Equatable {
+        let index: Int?
+
+        var isAdding: Bool { index == nil }
+    }
+
+    @Published private(set) var title: String
+    @Published private(set) var field: ProfileV3CustomRulesField
     @Published private(set) var editor: Editor?
-    @Published var draft = ""
+    @Published private(set) var draft = ""
     @Published private(set) var phase: Phase = .editing
     @Published private(set) var errorMessage: String?
-    @Published private(set) var revealedRuleID: String?
+    @Published private(set) var reveals = 0
+    @Published var confirmsDelete = false
 
-    private let agentID: String
-    private let profileID: String?
-    private let repository: any ProfileV3CustomRulesRepository
-    private var loadTask: Task<Void, Never>?
+    private let commit: (_ rules: [String]) async throws -> Commit
     private var writeTask: Task<Void, Never>?
     private var settleTask: Task<Void, Never>?
-    private var addedRuleID: String?
+    private var revealsOnClose = false
 
-    init(agentID: String, profileID: String?, repository: any ProfileV3CustomRulesRepository) {
-        self.agentID = agentID
-        self.profileID = profileID
-        self.repository = repository
+    init(
+        title: String,
+        field: ProfileV3CustomRulesField,
+        commit: @escaping (_ rules: [String]) async throws -> Commit
+    ) {
+        self.title = title
+        self.field = field
+        self.commit = commit
     }
+
+    var cards: [ProfileV3CustomRule] {
+        field.rules.enumerated().reversed().map { ProfileV3CustomRule(index: $0.offset, text: $0.element) }
+    }
+
+    var canAdd: Bool { field.canAdd }
 
     var trimmedDraft: String { draft.trimmingCharacters(in: .whitespacesAndNewlines) }
 
     var canSave: Bool {
         guard let editor, phase == .editing, !trimmedDraft.isEmpty else { return false }
-        guard let rule = editor.rule else { return true }
-        return trimmedDraft != rule.text
+        guard let index = editor.index, field.rules.indices.contains(index) else { return editor.isAdding }
+        return trimmedDraft != field.rules[index]
     }
 
-    func load() {
-        loadTask?.cancel()
-        let repository = repository
-        let agentID = agentID
-        let profileID = profileID
-        loadTask = Task { [weak self] in
-            let rules = (try? await repository.loadCustomRules(agentID: agentID, profileID: profileID)) ?? []
-            guard let self, !Task.isCancelled else { return }
-            self.rules = rules
-        }
+    func update(title: String, field: ProfileV3CustomRulesField) {
+        self.title = title
+        self.field = field
+    }
+
+    func setDraft(_ text: String) {
+        draft = String(text.prefix(field.editor.maxCharacters))
     }
 
     func startAdding() {
-        guard editor == nil else { return }
-        open(Editor(rule: nil), draft: "")
+        guard editor == nil, canAdd else { return }
+        open(Editor(index: nil), draft: "")
     }
 
     func startEditing(_ rule: ProfileV3CustomRule) {
-        guard editor == nil else { return }
-        open(Editor(rule: rule), draft: rule.text)
+        guard editor == nil, field.rules.indices.contains(rule.index) else { return }
+        open(Editor(index: rule.index), draft: rule.text)
     }
 
     func close() {
@@ -72,59 +83,44 @@ final class ProfileV3CustomRulesModel: ObservableObject {
         editor = nil
         phase = .editing
         errorMessage = nil
+        confirmsDelete = false
         draft = ""
-        if let addedRuleID {
-            revealedRuleID = addedRuleID
-            self.addedRuleID = nil
+        if revealsOnClose {
+            revealsOnClose = false
+            reveals += 1
         }
     }
 
     func save() {
         guard canSave, let editor else { return }
-        let text = trimmedDraft
-        var rule = editor.rule ?? ProfileV3CustomRule(text: text)
-        rule.text = text
-        phase = .saving
-        errorMessage = nil
-        let repository = repository
-        let agentID = agentID
-        let profileID = profileID
-        writeTask = Task { [weak self, rule] in
-            do {
-                try await repository.saveCustomRule(rule, agentID: agentID, profileID: profileID)
-                self?.didSave(rule)
-            } catch {
-                guard let self else { return }
-                phase = .editing
-                errorMessage = ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed)
-            }
+        var rules = field.rules
+        if let index = editor.index {
+            rules[index] = trimmedDraft
+        } else {
+            rules.append(trimmedDraft)
         }
+        write(rules, reveals: editor.isAdding)
     }
 
-    func delete() {
-        guard let rule = editor?.rule, phase == .editing else { return }
-        phase = .saving
+    func requestDelete() {
+        guard editor?.index != nil, phase == .editing else { return }
         errorMessage = nil
-        let repository = repository
-        let agentID = agentID
-        let profileID = profileID
-        writeTask = Task { [weak self] in
-            do {
-                try await repository.deleteCustomRule(id: rule.id, agentID: agentID, profileID: profileID)
-                guard let self else { return }
-                rules.removeAll { $0.id == rule.id }
-                phase = .editing
-                close()
-            } catch {
-                guard let self else { return }
-                phase = .editing
-                errorMessage = ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed)
-            }
-        }
+        confirmsDelete = true
+    }
+
+    func cancelDelete() {
+        guard phase != .saving else { return }
+        confirmsDelete = false
+    }
+
+    func confirmDelete() {
+        guard let index = editor?.index, field.rules.indices.contains(index), phase == .editing else { return }
+        var rules = field.rules
+        rules.remove(at: index)
+        write(rules, reveals: false)
     }
 
     func cancel() {
-        loadTask?.cancel()
         writeTask?.cancel()
         settleTask?.cancel()
     }
@@ -133,30 +129,46 @@ final class ProfileV3CustomRulesModel: ObservableObject {
         settleTask?.cancel()
         phase = .editing
         errorMessage = nil
-        self.draft = draft
+        confirmsDelete = false
+        setDraft(draft)
         self.editor = editor
     }
 
-    private func didSave(_ rule: ProfileV3CustomRule) {
-        if let index = rules.firstIndex(where: { $0.id == rule.id }) {
-            rules[index] = rule
-        } else {
-            rules.insert(rule, at: 0)
-            addedRuleID = rule.id
-        }
-        phase = .saved
-        settle(after: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds)) { model in
-            model.phase = .editing
-            model.close()
+    private func write(_ rules: [String], reveals: Bool) {
+        let isDelete = confirmsDelete
+        phase = .saving
+        errorMessage = nil
+        writeTask = Task { [weak self] in
+            guard let self else { return }
+            do {
+                let outcome = try await commit(rules)
+                guard !Task.isCancelled else { return }
+                revealsOnClose = reveals
+                if outcome == .handedOff || isDelete {
+                    phase = .editing
+                    close()
+                } else {
+                    phase = .saved
+                    settle()
+                }
+            } catch is CancellationError {
+                return
+            } catch {
+                guard !Task.isCancelled else { return }
+                phase = .editing
+                confirmsDelete = false
+                errorMessage = ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed)
+            }
         }
     }
 
-    private func settle(after delay: Duration, _ apply: @escaping (ProfileV3CustomRulesModel) -> Void) {
+    private func settle() {
         settleTask?.cancel()
         settleTask = Task { [weak self] in
-            try? await Task.sleep(for: delay)
+            try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds))
             guard let self, !Task.isCancelled else { return }
-            apply(self)
+            phase = .editing
+            close()
         }
     }
 }

@@ -102,6 +102,7 @@ enum ProfileV3FormControl: Equatable {
     case passport(ProfileV3PassportField)
     case cars(ProfileV3CarField)
     case baggage(ProfileV3BaggageField)
+    case customRules(ProfileV3CustomRulesField)
 }
 
 struct ProfileV3CarField: Equatable {
@@ -338,7 +339,7 @@ extension ProfileV3AgentForm {
             return field.selectedOptions.map(\.title).joined(separator: ", ")
         case .text(let field):
             return field.value.trimmingCharacters(in: .whitespacesAndNewlines)
-        case .cards, .slider, .date, .passport, .cars, .baggage:
+        case .cards, .slider, .date, .passport, .cars, .baggage, .customRules:
             return nil
         }
     }

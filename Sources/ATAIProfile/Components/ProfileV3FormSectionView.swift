@@ -159,6 +159,8 @@ struct ProfileV3FormSectionView: View {
                 onToggle: { onToggleBaggage?($0) },
                 onStep: { onStepBaggage?($0, $1) }
             )
+        case .customRules:
+            EmptyView()
         }
     }
 

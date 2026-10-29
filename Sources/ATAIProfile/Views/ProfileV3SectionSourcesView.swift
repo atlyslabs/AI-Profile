@@ -88,7 +88,7 @@ struct ProfileV3SectionSourcesView: View {
     private var hasOptions: Bool {
         switch section.control {
         case .chips, .cards: return true
-        case .slider, .text, .date, .passport, .cars, .baggage: return false
+        case .slider, .text, .date, .passport, .cars, .baggage, .customRules: return false
         }
     }
 
@@ -107,7 +107,7 @@ struct ProfileV3SectionSourcesView: View {
                 selection: field.selection,
                 showsAdd: false
             )
-        case .slider, .text, .date, .passport, .cars, .baggage:
+        case .slider, .text, .date, .passport, .cars, .baggage, .customRules:
             EmptyView()
         }
     }

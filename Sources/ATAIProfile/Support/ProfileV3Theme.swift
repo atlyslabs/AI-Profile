@@ -197,6 +197,8 @@ enum ProfileV3Theme {
         static let sliderRulerMajorInterval = 5
         static let sliderRulerMajorPhase = 3
         static let chipInlineLimit = 10
+        static let customRuleMaxCharacters = 500
+        static let customRuleMaxRules = 20
         static let addProgrammeSteps = 2
     }
 

@@ -11,20 +11,22 @@ struct ProfileV3CustomRulesSection: View {
     private static let rowStartID = "customRules.rowStart"
 
     var body: some View {
-        if !model.rules.isEmpty {
+        if !model.field.rules.isEmpty {
             VStack(alignment: .leading, spacing: 0) {
-                ProfileV3SectionHeader(title: ProfileV3Strings.customRulesTitle, status: .complete)
+                ProfileV3SectionHeader(title: model.title, status: .complete)
                 ScrollViewReader { row in
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: Sizes.cardSpacing) {
-                            ForEach(model.rules) { rule in
-                                ProfileV3CustomRuleCard(text: rule.text) { model.startEditing(rule) }
+                            ForEach(model.cards) { rule in
+                                ProfileV3CustomRuleCard(text: rule.text, hint: model.field.editor.editTitle) {
+                                    model.startEditing(rule)
+                                }
                             }
                         }
                         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                         .id(Self.rowStartID)
                     }
-                    .onChange(of: model.revealedRuleID) {
+                    .onChange(of: model.reveals) {
                         withAnimation(reduceMotion ? nil : ProfileV3Theme.Motion.customRuleReveal) {
                             row.scrollTo(Self.rowStartID, anchor: .leading)
                             onReveal()
@@ -40,6 +42,7 @@ struct ProfileV3CustomRulesSection: View {
 
 struct ProfileV3CustomRuleCard: View {
     let text: String
+    var hint = ""
     let action: () -> Void
 
     private typealias Sizes = ProfileV3Theme.Sizes.CustomRules
@@ -66,7 +69,7 @@ struct ProfileV3CustomRuleCard: View {
         }
         .buttonStyle(.profileV3Pressable(.selection))
         .accessibilityLabel(text)
-        .accessibilityHint(ProfileV3Strings.editRuleTitle)
+        .accessibilityHint(hint)
     }
 }
 
@@ -77,6 +80,7 @@ struct ProfileV3CustomRuleNote<Content: View>: View {
     }
 
     var style = Style.front
+    var label = ""
     @ViewBuilder let content: Content
 
     private typealias Sizes = ProfileV3Theme.Sizes.CustomRules
@@ -98,7 +102,7 @@ struct ProfileV3CustomRuleNote<Content: View>: View {
                 .padding(.bottom, Sizes.watermarkInset.height)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 .accessibilityHidden(true)
-            Text(ProfileV3Strings.ruleNoteLabel)
+            Text(label)
                 .font(.system(size: Sizes.noteLabelSize, weight: .bold, design: .monospaced))
                 .tracking(Sizes.noteLabelTracking)
                 .textCase(.uppercase)
@@ -159,6 +163,9 @@ private struct ProfileV3CustomRuleEditor: View {
         .sensoryFeedback(.success, trigger: model.phase) { _, phase in phase == .saved }
         .sensoryFeedback(.error, trigger: model.errorMessage) { _, message in message != nil }
         .onAppear { isFocused = true }
+        .sheet(isPresented: $model.confirmsDelete) {
+            ProfileV3CustomRuleDeleteSheet(model: model)
+        }
     }
 
     private var header: some View {
@@ -167,7 +174,7 @@ private struct ProfileV3CustomRuleEditor: View {
                 ProfileV3CircleIconButton.back(action: model.close)
                 Spacer(minLength: 0)
             }
-            Text(editor.isAdding ? ProfileV3Strings.addRuleTitle : ProfileV3Strings.editRuleTitle)
+            Text(editor.isAdding ? model.field.editor.addTitle : model.field.editor.editTitle)
                 .typoGraphy(.H5InterSemibold20)
                 .foregroundStyle(Color(at: .pureBlack))
                 .accessibilityAddTraits(.isHeader)
@@ -182,14 +189,14 @@ private struct ProfileV3CustomRuleEditor: View {
                 .opacity(ProfileV3Theme.Opacity.ruleBackNote)
                 .rotationEffect(.degrees(Sizes.backTilt))
                 .accessibilityHidden(true)
-            ProfileV3CustomRuleNote {
-                TextField("", text: $model.draft, axis: .vertical)
+            ProfileV3CustomRuleNote(label: model.field.editor.noteLabel) {
+                TextField("", text: Binding(get: { model.draft }, set: model.setDraft), axis: .vertical)
                     .typoGraphy(.H7InterMedium16)
                     .foregroundStyle(ProfileV3Theme.Palette.ruleNoteText)
                     .tint(ProfileV3Theme.Palette.ruleNoteText)
                     .focused($isFocused)
                     .disabled(model.phase != .editing)
-                    .accessibilityLabel(ProfileV3Strings.ruleNoteLabel)
+                    .accessibilityLabel(model.field.editor.noteLabel)
             }
         }
         .overlay(alignment: .topTrailing) {
@@ -201,7 +208,7 @@ private struct ProfileV3CustomRuleEditor: View {
     }
 
     private var trash: some View {
-        Button(action: model.delete) {
+        Button(action: model.requestDelete) {
             ATIcon.SwiftUIImage.delete
                 .profileV3Icon(ProfileV3Theme.Icon.xl)
                 .foregroundStyle(ProfileV3Theme.Palette.ruleTrash)
@@ -227,12 +234,12 @@ private struct ProfileV3CustomRuleEditor: View {
             }
             if editor.isAdding {
                 if model.phase == .saved {
-                    ProfileV3CustomRulePill(title: ProfileV3Strings.customRuleSaved)
+                    ProfileV3CustomRulePill(title: model.field.editor.savedToast)
                         .transition(.opacity)
                         .accessibilityAddTraits(.updatesFrequently)
                 } else if model.canSave || model.phase == .saving {
                     Button(action: model.save) {
-                        ProfileV3CustomRulePill(title: ProfileV3Strings.saveRule, isLoading: model.phase == .saving)
+                        ProfileV3CustomRulePill(title: model.field.editor.saveLabel, isLoading: model.phase == .saving)
                     }
                     .buttonStyle(.profileV3Pressable(.impact(weight: .medium)))
                     .disabled(model.phase != .editing)
@@ -242,7 +249,7 @@ private struct ProfileV3CustomRuleEditor: View {
                 ProfileV3SaveButton(
                     phase: savePhase,
                     title: ProfileV3Strings.saveChanges,
-                    savedTitle: ProfileV3Strings.customRuleSaved,
+                    savedTitle: model.field.editor.savedToast,
                     action: model.save
                 )
                 .transition(.opacity)
@@ -347,6 +354,8 @@ private struct ProfileV3CustomRuleEditorLayout: Layout {
 }
 
 struct ProfileV3CustomRuleButton: View {
+    let title: String
+    var accessibilityTitle = ""
     let action: () -> Void
 
     private typealias Sizes = ProfileV3Theme.Sizes.CustomRules
@@ -356,17 +365,51 @@ struct ProfileV3CustomRuleButton: View {
             HStack(spacing: Sizes.customPillGap) {
                 ATIcon.SwiftUIImage.add
                     .profileV3Icon(Sizes.customPillIcon)
-                Text(ProfileV3Strings.customRuleButton)
-                    .typoGraphy(.B1InterSemibold14)
+                if !title.isEmpty {
+                    Text(title)
+                        .typoGraphy(.B1InterSemibold14)
+                }
             }
             .foregroundStyle(Color(at: .pureBlack))
             .padding(.leading, Sizes.customPillLeading)
-            .padding(.trailing, Sizes.customPillTrailing)
+            .padding(.trailing, title.isEmpty ? Sizes.customPillLeading : Sizes.customPillTrailing)
             .frame(height: Sizes.customPillHeight)
             .profileV3CapsuleChrome()
         }
         .buttonStyle(.profileV3Pressable(.impact(weight: .medium)))
-        .accessibilityLabel(ProfileV3Strings.addRuleTitle)
+        .accessibilityLabel(accessibilityTitle.isEmpty ? title : accessibilityTitle)
+    }
+}
+
+struct ProfileV3CustomRuleDeleteSheet: View {
+    @ObservedObject var model: ProfileV3CustomRulesModel
+
+    @State private var measured = Measured()
+
+    private struct Measured: Equatable {
+        var content: CGFloat = 0
+        var bottomInset: CGFloat = 0
+    }
+
+    var body: some View {
+        ProfileV3ConfirmationView.deleteRule(
+            model.field.deleteConfirm,
+            isDeleting: model.phase == .saving,
+            onBack: model.cancelDelete,
+            onConfirm: model.confirmDelete
+        )
+        .fixedSize(horizontal: false, vertical: true)
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.content = $0 }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Color(at: .pureWhite).ignoresSafeArea())
+        .background {
+            Color.clear
+                .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
+        }
+        .profileV3FittedDetent(measured.content > 0 ? measured.content + measured.bottomInset : nil)
+        .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
+        .presentationDragIndicator(.hidden)
+        .interactiveDismissDisabled(model.phase == .saving)
     }
 }
 
@@ -382,7 +425,7 @@ struct ProfileV3CustomRuleButton: View {
         ProfileV3CustomRuleNote(style: .back) { EmptyView() }
             .opacity(ProfileV3Theme.Opacity.ruleBackNote)
             .rotationEffect(.degrees(ProfileV3Theme.Sizes.CustomRules.backTilt))
-        ProfileV3CustomRuleNote {
+        ProfileV3CustomRuleNote(label: "NOTE") {
             Text("Pick a veg restaurant every time Aakanksha is on the trip. Make sure the veg food doesn’t have egg")
                 .typoGraphy(.H7InterMedium16)
         }
@@ -393,11 +436,12 @@ struct ProfileV3CustomRuleButton: View {
 
 extension ProfileV3CustomRulesModel {
     static var preview: ProfileV3CustomRulesModel {
-        let model = ProfileV3CustomRulesModel(agentID: "food", profileID: nil, repository: ProfileV3MockRepository(delay: .zero))
-        model.startAdding()
-        model.draft = "Pick a veg restaurant every time. Aakanksha is on the trip. Make sure the veg food doesn’t have egg"
-        model.save()
-        return model
+        ProfileV3CustomRulesModel(
+            title: "CUSTOM RULES",
+            field: ProfileV3AgentFixtures.customRulesField([
+                "Pick a veg restaurant every time. Aakanksha is on the trip. Make sure the veg food doesn’t have egg"
+            ])
+        ) { _ in .saved }
     }
 }
 #endif

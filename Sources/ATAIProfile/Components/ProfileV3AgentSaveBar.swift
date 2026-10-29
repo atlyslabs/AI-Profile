@@ -8,11 +8,11 @@ struct ProfileV3AgentSaveBar: View {
         if viewModel.showsSaveBar {
             controls
                 .transition(.move(edge: .bottom).combined(with: .opacity))
-        } else if let customRules = viewModel.customRules {
+        } else if let customRules = viewModel.customRules, customRules.canAdd {
             ZStack(alignment: .bottom) {
                 ProfileV3SaveBarFade()
                 HStack {
-                    ProfileV3CustomRuleButton(action: customRules.startAdding)
+                    customRuleButton(customRules)
                     Spacer(minLength: 0)
                 }
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
@@ -33,16 +33,37 @@ struct ProfileV3AgentSaveBar: View {
                         .multilineTextAlignment(.center)
                         .accessibilityLabel(ProfileV3Strings.saveFailed)
                 }
-                ProfileV3SaveButton(
-                    phase: viewModel.savePhase,
-                    title: ProfileV3Strings.saveChanges,
-                    savedTitle: ProfileV3Strings.agentPreferencesUpdated,
-                    action: viewModel.save
-                )
+                if let customRules = viewModel.customRules, customRules.canAdd {
+                    HStack(spacing: ProfileV3Theme.Space.s12) {
+                        customRuleButton(customRules)
+                        Spacer(minLength: 0)
+                        saveButton
+                    }
+                    .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                } else {
+                    saveButton
+                }
             }
             .animation(ProfileV3Theme.Motion.saveState, value: viewModel.showsSaveError)
             .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
         }
+    }
+
+    private var saveButton: some View {
+        ProfileV3SaveButton(
+            phase: viewModel.savePhase,
+            title: ProfileV3Strings.saveChanges,
+            savedTitle: ProfileV3Strings.agentPreferencesUpdated,
+            action: viewModel.save
+        )
+    }
+
+    private func customRuleButton(_ customRules: ProfileV3CustomRulesModel) -> some View {
+        ProfileV3CustomRuleButton(
+            title: customRules.field.addLabel,
+            accessibilityTitle: customRules.field.editor.addTitle,
+            action: customRules.startAdding
+        )
     }
 }
 
