@@ -1,0 +1,90 @@
+Sources/ATAIProfile/Data/Mappers/ProfileV3PermissionsMapper.swift
+  s_aca99db70bc6e3::t_674888aa0226e6 5-6,8-9,11,13,30,35
+  s_aca99db70bc6e3::t_9ff74351284c97 1-4,7,10,12,14-29,31-34,36-51
+Sources/ATAIProfile/Data/ProfileV3MockRepository.swift
+  s_aca99db70bc6e3::t_5a39ab8d889dea 525,528
+Sources/ATAIProfile/Presentation/ProfileV3PermissionsSettingsModel.swift
+  s_aca99db70bc6e3::t_8148733d766d98 43,45,47-49,53-54,56,58-59
+  s_aca99db70bc6e3::t_a7e30658e689ce 12,16
+Sources/ATAIProfile/Resources/ProfileV3Localizable.xcstrings
+  s_aca99db70bc6e3::t_a8cc9bcdd3f9e5 664-675,748-759
+Sources/ATAIProfile/Networking/ProfileV3API.swift
+  s_aca99db70bc6e3::t_830048453a9665 208
+  s_aca99db70bc6e3::t_c675fa30444228 195-198
+  s_aca99db70bc6e3::t_b8d7edbd81290f 75
+  s_aca99db70bc6e3::t_05518f039cdae7 246
+  s_aca99db70bc6e3::t_93bbe83d839056 66-67
+Sources/ATAIProfile/Support/ProfileV3Theme+AgentSizes.swift
+  s_aca99db70bc6e3::t_12ec7a956dc927 74-75
+Tests/ATAIProfileTests/ProfileV3AnalyticsEventsTests.swift
+  s_aca99db70bc6e3::t_8d8e761211e77b 349-353
+  s_aca99db70bc6e3::t_514270f872b34b 332-333,336
+Sources/ATAIProfile/Views/ProfileV3PermissionsView.swift
+  s_aca99db70bc6e3::t_de0900d09ee764 14,39,50-52,55-65,68,70,73,75,90-92,95-101,104-108
+  s_aca99db70bc6e3::t_43c5a315189582 66-67
+  s_aca99db70bc6e3::t_7f18ca26799072 102
+Sources/ATAIProfile/Data/ProfileV3LiveRepository.swift
+  s_aca99db70bc6e3::t_eab3c6252fac50 473-474,480-484
+Sources/ATAIProfile/Components/ProfileV3MedicalCardView.swift
+  s_aca99db70bc6e3::t_459056b181549c 21,30
+  s_aca99db70bc6e3::t_fe722f791c01e1 33
+  s_aca99db70bc6e3::t_dae8148c5ed568 107-110
+Sources/ATAIProfile/Generated/ProfileV3L10n+Generated.swift
+  s_aca99db70bc6e3::t_a8cc9bcdd3f9e5 134-135,148-149
+Sources/ATAIProfile/Views/ProfileV3InformationAccessView.swift
+  s_aca99db70bc6e3::t_6d9c194bed1a60 271-272
+Sources/ATAIProfile/Support/ProfileV3Theme+SettingsPage.swift
+  s_aca99db70bc6e3::t_8eb35e6043714e 43-47,50-51,56-62
+  s_aca99db70bc6e3::t_15f12bfda1e032 146,151
+  s_aca99db70bc6e3::t_3603abcc677a11 49
+  s_aca99db70bc6e3::t_11a63f17d15175 63-64
+Sources/ATAIProfile/Data/ProfileV3Repository.swift
+  s_aca99db70bc6e3::t_1f791b6097a33e 86-91
+Sources/ATAIProfile/Support/ProfileV3Analytics.swift
+  s_aca99db70bc6e3::t_adab023efae35a 546-547
+Sources/ATAIProfile/Domain/ProfileV3Permissions.swift
+  s_aca99db70bc6e3::t_652a796f2e0cea 6-7,10,12-17,22-27
+Sources/ATAIProfile/Data/DTOs/ProfileV3PermissionsDTO.swift
+  s_aca99db70bc6e3::t_b1ef5cd59fe9b2 1-39
+Tests/ATAIProfileTests/ProfileV3MedicalCardTests.swift
+  s_aca99db70bc6e3::t_f3797af1e5793f 1-84
+Sources/ATAIProfile/Data/ProfileV3FailingRepository.swift
+  s_aca99db70bc6e3::t_2cf4cb68b987cb 61
+Sources/ATAIProfile/Components/ProfileV3SegmentedControl.swift
+  s_aca99db70bc6e3::t_5ca432092464ba 1-86
+Tests/ATAIProfileTests/ProfileV3PermissionsTests.swift
+  s_aca99db70bc6e3::t_16a28871126722 1-135
+Sources/ATAIProfile/Data/ProfileV3PermissionDefaults.swift
+  s_aca99db70bc6e3::t_54f4c0f373f3aa 5,7-17,19-25,28,33
+CHANGELOG.md
+  s_aca99db70bc6e3::t_3f956a10e2dc8f 44-46
+  s_aca99db70bc6e3::t_695bcfe53affd9 32-43
+CLAUDE.md
+  s_aca99db70bc6e3::t_16da4d86be0e52 65
+  s_aca99db70bc6e3::t_94a102a5acd865 96
+  s_aca99db70bc6e3::t_20a8b5c7a74210 1148-1159
+  s_aca99db70bc6e3::t_964bf346963b5e 157
+  s_aca99db70bc6e3::t_77168fe7b75c6e 1141-1146
+  s_aca99db70bc6e3::t_93082e2dc46c57 1147
+  s_aca99db70bc6e3::t_de5f13d1039722 34
+  s_aca99db70bc6e3::t_65a60a81861afd 1213
+  s_aca99db70bc6e3::t_5257e8c85a3ffa 21
+Sources/ATAIProfile/Support/ProfileV3Strings.swift
+  s_aca99db70bc6e3::t_f289a6d41aaec2 36-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "528b9a5f1250c99888015917c62ad11570e4dd81",
+  "prompts": {},
+  "sessions": {
+    "s_aca99db70bc6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "af994f3e-966b-4461-9c19-ecffb292ed42",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
