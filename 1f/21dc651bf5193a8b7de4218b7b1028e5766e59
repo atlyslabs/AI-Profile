@@ -1,0 +1,76 @@
+Sources/ATAIProfile/Data/ProfileV3GloveBoxFixtures.swift
+  s_aca99db70bc6e3::t_2b31eded9b565a 217
+Sources/ATAIProfile/Support/ProfileV3FeatureFlags.swift
+  s_aca99db70bc6e3::t_992e49bc0b42bd 22
+Sources/ATAIProfile/Resources/ProfileV3Localizable.xcstrings
+  s_aca99db70bc6e3::t_03d4755718b2f9 2964-2987,3196-3207,3244-3303,3616-3627,3748-3771
+  s_aca99db70bc6e3::t_8a38b4835d2fed 2963
+Tests/ATAIProfileTests/ProfileV3GloveBoxTests.swift
+  s_aca99db70bc6e3::t_2c245f4e058e06 316,323-328,331-332,356-367
+  s_aca99db70bc6e3::t_149866d97187ec 333-355
+  s_aca99db70bc6e3::t_0b3d7ff1f3c515 401
+CLAUDE.md
+  s_aca99db70bc6e3::t_1683e7d19889e8 1233
+  s_aca99db70bc6e3::t_3c66c8a47a056d 1165
+  s_aca99db70bc6e3::t_64d7d6a8425bb6 1166-1172
+  s_aca99db70bc6e3::t_3f4ff36fdbd9a6 1173
+  s_aca99db70bc6e3::t_f57e258d6fc9df 1174-1178
+  s_aca99db70bc6e3::t_8bdd44858b469b 21
+  s_aca99db70bc6e3::t_39ff684d2b6a8c 34,65,1179
+  s_aca99db70bc6e3::t_23afc22abd4bb4 1160-1164
+Sources/ATAIProfile/Views/ProfileV3GloveBoxSheets.swift
+  s_aca99db70bc6e3::t_086f4a9e9a25cd 52-57,62-104
+  s_aca99db70bc6e3::t_b67f66d12de56a 105-107
+Sources/ATAIProfile/Support/ProfileV3Theme+GloveBox.swift
+  s_aca99db70bc6e3::t_5085cdb081c9a2 299-305
+Sources/ATAIProfile/Presentation/ProfileV3GloveBoxViewModel.swift
+  s_aca99db70bc6e3::t_a7517cda3556f0 50-51
+  s_aca99db70bc6e3::t_afcaa1a6750429 130-131,153-154
+  s_aca99db70bc6e3::t_ac38a6582a5da0 359-363
+  s_aca99db70bc6e3::t_d9d3a37a59c33a 21
+  s_aca99db70bc6e3::t_5737bce562dfc3 62,67-68,72
+  s_aca99db70bc6e3::t_e2511e7b2f4732 231,233
+  s_aca99db70bc6e3::t_c285aad0314918 504
+Sources/ATAIProfile/Generated/ProfileV3L10n+Generated.swift
+  s_aca99db70bc6e3::t_8a38b4835d2fed 561
+  s_aca99db70bc6e3::t_03d4755718b2f9 562-565,600-601,612-621,672-673,694-697
+Sources/ATAIProfile/Presentation/ProfileV3SettingsViewModel.swift
+  s_aca99db70bc6e3::t_d74a528a4c5678 44
+  s_aca99db70bc6e3::t_e6c9ad98d659b1 163,165-169
+  s_aca99db70bc6e3::t_19dbd1fdaee5e6 164
+  s_aca99db70bc6e3::t_8d80ca71bb9594 61
+Sources/ATAIProfile/Views/ProfileV3GloveBoxView.swift
+  s_aca99db70bc6e3::t_d7c259a8c8985b 12,18-22
+Sources/ATAIProfile/Data/Mappers/ProfileV3GloveBoxMapper.swift
+  s_aca99db70bc6e3::t_079dbdd93cc112 220-240
+  s_aca99db70bc6e3::t_2527eb0192020f 403,407-408
+  s_aca99db70bc6e3::t_85ab523b721a44 415-425,428-436
+  s_aca99db70bc6e3::t_57a368aa14a84c 62-72
+Sources/ATAIProfile/Views/ProfileV3SettingsView.swift
+  s_aca99db70bc6e3::t_8e53a9908b011c 73
+  s_aca99db70bc6e3::t_05fe586fd12013 100-106
+Sources/ATAIProfile/Views/ProfileV3GloveBoxCardSection.swift
+  s_aca99db70bc6e3::t_d32c89b9b251ec 24
+  s_aca99db70bc6e3::t_cc2c2eac9ea12c 14
+  s_aca99db70bc6e3::t_3538097f6ad651 66-71
+  s_aca99db70bc6e3::t_c4695c8ec6e5f9 41-58
+CHANGELOG.md
+  s_aca99db70bc6e3::t_a184a91c7fe585 39-41
+  s_aca99db70bc6e3::t_4c938e70c4b336 32-38,42-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1f21dc651bf5193a8b7de4218b7b1028e5766e59",
+  "prompts": {},
+  "sessions": {
+    "s_aca99db70bc6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "af994f3e-966b-4461-9c19-ecffb292ed42",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
