@@ -2960,7 +2960,31 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "When the assistant books or buys for you. Change it anytime."
+            "value": "When the agent books for you."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-description-pay-atlys": {
+      "comment": "Description of the Atlys pays option.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We pay the restaurant, hotel or shop with our card. You see every charge here and pay us in one go."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-description-pay-link": {
+      "comment": "Description of the own card through Link option.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pay with cards saved in your Link wallet. Each purchase gets a one-time card for the exact amount you approve."
           }
         }
       }
@@ -3169,6 +3193,18 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-label-card-asks-first": {
+      "comment": "Virtual card fact value for No-show fee.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks you first"
+          }
+        }
+      }
+    },
     "mo-aiprofile-glovebox-label-card-cvc": {
       "comment": "Virtual card label for the CVC.",
       "extractionState": "manual",
@@ -3201,6 +3237,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "Name"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-never-shared": {
+      "comment": "Virtual card fact value for Your own card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never shared"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-no-show-fee": {
+      "comment": "Virtual card fact label for no-show fees.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No-show fee"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-own-card": {
+      "comment": "Virtual card fact label about the user's own card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your own card"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-restaurant-only": {
+      "comment": "Virtual card fact value for Works at.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurant only"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-works-at": {
+      "comment": "Virtual card fact label: where the card can be used.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Works at"
           }
         }
       }
@@ -3517,6 +3613,18 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-status-card-link-pending": {
+      "comment": "Coming soon sheet text after tapping Add card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paying with your own card is on its way."
+          }
+        }
+      }
+    },
     "mo-aiprofile-glovebox-status-handled-for-you": {
       "comment": "Email row status: the agent handled it.",
       "extractionState": "manual",
@@ -3633,6 +3741,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "How you pay"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-pay-atlys": {
+      "comment": "How you pay option where Atlys pays and bills the user.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atlys pays, we bill you"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-pay-link": {
+      "comment": "How you pay option using the user's own card through Link.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your own card, through link"
           }
         }
       }

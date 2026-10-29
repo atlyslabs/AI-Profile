@@ -11,6 +11,7 @@ struct ProfileV3GloveBoxCardSectionView: View {
     let onAddCard: () -> Void
     let onOpen: (ProfileV3GloveBoxTransaction) -> Void
     let onViewAll: () -> Void
+    var showsTransactions = ProfileV3FeatureFlags.isGloveBoxCardTransactionsEnabled
 
     private typealias Layout = ProfileV3Theme.GloveBox.Layout
     private typealias Palette = ProfileV3Theme.GloveBox.Palette
@@ -20,7 +21,7 @@ struct ProfileV3GloveBoxCardSectionView: View {
             icon: ATIcon.SwiftUIImage.creditCard,
             title: section.title,
             badge: section.badge,
-            viewAllTitle: section.transactions.isEmpty ? nil : section.viewAllTitle,
+            viewAllTitle: showsTransactions && !section.transactions.isEmpty ? section.viewAllTitle : nil,
             onViewAll: onViewAll
         ) {
             Button(action: onTapCard) {
@@ -36,25 +37,25 @@ struct ProfileV3GloveBoxCardSectionView: View {
                 facts
                     .padding(.top, Layout.factsTop)
             }
-            ProfileV3DashedDivider()
-                .padding(.top, Layout.payDividerTop)
-            if !section.payTitle.isEmpty {
-                Text(section.payTitle)
-                    .typoGraphy(.T1InterBold11)
-                    .textCase(.uppercase)
-                    .foregroundStyle(Color(at: .pureBlack).opacity(Palette.sectionTitleOpacity))
-                    .accessibilityAddTraits(.isHeader)
-                    .padding(.top, Layout.payTitleTop)
-            }
-            if !section.payBody.isEmpty {
-                Text(section.payBody)
-                    .typoGraphy(.B1InterMedium14)
-                    .foregroundStyle(Color(at: .pureBlack).opacity(Palette.aboutOpacity))
-                    .frame(maxWidth: Layout.payBodyWidth, alignment: .leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, Layout.payBodyTop)
-            }
             if !section.payOptions.isEmpty {
+                ProfileV3DashedDivider()
+                    .padding(.top, Layout.payDividerTop)
+                if !section.payTitle.isEmpty {
+                    Text(section.payTitle)
+                        .typoGraphy(.T1InterBold11)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color(at: .pureBlack).opacity(Palette.sectionTitleOpacity))
+                        .accessibilityAddTraits(.isHeader)
+                        .padding(.top, Layout.payTitleTop)
+                }
+                if !section.payBody.isEmpty {
+                    Text(section.payBody)
+                        .typoGraphy(.B1InterMedium14)
+                        .foregroundStyle(Color(at: .pureBlack).opacity(Palette.aboutOpacity))
+                        .frame(maxWidth: Layout.payBodyWidth, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, Layout.payBodyTop)
+                }
                 VStack(spacing: Layout.optionSpacing) {
                     ForEach(section.payOptions) { option in
                         payOption(option)
@@ -62,10 +63,12 @@ struct ProfileV3GloveBoxCardSectionView: View {
                 }
                 .padding(.top, Layout.optionsTop)
             }
-            ProfileV3DashedDivider()
-                .padding(.top, Layout.transactionsDividerTop)
-            transactions
-                .padding(.top, Layout.transactionsTop)
+            if showsTransactions {
+                ProfileV3DashedDivider()
+                    .padding(.top, section.payOptions.isEmpty ? Layout.payDividerTop : Layout.transactionsDividerTop)
+                transactions
+                    .padding(.top, Layout.transactionsTop)
+            }
         }
         .overlay(alignment: .top) {
             if showsNotice, !section.protectedNotice.isEmpty {

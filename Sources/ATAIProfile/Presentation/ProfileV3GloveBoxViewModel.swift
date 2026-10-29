@@ -18,6 +18,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     enum Sheet: Equatable {
         case list(Section)
         case detail(Entry)
+        case comingSoon
     }
 
     enum CopyTarget: Hashable {
@@ -41,12 +42,13 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
 
     var onIntroAction: (ProfileV3GloveBoxIntro.Action) -> Void = { _ in }
     var onFollowUp: (Entry) -> Void = { _ in }
-    var onAddCard: () -> Void = {}
 
     private var copiedTask: Task<Void, Never>?
     private var loadTask: Task<Void, Never>?
     private let repository: (any ProfileV3GloveBoxRepository)?
     private let isKYCComplete: @MainActor () async -> Bool
+    private let mainTravellerName: @MainActor () async -> String?
+    private var cardHolder = ""
     private var account: ProfileV3GloveBoxAccount?
     private var nextCursor: String? {
         didSet { hasMoreEmails = nextCursor != nil }
@@ -57,14 +59,17 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
         self.gloveBox = gloveBox
         repository = nil
         isKYCComplete = { true }
+        mainTravellerName = { nil }
     }
 
     init(
         repository: any ProfileV3GloveBoxRepository,
-        isKYCComplete: @escaping @MainActor () async -> Bool = { true }
+        isKYCComplete: @escaping @MainActor () async -> Bool = { true },
+        mainTravellerName: @escaping @MainActor () async -> String? = { nil }
     ) {
         self.repository = repository
         self.isKYCComplete = isKYCComplete
+        self.mainTravellerName = mainTravellerName
         isResolvingScreen = true
         gloveBox = ProfileV3GloveBox(
             title: ProfileV3GloveBoxCopy.title,
@@ -122,6 +127,8 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
                 }
                 let page = try await repository.loadGloveBoxMessages(cursor: nil)
                 guard !Task.isCancelled else { return }
+                cardHolder = ProfileV3GloveBoxMapper.cardHolder(await mainTravellerName())
+                guard !Task.isCancelled else { return }
                 showInbox(page, replacing: true)
             } catch is CancellationError {
                 return
@@ -142,6 +149,8 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
                 guard !Task.isCancelled else { return }
                 self.account = account
                 let page = try await repository.loadGloveBoxMessages(cursor: nil)
+                guard !Task.isCancelled else { return }
+                cardHolder = ProfileV3GloveBoxMapper.cardHolder(await mainTravellerName())
                 guard !Task.isCancelled else { return }
                 showInbox(page, replacing: true)
             } catch is CancellationError {
@@ -219,8 +228,9 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     }
 
     func tapAddCard() {
+        guard home != nil else { return }
         trackItem(.card)
-        onAddCard()
+        withAnimation(ProfileV3Theme.GloveBox.Motion.sheetSwitch) { sheets = [.comingSoon] }
     }
 
     func linkCard(_ card: ProfileV3GloveBoxCardSection.LinkedCard) {
@@ -346,7 +356,11 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
             emails: emails,
             hasMore: page.nextCursor != nil
         )
-        show(.home(ProfileV3GloveBoxMapper.home(email: section)))
+        show(.home(ProfileV3GloveBoxMapper.home(
+            email: section,
+            cardHolder: cardHolder,
+            cardLastFour: ProfileV3GloveBoxMapper.cardLastFour(for: account.address)
+        )))
     }
 
     func retryLoadMoreEmails() {
@@ -487,6 +501,7 @@ extension ProfileV3GloveBoxViewModel.Sheet: Identifiable {
         switch self {
         case .list(let section): return "list-\(section)"
         case .detail(let entry): return "detail-\(entry.id)"
+        case .comingSoon: return "coming-soon"
         }
     }
 }

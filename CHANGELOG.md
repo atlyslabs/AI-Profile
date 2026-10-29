@@ -29,6 +29,22 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
+- Settings cards are in the order Accounts center, Connectors, Glove box, Secure credential store
+  (the concierge card, when served, stays after Accounts center), all 25pt apart.
+- Glove box: an empty inbox shows only the Emirates sample email; any real email still replaces
+  it. The Virtual card section shows three facts (Works at, Your own card, No-show fee) and How you
+  pay ("When the agent books for you.") with two options, chosen on the device only (no API yet).
+  Add card opens a "Coming soon" sheet. The stats tiles stay off, and the card's transactions and
+  View all are hidden behind `ProfileV3FeatureFlags.isGloveBoxCardTransactionsEnabled` (false).
+  The card shows the main traveler's name from the board, shortened to first name and last initial
+  ("Mohak N."), and last four digits derived from the user's glove box address, so they stay the
+  same on every open until the backend issues real cards.
+  New keys to add in Ditto: `mo-aiprofile-glovebox-label-card-works-at`, `-restaurant-only`,
+  `-own-card`, `-never-shared`, `-no-show-fee`, `-asks-first`,
+  `mo-aiprofile-glovebox-title-pay-atlys`, `-pay-link`,
+  `mo-aiprofile-glovebox-description-pay-atlys`, `-pay-link` and
+  `mo-aiprofile-glovebox-status-card-link-pending`; `mo-aiprofile-glovebox-description-how-you-pay`
+  needs its new text. The four `mo-aiprofile-glovebox-sample-email-hotel-*` keys are unused.
 - Permissions read from the harness service: `GET /api/harness/v1/permissions`, saved one at a
   time with `PUT /api/harness/v1/permissions/{key}` and `{"value": …}`. The board's
   `/permissions` screen and the `save_permissions` submit are no longer used. Each top-level

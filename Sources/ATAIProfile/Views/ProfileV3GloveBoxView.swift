@@ -9,12 +9,17 @@ struct ProfileV3GloveBoxLiveFlow: View {
     init(
         repository: any ProfileV3GloveBoxRepository,
         isKYCComplete: @escaping @MainActor () async -> Bool = { true },
+        mainTravellerName: @escaping @MainActor () async -> String? = { nil },
         onCompleteKYC: @escaping () -> Void = {},
         onClose: @escaping () -> Void
     ) {
         self.onClose = onClose
         _viewModel = StateObject(wrappedValue: {
-            let viewModel = ProfileV3GloveBoxViewModel(repository: repository, isKYCComplete: isKYCComplete)
+            let viewModel = ProfileV3GloveBoxViewModel(
+                repository: repository,
+                isKYCComplete: isKYCComplete,
+                mainTravellerName: mainTravellerName
+            )
             viewModel.onIntroAction = { action in
                 if action == .completeKYC { onCompleteKYC() }
             }

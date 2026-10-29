@@ -558,7 +558,11 @@ internal enum ProfileV3L10n {
   /// About text in the glove box email section.
   internal static var moAiprofileGloveboxDescriptionEmailAbout: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-description-email-about", fallback: "Follow up, reply, and coordinate with hotels and airlines. Your real inbox stays private.") }
   /// Virtual card section text under How you pay.
-  internal static var moAiprofileGloveboxDescriptionHowYouPay: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-description-how-you-pay", fallback: "When the assistant books or buys for you. Change it anytime.") }
+  internal static var moAiprofileGloveboxDescriptionHowYouPay: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-description-how-you-pay", fallback: "When the agent books for you.") }
+  /// Description of the Atlys pays option.
+  internal static var moAiprofileGloveboxDescriptionPayAtlys: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-description-pay-atlys", fallback: "We pay the restaurant, hotel or shop with our card. You see every charge here and pay us in one go.") }
+  /// Description of the own card through Link option.
+  internal static var moAiprofileGloveboxDescriptionPayLink: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-description-pay-link", fallback: "Pay with cards saved in your Link wallet. Each purchase gets a one-time card for the exact amount you approve.") }
   /// About text in the glove box phone number section.
   internal static var moAiprofileGloveboxDescriptionPhoneAbout: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-description-phone-about", fallback: "Agent answers every call, day or night. It handles the simple ones and puts urgent ones through to you.") }
   /// Settings glove box card description. The line break follows the design.
@@ -593,6 +597,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxHeadlineNewNumberLead: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-headline-new-number-lead", fallback: "You get a") }
   /// Phone number headline, last part. Joined with a space after the emphasis.
   internal static var moAiprofileGloveboxHeadlineNewNumberTrail: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-headline-new-number-trail", fallback: "every time you travel") }
+  /// Virtual card fact value for No-show fee.
+  internal static var moAiprofileGloveboxLabelCardAsksFirst: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-asks-first", fallback: "Asks you first") }
   /// Virtual card label for the CVC.
   internal static var moAiprofileGloveboxLabelCardCvc: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-cvc", fallback: "CVC") }
   /// Virtual card label for the expiry date.
@@ -603,6 +609,16 @@ internal enum ProfileV3L10n {
   internal static func moAiprofileGloveboxLabelDated(_ p1: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-dated", String(describing: p1), fallback: "·  %1$@")
   }
+  /// Virtual card fact value for Your own card.
+  internal static var moAiprofileGloveboxLabelCardNeverShared: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-never-shared", fallback: "Never shared") }
+  /// Virtual card fact label for no-show fees.
+  internal static var moAiprofileGloveboxLabelCardNoShowFee: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-no-show-fee", fallback: "No-show fee") }
+  /// Virtual card fact label about the user's own card.
+  internal static var moAiprofileGloveboxLabelCardOwnCard: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-own-card", fallback: "Your own card") }
+  /// Virtual card fact value for Works at.
+  internal static var moAiprofileGloveboxLabelCardRestaurantOnly: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-restaurant-only", fallback: "Restaurant only") }
+  /// Virtual card fact label: where the card can be used.
+  internal static var moAiprofileGloveboxLabelCardWorksAt: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-works-at", fallback: "Works at") }
   /// Label before the forwarding address. Also the forwarding email field placeholder.
   internal static var moAiprofileGloveboxLabelEmailsForwardedTo: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-emails-forwarded-to", fallback: "Emails forwarded to") }
   /// Tag on glove box sample entries shown while there is no real data.
@@ -653,6 +669,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxSampleTransactionSummary: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-transaction-summary", fallback: "Card check for table of 4") }
   /// Title of the sample virtual card transaction.
   internal static var moAiprofileGloveboxSampleTransactionTitle: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-transaction-title", fallback: "Dinner at SOHO, New York") }
+  /// Coming soon sheet text after tapping Add card.
+  internal static var moAiprofileGloveboxStatusCardLinkPending: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-status-card-link-pending", fallback: "Paying with your own card is on its way.") }
   /// Email row status: the agent handled it.
   internal static var moAiprofileGloveboxStatusHandledForYou: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-status-handled-for-you", fallback: "Handled for you") }
   /// Email row status: the user was added to the thread.
@@ -673,6 +691,10 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxTitleGloveBox: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-glove-box", fallback: "Glove box") }
   /// Virtual card section heading for the payment options.
   internal static var moAiprofileGloveboxTitleHowYouPay: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-how-you-pay", fallback: "How you pay") }
+  /// How you pay option where Atlys pays and bills the user.
+  internal static var moAiprofileGloveboxTitlePayAtlys: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-pay-atlys", fallback: "Atlys pays, we bill you") }
+  /// How you pay option using the user's own card through Link.
+  internal static var moAiprofileGloveboxTitlePayLink: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-pay-link", fallback: "Your own card, through link") }
   /// Title of the glove box phone number section.
   internal static var moAiprofileGloveboxTitlePhoneNumber: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-phone-number", fallback: "Phone number") }
   /// Title of the glove box transactions list sheet.

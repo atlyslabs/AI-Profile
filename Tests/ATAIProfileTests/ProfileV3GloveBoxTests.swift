@@ -313,18 +313,58 @@ struct ProfileV3GloveBoxTests {
         #expect(home.sampleLabel(for: .email(Fixtures.emails[0])) == nil)
     }
 
-    @Test func choosingHowToPayAndLinkingACardUpdateTheCard() {
+    @Test func choosingHowToPayIsLocalAndAddCardSaysComingSoon() {
         let viewModel = ProfileV3GloveBoxViewModel(gloveBox: Fixtures.Start.homeSample.gloveBox)
-        var addCardTaps = 0
-        viewModel.onAddCard = { addCardTaps += 1 }
 
         viewModel.selectPayOption("link")
         #expect(viewModel.home?.card.selectedPayOptionID == "link")
         #expect(viewModel.home?.card.linkedCard == nil)
         viewModel.tapAddCard()
+        #expect(viewModel.sheets == [.comingSoon])
+        #expect(viewModel.home?.card.linkedCard == nil)
+        viewModel.back()
+        #expect(viewModel.sheets.isEmpty)
+        #expect(viewModel.home?.card.selectedPayOptionID == "link")
+
         viewModel.linkCard(Fixtures.hdfc)
         #expect(viewModel.home?.card.linkedCard == Fixtures.hdfc)
-        #expect(addCardTaps == 1)
+    }
+
+    @Test func theCardShowsTheMainTravellersShortNameAndSteadyDigits() {
+        #expect(ProfileV3GloveBoxMapper.cardHolder("Mohak Nahar") == "Mohak N.")
+        #expect(ProfileV3GloveBoxMapper.cardHolder(" Venkata Satya Narayana Murthy ") == "Venkata M.")
+        #expect(ProfileV3GloveBoxMapper.cardHolder("mohak n.") == "mohak n.")
+        #expect(ProfileV3GloveBoxMapper.cardHolder("Priya") == "Priya")
+        #expect(ProfileV3GloveBoxMapper.cardHolder("  ") == "")
+        #expect(ProfileV3GloveBoxMapper.cardHolder(nil) == "")
+
+        let digits = ProfileV3GloveBoxMapper.cardLastFour(for: "priya@trips.atlys.com")
+        #expect(digits.count == 4 && digits.allSatisfy(\.isNumber))
+        #expect(ProfileV3GloveBoxMapper.cardLastFour(for: "Priya@Trips.Atlys.com") == digits)
+        #expect(ProfileV3GloveBoxMapper.cardLastFour(for: "mohak@trips.atlys.com") != digits)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func theLiveCardIsMadeOutToTheMainTraveller() async throws {
+        let viewModel = ProfileV3GloveBoxViewModel(repository: EmptyInboxStub(), mainTravellerName: { "Priya Sharma" })
+        while viewModel.home == nil { try await Task.sleep(for: .milliseconds(10)) }
+        let card = try #require(viewModel.home?.card.card)
+        #expect(card.holder == "Priya S.")
+        #expect(card.lastFour == ProfileV3GloveBoxMapper.cardLastFour(for: "priya@trips.atlys.com"))
+    }
+
+    @Test func theLiveCardSectionShowsItsFactsAndHowYouPay() {
+        let card = ProfileV3GloveBoxMapper.home(email: Fixtures.home.email).card
+        #expect(card.stats.isEmpty)
+        #expect(card.facts.map(\.label) == [
+            ProfileV3GloveBoxCopy.cardWorksAt, ProfileV3GloveBoxCopy.cardOwnCard, ProfileV3GloveBoxCopy.cardNoShowFee
+        ])
+        #expect(card.facts.map(\.value) == [
+            ProfileV3GloveBoxCopy.cardRestaurantOnly, ProfileV3GloveBoxCopy.cardNeverShared, ProfileV3GloveBoxCopy.cardAsksFirst
+        ])
+        #expect(card.payOptions.map(\.kind) == [.atlys, .link])
+        #expect(card.selectedPayOptionID == card.payOptions.first?.id)
+        #expect(card.payBody == "When the agent books for you.")
     }
 
     @Test func theCardNoticeShowsUntilClosedOrTheStageChanges() {
@@ -358,6 +398,7 @@ struct ProfileV3GloveBoxTests {
         let empty = ProfileV3GloveBoxMapper.section(account: account, emails: [], hasMore: false)
         #expect(empty.sampleLabel == ProfileV3GloveBoxCopy.sample)
         #expect(empty.emails == ProfileV3GloveBoxSamples.emails)
+        #expect(empty.emails.map(\.id) == ["sample-email-flight"])
         #expect(empty.viewAllTitle == nil)
         #expect(empty.forwardingNotice == nil)
 

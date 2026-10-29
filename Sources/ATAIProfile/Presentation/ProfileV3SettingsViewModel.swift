@@ -41,6 +41,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     @ObservationIgnored private let repository: any ProfileV3SettingsRepository
     @ObservationIgnored let gloveBoxRepository: (any ProfileV3GloveBoxRepository)?
     @ObservationIgnored private let board: (any ProfileV3BoardRepository)?
+    @ObservationIgnored private let profileName: String?
     @ObservationIgnored private var menuTask: Task<Void, Never>?
     @ObservationIgnored private var presentTask: Task<Void, Never>?
     @ObservationIgnored private var monogramTask: Task<Void, Never>?
@@ -57,6 +58,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         self.repository = repository
         gloveBoxRepository = repository as? any ProfileV3GloveBoxRepository
         self.board = board
+        self.profileName = profileName
         monogram = Self.monogram(from: deps.currentFirstName())
             ?? Self.monogram(from: profileName)
             ?? Self.monogram(from: board?.cachedBoard()?.mainProfile?.name)
@@ -156,6 +158,13 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
             return main.home.kycStatus.isComplete
         }
         return (try? await board.loadLatestBoard().mainProfile?.home.kycStatus.isComplete) ?? true
+    }
+
+    func mainTravellerName() async -> String? {
+        if let profileName, !profileName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return profileName }
+        guard let board else { return nil }
+        if let main = board.cachedBoard()?.mainProfile { return main.name }
+        return try? await board.loadLatestBoard().mainProfile?.name
     }
 
     private func loadGloveBoxStatus() {
