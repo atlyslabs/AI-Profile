@@ -123,6 +123,8 @@ extension ProfileV3Theme.Sizes {
         static let controlSpacing: CGFloat = 20
         static let cardWidth: CGFloat = 380
         static let cardHeight: CGFloat = 292
+        static let pageSpacing: CGFloat = 13
+        static let pageLabelSpacing: CGFloat = 10
         static let glowTop: CGFloat = 64
         static let glowHeight: CGFloat = 177
         static let stripHeight: CGFloat = 46

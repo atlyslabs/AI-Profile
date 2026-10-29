@@ -7,6 +7,7 @@ extension ProfileV3Theme {
         static let passportStripOpacity: Double = 0.2
         static let passportGuillocheOpacity: Double = 0.05
         static let passportExpiredOpacity: Double = 0.5
+        static let passportPageLabelOpacity: Double = 0.5
         static let catalogueSearchDebounceMilliseconds = 300
         static let catalogueLoaderMinimumMilliseconds = 400
         static let remoteImageFadeSeconds: Double = 0.3

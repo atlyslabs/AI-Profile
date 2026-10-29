@@ -47,6 +47,7 @@ enum ProfileV3PassportMapper: ProfileV3DTOReading {
             countryName: country?.name ?? "",
             countryNativeName: country?.nativeName,
             passport: passport,
+            backPageURL: remoteURL(dto.backURL),
             previous: previous(dto.previous),
             rescan: rescan,
             howUsed: dto.howUsed?.directive

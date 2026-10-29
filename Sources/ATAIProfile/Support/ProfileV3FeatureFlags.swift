@@ -21,4 +21,5 @@ enum ProfileV3FeatureFlags {
     static let isGloveBoxVirtualCardEnabled = true
     static let isGloveBoxCardTransactionsEnabled = false
     static let isAgentCustomRulesEnabled = true
+    static let isPassportBackPageEnabled = false
 }

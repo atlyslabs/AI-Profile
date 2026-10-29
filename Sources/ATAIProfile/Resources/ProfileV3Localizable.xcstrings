@@ -1873,6 +1873,30 @@
         }
       }
     },
+    "mo-aiprofile-documents-label-passport-back-page": {
+      "comment": "Label above the scanned back page of the passport on the personal agent.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BACK"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-label-passport-front-page": {
+      "comment": "Label above the passport details card when its back page is shown beside it.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FRONT"
+          }
+        }
+      }
+    },
     "mo-aiprofile-documents-reason-damaged": {
       "comment": "Reason option for passport replacement (damaged).",
       "extractionState": "manual",

@@ -20,6 +20,7 @@ struct ProfileV3FormSectionView: View {
     var onToggleBaggage: ((String) -> Void)?
     var onStepBaggage: ((String, Int) -> Void)?
     var onOpenNoteLink: ((ProfileV3Directive) -> Void)?
+    var showsPassportBackPage = ProfileV3FeatureFlags.isPassportBackPageEnabled
 
     @State private var sliderPreview: Double?
 
@@ -112,14 +113,11 @@ struct ProfileV3FormSectionView: View {
             }
         case .passport(let field):
             VStack(spacing: ProfileV3Theme.Sizes.Passport.controlSpacing) {
-                ProfileV3PassportCard(
-                    holderName: field.holderName,
-                    countryName: field.countryName,
-                    countryNativeName: field.countryNativeName,
-                    content: field.passport.map(ProfileV3PassportCard.Content.details)
-                        ?? .upload(field.emptyState ?? .blank),
-                    onUpload: onUploadPassport
-                )
+                if showsPassportBackPage, field.passport != nil, let backPageURL = field.backPageURL {
+                    ProfileV3PassportPagesRow(backPageURL: backPageURL) { passportCard(field) }
+                } else {
+                    passportCard(field)
+                }
                 if field.passport != nil {
                     ProfileV3PillButton(
                         title: ProfileV3Strings.uploadNewPassport,
@@ -162,6 +160,17 @@ struct ProfileV3FormSectionView: View {
         case .customRules:
             EmptyView()
         }
+    }
+
+    private func passportCard(_ field: ProfileV3PassportField) -> some View {
+        ProfileV3PassportCard(
+            holderName: field.holderName,
+            countryName: field.countryName,
+            countryNativeName: field.countryNativeName,
+            content: field.passport.map(ProfileV3PassportCard.Content.details)
+                ?? .upload(field.emptyState ?? .blank),
+            onUpload: onUploadPassport
+        )
     }
 
     private var passportField: ProfileV3PassportField? {
@@ -209,6 +218,7 @@ extension ProfileV3FormSectionView: Equatable {
             && (lhs.onToggleBaggage == nil) == (rhs.onToggleBaggage == nil)
             && (lhs.onStepBaggage == nil) == (rhs.onStepBaggage == nil)
             && (lhs.onOpenNoteLink == nil) == (rhs.onOpenNoteLink == nil)
+            && lhs.showsPassportBackPage == rhs.showsPassportBackPage
     }
 }
 

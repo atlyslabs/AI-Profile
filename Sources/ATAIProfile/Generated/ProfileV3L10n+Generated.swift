@@ -337,6 +337,10 @@ internal enum ProfileV3L10n {
   internal static func moAiprofileDocumentsLabelPassNumber(_ p1: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-label-pass-number", String(describing: p1), fallback: "Pass number %1$@")
   }
+  /// Label above the scanned back page of the passport on the personal agent.
+  internal static var moAiprofileDocumentsLabelPassportBackPage: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-label-passport-back-page", fallback: "BACK") }
+  /// Label above the passport details card when its back page is shown beside it.
+  internal static var moAiprofileDocumentsLabelPassportFrontPage: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-label-passport-front-page", fallback: "FRONT") }
   /// Reason option for passport replacement (damaged).
   internal static var moAiprofileDocumentsReasonDamaged: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-reason-damaged", fallback: "Damaged") }
   /// Reason option for passport replacement (lost).

@@ -8,6 +8,7 @@ struct ProfileV3AgentPassportDTO: Decodable, Equatable {
     let expiryDate: String?
     let status: String?
     let verified: Bool?
+    let backURL: String?
     private let rawRescan: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
     private let rawHowUsed: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
     private let rawPrevious: ProfileV3LossyDTO<ProfileV3PassportPreviousDTO>?
@@ -24,6 +25,7 @@ struct ProfileV3AgentPassportDTO: Decodable, Equatable {
         case expiryDate = "expiry_date"
         case status
         case verified
+        case backURL = "back_url"
         case rawRescan = "rescan"
         case rawHowUsed = "how_used"
         case rawPrevious = "previous"
@@ -38,6 +40,7 @@ struct ProfileV3AgentPassportDTO: Decodable, Equatable {
         expiryDate = container.lenientString(forKey: .expiryDate)
         status = container.lenientString(forKey: .status)
         verified = try? container.decodeIfPresent(Bool.self, forKey: .verified)
+        backURL = container.lenientString(forKey: .backURL)
         rawRescan = try? container.decodeIfPresent(ProfileV3LossyDTO<ProfileV3DirectiveDTO>.self, forKey: .rawRescan)
         rawHowUsed = try? container.decodeIfPresent(ProfileV3LossyDTO<ProfileV3DirectiveDTO>.self, forKey: .rawHowUsed)
         rawPrevious = try? container.decodeIfPresent(

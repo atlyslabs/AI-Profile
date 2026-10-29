@@ -19,14 +19,9 @@ struct ProfileV3PassportCard: View {
     private typealias Sizes = ProfileV3Theme.Sizes.Passport
 
     var body: some View {
-        ZStack(alignment: .top) {
-            pageEdge(Sizes.lowerPageEdge)
-            pageEdge(Sizes.upperPageEdge)
-            card
-        }
-        .frame(maxWidth: Sizes.cardWidth)
-        .frame(height: Sizes.cardHeight + Sizes.pageEdgeDrop, alignment: .top)
-        .accessibilityElement(children: .contain)
+        card
+            .profileV3PassportPageEdges()
+            .accessibilityElement(children: .contain)
     }
 
     private var card: some View {
@@ -41,19 +36,6 @@ struct ProfileV3PassportCard: View {
         .frame(height: Sizes.cardHeight, alignment: .top)
         .background(ProfileV3Theme.Palette.passportCard)
         .clipShape(RoundedRectangle(cornerRadius: ProfileV3Theme.Radius.sm, style: .continuous))
-    }
-
-    private func pageEdge(_ insets: EdgeInsets) -> some View {
-        let shape = UnevenRoundedRectangle(
-            bottomLeadingRadius: Sizes.pageEdgeHeight,
-            bottomTrailingRadius: Sizes.pageEdgeHeight
-        )
-        return shape
-            .fill(Color(at: .pureWhite))
-            .overlay(shape.fill(ProfileV3Theme.passportPageEdgeShade))
-            .frame(height: Sizes.pageEdgeHeight)
-            .padding(insets)
-            .accessibilityHidden(true)
     }
 
     @ViewBuilder
@@ -250,6 +232,92 @@ struct ProfileV3PassportCard: View {
                         : ProfileV3Theme.Palette.passportBadgeExpired
                 )
             )
+    }
+}
+
+struct ProfileV3PassportBackPage: View {
+    let url: URL
+    let accessibilityTitle: String
+
+    private typealias Sizes = ProfileV3Theme.Sizes.Passport
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: ProfileV3Theme.Radius.sm, style: .continuous)
+        shape
+            .fill(ProfileV3Theme.Palette.passportCard)
+            .frame(height: Sizes.cardHeight)
+            .overlay { ProfileV3RemoteImage(url: url, contentMode: .fit, placeholder: .clear, showsLoader: true) }
+            .clipShape(shape)
+            .postHogMask()
+            .profileV3PassportPageEdges()
+            .accessibilityElement()
+            .accessibilityLabel(accessibilityTitle)
+            .accessibilityAddTraits(.isImage)
+    }
+}
+
+struct ProfileV3PassportPagesRow<Front: View>: View {
+    let backPageURL: URL
+    @ViewBuilder let front: Front
+
+    private typealias Sizes = ProfileV3Theme.Sizes.Passport
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .top, spacing: Sizes.pageSpacing) {
+                page(ProfileV3Strings.passportFrontPage) { front }
+                page(ProfileV3Strings.passportBackPage) {
+                    ProfileV3PassportBackPage(url: backPageURL, accessibilityTitle: ProfileV3Strings.passportBackPage)
+                }
+            }
+            .scrollTargetLayout()
+        }
+        .scrollTargetBehavior(.viewAligned)
+        .contentMargins(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin, for: .scrollContent)
+        .padding(.horizontal, -ProfileV3Theme.Sizes.screenHorizontalMargin)
+    }
+
+    private func page(_ label: String, @ViewBuilder card: () -> some View) -> some View {
+        VStack(alignment: .leading, spacing: Sizes.pageLabelSpacing) {
+            ProfileV3TagLabel(text: label)
+                .opacity(ProfileV3Theme.Motion.passportPageLabelOpacity)
+                .accessibilityHidden(true)
+            card()
+        }
+        .containerRelativeFrame(.horizontal) { width, _ in min(width, Sizes.cardWidth) }
+    }
+}
+
+private struct ProfileV3PassportPageEdges: ViewModifier {
+    private typealias Sizes = ProfileV3Theme.Sizes.Passport
+
+    func body(content: Content) -> some View {
+        ZStack(alignment: .top) {
+            edge(Sizes.lowerPageEdge)
+            edge(Sizes.upperPageEdge)
+            content
+        }
+        .frame(maxWidth: Sizes.cardWidth)
+        .frame(height: Sizes.cardHeight + Sizes.pageEdgeDrop, alignment: .top)
+    }
+
+    private func edge(_ insets: EdgeInsets) -> some View {
+        let shape = UnevenRoundedRectangle(
+            bottomLeadingRadius: Sizes.pageEdgeHeight,
+            bottomTrailingRadius: Sizes.pageEdgeHeight
+        )
+        return shape
+            .fill(Color(at: .pureWhite))
+            .overlay(shape.fill(ProfileV3Theme.passportPageEdgeShade))
+            .frame(height: Sizes.pageEdgeHeight)
+            .padding(insets)
+            .accessibilityHidden(true)
+    }
+}
+
+private extension View {
+    func profileV3PassportPageEdges() -> some View {
+        modifier(ProfileV3PassportPageEdges())
     }
 }
 

@@ -39,6 +39,7 @@ struct ProfileV3PassportField: Equatable {
     var countryName: String
     var countryNativeName: String?
     var passport: ProfileV3Passport?
+    var backPageURL: URL?
     var previous: ProfileV3PassportPrevious?
     var rescan: ProfileV3Directive?
     var howUsed: ProfileV3Directive?
