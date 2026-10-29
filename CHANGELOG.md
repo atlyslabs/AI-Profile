@@ -29,6 +29,21 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
+- Permissions read from the harness service: `GET /api/harness/v1/permissions`, saved one at a
+  time with `PUT /api/harness/v1/permissions/{key}` and `{"value": …}`. The board's
+  `/permissions` screen and the `save_permissions` submit are no longer used. Each top-level
+  permission is a card (its `label` as the tag, its `description` above a segmented control), and
+  a permission with a `parent_key` is another row in its parent's card under a dashed divider. The
+  sheet title is the client "Permissions". Option values get client labels: `on` "Yes", `off` "No",
+  `ask` "Always ask", `always` "Always", `when_needed` "When needed"; anything else is shown with
+  its underscores as spaces. Two new keys need adding in Ditto: `mo-aiprofile-agent-settings-always`
+  and `mo-aiprofile-agent-settings-when-needed`. The keys
+  `mo-aiprofile-agent-settings-connector-defaults`, `-web-access-defaults`, `-ask-for-actions`,
+  `-permission-description` and `-before-action-description` are now unused and can be deleted
+  from Ditto.
+- Medical card: the holder's name stops short of the caduceus and wraps between words, so a long
+  name no longer runs under the emblem's wings. The country flag lines up with the name's first
+  line.
 - The hub doesn't scroll while the "Build your household" card is selected, and scrolls back to
   the top if it was partway down. The pass carousel still swipes.
 - Loyalty programmes: edit mode selects programs to delete. Every card gets a checkbox and slides

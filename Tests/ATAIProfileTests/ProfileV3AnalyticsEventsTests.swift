@@ -329,12 +329,11 @@ struct ProfileV3AnalyticsEventsTests {
             let permissions = ProfileV3PermissionsSettingsModel(repository: repository)
             permissions.load()
             while permissions.permissions == nil { try await Task.sleep(for: .milliseconds(10)) }
-            permissions.select("always_ask", in: "connector_defaults")
-            permissions.select("ask_some", in: "web_access_defaults")
+            permissions.select("on", in: "email")
+            permissions.select("when_needed", in: "email_cc")
 
             while recorder.named("settings_residence_updated").isEmpty
-                || recorder.named("settings_action_permission_changed").isEmpty
-                || recorder.named("settings_connector_permission_changed").isEmpty {
+                || recorder.named("settings_action_permission_changed").count < 2 {
                 try await Task.sleep(for: .milliseconds(10))
             }
 
@@ -347,12 +346,11 @@ struct ProfileV3AnalyticsEventsTests {
             #expect((updated.parameters["oldContactInfo"] as? [String: String])?["email"] == "ada@example.com")
             #expect((updated.parameters["newContactInfo"] as? [String: String])?["phone"] == "+919000000002")
 
-            let connector = try #require(recorder.named("settings_connector_permission_changed").first)
-            #expect(connector.string("newPermission") == "always_ask")
-            #expect(connector.string("oldPermission") == "ask_sometimes")
-            let action = try #require(recorder.named("settings_action_permission_changed").first)
-            #expect(action.string("newPermission") == "ask_sometimes")
-            #expect(action.string("oldPermission") == "always_ask")
+            let changes = recorder.named("settings_action_permission_changed").map { event in
+                "\(event.string("oldPermission") ?? "")>\(event.string("newPermission") ?? "")"
+            }
+            #expect(Set(changes) == ["ask>on", "always>when_needed"])
+            #expect(recorder.named("settings_connector_permission_changed").isEmpty)
         }
     }
 

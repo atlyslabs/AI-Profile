@@ -82,49 +82,6 @@ struct ProfileV3SettingsRowDTO: Decodable, Equatable {
     var next: ProfileV3DirectiveDTO? { rawNext?.value }
 }
 
-struct ProfileV3PermissionOptionDTO: Decodable, Equatable {
-    let value: String?
-    let title: String?
-    let subtitle: String?
-    let selected: Bool?
-}
-
-struct ProfileV3PermissionGroupDTO: Decodable, Equatable {
-    let key: String?
-    let title: String?
-    private let rawOptions: [ProfileV3LossyDTO<ProfileV3PermissionOptionDTO>]?
-    private let rawSelected: ProfileV3LossyDTO<String>?
-
-    var options: [ProfileV3PermissionOptionDTO] { rawOptions?.compactMap(\.value) ?? [] }
-    var selected: String? { rawSelected?.value }
-
-    enum CodingKeys: String, CodingKey {
-        case key
-        case title
-        case rawOptions = "options"
-        case rawSelected = "selected"
-    }
-}
-
-struct ProfileV3PermissionsScreenDTO: Decodable, Equatable {
-    let type: String?
-    let title: String?
-    private let rawGroups: [ProfileV3LossyDTO<ProfileV3PermissionGroupDTO>]?
-
-    var groups: [ProfileV3PermissionGroupDTO] { rawGroups?.compactMap(\.value) ?? [] }
-
-    enum CodingKeys: String, CodingKey {
-        case type
-        case title
-        case rawGroups = "groups"
-    }
-}
-
-struct ProfileV3SavePermissionsRequest: Encodable, Equatable {
-    let action = "save_permissions"
-    let updates: [String: String]
-}
-
 struct ProfileV3DeleteAccountReasonDTO: Decodable, Equatable {
     struct Field: Decodable, Equatable {
         let key: String?

@@ -470,16 +470,18 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadPermissions() async throws -> ProfileV3Permissions {
-        let dto: ProfileV3PermissionsScreenDTO = try await request(ProfileV3API.permissions, action: "permissions")
-        guard let permissions = ProfileV3SettingsMapper.permissions(dto) else {
+        let dto: ProfileV3PermissionsDTO = try await request(ProfileV3API.permissions, action: "permissions")
+        guard let permissions = ProfileV3PermissionsMapper.permissions(dto) else {
             throw ProfileV3RepositoryError.unavailable
         }
         return permissions
     }
 
-    func savePermission(_ optionID: String, in sectionID: String) async throws {
-        let request = ProfileV3SavePermissionsRequest(updates: [sectionID: optionID])
-        try await submit(try JSONEncoder().encode(request), action: "save_permissions")
+    func savePermission(_ value: String, for key: String) async throws {
+        let body = try JSONEncoder().encode(ProfileV3UpdatePermissionRequest(value: value))
+        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: "update_permission") {
+            try await client.perform(.updatePermission(key: key, body: body))
+        }
     }
 
     func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen {

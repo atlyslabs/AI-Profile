@@ -131,6 +131,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentErrorKycRequired: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-error-kyc-required", fallback: "A quick verification is needed before this agent can be activated.") }
   /// Error message for unavailable agent.
   internal static var moAiprofileAgentErrorUnavailable: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-error-unavailable", fallback: "This agent is taking a break. Try again in a bit.") }
+  /// Configuration option for AI agent to always do an action, such as copying you on emails.
+  internal static var moAiprofileAgentSettingsAlways: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-always", fallback: "Always") }
   /// Configuration option for AI agent to always ask for permission.
   internal static var moAiprofileAgentSettingsAlwaysAsk: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-always-ask", fallback: "Always ask") }
   /// Configuration option for AI agent action behavior.
@@ -143,6 +145,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentSettingsPermissionDescription: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-permission-description", fallback: "You can give read only or read and write access") }
   /// Settings category for default web access configurations.
   internal static var moAiprofileAgentSettingsWebAccessDefaults: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-web-access-defaults", fallback: "Web access defaults") }
+  /// Configuration option for AI agent to do an action only when needed.
+  internal static var moAiprofileAgentSettingsWhenNeeded: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-when-needed", fallback: "When needed") }
   /// Refers to an AI agent suffix or label.
   internal static var moAiprofileAgentSuffix: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-suffix", fallback: "agent") }
   /// Tag label used to identify agent-based entries.

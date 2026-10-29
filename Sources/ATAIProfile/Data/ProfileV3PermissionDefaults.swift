@@ -2,35 +2,32 @@ import Foundation
 
 enum ProfileV3PermissionDefaults {
     static let rowKey = "permissions"
+}
 
-    static let permissions = ProfileV3Permissions(
-        title: ProfileV3Strings.permissions,
-        sections: [
-            section(id: "connector_defaults", title: ProfileV3Strings.connectorDefaults, selected: askSome),
-            section(id: "web_access_defaults", title: ProfileV3Strings.webAccessDefaults, selected: alwaysAsk)
-        ]
-    )
+#if DEBUG
+enum ProfileV3PermissionFixtures {
+    static let permissions = ProfileV3Permissions(sections: [
+        ProfileV3PermissionSection(id: "email", title: "Email", rows: [
+            row("email", "Ayl will email hotels, airlines and others for you", options: ["on": "Yes", "ask": "Always ask"], selected: "ask"),
+            row("email_cc", "Copy you on the emails Ayl sends", options: ["always": "Always", "when_needed": "When needed"], selected: "always")
+        ]),
+        ProfileV3PermissionSection(id: "call", title: "Call", rows: [
+            row("call", "Ayl will call hotels, airlines and others for you", options: ["on": "Yes", "ask": "Always ask"], selected: "ask")
+        ])
+    ])
 
-    private static let askSome = "ask_some"
-    private static let alwaysAsk = "always_ask"
-
-    private static func section(id: String, title: String, selected: String) -> ProfileV3PermissionSection {
-        ProfileV3PermissionSection(
+    private static func row(
+        _ id: String,
+        _ title: String,
+        options: KeyValuePairs<String, String>,
+        selected: String
+    ) -> ProfileV3PermissionRow {
+        ProfileV3PermissionRow(
             id: id,
             title: title,
-            options: [
-                ProfileV3PermissionOption(
-                    id: askSome,
-                    title: ProfileV3Strings.askForSomeActions,
-                    subtitle: ProfileV3Strings.askForSomeActionsDetail
-                ),
-                ProfileV3PermissionOption(
-                    id: alwaysAsk,
-                    title: ProfileV3Strings.alwaysAsk,
-                    subtitle: ProfileV3Strings.alwaysAskDetail
-                )
-            ],
+            options: options.map { ProfileV3PermissionOption(id: $0.key, title: $0.value) },
             selectedOptionID: selected
         )
     }
 }
+#endif

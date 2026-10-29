@@ -543,8 +543,8 @@ enum ProfileV3Analytics {
         log(EventName.permissionClicked)
     }
 
-    static func permissionChanged(sectionID: String, to optionID: String, from previous: String?) {
-        let name = sectionID.contains("connector") ? EventName.connectorPermissionChanged : EventName.actionPermissionChanged
+    static func permissionChanged(key: String, to optionID: String, from previous: String?) {
+        let name = key.contains("connector") ? EventName.connectorPermissionChanged : EventName.actionPermissionChanged
         log(name, [
             ParamKey.newPermission: permissionValue(optionID),
             ParamKey.oldPermission: previous.map(permissionValue)

@@ -71,6 +71,8 @@ extension ProfileV3Theme.Sizes {
         static let emblem: CGFloat = 109
         static let emblemTop: CGFloat = 23
         static let emblemBleed: CGFloat = 35
+        static let nameEmblemGap: CGFloat = 8
+        static let nameTrailing = emblem - emblemBleed - padding + nameEmblemGap
         static let emblemFadeWidth: CGFloat = 50
         static let emblemFadeHeight: CGFloat = 73
         static let emblemFadeTop: CGFloat = 55
