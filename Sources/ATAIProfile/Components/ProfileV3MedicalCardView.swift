@@ -18,7 +18,7 @@ struct ProfileV3MedicalCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s20) {
-            HStack(spacing: Metrics.flagSpacing) {
+            HStack(alignment: .top, spacing: Metrics.flagSpacing) {
                 Text(card.holderName)
                     .typoGraphy(.H6InterMedium18)
                     .foregroundStyle(Color(at: .pureWhite))
@@ -27,8 +27,10 @@ struct ProfileV3MedicalCardView: View {
                     ATCountryFlagView(country: country)
                         .frame(width: Metrics.flag, height: Metrics.flag)
                         .clipShape(Circle())
+                        .padding(.top, flagTop)
                 }
             }
+            .padding(.trailing, Metrics.nameTrailing)
             VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s16) {
                 ForEach(rows, id: \.0) { row in
                     HStack(alignment: .firstTextBaseline, spacing: ProfileV3Theme.Space.s12) {
@@ -100,6 +102,10 @@ struct ProfileV3MedicalCardView: View {
 
     private var labelWidth: CGFloat {
         Metrics.valueLeading - Metrics.padding - ProfileV3Theme.Space.s12
+    }
+
+    private var flagTop: CGFloat {
+        (TypographyStyle.H6InterMedium18.uiFont.lineHeight - Metrics.flag) / 2
     }
 
     private var shape: RoundedRectangle {

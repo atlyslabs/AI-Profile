@@ -661,6 +661,18 @@
         }
       }
     },
+    "mo-aiprofile-agent-settings-always": {
+      "comment": "Configuration option for AI agent to always do an action, such as copying you on emails.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Always"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agent-settings-always-ask": {
       "comment": "Configuration option for AI agent to always ask for permission.",
       "extractionState": "manual",
@@ -729,6 +741,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Web access defaults"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agent-settings-when-needed": {
+      "comment": "Configuration option for AI agent to do an action only when needed.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When needed"
           }
         }
       }

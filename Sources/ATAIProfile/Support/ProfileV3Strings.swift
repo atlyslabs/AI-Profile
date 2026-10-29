@@ -32,12 +32,9 @@ enum ProfileV3Strings {
     static func visitedCountries(_ count: Int) -> String { ProfileV3L10n.moAiprofileProfileAccessibilityVisitedCountries(count) }
     static func pastTripOptions(_ country: String) -> String { ProfileV3L10n.moAiprofileGeneralPastTripOptions(country) }
     static func pastTripLabel(country: String, month: String, year: Int) -> String { ProfileV3L10n.moAiprofileGeneralTripDateLabel(country, month, year) }
-    static var connectorDefaults: String { ProfileV3L10n.moAiprofileAgentSettingsConnectorDefaults }
-    static var webAccessDefaults: String { ProfileV3L10n.moAiprofileAgentSettingsWebAccessDefaults }
-    static var askForSomeActions: String { ProfileV3L10n.moAiprofileAgentSettingsAskForActions }
-    static var askForSomeActionsDetail: String { ProfileV3L10n.moAiprofileAgentSettingsPermissionDescription }
     static var alwaysAsk: String { ProfileV3L10n.moAiprofileAgentSettingsAlwaysAsk }
-    static var alwaysAskDetail: String { ProfileV3L10n.moAiprofileAgentSettingsBeforeActionDescription }
+    static var permissionAlways: String { ProfileV3L10n.moAiprofileAgentSettingsAlways }
+    static var permissionWhenNeeded: String { ProfileV3L10n.moAiprofileAgentSettingsWhenNeeded }
     static var back: String { ProfileV3L10n.moAiprofileGeneralButtonBack }
     static var close: String { ProfileV3L10n.moAiprofileGeneralButtonClose }
     static var search: String { ProfileV3L10n.moAiprofileGeneralButtonSearch }

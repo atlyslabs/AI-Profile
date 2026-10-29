@@ -4,7 +4,7 @@ import SwiftUI
 
 struct ProfileV3PassportCard: View {
     enum Content: Equatable {
-        case upload
+        case upload(ProfileV3PassportEmptyState)
         case details(ProfileV3Passport)
     }
 
@@ -34,11 +34,7 @@ struct ProfileV3PassportCard: View {
             glow
             countryStrip
             guilloche
-            Text(holderName)
-                .typoGraphy(.B1InterMedium14)
-                .foregroundStyle(Color(at: .pureBlack))
-                .padding(.leading, Sizes.contentInset)
-                .padding(.top, Sizes.nameTop)
+            holder
             statusBadge
             cardContent
         }
@@ -61,10 +57,29 @@ struct ProfileV3PassportCard: View {
     }
 
     @ViewBuilder
-    private var cardContent: some View {
+    private var holder: some View {
+        let name = Text(holderName)
+            .typoGraphy(.B1InterMedium14)
+            .foregroundStyle(Color(at: .pureBlack))
         switch content {
         case .upload:
-            uploadPrompt
+            name
+                .lineLimit(1)
+                .padding(.horizontal, Sizes.contentInset)
+                .frame(maxWidth: .infinity)
+                .padding(.top, Sizes.emptyNameTop)
+        case .details:
+            name
+                .padding(.leading, Sizes.contentInset)
+                .padding(.top, Sizes.nameTop)
+        }
+    }
+
+    @ViewBuilder
+    private var cardContent: some View {
+        switch content {
+        case .upload(let emptyState):
+            uploadPrompt(emptyState)
         case .details(let passport):
             VStack(alignment: .leading, spacing: 0) {
                 fields(for: passport)
@@ -151,26 +166,35 @@ struct ProfileV3PassportCard: View {
             .accessibilityHidden(true)
     }
 
-    private var uploadPrompt: some View {
+    private func uploadPrompt(_ emptyState: ProfileV3PassportEmptyState) -> some View {
         VStack(spacing: Sizes.promptSpacing) {
             VStack(spacing: Sizes.promptTitleSpacing) {
-                Text(ProfileV3Strings.uploadPassport)
-                    .typoGraphy(.H7InterMedium16)
-                    .foregroundStyle(ProfileV3Theme.Palette.passportPromptTitle)
-                Text(ProfileV3Strings.uploadPassportBlurb)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(Color(at: .neutralGrey400))
-                    .frame(width: Sizes.promptWidth)
+                if !emptyState.title.isEmpty {
+                    Text(emptyState.title)
+                        .typoGraphy(.H7InterMedium16)
+                        .foregroundStyle(ProfileV3Theme.Palette.passportPromptTitle)
+                        .frame(maxWidth: Sizes.promptTitleWidth, minHeight: Sizes.promptTitleLineHeight)
+                }
+                if !emptyState.body.isEmpty {
+                    Text(emptyState.body)
+                        .typoGraphy(.B2InterMedium12)
+                        .foregroundStyle(Color(at: .neutralGrey400))
+                        .frame(width: Sizes.promptWidth)
+                }
             }
-            ProfileV3ContinueButton(
-                title: ProfileV3Strings.upload,
-                icon: ATIcon.SwiftUIImage.iOS_share,
-                action: { onUpload?() }
-            )
-            .fixedSize()
+            if !emptyState.ctaLabel.isEmpty {
+                ProfileV3ContinueButton(
+                    title: emptyState.ctaLabel,
+                    icon: ProfileV3Vector.iosShare.image,
+                    iconSize: ProfileV3Theme.Icon.lg,
+                    horizontalPadding: Sizes.promptButtonPadding,
+                    action: { onUpload?() }
+                )
+                .fixedSize()
+            }
         }
         .multilineTextAlignment(.center)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity)
         .padding(.top, Sizes.promptTop)
     }
 
@@ -237,7 +261,7 @@ struct ProfileV3PassportCard: View {
                 holderName: "alex r.",
                 countryName: ProfileV3Strings.passportCountryIndia,
                 countryNativeName: ProfileV3Strings.passportCountryIndiaNative,
-                content: .upload,
+                content: .upload(ProfileV3PassportFixtures.emptyState),
                 onUpload: {}
             )
             ProfileV3PassportCard(

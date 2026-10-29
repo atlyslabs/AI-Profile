@@ -19,34 +19,6 @@ enum ProfileV3SettingsMapper: ProfileV3DTOReading {
         )
     }
 
-    static func permissions(_ dto: ProfileV3PermissionsScreenDTO) -> ProfileV3Permissions? {
-        let sections = dto.groups.compactMap(permissionSection)
-        guard !sections.isEmpty else { return nil }
-        return ProfileV3Permissions(title: text(dto.title) ?? "", sections: sections)
-    }
-
-    private static func permissionSection(_ dto: ProfileV3PermissionGroupDTO) -> ProfileV3PermissionSection? {
-        guard let key = text(dto.key) else { return nil }
-        let options = dto.options.compactMap(permissionOption)
-        guard !options.isEmpty else { return nil }
-        let selected = text(dto.options.first { $0.selected == true }?.value) ?? text(dto.selected)
-        return ProfileV3PermissionSection(
-            id: key,
-            title: text(dto.title) ?? "",
-            options: options,
-            selectedOptionID: options.first { $0.id == selected }?.id
-        )
-    }
-
-    private static func permissionOption(_ dto: ProfileV3PermissionOptionDTO) -> ProfileV3PermissionOption? {
-        guard let value = text(dto.value), let title = text(dto.title) else { return nil }
-        return ProfileV3PermissionOption(
-            id: value,
-            title: title,
-            subtitle: text(dto.subtitle)
-        )
-    }
-
     static func deleteAccountReason(_ dto: ProfileV3DeleteAccountReasonDTO) -> ProfileV3DeleteAccountReason {
         ProfileV3DeleteAccountReason(
             title: text(dto.title) ?? "",

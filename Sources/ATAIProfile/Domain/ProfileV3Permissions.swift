@@ -1,22 +1,30 @@
 import Foundation
 
 struct ProfileV3Permissions: Equatable {
-    let title: String
     var sections: [ProfileV3PermissionSection]
 
-    func selectedOptionID(in sectionID: String) -> String? {
-        sections.first { $0.id == sectionID }?.selectedOptionID
+    func selectedOptionID(in rowID: String) -> String? {
+        sections.lazy.flatMap(\.rows).first { $0.id == rowID }?.selectedOptionID
     }
 
-    func selecting(_ optionID: String?, in sectionID: String) -> ProfileV3Permissions {
-        guard let index = sections.firstIndex(where: { $0.id == sectionID }) else { return self }
+    func selecting(_ optionID: String?, in rowID: String) -> ProfileV3Permissions {
         var updated = self
-        updated.sections[index].selectedOptionID = optionID
-        return updated
+        for index in updated.sections.indices {
+            guard let row = updated.sections[index].rows.firstIndex(where: { $0.id == rowID }) else { continue }
+            updated.sections[index].rows[row].selectedOptionID = optionID
+            return updated
+        }
+        return self
     }
 }
 
 struct ProfileV3PermissionSection: Identifiable, Equatable {
+    let id: String
+    let title: String
+    var rows: [ProfileV3PermissionRow]
+}
+
+struct ProfileV3PermissionRow: Identifiable, Equatable {
     let id: String
     let title: String
     let options: [ProfileV3PermissionOption]
@@ -26,5 +34,4 @@ struct ProfileV3PermissionSection: Identifiable, Equatable {
 struct ProfileV3PermissionOption: Identifiable, Equatable {
     let id: String
     let title: String
-    var subtitle: String?
 }

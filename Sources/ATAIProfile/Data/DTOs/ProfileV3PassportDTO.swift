@@ -47,6 +47,18 @@ struct ProfileV3AgentPassportDTO: Decodable, Equatable {
     }
 }
 
+struct ProfileV3AgentPassportEmptyDTO: Decodable, Equatable {
+    let title: String?
+    let body: String?
+    let ctaLabel: String?
+
+    enum CodingKeys: String, CodingKey {
+        case title
+        case body
+        case ctaLabel = "cta_label"
+    }
+}
+
 struct ProfileV3PassportPreviousDTO: Decodable, Equatable {
     let label: String?
     let title: String?

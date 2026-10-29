@@ -44,6 +44,7 @@ struct ProfileV3AgentScreenDTO: Decodable, Equatable {
     private let rawInsight: ProfileV3LossyDTO<ProfileV3AgentInsightDTO>?
     private let rawCard: ProfileV3LossyDTO<ProfileV3AgentCardDTO>?
     private let rawPassport: ProfileV3LossyDTO<ProfileV3AgentPassportDTO>?
+    private let rawPassportEmpty: ProfileV3LossyDTO<ProfileV3AgentPassportEmptyDTO>?
     private let rawFields: [ProfileV3LossyDTO<ProfileV3AgentFieldDTO>]?
 
     var found: ProfileV3AgentFoundDTO? { rawFound?.value }
@@ -52,6 +53,7 @@ struct ProfileV3AgentScreenDTO: Decodable, Equatable {
     var insight: ProfileV3AgentInsightDTO? { rawInsight?.value }
     var card: ProfileV3AgentCardDTO? { rawCard?.value }
     var passport: ProfileV3AgentPassportDTO? { rawPassport?.value }
+    var passportEmpty: ProfileV3AgentPassportEmptyDTO? { rawPassportEmpty?.value }
     var fields: [ProfileV3AgentFieldDTO] { rawFields?.compactMap(\.value) ?? [] }
 
     enum CodingKeys: String, CodingKey {
@@ -67,6 +69,7 @@ struct ProfileV3AgentScreenDTO: Decodable, Equatable {
         case rawInsight = "insight"
         case rawCard = "card"
         case rawPassport = "passport"
+        case rawPassportEmpty = "passport_empty"
         case rawFields = "fields"
     }
 }

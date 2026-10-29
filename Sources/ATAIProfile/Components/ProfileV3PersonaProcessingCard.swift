@@ -30,6 +30,7 @@ struct ProfileV3PersonaProcessingDial: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var start = Date.now
     @State private var hasEntered = false
+    @State private var waveTicks = 0
 
     private typealias Persona = ProfileV3Theme.Sizes.Persona
     private typealias Layout = ProfileV3Theme.Sizes.PersonaProcessing
@@ -54,6 +55,23 @@ struct ProfileV3PersonaProcessingDial: View {
             start = .now
             hasEntered = true
         }
+        .sensoryFeedback(
+            .impact(flexibility: .soft, intensity: ProfileV3Theme.Motion.personaWaveTickIntensity),
+            trigger: waveTicks
+        )
+        .task(id: isStill) {
+            guard !isStill else { return }
+            while !Task.isCancelled {
+                let elapsed = Date.now.timeIntervalSince(start)
+                let next = ProfileV3PersonaWave.nextPeak(after: elapsed)
+                do {
+                    try await Task.sleep(for: .seconds(next - elapsed))
+                } catch {
+                    return
+                }
+                waveTicks += 1
+            }
+        }
     }
 
     private func loopPhase(at date: Date) -> Double {
@@ -76,7 +94,7 @@ struct ProfileV3PersonaProcessingDial: View {
     private func entrance(_ index: Int) -> Animation? {
         guard !isStill else { return nil }
         return ProfileV3Theme.Motion.personaLabelEntrance
-            .delay(ProfileV3Theme.Motion.personaLabelDelay + ProfileV3Theme.Motion.personaLabelStagger * Double(index))
+            .delay(ProfileV3PersonaProcessingSlot.entranceDelay(index))
     }
 }
 
@@ -101,6 +119,10 @@ struct ProfileV3PersonaProcessingSlot {
         case .trailing: return edge - half
         default: return edge
         }
+    }
+
+    static func entranceDelay(_ index: Int) -> Double {
+        ProfileV3Theme.Motion.personaLabelDelay + ProfileV3Theme.Motion.personaLabelStagger * Double(index)
     }
 
     static let all = [
@@ -152,8 +174,24 @@ enum ProfileV3PersonaWave {
         (0.1575, base),
     ]
 
+    static let peak = keyframes[3].offset
+
     static func color(at phase: Double, start: Double) -> Color {
         rgb(at: phase, start: start).color
+    }
+
+    static func nextPeak(after elapsed: TimeInterval) -> TimeInterval {
+        let loop = ProfileV3Theme.Motion.personaProcessingLoop
+        let times = ProfileV3PersonaProcessingSlot.all.enumerated().map { index, slot in
+            var offset = slot.waveStart + peak
+            offset -= offset.rounded(.down)
+            let first = offset * loop
+            let earliest = max(elapsed, ProfileV3PersonaProcessingSlot.entranceDelay(index))
+            var time = first + max(((earliest - first) / loop).rounded(.up), 0) * loop
+            if time <= elapsed { time += loop }
+            return time
+        }
+        return times.min() ?? elapsed + loop
     }
 
     static func rgb(at phase: Double, start: Double) -> RGB {

@@ -52,6 +52,7 @@ extension ProfileV3Theme.Opacity {
 
 extension ProfileV3Theme.Motion {
     static let personaProcessingLoop: Double = 4
+    static let personaWaveTickIntensity: Double = 0.5
 }
 
 extension ProfileV3Theme {

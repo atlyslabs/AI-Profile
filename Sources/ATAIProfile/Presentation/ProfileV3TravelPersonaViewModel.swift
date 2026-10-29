@@ -27,6 +27,7 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
     @Published private(set) var draggingTraitID: String?
     @Published private(set) var coach: ProfileV3PersonaCoach?
     @Published private(set) var isDecoding = false
+    @Published private(set) var decodedReveals = 0
     @Published var trait: ProfileV3PersonaTraitViewModel?
 
     let isEditable: Bool
@@ -81,6 +82,7 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
     func finishDecodingLoop() {
         guard isDecoding, phase != .loading else { return }
         isDecoding = false
+        if content != nil { decodedReveals += 1 }
     }
 
     func score(of trait: ProfileV3TravelPersona.Trait) -> Int {

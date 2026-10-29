@@ -40,18 +40,26 @@ extension ProfileV3Theme.Sizes {
     }
 
     enum Permissions {
-        static let cardsTop = ProfileV3Theme.Space.s40
-        static let cardSpacing = ProfileV3Theme.Space.s30
-        static let cardInset: CGFloat = 28
-        static let cardTop: CGFloat = 29
-        static let cardBottom = ProfileV3Theme.Space.s32
+        static let cardsTop: CGFloat = 36
+        static let cardSpacing: CGFloat = 43
+        static let cardInset: CGFloat = 31
+        static let cardRadius = ProfileV3Theme.Radius.xxxl
+        static let cardContentSpacing = ProfileV3Theme.Space.s24
         static let tagHeight: CGFloat = 14
-        static let optionsTop: CGFloat = 27
-        static let optionSpacing = ProfileV3Theme.Space.s24
-        static let subtitleTop = ProfileV3Theme.Space.s8
-        static let subtitleWidth: CGFloat = 177
+        static let questionLineHeight: CGFloat = 19
+        static let questionGap = ProfileV3Theme.Space.s24
+        static let dividerDash: [CGFloat] = [2, 2]
         static let bottom = ProfileV3Theme.Space.s40
         static let loadStateHeight: CGFloat = 240
+    }
+
+    enum SegmentedControl {
+        static let height = ProfileV3Theme.Space.s48
+        static let inset = ProfileV3Theme.Space.s4
+        static let segmentPadding = ProfileV3Theme.Space.s16
+        static let minimumScale: CGFloat = 0.8
+        static let shadowRadius: CGFloat = 15
+        static let shadowY: CGFloat = 4
     }
 
     enum InformationAccess {
@@ -135,10 +143,12 @@ extension ProfileV3Theme {
 extension ProfileV3Theme.Palette {
     static let inkText = Color(hex: "0B0B0B")
     static let inkGlyph = Color(hex: "323232")
+    static let segmentSelectedBorder = Color(hex: "E8E8E8")
 }
 
 extension ProfileV3Theme.Opacity {
     static let sectionTag: Double = 0.5
+    static let segmentIdle: Double = 0.5
     static let accessGlowFill: Double = 0.4
     static let accessGlow: Double = 0.5
     static let shieldFill: Double = 0.2

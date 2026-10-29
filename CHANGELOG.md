@@ -17,9 +17,35 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   Until the backend supports them, rules are kept on the device per signed-in user, traveler and
   agent (`ProfileV3FeatureFlags.isAgentCustomRulesEnabled`). Eight new `mo-aiprofile-agents-*`
   string keys need adding in Ditto.
+- The personal agent shows a passport placeholder when no passport is on file. The agent screen
+  sends `passport_empty` (`title`, `body`, `cta_label`) instead of `passport`, and the card shows
+  that copy under the traveler's name, with an Upload button that scans a passport for that
+  traveler. A first passport skips "What happened to your old passport" and the card refreshes.
+  The client strings `mo-aiprofile-documents-button-upload-passport`,
+  `mo-aiprofile-documents-text-upload-blurb-start` and `mo-aiprofile-documents-button-upload` are
+  now unused and can be deleted from Ditto.
+- The travel persona's loading dial plays a soft tap each time its colour wave lights a trait
+  label, and a success tap when the radar replaces it.
 
 ### Changed
 
+- Permissions read from the harness service: `GET /api/harness/v1/permissions`, saved one at a
+  time with `PUT /api/harness/v1/permissions/{key}` and `{"value": …}`. The board's
+  `/permissions` screen and the `save_permissions` submit are no longer used. Each top-level
+  permission is a card (its `label` as the tag, its `description` above a segmented control), and
+  a permission with a `parent_key` is another row in its parent's card under a dashed divider. The
+  sheet title is the client "Permissions". Option values get client labels: `on` "Yes", `off` "No",
+  `ask` "Always ask", `always` "Always", `when_needed` "When needed"; anything else is shown with
+  its underscores as spaces. Two new keys need adding in Ditto: `mo-aiprofile-agent-settings-always`
+  and `mo-aiprofile-agent-settings-when-needed`. The keys
+  `mo-aiprofile-agent-settings-connector-defaults`, `-web-access-defaults`, `-ask-for-actions`,
+  `-permission-description` and `-before-action-description` are now unused and can be deleted
+  from Ditto.
+- Medical card: the holder's name stops short of the caduceus and wraps between words, so a long
+  name no longer runs under the emblem's wings. The country flag lines up with the name's first
+  line.
+- The hub doesn't scroll while the "Build your household" card is selected, and scrolls back to
+  the top if it was partway down. The pass carousel still swipes.
 - Loyalty programmes: edit mode selects programs to delete. Every card gets a checkbox and slides
   right, a "Delete N program(s)" bar appears once one is selected, and a confirmation sheet
   ("Are you sure you want to delete N program(s)", Confirm / Cancel) removes them one by one. A

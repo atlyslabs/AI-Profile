@@ -268,8 +268,8 @@ private struct ProfileV3ConnectedEmailChip: View {
 }
 
 extension View {
-    func profileV3AccessCard() -> some View {
-        profileV3SettingsCard(cornerRadius: ProfileV3Theme.Sizes.InformationAccess.cardRadius, fill: Color(at: .pureWhite))
+    func profileV3AccessCard(cornerRadius: CGFloat = ProfileV3Theme.Sizes.InformationAccess.cardRadius) -> some View {
+        profileV3SettingsCard(cornerRadius: cornerRadius, fill: Color(at: .pureWhite))
             .shadow(
                 color: ProfileV3Theme.Palette.accessCardShadow,
                 radius: ProfileV3Theme.Sizes.InformationAccess.cardShadowRadius,

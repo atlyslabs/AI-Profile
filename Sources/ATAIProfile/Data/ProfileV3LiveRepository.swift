@@ -41,6 +41,12 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return account.snapshot().passportNationality
     }
 
+    @MainActor private func travellerName(for profileID: String?) -> String? {
+        guard let board = store.cachedBoard() else { return nil }
+        guard let profileID else { return board.mainProfile?.name }
+        return board.profiles.first { $0.profileID == profileID }?.name
+    }
+
     func loadAgentFlow(agentID: String, profileID: String?) async throws -> ProfileV3AgentFlow {
         guard let agent = ProfileV3AgentID(rawValue: agentID) else {
             throw ProfileV3RepositoryError.agentNotFound
@@ -48,7 +54,8 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         let endpoint = ProfileV3API.agent(type: agent, profileID: profileID)
         let dto: ProfileV3AgentScreenDTO = try await request(endpoint, action: "agent")
         let country = await accountCountry(for: profileID)
-        let mapped = ProfileV3AgentMapper.flow(from: dto, accountCountry: country)
+        let name = await travellerName(for: profileID)
+        let mapped = ProfileV3AgentMapper.flow(from: dto, accountCountry: country, holderName: name)
         agentResiduals.record(mapped.residuals, agentID: mapped.agentID, profileID: profileID)
         return mapped.flow
     }
@@ -467,16 +474,18 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadPermissions() async throws -> ProfileV3Permissions {
-        let dto: ProfileV3PermissionsScreenDTO = try await request(ProfileV3API.permissions, action: "permissions")
-        guard let permissions = ProfileV3SettingsMapper.permissions(dto) else {
+        let dto: ProfileV3PermissionsDTO = try await request(ProfileV3API.permissions, action: "permissions")
+        guard let permissions = ProfileV3PermissionsMapper.permissions(dto) else {
             throw ProfileV3RepositoryError.unavailable
         }
         return permissions
     }
 
-    func savePermission(_ optionID: String, in sectionID: String) async throws {
-        let request = ProfileV3SavePermissionsRequest(updates: [sectionID: optionID])
-        try await submit(try JSONEncoder().encode(request), action: "save_permissions")
+    func savePermission(_ value: String, for key: String) async throws {
+        let body = try JSONEncoder().encode(ProfileV3UpdatePermissionRequest(value: value))
+        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: "update_permission") {
+            try await client.perform(.updatePermission(key: key, body: body))
+        }
     }
 
     func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen {

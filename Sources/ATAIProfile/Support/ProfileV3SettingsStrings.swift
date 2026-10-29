@@ -74,9 +74,6 @@ extension ProfileV3Strings {
     static var disconnectProgressTitle: String { ProfileV3L10n.moAiprofileSettingsTitleDisconnectProgress }
     static var disconnectProgressBody: String { ProfileV3L10n.moAiprofileSettingsBodyDisconnectProgress }
     static var stopDisconnecting: String { ProfileV3L10n.moAiprofileSettingsButtonStopDisconnecting }
-    static var uploadPassport: String { ProfileV3L10n.moAiprofileDocumentsButtonUploadPassport }
-    static var uploadPassportBlurb: String { ProfileV3L10n.moAiprofileDocumentsTextUploadBlurbStart }
-    static var upload: String { ProfileV3L10n.moAiprofileDocumentsButtonUpload }
     static var uploadNewPassport: String { ProfileV3L10n.moAiprofileDocumentsButtonUploadNewPassport }
     static var passportDetails: String { ProfileV3L10n.moAiprofileDocumentsHeaderPassportDetails }
     static var noPreviousPassportsTitle: String { ProfileV3L10n.moAiprofileDocumentsEmptyStateNoPreviousPassports }

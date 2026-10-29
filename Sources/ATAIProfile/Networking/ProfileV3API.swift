@@ -32,7 +32,6 @@ enum ProfileV3API {
     case connectorControlPanel
     case disconnectConfirm(connector: ProfileV3ConnectorKey)
     case editTravellers
-    case permissions
     case deleteAccount
     case deleteAccountConfirm
     case deleteTravellerConfirm(profileID: String)
@@ -64,6 +63,8 @@ enum ProfileV3API {
     case gloveBoxMessages(limit: Int, cursor: String?)
     case gloveBoxMessage(id: String)
     case gloveBoxAttachment(messageID: String, index: Int)
+    case permissions
+    case updatePermission(key: String, body: Data)
 }
 
 extension ProfileV3API: ATCoreTargetType {
@@ -71,6 +72,7 @@ extension ProfileV3API: ATCoreTargetType {
     private static let captureBasePath = "/api/gmail-connector/kyc/v1"
     private static let vaultBasePath = "/api/fort-knox/v1"
     private static let gloveBoxBasePath = "/gateway/jaqen/v1"
+    private static let harnessBasePath = "/api/harness/v1"
 
     var baseURL: URL {
         URL(string: "https://profile.atlys.invalid")!
@@ -136,8 +138,6 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.boardBasePath + "/settings/connectors/disconnect/\(connector.rawValue)"
         case .editTravellers:
             return Self.boardBasePath + "/edit-traveler"
-        case .permissions:
-            return Self.boardBasePath + "/permissions"
         case .deleteAccount:
             return Self.boardBasePath + "/settings/delete-account"
         case .deleteAccountConfirm:
@@ -192,6 +192,10 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.gloveBoxBasePath + "/messages/\(id)"
         case .gloveBoxAttachment(let messageID, let index):
             return Self.gloveBoxBasePath + "/messages/\(messageID)/attachments/\(index)"
+        case .permissions:
+            return Self.harnessBasePath + "/permissions"
+        case .updatePermission(let key, _):
+            return Self.harnessBasePath + "/permissions/\(key)"
         }
     }
 
@@ -201,7 +205,7 @@ extension ProfileV3API: ATCoreTargetType {
              .vaultCreateCredential, .vaultCredentialAction, .vaultRegisterDevice, .vaultRevealChallenge, .vaultReveal,
              .gloveBoxCreate, .gloveBoxForwardingAddress:
             return .post
-        case .gloveBoxForwarding:
+        case .gloveBoxForwarding, .updatePermission:
             return .put
         case .editProfile, .vaultUpdateCredential:
             return .patch
@@ -239,7 +243,7 @@ extension ProfileV3API: ATCoreTargetType {
             return includeUsername ? Self.query(("include_username", "true")) : .requestPlain
         case .gloveBoxMessages(let limit, let cursor):
             return Self.query(("limit", String(limit)), ("cursor", cursor))
-        case .gloveBoxForwarding(let body), .gloveBoxForwardingAddress(let body):
+        case .gloveBoxForwarding(let body), .gloveBoxForwardingAddress(let body), .updatePermission(_, let body):
             return .requestData(body)
         case .vaultCreateCredential(let body),
              .vaultUpdateCredential(_, let body),

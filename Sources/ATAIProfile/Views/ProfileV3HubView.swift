@@ -12,6 +12,7 @@ struct ProfileV3HubView: View {
     @State private var viewport: CGSize = .zero
     @State private var isSettled = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.isScrollEnabled) private var isScrollEnabled
     @Environment(\.profileV3Globe) private var globeRenderer
     @Environment(\.profileV3FloatingBarClearance) private var floatingBarClearance
     @Environment(\.profileV3PausesAnimations) private var pausesAnimations
@@ -143,33 +144,47 @@ struct ProfileV3HubView: View {
     }
 
     private var content: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
-                Color.clear
-                    .frame(height: ProfileV3Theme.Sizes.hubBarBottom)
-                ProfileV3HubPinnedBlock(
-                    viewModel: viewModel,
-                    stage: stage,
-                    scroll: scroll,
-                    onExpand: expand
-                )
-                .zIndex(1)
-                ProfileV3HubPodiumSlot(scroll: scroll, isRevealed: stage.showsChrome && viewModel.home != nil)
-                phaseContent
-                    .padding(.top, ProfileV3Theme.Sizes.Podium.contentGap)
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    Color.clear
+                        .frame(height: ProfileV3Theme.Sizes.hubBarBottom)
+                        .id(Self.topID)
+                    ProfileV3HubPinnedBlock(
+                        viewModel: viewModel,
+                        stage: stage,
+                        scroll: scroll,
+                        onExpand: expand
+                    )
+                    .zIndex(1)
+                    ProfileV3HubPodiumSlot(scroll: scroll, isRevealed: stage.showsChrome && viewModel.home != nil)
+                    phaseContent
+                        .padding(.top, ProfileV3Theme.Sizes.Podium.contentGap)
+                }
+                .padding(.bottom, ProfileV3Theme.Space.s32)
+                .profileV3ScrollOffsetAnchor(scrollOffset)
+                .environment(\.isScrollEnabled, isScrollEnabled && !locksScrolling)
             }
-            .padding(.bottom, ProfileV3Theme.Space.s32)
-            .profileV3ScrollOffsetAnchor(scrollOffset)
+            .contentMargins(.bottom, floatingBarClearance, for: .scrollContent)
+            .profileV3ScrollOffset(scrollOffset)
+            .scrollDisabled(locksScrolling || viewModel.isHouseholdSelected)
+            .onChange(of: viewModel.isHouseholdSelected) { _, isSelected in
+                guard isSelected, scroll.offset > 0 else { return }
+                withAnimation(reduceMotion ? nil : ProfileV3Theme.Motion.contentSwitch) {
+                    proxy.scrollTo(Self.topID, anchor: .top)
+                }
+            }
         }
-        .contentMargins(.bottom, floatingBarClearance, for: .scrollContent)
-        .profileV3ScrollOffset(scrollOffset)
-        .scrollDisabled(
-            viewModel.home == nil
-                || stage.expandedPass != nil
-                || benefitPresenter.isPresenting
-                || couponPresenter.isPresenting
-        )
         .environment(\.profileV3PausesAnimations, pausesAnimations || hidesHub)
+    }
+
+    private static let topID = "profile_v3_hub_top"
+
+    private var locksScrolling: Bool {
+        viewModel.home == nil
+            || stage.expandedPass != nil
+            || benefitPresenter.isPresenting
+            || couponPresenter.isPresenting
     }
 
     private var scrollOffset: Binding<CGFloat> {

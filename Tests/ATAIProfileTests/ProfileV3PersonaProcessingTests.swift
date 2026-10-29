@@ -34,6 +34,34 @@ struct ProfileV3PersonaProcessingTests {
         #expect(slots.map(\.top) == [0, 23, 97, 185, 253, 275, 253, 185, 97, 23])
     }
 
+    @Test func hapticsTickEachLabelAsTheWaveLightsItOnceItHasAppeared() {
+        let loop = ProfileV3Theme.Motion.personaProcessingLoop
+        let slots = ProfileV3PersonaProcessingSlot.all
+        var ticks: [Double] = []
+        var elapsed = 0.0
+        for _ in 0 ..< 30 {
+            elapsed = Wave.nextPeak(after: elapsed)
+            ticks.append(elapsed)
+        }
+
+        #expect(zip(ticks, ticks.dropFirst()).allSatisfy { $0 < $1 })
+        #expect(abs(ticks[0] - 1.62576) < 0.001)
+        for tick in ticks {
+            let phase = tick / loop
+            let lit = slots.indices.filter { index in
+                var offset = phase - slots[index].waveStart - Wave.peak
+                offset -= offset.rounded()
+                return abs(offset) < 1e-9 && tick >= ProfileV3PersonaProcessingSlot.entranceDelay(index)
+            }
+            #expect(lit.count == 1)
+            #expect(rounded(Wave.rgb(at: phase - phase.rounded(.down), start: slots[lit.first ?? 0].waveStart))
+                == Wave.RGB(245, 166, 209))
+        }
+        #expect(ticks.filter { $0 < loop }.count == 6)
+        #expect(ticks.filter { $0 >= loop && $0 < 2 * loop }.count == slots.count)
+        #expect(ticks.filter { $0 >= 2 * loop && $0 < 3 * loop }.count == slots.count)
+    }
+
     private func rounded(_ rgb: Wave.RGB) -> Wave.RGB {
         Wave.RGB(rgb.red.rounded(), rgb.green.rounded(), rgb.blue.rounded())
     }

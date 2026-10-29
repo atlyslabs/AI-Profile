@@ -58,7 +58,7 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func savePermission(_: String, in _: String) async throws {
+    func savePermission(_: String, for _: String) async throws {
         throw ProfileV3RepositoryError.unavailable
     }
 

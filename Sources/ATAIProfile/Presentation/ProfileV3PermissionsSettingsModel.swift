@@ -9,11 +9,11 @@ final class ProfileV3PermissionsSettingsModel: ObservableObject {
 
     weak var navigator: ProfileV3SettingsNavigating?
 
-    private let repository: any ProfileV3SettingsRepository
+    private let repository: any ProfileV3PermissionsRepository
     private var loadTask: Task<Void, Never>?
     private var saveGenerations: [String: Int] = [:]
 
-    init(repository: any ProfileV3SettingsRepository) {
+    init(repository: any ProfileV3PermissionsRepository) {
         self.repository = repository
     }
 
@@ -40,23 +40,23 @@ final class ProfileV3PermissionsSettingsModel: ObservableObject {
         )
     }
 
-    func select(_ optionID: String, in sectionID: String) {
+    func select(_ optionID: String, in rowID: String) {
         guard let permissions else { return }
-        let previous = permissions.selectedOptionID(in: sectionID)
+        let previous = permissions.selectedOptionID(in: rowID)
         guard previous != optionID else { return }
-        show(permissions.selecting(optionID, in: sectionID))
-        let generation = (saveGenerations[sectionID] ?? 0) + 1
-        saveGenerations[sectionID] = generation
+        show(permissions.selecting(optionID, in: rowID))
+        let generation = (saveGenerations[rowID] ?? 0) + 1
+        saveGenerations[rowID] = generation
         let repository = repository
         Task { [weak self] in
             do {
-                try await repository.savePermission(optionID, in: sectionID)
-                ProfileV3Analytics.permissionChanged(sectionID: sectionID, to: optionID, from: previous)
+                try await repository.savePermission(optionID, for: rowID)
+                ProfileV3Analytics.permissionChanged(key: rowID, to: optionID, from: previous)
             } catch {
-                guard let self, self.saveGenerations[sectionID] == generation,
+                guard let self, self.saveGenerations[rowID] == generation,
                       let current = self.permissions,
-                      current.selectedOptionID(in: sectionID) == optionID else { return }
-                self.show(current.selecting(previous, in: sectionID))
+                      current.selectedOptionID(in: rowID) == optionID else { return }
+                self.show(current.selecting(previous, in: rowID))
             }
         }
     }

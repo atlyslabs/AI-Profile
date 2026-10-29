@@ -526,10 +526,10 @@ struct ProfileV3MockRepository: ProfileV3Repository {
 
     func loadPermissions() async throws -> ProfileV3Permissions {
         try await Task.sleep(for: delay)
-        return ProfileV3PermissionDefaults.permissions
+        return ProfileV3PermissionFixtures.permissions
     }
 
-    func savePermission(_: String, in _: String) async throws {
+    func savePermission(_: String, for _: String) async throws {
         try await Task.sleep(for: delay)
     }
 

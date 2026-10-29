@@ -83,7 +83,12 @@ protocol ProfileV3AppAccessRepository: Sendable {
     func revealVaultPassword(id: String, deviceName: String) async throws -> String
 }
 
-protocol ProfileV3SettingsRepository: ProfileV3AppAccessRepository {
+protocol ProfileV3PermissionsRepository: Sendable {
+    func loadPermissions() async throws -> ProfileV3Permissions
+    func savePermission(_ value: String, for key: String) async throws
+}
+
+protocol ProfileV3SettingsRepository: ProfileV3AppAccessRepository, ProfileV3PermissionsRepository {
     func loadSettings() async throws -> ProfileV3SettingsMenu
     func loadEditField(_ field: ProfileV3ProfileField) async throws -> ProfileV3EditField
     func saveProfileField(
@@ -114,8 +119,6 @@ protocol ProfileV3SettingsRepository: ProfileV3AppAccessRepository {
     func requestAccountDeletion() async throws
     func loadDeleteAccountReason() async throws -> ProfileV3DeleteAccountReason
     func loadDeleteAccountConfirm() async throws -> ProfileV3DeleteAccountConfirm
-    func loadPermissions() async throws -> ProfileV3Permissions
-    func savePermission(_ optionID: String, in sectionID: String) async throws
 }
 
 protocol ProfileV3GloveBoxRepository: Sendable {
