@@ -47,7 +47,7 @@ enum ProfileV3PassportMapper: ProfileV3DTOReading {
             countryName: country?.name ?? "",
             countryNativeName: country?.nativeName,
             passport: passport,
-            backPageURL: remoteURL(dto.backURL),
+            labels: labels(dto.labels, fallback: .card),
             previous: previous(dto.previous),
             rescan: rescan,
             howUsed: dto.howUsed?.directive
@@ -74,11 +74,7 @@ enum ProfileV3PassportMapper: ProfileV3DTOReading {
         }
         return ProfileV3PreviousPassports(
             title: text(dto.title) ?? "",
-            labels: ProfileV3PassportLabels(
-                number: text(dto.labels?.number) ?? "",
-                issueDate: text(dto.labels?.issueDate) ?? "",
-                expiryDate: text(dto.labels?.expiryDate) ?? ""
-            ),
+            labels: labels(dto.labels, fallback: .none),
             passports: passports
         )
     }
@@ -97,8 +93,30 @@ enum ProfileV3PassportMapper: ProfileV3DTOReading {
             countryNativeName: country?.nativeName,
             issuedOn: displayDate(dto.issueDate),
             expiresOn: displayDate(dto.expiryDate),
-            status: text(dto.status)?.lowercased() == expiredStatus ? .expired : .active
+            status: text(dto.status)?.lowercased() == expiredStatus ? .expired : .active,
+            back: ProfileV3PassportBack(
+                father: text(dto.father),
+                mother: text(dto.mother),
+                spouse: text(dto.spouse),
+                address: Array(dto.address.compactMap(text).prefix(ProfileV3Theme.Counts.passportAddressLines))
+            )
         )
+    }
+
+    private static func labels(
+        _ dto: ProfileV3PassportLabelsDTO?,
+        fallback: ProfileV3PassportLabels
+    ) -> ProfileV3PassportLabels {
+        ProfileV3PassportLabels(
+            number: text(dto?.number) ?? "",
+            issueDate: text(dto?.issueDate) ?? "",
+            expiryDate: text(dto?.expiryDate) ?? "",
+            father: text(dto?.father) ?? "",
+            mother: text(dto?.mother) ?? "",
+            spouse: text(dto?.spouse) ?? "",
+            address: text(dto?.address) ?? ""
+        )
+        .filling(from: fallback)
     }
 
     static func scan(_ dto: ProfileV3PassportScanScreenDTO) -> ProfileV3PassportScan {

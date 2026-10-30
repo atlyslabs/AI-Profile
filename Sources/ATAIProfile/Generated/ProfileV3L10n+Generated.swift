@@ -159,6 +159,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsButtonAddNewPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-add-new-password", fallback: "+ Add new") }
   /// Credential store sheet button that starts adding a saved login.
   internal static var moAiprofileAgentsButtonAddStoredCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-add-stored-credentials", fallback: "+ Add credentials") }
+  /// App access row action for an app that only needs a username, such as Instagram.
+  internal static var moAiprofileAgentsButtonAddUsername: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-add-username", fallback: "+ user name") }
   /// Button to trigger the flow for adding additional email accounts.
   internal static var moAiprofileAgentsButtonConnectEmails: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-connect-emails", fallback: "Connect other emails") }
   /// Floating button on an agent form that opens the custom rule editor.
@@ -189,6 +191,12 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsDescriptionDataVault: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-data-vault", fallback: "A secure vault for your sources") }
   /// Introductory blurb for the Gmail connector functionality.
   internal static var moAiprofileAgentsDescriptionGmailConnector: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-gmail-connector", fallback: "Your travel details, bookings and updates are already there. Connecting email helps the agent understand and act on them without asking you to find or share everything manually.") }
+  /// Detail under the third Instagram explainer step.
+  internal static var moAiprofileAgentsDescriptionInstagramStepFollow: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-instagram-step-follow", fallback: "From here on, your agent will organize, plan, and recommend the best of everything for you.") }
+  /// Detail under the second Instagram explainer step.
+  internal static var moAiprofileAgentsDescriptionInstagramStepRedirect: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-instagram-step-redirect", fallback: "See how the magic begins...") }
+  /// Detail under the first Instagram explainer step.
+  internal static var moAiprofileAgentsDescriptionInstagramStepUsername: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-instagram-step-username", fallback: "Just to get to know you...") }
   /// Introductory blurb for the ITR connector functionality.
   internal static var moAiprofileAgentsDescriptionItrConnector: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-itr-connector", fallback: "Your filings confirm income and travel history, so the agent can prefill applications without asking you to dig up documents.") }
   /// Error when disconnecting a connector fails.
@@ -223,6 +231,12 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelEmailConnector: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-email-connector", fallback: "Email") }
   /// Label for settings regarding data sources and permissions.
   internal static var moAiprofileAgentsLabelInformationAccess: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-information-access", fallback: "Information access") }
+  /// Instagram's Follow button drawn in the third Instagram explainer card.
+  internal static var moAiprofileAgentsLabelInstagramFollow: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-instagram-follow", fallback: "Follow") }
+  /// Message bubble drawn in the third Instagram explainer card.
+  internal static var moAiprofileAgentsLabelInstagramHi: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-instagram-hi", fallback: "hi") }
+  /// Sample username drawn in the first Instagram explainer card.
+  internal static var moAiprofileAgentsLabelInstagramSampleHandle: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-instagram-sample-handle", fallback: "Johndoe") }
   /// Credentials form field label for the password.
   internal static var moAiprofileAgentsLabelPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-password", fallback: "Password") }
   /// Travel persona loader: trait label on the processing dial.
@@ -251,6 +265,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelRegainAccess: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-regain-access", fallback: "Regain access to agents and benefits.") }
   /// Label at the top of the custom rule note card.
   internal static var moAiprofileAgentsLabelRuleNote: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-rule-note", fallback: "Note") }
+  /// Label of the field that asks for an Instagram username.
+  internal static var moAiprofileAgentsLabelUsername: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-username", fallback: "Username") }
   /// Credentials form field label for the username or email address.
   internal static var moAiprofileAgentsLabelUsernameEmail: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-username-email", fallback: "Username/Email address") }
   /// Credentials form field label for the website.
@@ -269,6 +285,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsStatusAutoConnected: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-auto-connected", fallback: "Auto connected") }
   /// Status label indicating a connector is active.
   internal static var moAiprofileAgentsStatusConnected: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-connected", fallback: "Connected") }
+  /// Shown while the app opens Instagram after a username is saved.
+  internal static var moAiprofileAgentsStatusInstagramRedirecting: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-instagram-redirecting", fallback: "Redirecting you to instagram...") }
   /// Travel persona loader caption under the processing dial.
   internal static var moAiprofileAgentsStatusPersonaProcessing: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-persona-processing", fallback: "Decoding your travel choices, won't take long...") }
   /// Privacy reassurance subtitle for travel data.
@@ -279,12 +297,24 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsTitleAddNewPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-new-password", fallback: "Add new password") }
   /// Title of the custom rule editor when adding a rule.
   internal static var moAiprofileAgentsTitleAddRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-rule", fallback: "Add a rule") }
+  /// Title of the sheet that asks for an Instagram username.
+  internal static var moAiprofileAgentsTitleAddUsername: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-username", fallback: "Add user name") }
   /// Heading for the connector integration management screen.
   internal static var moAiprofileAgentsTitleConnectors: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-connectors", fallback: "Connectors") }
   /// Agent form section listing the traveler's custom rules.
   internal static var moAiprofileAgentsTitleCustomRules: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-custom-rules", fallback: "Custom rules") }
   /// Title of the custom rule editor when editing a rule.
   internal static var moAiprofileAgentsTitleEditRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-edit-rule", fallback: "Edit a rule") }
+  /// Lead line after the Instagram username is saved.
+  internal static var moAiprofileAgentsTitleInstagramComeSayHi: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-come-say-hi", fallback: "...Come say hi!") }
+  /// Main line after the Instagram username is saved.
+  internal static var moAiprofileAgentsTitleInstagramFollowUs: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-follow-us", fallback: "Follow us, drop in a text") }
+  /// Third step on the Instagram connect explainer.
+  internal static var moAiprofileAgentsTitleInstagramStepFollow: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-step-follow", fallback: "Hit the “Follow” button and say hi!") }
+  /// Second step on the Instagram connect explainer.
+  internal static var moAiprofileAgentsTitleInstagramStepRedirect: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-step-redirect", fallback: "Redirect to meet Ayl on instagram") }
+  /// First step on the Instagram connect explainer.
+  internal static var moAiprofileAgentsTitleInstagramStepUsername: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-step-username", fallback: "We ask for your username") }
   /// Travel persona loader card title.
   internal static var moAiprofileAgentsTitleTravelerProfile: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-traveler-profile", fallback: "Traveler profile") }
   /// Toast after saving edited credentials.
@@ -297,6 +327,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsToastPersonaUpdated: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-persona-updated", fallback: "Travel persona updated") }
   /// Confirmation message after updating agent preferences.
   internal static var moAiprofileAgentsToastPreferencesUpdated: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-preferences-updated", fallback: "Agent preferences updated") }
+  /// Toast after an Instagram username is saved.
+  internal static var moAiprofileAgentsToastUsernameAdded: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-username-added", fallback: "Username added successfully") }
   /// Action button to add a traveler to a profile or document.
   internal static var moAiprofileDocumentsButtonAddTraveler: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-button-add-traveler", fallback: "Add traveler") }
   /// Generic upload action button.

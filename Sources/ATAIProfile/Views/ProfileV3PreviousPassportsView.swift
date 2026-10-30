@@ -7,6 +7,7 @@ struct ProfileV3PreviousPassportsView: View {
     var phase: ProfileV3LoadPhase = .loaded
     let onBack: () -> Void
     var onRetry: () -> Void = {}
+    var showsBackPages = ProfileV3FeatureFlags.isPassportBackPageEnabled
 
     @State private var headerPin = ProfileV3HeaderPin()
 
@@ -36,13 +37,14 @@ struct ProfileV3PreviousPassportsView: View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: Passport.listSpacing) {
                 ForEach(Array(screen.passports.enumerated()), id: \.element.id) { index, passport in
-                    ProfileV3PassportCard(
+                    ProfileV3PassportPages(
                         holderName: passport.holderName,
                         countryName: passport.countryName,
                         countryNativeName: passport.countryNativeName,
                         labels: screen.labels,
                         content: .details(passport),
-                        showsStatusBadge: true
+                        showsStatusBadge: true,
+                        showsBackPage: showsBackPages
                     )
                     if index == 0, screen.passports.count > 1 {
                         ProfileV3HorizontalRule()

@@ -77,6 +77,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
     private let appAccess: ProfileV3AppAccessStore
     private let vault: ProfileV3VaultStore
     private let gloveBox: ProfileV3GloveBoxStore
+    private let aiConnectors = ProfileV3AIConnectorStore()
     private let settingsCitizenship: String?
 
     init(
@@ -242,7 +243,31 @@ struct ProfileV3MockRepository: ProfileV3Repository {
 
     func loadConnectors() async throws -> ProfileV3ConnectorsScreen {
         try await Task.sleep(for: delay)
-        return ProfileV3Fixtures.connectorsScreen
+        let screen = ProfileV3Fixtures.connectorsScreen
+        return ProfileV3ConnectorsScreen(
+            title: screen.title,
+            blurb: screen.blurb,
+            connectors: screen.connectors + ProfileV3AIConnectorFixtures.rows(syncedAt: aiConnectors.syncedAt),
+            controlPanel: screen.controlPanel
+        )
+    }
+
+    func loadAIConnector(_ connector: String) async throws -> ProfileV3AIConnector {
+        try await Task.sleep(for: delay)
+        return ProfileV3AIConnectorFixtures.detail(connector)
+    }
+
+    func loadAIConnectorConnect(_ connector: String) async throws -> ProfileV3AIConnectorConnect {
+        try await Task.sleep(for: delay)
+        return ProfileV3AIConnectorFixtures.connect(connector)
+    }
+
+    func connectAIConnector(_ submit: ProfileV3AIConnectorConnect.Submit, text: String) async throws {
+        try await Task.sleep(for: delay)
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw ProfileV3Error.invalidRequest(message: "Paste the answer before you save.")
+        }
+        aiConnectors.connect(submit.connector)
     }
 
     func disconnectConnector(_: ProfileV3ConnectorKey) async throws {
@@ -417,13 +442,14 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         }
     }
 
-    func loadProgrammeCatalogue(query _: String?, kind _: String?) async throws -> ProfileV3ProgrammePicker {
+    func loadProgrammeCatalogue(query _: String?, kind _: String?, market: String?) async throws -> ProfileV3ProgrammePicker {
         try await Task.sleep(for: delay)
         return ProfileV3ProgrammePicker(
             items: ProfileV3ProgrammeCatalogue.all,
             filters: ProfileV3ProgrammeCategory.allCases.map {
                 ProfileV3ProgrammeFilter(label: $0.title, category: $0)
-            }
+            },
+            market: ProfileV3ProgrammeCatalogue.mockMarket(selected: market)
         )
     }
 

@@ -817,6 +817,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-button-add-username": {
+      "comment": "App access row action for an app that only needs a username, such as Instagram.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ user name"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-button-connect-emails": {
       "comment": "Button to trigger the flow for adding additional email accounts.",
       "extractionState": "manual",
@@ -993,6 +1005,42 @@
           "stringUnit": {
             "state": "translated",
             "value": "Your travel details, bookings and updates are already there. Connecting email helps the agent understand and act on them without asking you to find or share everything manually."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-instagram-step-follow": {
+      "comment": "Detail under the third Instagram explainer step.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From here on, your agent will organize, plan, and recommend the best of everything for you."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-instagram-step-redirect": {
+      "comment": "Detail under the second Instagram explainer step.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See how the magic begins..."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-instagram-step-username": {
+      "comment": "Detail under the first Instagram explainer step.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Just to get to know you..."
           }
         }
       }
@@ -1201,6 +1249,42 @@
         }
       }
     },
+    "mo-aiprofile-agents-label-instagram-follow": {
+      "comment": "Instagram's Follow button drawn in the third Instagram explainer card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follow"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-instagram-hi": {
+      "comment": "Message bubble drawn in the third Instagram explainer card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hi"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-instagram-sample-handle": {
+      "comment": "Sample username drawn in the first Instagram explainer card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Johndoe"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-label-password": {
       "comment": "Credentials form field label for the password.",
       "extractionState": "manual",
@@ -1369,6 +1453,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-label-username": {
+      "comment": "Label of the field that asks for an Instagram username.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-label-username-email": {
       "comment": "Credentials form field label for the username or email address.",
       "extractionState": "manual",
@@ -1477,6 +1573,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-status-instagram-redirecting": {
+      "comment": "Shown while the app opens Instagram after a username is saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redirecting you to instagram..."
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-status-persona-processing": {
       "comment": "Travel persona loader caption under the processing dial.",
       "extractionState": "manual",
@@ -1537,6 +1645,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-title-add-username": {
+      "comment": "Title of the sheet that asks for an Instagram username.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add user name"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-title-connectors": {
       "comment": "Heading for the connector integration management screen.",
       "extractionState": "manual",
@@ -1569,6 +1689,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "Edit a rule"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-come-say-hi": {
+      "comment": "Lead line after the Instagram username is saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "...Come say hi!"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-follow-us": {
+      "comment": "Main line after the Instagram username is saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follow us, drop in a text"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-step-follow": {
+      "comment": "Third step on the Instagram connect explainer.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hit the “Follow” button and say hi!"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-step-redirect": {
+      "comment": "Second step on the Instagram connect explainer.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redirect to meet Ayl on instagram"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-step-username": {
+      "comment": "First step on the Instagram connect explainer.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We ask for your username"
           }
         }
       }
@@ -1641,6 +1821,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Agent preferences updated"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-toast-username-added": {
+      "comment": "Toast after an Instagram username is saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username added successfully"
           }
         }
       }

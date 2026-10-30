@@ -232,45 +232,61 @@ struct ProfileV3AppCredentialsSheet: View {
                     }
                 }
             }
-            ProfileV3CredentialField(
-                label: ProfileV3Strings.appCredentialsUsername,
-                text: $viewModel.credentials.username,
-                keyboard: .emailAddress,
-                contentType: .username
-            )
             VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s8) {
                 ProfileV3CredentialField(
-                    label: ProfileV3Strings.appCredentialsPassword,
-                    text: $viewModel.credentials.password,
-                    isSecure: !viewModel.isPasswordRevealed,
-                    contentType: .password,
-                    prompt: viewModel.passwordPrompt
-                ) {
-                    if viewModel.isRevealingPassword {
-                        ProfileV3Spinner(size: Layout.accessory, lineWidth: ProfileV3Theme.Stroke.regular)
-                            .frame(minWidth: ProfileV3Theme.Control.tapTarget, minHeight: Layout.accessory)
-                    } else {
-                        ProfileV3CredentialAccessory(
-                            icon: viewModel.isPasswordRevealed
-                                ? ATIcon.SwiftUIImage.visibility
-                                : ATIcon.SwiftUIImage.visibilityOff,
-                            accessibilityLabel: viewModel.isPasswordRevealed
-                                ? ProfileV3Strings.hidePassword
-                                : ProfileV3Strings.showPassword,
-                            action: viewModel.togglePasswordVisibility
-                        )
-                    }
+                    label: viewModel.usernameLabel,
+                    text: $viewModel.credentials.username,
+                    keyboard: viewModel.asksForPassword ? .emailAddress : .asciiCapable,
+                    contentType: .username
+                )
+                if !viewModel.asksForPassword {
+                    inlineError
                 }
-                if let error = viewModel.inlineError {
-                    Text(error)
-                        .typoGraphy(.B2InterMedium12)
-                        .foregroundStyle(ProfileV3Theme.Palette.destructive)
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+            }
+            if viewModel.asksForPassword {
+                passwordField
             }
         }
         .disabled(viewModel.phase != .editing)
+    }
+
+    private var passwordField: some View {
+        VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s8) {
+            ProfileV3CredentialField(
+                label: ProfileV3Strings.appCredentialsPassword,
+                text: $viewModel.credentials.password,
+                isSecure: !viewModel.isPasswordRevealed,
+                contentType: .password,
+                prompt: viewModel.passwordPrompt
+            ) {
+                if viewModel.isRevealingPassword {
+                    ProfileV3Spinner(size: Layout.accessory, lineWidth: ProfileV3Theme.Stroke.regular)
+                        .frame(minWidth: ProfileV3Theme.Control.tapTarget, minHeight: Layout.accessory)
+                } else {
+                    ProfileV3CredentialAccessory(
+                        icon: viewModel.isPasswordRevealed
+                            ? ATIcon.SwiftUIImage.visibility
+                            : ATIcon.SwiftUIImage.visibilityOff,
+                        accessibilityLabel: viewModel.isPasswordRevealed
+                            ? ProfileV3Strings.hidePassword
+                            : ProfileV3Strings.showPassword,
+                        action: viewModel.togglePasswordVisibility
+                    )
+                }
+            }
+            inlineError
+        }
+    }
+
+    @ViewBuilder
+    private var inlineError: some View {
+        if let error = viewModel.inlineError {
+            Text(error)
+                .typoGraphy(.B2InterMedium12)
+                .foregroundStyle(ProfileV3Theme.Palette.destructive)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     private var bar: some View {
@@ -343,7 +359,7 @@ private struct ProfileV3AppCredentialsPreview: View {
 }
 
 #Preview("Add credentials") {
-    ProfileV3AppCredentialsPreview(mode: .add(ProfileV3AppAccessFixtures.content.apps[0]))
+    ProfileV3AppCredentialsPreview(mode: .add(ProfileV3AppAccessFixtures.content.apps[1]))
 }
 
 #Preview("Add new password") {

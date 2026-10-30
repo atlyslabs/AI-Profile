@@ -24,6 +24,22 @@ extension ProfileV3Strings {
     static var appCredentialsAdd: String { ProfileV3L10n.moAiprofileGeneralButtonAdd1 }
     static var appPasswordAdded: String { ProfileV3L10n.moAiprofileAgentsToastPasswordAdded }
     static var appCredentialsUpdated: String { ProfileV3L10n.moAiprofileAgentsToastCredentialsUpdated }
+    static var appAccessAddUsername: String { ProfileV3L10n.moAiprofileAgentsButtonAddUsername }
+    static var appUsernameTitle: String { ProfileV3L10n.moAiprofileAgentsTitleAddUsername }
+    static var appUsernameLabel: String { ProfileV3L10n.moAiprofileAgentsLabelUsername }
+    static var appUsernameAdded: String { ProfileV3L10n.moAiprofileAgentsToastUsernameAdded }
+    static var instagramStepUsername: String { ProfileV3L10n.moAiprofileAgentsTitleInstagramStepUsername }
+    static var instagramStepUsernameDetail: String { ProfileV3L10n.moAiprofileAgentsDescriptionInstagramStepUsername }
+    static var instagramStepRedirect: String { ProfileV3L10n.moAiprofileAgentsTitleInstagramStepRedirect }
+    static var instagramStepRedirectDetail: String { ProfileV3L10n.moAiprofileAgentsDescriptionInstagramStepRedirect }
+    static var instagramStepFollow: String { ProfileV3L10n.moAiprofileAgentsTitleInstagramStepFollow }
+    static var instagramStepFollowDetail: String { ProfileV3L10n.moAiprofileAgentsDescriptionInstagramStepFollow }
+    static var instagramSampleHandle: String { ProfileV3L10n.moAiprofileAgentsLabelInstagramSampleHandle }
+    static var instagramFollow: String { ProfileV3L10n.moAiprofileAgentsLabelInstagramFollow }
+    static var instagramHi: String { ProfileV3L10n.moAiprofileAgentsLabelInstagramHi }
+    static var instagramComeSayHi: String { ProfileV3L10n.moAiprofileAgentsTitleInstagramComeSayHi }
+    static var instagramFollowUs: String { ProfileV3L10n.moAiprofileAgentsTitleInstagramFollowUs }
+    static var instagramRedirecting: String { ProfileV3L10n.moAiprofileAgentsStatusInstagramRedirecting }
     static var credentialStore: String { ProfileV3L10n.moAiprofileAgentsLabelCredentialStore }
     static var credentialStoreBlurb: String { ProfileV3L10n.moAiprofileAgentsDescriptionCredentialStore }
     static var credentialStoreSubtitle: String { ProfileV3L10n.moAiprofileAgentsDescriptionCredentialStoreSheet }

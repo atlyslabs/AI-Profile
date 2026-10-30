@@ -11,7 +11,8 @@ struct ProfileV3AppAccessTests {
         try await waitUntil { model.phase == .loaded }
 
         #expect(model.autoConnected.map(\.name) == ["Splits by Atlys"])
-        #expect(model.pendingApps.map(\.id) == ["grab", "uber", "stripe", "plaid", "spotify", "strava"])
+        #expect(model.pendingApps.map(\.id) == ["instagram", "grab", "uber", "stripe", "plaid", "spotify", "strava"])
+        #expect(model.pendingApps.first?.asksForUsernameOnly == true)
         #expect(model.connectedApps.isEmpty)
         #expect(model.deckEntries.isEmpty)
         #expect(!model.showsConnectedHint)
@@ -21,7 +22,8 @@ struct ProfileV3AppAccessTests {
         let model = makeModel()
         model.load()
         try await waitUntil { model.phase == .loaded }
-        let grab = try #require(model.pendingApps.first)
+        let pendingGrab = model.pendingApps.first { $0.id == "grab" }
+        let grab = try #require(pendingGrab)
 
         model.tapAddCredentials(grab)
         let editor = try #require(model.editor(from: .page))
@@ -41,7 +43,7 @@ struct ProfileV3AppAccessTests {
         try await waitUntil { model.connectedApps.map(\.id) == ["grab"] }
 
         #expect(model.connectedApps.first?.username == "rahul@atlys.com")
-        #expect(model.pendingApps.first?.id == "uber")
+        #expect(model.pendingApps.map(\.id) == ["instagram", "uber", "stripe", "plaid", "spotify", "strava"])
         #expect(model.saveCompletions == 1)
         #expect(model.showsConnectedHint)
         let entry = try #require(model.deckEntries.first)
@@ -76,7 +78,7 @@ struct ProfileV3AppAccessTests {
         try await waitUntil { model.connectedApps.count == 1 }
         #expect(model.connectedApps.first?.name == "hdfcbank.in")
         #expect(model.connectedApps.first?.iconURL == nil)
-        #expect(model.pendingApps.count == 6)
+        #expect(model.pendingApps.count == 7)
     }
 
     @Test func websiteLinksNeedAHostWithADot() {
@@ -126,7 +128,7 @@ struct ProfileV3AppAccessTests {
 
         #expect(navigator.path == [.appAccess])
         #expect(model.deckEntries.isEmpty)
-        #expect(model.pendingApps.first?.id == "grab")
+        #expect(model.pendingApps.map(\.id).prefix(2) == ["instagram", "grab"])
         #expect(model.deckResetToken == 1)
     }
 

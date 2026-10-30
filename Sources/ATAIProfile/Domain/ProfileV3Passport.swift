@@ -14,6 +14,32 @@ struct ProfileV3Passport: Identifiable, Equatable {
     var issuedOn: String
     var expiresOn: String
     var status: Status = .active
+    var back = ProfileV3PassportBack()
+}
+
+struct ProfileV3PassportBack: Equatable {
+    var father: String?
+    var mother: String?
+    var spouse: String?
+    var address: [String] = []
+
+    var isEmpty: Bool { father == nil && mother == nil && spouse == nil && address.isEmpty }
+
+    func rows(labels: ProfileV3PassportLabels) -> [ProfileV3PassportBackRow] {
+        [
+            ProfileV3PassportBackRow(id: "father", label: labels.father, lines: [father ?? ""]),
+            ProfileV3PassportBackRow(id: "mother", label: labels.mother, lines: [mother ?? ""]),
+            ProfileV3PassportBackRow(id: "spouse", label: labels.spouse, lines: [spouse ?? ""]),
+            ProfileV3PassportBackRow(id: "address", label: labels.address, lines: address.isEmpty ? [""] : address)
+        ]
+        .filter { !$0.label.isEmpty }
+    }
+}
+
+struct ProfileV3PassportBackRow: Identifiable, Equatable {
+    let id: String
+    let label: String
+    let lines: [String]
 }
 
 enum ProfileV3PassportChangeReason: String, CaseIterable, Identifiable {
@@ -39,7 +65,7 @@ struct ProfileV3PassportField: Equatable {
     var countryName: String
     var countryNativeName: String?
     var passport: ProfileV3Passport?
-    var backPageURL: URL?
+    var labels: ProfileV3PassportLabels = .card
     var previous: ProfileV3PassportPrevious?
     var rescan: ProfileV3Directive?
     var howUsed: ProfileV3Directive?
@@ -64,6 +90,24 @@ struct ProfileV3PassportLabels: Equatable {
     var number: String
     var issueDate: String
     var expiryDate: String
+    var father = ""
+    var mother = ""
+    var spouse = ""
+    var address = ""
+
+    static let none = ProfileV3PassportLabels(number: "", issueDate: "", expiryDate: "")
+
+    func filling(from other: ProfileV3PassportLabels) -> ProfileV3PassportLabels {
+        ProfileV3PassportLabels(
+            number: number.isEmpty ? other.number : number,
+            issueDate: issueDate.isEmpty ? other.issueDate : issueDate,
+            expiryDate: expiryDate.isEmpty ? other.expiryDate : expiryDate,
+            father: father.isEmpty ? other.father : father,
+            mother: mother.isEmpty ? other.mother : mother,
+            spouse: spouse.isEmpty ? other.spouse : spouse,
+            address: address.isEmpty ? other.address : address
+        )
+    }
 
     static var card: ProfileV3PassportLabels {
         ProfileV3PassportLabels(

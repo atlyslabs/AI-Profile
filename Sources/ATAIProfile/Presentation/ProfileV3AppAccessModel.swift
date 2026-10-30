@@ -6,6 +6,7 @@ final class ProfileV3AppAccessModel: ObservableObject {
     @Published private(set) var content: ProfileV3AppAccess?
     @Published private(set) var phase: ProfileV3LoadPhase = .loading
     @Published private(set) var editor: ProfileV3AppCredentialsViewModel?
+    @Published var instagram: ProfileV3InstagramConnectModel?
     @Published private(set) var hasSeenHint: Bool
     @Published private(set) var deckResetToken = 0
     @Published private(set) var saveCompletions = 0
@@ -81,7 +82,14 @@ final class ProfileV3AppAccessModel: ObservableObject {
     }
 
     func tapAddCredentials(_ app: ProfileV3LinkedApp) {
-        present(.add(app), from: .page)
+        guard app.asksForUsernameOnly else {
+            present(.add(app), from: .page)
+            return
+        }
+        instagram?.cancel()
+        instagram = ProfileV3InstagramConnectModel(app: app, repository: repository) { [weak self] in
+            self?.finishInstagram()
+        }
     }
 
     func tapAddNew() {
@@ -144,6 +152,12 @@ final class ProfileV3AppAccessModel: ObservableObject {
         editor.onFinish = { [weak self] in self?.finishEditing() }
         editor.onFailure = { [weak self] message in self?.router?.showFlash(message, isSuccess: false) }
         self.editor = editor
+    }
+
+    private func finishInstagram() {
+        guard instagram != nil else { return }
+        instagram = nil
+        load()
     }
 
     private func finishEditing() {

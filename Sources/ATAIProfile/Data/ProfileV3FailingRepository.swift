@@ -18,6 +18,18 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
+    func loadAIConnector(_: String) async throws -> ProfileV3AIConnector {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadAIConnectorConnect(_: String) async throws -> ProfileV3AIConnectorConnect {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func connectAIConnector(_: ProfileV3AIConnectorConnect.Submit, text _: String) async throws {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
     func loadConnectors() async throws -> ProfileV3ConnectorsScreen {
         throw ProfileV3RepositoryError.unavailable
     }
@@ -273,7 +285,7 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         AsyncThrowingStream { $0.finish(throwing: ProfileV3RepositoryError.agentNotFound) }
     }
 
-    func loadProgrammeCatalogue(query _: String?, kind _: String?) async throws -> ProfileV3ProgrammePicker {
+    func loadProgrammeCatalogue(query _: String?, kind _: String?, market _: String?) async throws -> ProfileV3ProgrammePicker {
         throw ProfileV3RepositoryError.unavailable
     }
 

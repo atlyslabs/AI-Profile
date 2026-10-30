@@ -7,39 +7,77 @@ import UIKit
 @MainActor
 @Suite("Passport back page", .serialized)
 struct ProfileV3PassportBackPageTests {
-    private static let backURL = "https://storage.googleapis.com/vdcapp-54939.appspot.com/u/documents/"
-        + "passportbackpage-769b.jpeg?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Expires=604795&X-Goog-Signature=4cdd"
-
-    @Test func aScannedBackPageComesWithThePassport() throws {
+    @Test func theCardCarriesItsBackPageDetailsAndTheirLabels() throws {
         let field = try Self.field(#"""
         {"agent_type":"personal","passport":{
-          "issue_date":"May 15, 2024","status":"active","expiry_date":"May 14, 2034",
-          "rescan_label":"Upload new passport","front_url":"https://storage.googleapis.com/b/front.jpeg",
-          "verified":true,"labels":{"number":"PASSPORT NUMBER","issue_date":"ISSUE DATE","expiry_date":"EXPIRY DATE"},
-          "how_used":{"go":"passport_how_used"},"title":"भारत गणराज्य   REPUBLIC OF INDIA",
-          "rescan":{"profile_id":"8372cf0a","go":"passport_update"},"number":"F9090906",
-          "back_url":"\#(Self.backURL)","title_label":"PASSPORT DETAILS","name":"CHOTA BACHA"}}
+          "name":"CHOTA BACHA","number":"F9090906","status":"active","title":"भारत गणराज्य   REPUBLIC OF INDIA",
+          "issue_date":"May 15, 2024","expiry_date":"May 14, 2034","verified":true,
+          "father":" Vindo Sharma ","mother":"Vindo Sharma",
+          "address":["Village- Betalon, Post-Mangalpur","  ","District-Bankpura,PS-INDUS","Wet Bengal, PIN-722305","Extra line"],
+          "labels":{"number":"PASSPORT NUMBER","issue_date":"ISSUE DATE","expiry_date":"EXPIRY DATE",
+                    "father":"FATHER","mother":"MOTHER","spouse":"SPOUSE","address":"ADDRESS"},
+          "rescan":{"profile_id":"8372cf0a","go":"passport_update"}}}
         """#)
-        #expect(field.backPageURL == URL(string: Self.backURL))
-        #expect(field.passport?.number == "F9090906")
-        #expect(field.holderName == "CHOTA BACHA")
-        #expect(field.countryName == "REPUBLIC OF INDIA")
+        let passport = try #require(field.passport)
+        #expect(field.labels == ProfileV3PassportFixtures.labels)
+        #expect(passport.back == ProfileV3PassportBack(
+            father: "Vindo Sharma",
+            mother: "Vindo Sharma",
+            address: ["Village- Betalon, Post-Mangalpur", "District-Bankpura,PS-INDUS", "Wet Bengal, PIN-722305"]
+        ))
+        #expect(passport.back.rows(labels: field.labels) == [
+            ProfileV3PassportBackRow(id: "father", label: "FATHER", lines: ["Vindo Sharma"]),
+            ProfileV3PassportBackRow(id: "mother", label: "MOTHER", lines: ["Vindo Sharma"]),
+            ProfileV3PassportBackRow(id: "spouse", label: "SPOUSE", lines: [""]),
+            ProfileV3PassportBackRow(
+                id: "address",
+                label: "ADDRESS",
+                lines: ["Village- Betalon, Post-Mangalpur", "District-Bankpura,PS-INDUS", "Wet Bengal, PIN-722305"]
+            )
+        ])
     }
 
-    @Test func onlyAnAbsoluteWebAddressCountsAsABackPage() throws {
-        for back in [#""back_url":null"#, #""back_url":"  ""#, #""back_url":"/documents/back.jpeg""#, #""back_url":42"#, ""] {
-            let comma = back.isEmpty ? "" : ","
-            let field = try Self.field(#"{"agent_type":"personal","passport":{"number":"F9090906"\#(comma)\#(back)}}"#)
-            #expect(field.backPageURL == nil, "\(back)")
-            #expect(field.passport?.number == "F9090906")
-        }
+    @Test func withoutBackDetailsThereIsNoBackPageAndTheFrontKeepsItsClientLabels() throws {
+        let bare = try Self.field(#"{"agent_type":"personal","passport":{"number":"F9090906","father":"  ","address":[]}}"#)
+        #expect(bare.passport?.back.isEmpty == true)
+        #expect(bare.labels == .card)
+        #expect(bare.passport?.back.rows(labels: bare.labels).isEmpty == true)
+
+        let oneLine = try Self.field(#"""
+        {"agent_type":"personal","passport":{"number":"F9090906","spouse":"Priya","address":"Flat 2\nPune 411001",
+         "labels":{"number":"PASSPORT NO.","spouse":"SPOUSE","address":"ADDRESS"}}}
+        """#)
+        #expect(oneLine.passport?.back == ProfileV3PassportBack(spouse: "Priya", address: ["Flat 2", "Pune 411001"]))
+        #expect(oneLine.labels.number == "PASSPORT NO.")
+        #expect(oneLine.labels.issueDate == ProfileV3Strings.passportIssueDate)
+        #expect(oneLine.passport?.back.rows(labels: oneLine.labels).map(\.id) == ["spouse", "address"])
+    }
+
+    @Test func eachPreviousPassportCarriesItsOwnBackPage() throws {
+        let dto = try JSONDecoder().decode(ProfileV3PreviousPassportsScreenDTO.self, from: Data(#"""
+        {"type":"passport_previous","title":"PREVIOUS PASSPORTS",
+         "labels":{"number":"PASSPORT NUMBER","issue_date":"ISSUE DATE","expiry_date":"EXPIRY DATE",
+                   "father":"FATHER","mother":"MOTHER","spouse":"SPOUSE","address":"ADDRESS"},
+         "passports":[
+          {"number":"F9090906","status":"active","father":"Vindo Sharma","address":["Wet Bengal, PIN-722305"]},
+          {"number":"A1234567","status":"expired"}
+         ]}
+        """#.utf8))
+        let screen = ProfileV3PassportMapper.previousPassports(dto, accountCountry: nil)
+        #expect(screen.labels == ProfileV3PassportFixtures.labels)
+        #expect(screen.passports.map(\.back) == [
+            ProfileV3PassportBack(father: "Vindo Sharma", address: ["Wet Bengal, PIN-722305"]),
+            ProfileV3PassportBack()
+        ])
     }
 
     @Test(arguments: [(width: CGFloat(440), card: CGFloat(380)), (width: 393, card: 333)])
     func frontAndBackSitSideBySideAndScrollSideways(width: CGFloat, card: CGFloat) async throws {
         let margin = ProfileV3Theme.Sizes.screenHorizontalMargin
         let host = UIHostingController(rootView:
-            ProfileV3PassportPagesRow(backPageURL: try #require(URL(string: Self.backURL))) {
+            ProfileV3PassportPagesRow {
+                Color.gray.frame(height: ProfileV3Theme.Sizes.Passport.cardHeight)
+            } back: {
                 Color.gray.frame(height: ProfileV3Theme.Sizes.Passport.cardHeight)
             }
             .padding(.horizontal, margin)
@@ -59,22 +97,25 @@ struct ProfileV3PassportBackPageTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func theBackPageStaysHiddenUntilTheClientConfigTurnsItOn() async throws {
-        #expect(!ProfileV3FeatureFlags.isPassportBackPageEnabled)
-        var field = ProfileV3PassportField(holderName: "CHOTA BACHA", countryName: "REPUBLIC OF INDIA")
-        field.passport = ProfileV3Passport(
-            id: "F9090906", holderName: "CHOTA BACHA", number: "F9090906", countryName: "REPUBLIC OF INDIA",
-            issuedOn: "15/05/2024", expiresOn: "14/05/2034"
-        )
-        field.backPageURL = URL(string: Self.backURL)
-        let section = ProfileV3FormSection(id: "passport", title: "PASSPORT DETAILS", status: .complete, control: .passport(field))
-
-        for showsBackPage in [false, true] {
+    func theBackPageShowsOnlyWhenThePassportHasOne() async throws {
+        #expect(ProfileV3FeatureFlags.isPassportBackPageEnabled)
+        var withoutBack = ProfileV3PassportFixtures.field
+        withoutBack.passport?.back = ProfileV3PassportBack()
+        let cases: [(field: ProfileV3PassportField, showsBackPage: Bool, scrolls: Bool)] = [
+            (ProfileV3PassportFixtures.field, true, true),
+            (withoutBack, true, false),
+            (ProfileV3PassportFixtures.field, false, false),
+            (ProfileV3PassportFixtures.emptyField, true, false)
+        ]
+        for entry in cases {
+            let section = ProfileV3FormSection(
+                id: "passport", title: "PASSPORT DETAILS", status: .complete, control: .passport(entry.field)
+            )
             var view = ProfileV3FormSectionView(
                 section: section,
                 onToggleOption: { _ in }, onSliderChange: { _ in }, onOptOut: { _ in }, onTextChange: { _ in }
             )
-            if showsBackPage { view.showsPassportBackPage = true }
+            view.showsPassportBackPage = entry.showsBackPage
             let host = UIHostingController(rootView: view.padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin))
             let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 393, height: 700))
             window.rootViewController = host
@@ -83,48 +124,39 @@ struct ProfileV3PassportBackPageTests {
 
             try await Task.sleep(for: .milliseconds(300))
             host.view.layoutIfNeeded()
-            #expect(Self.scrollViews(in: host.view).isEmpty == !showsBackPage, "showsBackPage \(showsBackPage)")
+            #expect(!Self.scrollViews(in: host.view).isEmpty == entry.scrolls, "\(entry.showsBackPage) \(entry.scrolls)")
         }
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func aWideScanFitsInsideTheCardInsteadOfWideningIt() async throws {
-        let scan = UIGraphicsImageRenderer(size: CGSize(width: 1250, height: 880)).image { context in
-            UIColor(red: 0, green: 1, blue: 0, alpha: 1).setFill()
-            context.fill(CGRect(x: 0, y: 0, width: 1250, height: 880))
-        }
-        let file = FileManager.default.temporaryDirectory.appendingPathComponent("pv3-wide-back-page.png")
-        try #require(scan.pngData()).write(to: file)
-        defer { try? FileManager.default.removeItem(at: file) }
-
-        let host = UIHostingController(rootView:
-            ProfileV3PassportBackPage(url: file, accessibilityTitle: "BACK").frame(width: 333)
+    func aScanThatSendsNoLabelsKeepsTheBackLabelsAndDropsTheOldBackPage() async throws {
+        var scanned = ProfileV3PassportFixtures.field
+        scanned.labels = .card
+        scanned.passport?.back = ProfileV3PassportBack()
+        let repository = ScanStub(result: scanned)
+        var form = ProfileV3AgentFixtures.personal
+        form.sections = [ProfileV3FormSection(
+            id: ProfileV3PassportMapper.sectionID,
+            title: ProfileV3Strings.passportDetails,
+            status: .complete,
+            control: .passport(ProfileV3PassportFixtures.field)
+        )]
+        var scans: [ProfileV3PassportScanRequest] = []
+        let viewModel = ProfileV3AgentFormViewModel(
+            form: form,
+            avatarURL: nil,
+            repository: repository,
+            presentPassportScan: { scans.append($0) },
+            onFinish: {}
         )
-        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 393, height: 600))
-        window.rootViewController = host
-        window.makeKeyAndVisible()
-        defer { window.isHidden = true }
 
-        try await Self.waitUntil { Self.greenSpan(acrossTheMiddleOf: host.view) > 0 }
-        #expect(Self.greenSpan(acrossTheMiddleOf: host.view) == 333)
-    }
+        viewModel.startPassportUpdate()
+        try await Self.waitUntil { !scans.isEmpty }
+        let result = try await scans[0].upload(.front, Data([0x01]))
+        scans[0].onFinish(result.field, false)
 
-    private static func greenSpan(acrossTheMiddleOf view: UIView) -> Int {
-        view.layoutIfNeeded()
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = 1
-        format.preferredRange = .standard
-        let row = CGRect(x: 0, y: view.bounds.midY.rounded(), width: view.bounds.width, height: 1)
-        let image = UIGraphicsImageRenderer(bounds: row, format: format).image { context in
-            view.layer.render(in: context.cgContext)
-        }
-        guard let cgImage = image.cgImage, let data = cgImage.dataProvider?.data,
-              let bytes = CFDataGetBytePtr(data) else { return 0 }
-        let stride = cgImage.bitsPerPixel / 8
-        return (0 ..< cgImage.width).filter { x in
-            let pixel = bytes + x * stride
-            return pixel[1] > 240 && max(pixel[0], pixel[2]) < 15
-        }.count
+        #expect(viewModel.passportField?.labels == ProfileV3PassportFixtures.labels)
+        #expect(viewModel.passportField?.passport?.back.isEmpty == true)
     }
 
     private static func field(_ json: String) throws -> ProfileV3PassportField {
@@ -148,5 +180,53 @@ struct ProfileV3PassportBackPageTests {
             try await Task.sleep(for: .milliseconds(50))
         }
         #expect(condition())
+    }
+}
+
+private final class ScanStub: ProfileV3AgentRepository, @unchecked Sendable {
+    private let result: ProfileV3PassportField
+
+    init(result: ProfileV3PassportField) {
+        self.result = result
+    }
+
+    func loadAgentFlow(agentID: String, profileID: String?) async throws -> ProfileV3AgentFlow {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func saveAgentForm(_ form: ProfileV3AgentForm, profileID: String?, profileIDs: [String]?) async throws -> String? {
+        nil
+    }
+
+    func loadPreviousPassports(profileID: String?) async throws -> ProfileV3PreviousPassports {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadPassportScan(profileID: String?) async throws -> ProfileV3PassportScan { ProfileV3PassportFixtures.scan }
+
+    func uploadPassportScan(_ side: ProfileV3PassportSide, data: Data, profileID: String?) async throws
+        -> ProfileV3PassportScanResult {
+        ProfileV3PassportScanResult(field: result, backRequired: false)
+    }
+
+    func loadPassportReason() async throws -> ProfileV3PassportReasonScreen { .fallback }
+
+    func loadPassportHowUsed() async throws -> ProfileV3PassportHowUsed {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func updatePassport(reason: String, profileID: String?) async throws {}
+
+    func loadPreferenceSources(_ source: ProfileV3SectionSource, profileID: String?) async throws
+        -> ProfileV3PreferenceSources {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadRidePicker(agentType: String, profileID: String?) async throws -> ProfileV3RidePicker {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadRideRegions() async throws -> ProfileV3RideRegions {
+        throw ProfileV3RepositoryError.unavailable
     }
 }

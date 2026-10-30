@@ -10,7 +10,22 @@ enum ProfileV3PassportFixtures {
         countryNativeName: ProfileV3Strings.passportCountryIndiaNative,
         issuedOn: "01/01/2026",
         expiresOn: "01/01/2026",
-        status: .active
+        status: .active,
+        back: ProfileV3PassportBack(
+            father: "Vindo Sharma",
+            mother: "Vindo Sharma",
+            address: ["Village- Betalon, Post-Mangalpur", "District-Bankpura,PS-INDUS", "Wet Bengal, PIN-722305"]
+        )
+    )
+
+    static let labels = ProfileV3PassportLabels(
+        number: "PASSPORT NUMBER",
+        issueDate: "ISSUE DATE",
+        expiryDate: "EXPIRY DATE",
+        father: "FATHER",
+        mother: "MOTHER",
+        spouse: "SPOUSE",
+        address: "ADDRESS"
     )
 
     static let history: [ProfileV3Passport] = [
@@ -23,7 +38,13 @@ enum ProfileV3PassportFixtures {
             countryNativeName: ProfileV3Strings.passportCountryIndiaNative,
             issuedOn: "01/01/2026",
             expiresOn: "01/01/2026",
-            status: .expired
+            status: .expired,
+            back: ProfileV3PassportBack(
+                father: "Vindo Sharma",
+                mother: "Vindo Sharma",
+                spouse: "Priya Sharma",
+                address: ["House 12, Park Street", "Kolkata, PIN-700016"]
+            )
         ),
         ProfileV3Passport(
             id: "passport-2011",
@@ -39,7 +60,7 @@ enum ProfileV3PassportFixtures {
 
     static let previous = ProfileV3PreviousPassports(
         title: "PREVIOUS PASSPORTS",
-        labels: ProfileV3PassportLabels(number: "PASSPORT NUMBER", issueDate: "ISSUE DATE", expiryDate: "EXPIRY DATE"),
+        labels: labels,
         passports: history
     )
 
@@ -70,6 +91,7 @@ enum ProfileV3PassportFixtures {
         countryName: active.countryName,
         countryNativeName: active.countryNativeName,
         passport: active,
+        labels: labels,
         rescan: rescan,
         howUsed: howUsedDirective
     )

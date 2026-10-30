@@ -14,6 +14,15 @@ extension ProfileV3Theme {
         endPoint: .bottom
     )
 
+    static let passportBackShade = LinearGradient(
+        stops: [
+            .init(color: Palette.passportPageEdgeShade, location: 0),
+            .init(color: Palette.passportPageEdgeShadeEnd, location: Sizes.Passport.backShadeEnd)
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
     static let activateGradient = LinearGradient(
         colors: [Palette.activateTop, Palette.activateBottom],
         startPoint: .top,

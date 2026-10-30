@@ -175,8 +175,8 @@ private actor RemovalStub: ProfileV3LoyaltyRepository {
         mock.scanProgrammes()
     }
 
-    func loadProgrammeCatalogue(query: String?, kind: String?) async throws -> ProfileV3ProgrammePicker {
-        try await mock.loadProgrammeCatalogue(query: query, kind: kind)
+    func loadProgrammeCatalogue(query: String?, kind: String?, market: String?) async throws -> ProfileV3ProgrammePicker {
+        try await mock.loadProgrammeCatalogue(query: query, kind: kind, market: market)
     }
 
     func loadLoyaltyEntry(programID: String, programName: String?, kind: String?) async throws -> ProfileV3LoyaltyEntryForm {

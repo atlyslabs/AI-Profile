@@ -7,6 +7,7 @@ struct ProfileV3ContinueButton: View {
     var iconSize = ProfileV3Theme.Sizes.pillIcon
     var horizontalPadding: CGFloat = 0
     var tint: Color = Color(at: .pureBlack)
+    var fill: Color = Color(at: .pureWhite)
     var disabledTint: Color?
     var isLoading = false
     var isEnabled = true
@@ -39,7 +40,7 @@ struct ProfileV3ContinueButton: View {
             .padding(.horizontal, horizontalPadding)
             .frame(maxWidth: .infinity)
             .frame(height: ProfileV3Theme.Sizes.Save.buttonHeight)
-            .profileV3CapsuleChrome()
+            .profileV3CapsuleChrome(fill: fill)
             .animation(ProfileV3Theme.Motion.saveState, value: isLoading)
         }
         .buttonStyle(.profileV3Pressable(.impact(weight: .medium)))

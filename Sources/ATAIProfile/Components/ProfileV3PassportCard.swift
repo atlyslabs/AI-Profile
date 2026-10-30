@@ -6,6 +6,7 @@ struct ProfileV3PassportCard: View {
     enum Content: Equatable {
         case upload(ProfileV3PassportEmptyState)
         case details(ProfileV3Passport)
+        case back(ProfileV3Passport)
     }
 
     let holderName: String
@@ -27,15 +28,29 @@ struct ProfileV3PassportCard: View {
     private var card: some View {
         ZStack(alignment: .topLeading) {
             glow
-            countryStrip
+            if !isBackPage {
+                countryStrip
+            }
             guilloche
             holder
             statusBadge
             cardContent
         }
         .frame(height: Sizes.cardHeight, alignment: .top)
-        .background(ProfileV3Theme.Palette.passportCard)
+        .background {
+            ZStack {
+                ProfileV3Theme.Palette.passportCard
+                if isBackPage {
+                    ProfileV3Theme.passportBackShade
+                }
+            }
+        }
         .clipShape(RoundedRectangle(cornerRadius: ProfileV3Theme.Radius.sm, style: .continuous))
+    }
+
+    private var isBackPage: Bool {
+        if case .back = content { return true }
+        return false
     }
 
     @ViewBuilder
@@ -54,6 +69,8 @@ struct ProfileV3PassportCard: View {
             name
                 .padding(.leading, Sizes.contentInset)
                 .padding(.top, Sizes.nameTop)
+        case .back:
+            EmptyView()
         }
     }
 
@@ -69,6 +86,12 @@ struct ProfileV3PassportCard: View {
             .opacity(passport.status == .expired ? ProfileV3Theme.Motion.passportExpiredOpacity : 1)
             .padding(.horizontal, Sizes.contentInset)
             .padding(.top, Sizes.fieldsTop)
+        case .back(let passport):
+            backRows(passport.back.rows(labels: labels))
+                .opacity(passport.status == .expired ? ProfileV3Theme.Motion.passportExpiredOpacity : 1)
+                .padding(.leading, Sizes.backLeading)
+                .padding(.trailing, Sizes.backTrailing)
+                .padding(.top, Sizes.backTop)
         }
     }
 
@@ -103,7 +126,7 @@ struct ProfileV3PassportCard: View {
         switch content {
         case .upload:
             return ProfileV3Theme.Palette.passportGlowUpload
-        case .details(let passport):
+        case .details(let passport), .back(let passport):
             return passport.status == .expired
                 ? ProfileV3Theme.Palette.passportGlowExpired
                 : ProfileV3Theme.Palette.passportGlowActive
@@ -185,29 +208,52 @@ struct ProfileV3PassportCard: View {
         labelled(labels.number, value: passport.number)
             .postHogMask()
         HStack(alignment: .top, spacing: Sizes.dateSpacing) {
-            labelled(labels.issueDate, value: passport.issuedOn, showsCalendar: passport.status == .active)
-            labelled(labels.expiryDate, value: passport.expiresOn, showsCalendar: passport.status == .active)
+            labelled(labels.issueDate, value: passport.issuedOn)
+            labelled(labels.expiryDate, value: passport.expiresOn)
         }
         .padding(.top, Sizes.datesTop)
     }
 
-    private func labelled(_ label: String, value: String, showsCalendar: Bool = false) -> some View {
+    private func backRows(_ rows: [ProfileV3PassportBackRow]) -> some View {
+        VStack(alignment: .leading, spacing: Sizes.backRowSpacing) {
+            ForEach(rows) { row in
+                VStack(alignment: .leading, spacing: Sizes.backLineSpacing) {
+                    Text(row.label)
+                        .font(Font.Inter.get(size: ProfileV3Theme.Typography.passportBackLabelSize, weight: .bold))
+                        .tracking(ProfileV3Theme.Typography.passportBackLabelTracking)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color(at: .pureBlack))
+                        .opacity(ProfileV3Theme.Motion.passportBackLabelOpacity)
+                        .lineLimit(1)
+                        .frame(height: Sizes.backLabelHeight)
+                    ForEach(Array(row.lines.enumerated()), id: \.offset) { _, line in
+                        VStack(alignment: .leading, spacing: Sizes.backValueToDivider) {
+                            Text(line)
+                                .typoGraphy(.B2InterMedium12)
+                                .foregroundStyle(Color(at: .pureBlack))
+                                .lineLimit(1)
+                                .minimumScaleFactor(ProfileV3Theme.Typography.passportBackValueMinScale)
+                                .frame(maxWidth: .infinity, minHeight: Sizes.backValueHeight, alignment: .leading)
+                            ProfileV3DashedDivider()
+                        }
+                    }
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(([row.label] + row.lines.filter { !$0.isEmpty }).joined(separator: ", "))
+            }
+        }
+        .postHogMask()
+    }
+
+    private func labelled(_ label: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: Sizes.labelSpacing) {
             if !label.isEmpty {
                 ProfileV3TagLabel(text: label)
             }
-            HStack(spacing: ProfileV3Theme.Space.s8) {
-                Text(value)
-                    .typoGraphy(.B1InterMedium14)
-                    .foregroundStyle(Color(at: .pureBlack))
-                Spacer(minLength: 0)
-                if showsCalendar {
-                    ATIcon.SwiftUIImage.calendarToday
-                        .profileV3Icon(ProfileV3Theme.Icon.md)
-                        .foregroundStyle(Color(at: .neutralGrey800))
-                }
-            }
-            .frame(maxWidth: .infinity, minHeight: ProfileV3Theme.Icon.lg, alignment: .leading)
+            Text(value)
+                .typoGraphy(.B1InterMedium14)
+                .foregroundStyle(Color(at: .pureBlack))
+                .frame(maxWidth: .infinity, minHeight: ProfileV3Theme.Icon.lg, alignment: .leading)
             ProfileV3DashedDivider()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -235,30 +281,50 @@ struct ProfileV3PassportCard: View {
     }
 }
 
-struct ProfileV3PassportBackPage: View {
-    let url: URL
-    let accessibilityTitle: String
-
-    private typealias Sizes = ProfileV3Theme.Sizes.Passport
+struct ProfileV3PassportPages: View {
+    let holderName: String
+    let countryName: String
+    var countryNativeName: String?
+    var labels: ProfileV3PassportLabels = .card
+    let content: ProfileV3PassportCard.Content
+    var showsStatusBadge = false
+    var showsBackPage = ProfileV3FeatureFlags.isPassportBackPageEnabled
+    var onUpload: (() -> Void)?
 
     var body: some View {
-        let shape = RoundedRectangle(cornerRadius: ProfileV3Theme.Radius.sm, style: .continuous)
-        shape
-            .fill(ProfileV3Theme.Palette.passportCard)
-            .frame(height: Sizes.cardHeight)
-            .overlay { ProfileV3RemoteImage(url: url, contentMode: .fit, placeholder: .clear, showsLoader: true) }
-            .clipShape(shape)
-            .postHogMask()
-            .profileV3PassportPageEdges()
-            .accessibilityElement()
-            .accessibilityLabel(accessibilityTitle)
-            .accessibilityAddTraits(.isImage)
+        if let backPage {
+            ProfileV3PassportPagesRow {
+                card(content)
+            } back: {
+                card(.back(backPage))
+            }
+        } else {
+            card(content)
+        }
+    }
+
+    private var backPage: ProfileV3Passport? {
+        guard showsBackPage, case .details(let passport) = content, !passport.back.isEmpty,
+              !passport.back.rows(labels: labels).isEmpty else { return nil }
+        return passport
+    }
+
+    private func card(_ content: ProfileV3PassportCard.Content) -> ProfileV3PassportCard {
+        ProfileV3PassportCard(
+            holderName: holderName,
+            countryName: countryName,
+            countryNativeName: countryNativeName,
+            labels: labels,
+            content: content,
+            showsStatusBadge: showsStatusBadge,
+            onUpload: onUpload
+        )
     }
 }
 
-struct ProfileV3PassportPagesRow<Front: View>: View {
-    let backPageURL: URL
+struct ProfileV3PassportPagesRow<Front: View, Back: View>: View {
     @ViewBuilder let front: Front
+    @ViewBuilder let back: Back
 
     private typealias Sizes = ProfileV3Theme.Sizes.Passport
 
@@ -266,9 +332,7 @@ struct ProfileV3PassportPagesRow<Front: View>: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top, spacing: Sizes.pageSpacing) {
                 page(ProfileV3Strings.passportFrontPage) { front }
-                page(ProfileV3Strings.passportBackPage) {
-                    ProfileV3PassportBackPage(url: backPageURL, accessibilityTitle: ProfileV3Strings.passportBackPage)
-                }
+                page(ProfileV3Strings.passportBackPage) { back }
             }
             .scrollTargetLayout()
         }
@@ -281,7 +345,7 @@ struct ProfileV3PassportPagesRow<Front: View>: View {
         VStack(alignment: .leading, spacing: Sizes.pageLabelSpacing) {
             ProfileV3TagLabel(text: label)
                 .opacity(ProfileV3Theme.Motion.passportPageLabelOpacity)
-                .accessibilityHidden(true)
+                .accessibilityAddTraits(.isHeader)
             card()
         }
         .containerRelativeFrame(.horizontal) { width, _ in min(width, Sizes.cardWidth) }

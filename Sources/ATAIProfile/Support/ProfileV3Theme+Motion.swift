@@ -8,6 +8,11 @@ extension ProfileV3Theme {
         static let passportGuillocheOpacity: Double = 0.05
         static let passportExpiredOpacity: Double = 0.5
         static let passportPageLabelOpacity: Double = 0.5
+        static let passportBackLabelOpacity: Double = 0.3
+        static let aiConnectorCopiedSeconds: Double = 1.5
+        static let aiConnectorReveal: Animation = .easeInOut(duration: 0.25)
+        static let instagramExplainerSeconds: Double = 3.5
+        static let instagramRedirectSeconds: Double = 1.8
         static let catalogueSearchDebounceMilliseconds = 300
         static let catalogueLoaderMinimumMilliseconds = 400
         static let remoteImageFadeSeconds: Double = 0.3

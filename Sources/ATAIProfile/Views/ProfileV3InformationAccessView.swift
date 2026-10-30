@@ -17,12 +17,12 @@ struct ProfileV3InformationAccessView: View {
                 )
                 ProfileV3InformationAccessHero()
                     .padding(.top, Layout.heroTop)
-                Text(ProfileV3Strings.informationAccess)
+                Text(model.screen?.title.nonEmpty ?? ProfileV3Strings.informationAccess)
                     .typoGraphy(.H5InterMedium20)
                     .foregroundStyle(Color(at: .pureBlack))
                     .frame(maxWidth: Layout.titleWidth)
                     .padding(.top, Layout.titleTop)
-                Text(ProfileV3Strings.informationAccessSubtitle)
+                Text(model.screen?.blurb.nonEmpty ?? ProfileV3Strings.informationAccessSubtitle)
                     .typoGraphy(.B2InterMedium12)
                     .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.accessSubtitle))
                     .frame(maxWidth: Layout.titleWidth)
@@ -41,6 +41,9 @@ struct ProfileV3InformationAccessView: View {
         .scrollBounceBehavior(.basedOnSize)
         .background(Color(at: .pureWhite))
         .sensoryFeedback(.success, trigger: model.disconnectCompletions)
+        .sheet(item: $model.aiConnector) { connector in
+            ProfileV3AIConnectorSheet(model: connector)
+        }
     }
 
     @ViewBuilder
@@ -160,13 +163,15 @@ private struct ProfileV3ConnectorCardRow: View {
 
     var body: some View {
         ProfileV3ConnectorCardTitle(icon: icon, iconURL: iconURL, title: connector.name) {
-            if connector.status == .connected {
+            if connector.aiConnector != nil {
+                aiAccessory
+            } else if connector.status == .connected {
                 Text(ProfileV3Strings.connectorConnected)
                     .typoGraphy(.H7InterSemibold16)
                     .foregroundStyle(ProfileV3Theme.Palette.accessChipText)
             } else {
                 ProfileV3ConnectorAction(
-                    title: ProfileV3Strings.connectConnector,
+                    title: connector.connectLabel ?? ProfileV3Strings.connectConnector,
                     action: connector.captureStep == nil ? nil : onConnect
                 )
             }
@@ -175,6 +180,23 @@ private struct ProfileV3ConnectorCardRow: View {
         .profileV3AccessCard()
         .accessibilityElement(children: .combine)
         .accessibilityValue(connector.status.accessibilityValue)
+    }
+
+    @ViewBuilder
+    private var aiAccessory: some View {
+        if connector.status == .connected {
+            Button(action: onConnect) {
+                Text(connector.statusLabel ?? ProfileV3Strings.connectorConnected)
+                    .typoGraphy(.B2InterSemibold12)
+                    .foregroundStyle(ProfileV3Theme.Palette.accessChipText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(ProfileV3Theme.Typography.aiConnectorStatusMinScale)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.profileV3Pressable)
+        } else {
+            ProfileV3ConnectorAction(title: connector.connectLabel ?? ProfileV3Strings.connectConnector, action: onConnect)
+        }
     }
 
     private var icon: Image {

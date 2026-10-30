@@ -8,11 +8,16 @@ struct ProfileV3AgentPassportDTO: Decodable, Equatable {
     let expiryDate: String?
     let status: String?
     let verified: Bool?
-    let backURL: String?
+    let father: String?
+    let mother: String?
+    let spouse: String?
+    let address: [String]
+    private let rawLabels: ProfileV3LossyDTO<ProfileV3PassportLabelsDTO>?
     private let rawRescan: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
     private let rawHowUsed: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
     private let rawPrevious: ProfileV3LossyDTO<ProfileV3PassportPreviousDTO>?
 
+    var labels: ProfileV3PassportLabelsDTO? { rawLabels?.value }
     var rescan: ProfileV3DirectiveDTO? { rawRescan?.value }
     var howUsed: ProfileV3DirectiveDTO? { rawHowUsed?.value }
     var previous: ProfileV3PassportPreviousDTO? { rawPrevious?.value }
@@ -25,7 +30,11 @@ struct ProfileV3AgentPassportDTO: Decodable, Equatable {
         case expiryDate = "expiry_date"
         case status
         case verified
-        case backURL = "back_url"
+        case father
+        case mother
+        case spouse
+        case address
+        case rawLabels = "labels"
         case rawRescan = "rescan"
         case rawHowUsed = "how_used"
         case rawPrevious = "previous"
@@ -40,7 +49,15 @@ struct ProfileV3AgentPassportDTO: Decodable, Equatable {
         expiryDate = container.lenientString(forKey: .expiryDate)
         status = container.lenientString(forKey: .status)
         verified = try? container.decodeIfPresent(Bool.self, forKey: .verified)
-        backURL = container.lenientString(forKey: .backURL)
+        father = container.lenientString(forKey: .father)
+        mother = container.lenientString(forKey: .mother)
+        spouse = container.lenientString(forKey: .spouse)
+        if let lines = try? container.decodeIfPresent([ProfileV3LossyDTO<String>].self, forKey: .address) {
+            address = lines.compactMap(\.value)
+        } else {
+            address = container.lenientString(forKey: .address)?.components(separatedBy: .newlines) ?? []
+        }
+        rawLabels = try? container.decodeIfPresent(ProfileV3LossyDTO<ProfileV3PassportLabelsDTO>.self, forKey: .rawLabels)
         rawRescan = try? container.decodeIfPresent(ProfileV3LossyDTO<ProfileV3DirectiveDTO>.self, forKey: .rawRescan)
         rawHowUsed = try? container.decodeIfPresent(ProfileV3LossyDTO<ProfileV3DirectiveDTO>.self, forKey: .rawHowUsed)
         rawPrevious = try? container.decodeIfPresent(
@@ -80,11 +97,19 @@ struct ProfileV3PassportLabelsDTO: Decodable, Equatable {
     let number: String?
     let issueDate: String?
     let expiryDate: String?
+    let father: String?
+    let mother: String?
+    let spouse: String?
+    let address: String?
 
     enum CodingKeys: String, CodingKey {
         case number
         case issueDate = "issue_date"
         case expiryDate = "expiry_date"
+        case father
+        case mother
+        case spouse
+        case address
     }
 }
 

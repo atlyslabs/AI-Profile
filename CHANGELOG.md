@@ -33,6 +33,34 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   now unused and can be deleted from Ditto.
 - The travel persona's loading dial plays a soft tap each time its colour wave lights a trait
   label, and a success tap when the radar replaces it.
+- The personal agent shows the passport's back page beside the front, in a sideways FRONT/BACK
+  row, when the passport card sends any of `father`, `mother`, `spouse` or `address` (up to three
+  lines). Each row's label comes from the card's `labels`; a missing value keeps its label and an
+  empty underline. Previous passports show their own back pages the same way.
+  `ProfileV3FeatureFlags.isPassportBackPageEnabled` turns the back page off. The passport card now
+  uses the server's `labels` for the front too, falling back to the client copy. Two new keys need
+  adding in Ditto: `mo-aiprofile-documents-label-passport-front-page` and
+  `mo-aiprofile-documents-label-passport-back-page`.
+- The loyalty picker shows an IN / World market pill before the chips, on the chips the catalogue
+  lists in `market.chips`. The first catalogue request sends no `market` and preselects the served
+  one; every later request (filters, search) sends the selected `market`.
+- Information access lists the AI assistants the overview sends (Claude, ChatGPT, Gemini, Grok, or
+  any other entry), with `connect_label`, or `status_label` with `{date}` filled from `synced_at`
+  in the phone's time zone. A row opens the assistant's sheet: its benefits and disclaimers
+  (`GET …/settings/connectors/ai/{connector}`), then the two steps
+  (`…/connect`): copy the prompt, paste the answer, Save (`connect_ai_connector` with `text`). A
+  refusal shows the server's message; a save reloads the list. The page's title and blurb come
+  from the overview. `ProfileV3SettingsRepository` gained the `ProfileV3AIConnectorRepository`
+  methods.
+- App access has an Instagram flow, UI only: "+ user name" opens an explainer, then a username
+  sheet, then "Follow us, drop in a text" before opening Instagram. App access itself still shows
+  "Coming soon" (`isAppAccessEnabled` is off). The Instagram destination is a placeholder until
+  Ayl's handle is known. Sixteen new keys need adding in Ditto: `mo-aiprofile-agents-button-add-username`,
+  `-title-add-username`, `-label-username`, `-toast-username-added`,
+  `-title-instagram-step-username`/`-redirect`/`-follow`,
+  `-description-instagram-step-username`/`-redirect`/`-follow`, `-label-instagram-sample-handle`,
+  `-label-instagram-follow`, `-label-instagram-hi`, `-title-instagram-come-say-hi`,
+  `-title-instagram-follow-us` and `-status-instagram-redirecting`.
 
 ### Changed
 

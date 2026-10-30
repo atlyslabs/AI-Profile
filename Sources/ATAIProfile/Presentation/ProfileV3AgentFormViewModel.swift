@@ -189,6 +189,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     private func applyPassportField(_ field: ProfileV3PassportField) {
         guard let section = passportSection, case .passport(let current) = section.control else { return }
         var merged = field
+        merged.labels = field.labels.filling(from: current.labels)
         merged.previous = field.previous ?? current.previous
         merged.rescan = field.rescan ?? current.rescan
         merged.howUsed = field.howUsed ?? current.howUsed

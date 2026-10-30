@@ -6,6 +6,12 @@ struct ProfileV3ConnectorRowDTO: Decodable, Equatable {
     let connected: Bool?
     let accountEmail: String?
     let imageURL: String?
+    let connectLabel: String?
+    let statusLabel: String?
+    let syncedAt: String?
+    private let rawNext: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
+
+    var next: ProfileV3DirectiveDTO? { rawNext?.value }
 
     enum CodingKeys: String, CodingKey {
         case key
@@ -13,6 +19,10 @@ struct ProfileV3ConnectorRowDTO: Decodable, Equatable {
         case connected
         case accountEmail = "account_email"
         case imageURL = "image_url"
+        case connectLabel = "connect_label"
+        case statusLabel = "status_label"
+        case syncedAt = "synced_at"
+        case rawNext = "next"
     }
 }
 

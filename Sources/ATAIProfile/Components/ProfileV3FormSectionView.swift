@@ -113,11 +113,16 @@ struct ProfileV3FormSectionView: View {
             }
         case .passport(let field):
             VStack(spacing: ProfileV3Theme.Sizes.Passport.controlSpacing) {
-                if showsPassportBackPage, field.passport != nil, let backPageURL = field.backPageURL {
-                    ProfileV3PassportPagesRow(backPageURL: backPageURL) { passportCard(field) }
-                } else {
-                    passportCard(field)
-                }
+                ProfileV3PassportPages(
+                    holderName: field.holderName,
+                    countryName: field.countryName,
+                    countryNativeName: field.countryNativeName,
+                    labels: field.labels,
+                    content: field.passport.map(ProfileV3PassportCard.Content.details)
+                        ?? .upload(field.emptyState ?? .blank),
+                    showsBackPage: showsPassportBackPage,
+                    onUpload: onUploadPassport
+                )
                 if field.passport != nil {
                     ProfileV3PillButton(
                         title: ProfileV3Strings.uploadNewPassport,
@@ -160,17 +165,6 @@ struct ProfileV3FormSectionView: View {
         case .customRules:
             EmptyView()
         }
-    }
-
-    private func passportCard(_ field: ProfileV3PassportField) -> some View {
-        ProfileV3PassportCard(
-            holderName: field.holderName,
-            countryName: field.countryName,
-            countryNativeName: field.countryNativeName,
-            content: field.passport.map(ProfileV3PassportCard.Content.details)
-                ?? .upload(field.emptyState ?? .blank),
-            onUpload: onUploadPassport
-        )
     }
 
     private var passportField: ProfileV3PassportField? {

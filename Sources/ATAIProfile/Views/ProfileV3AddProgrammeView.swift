@@ -272,7 +272,7 @@ struct ProfileV3AddProgrammeView: View {
             SettingsSearchField(placeholder: ProfileV3Strings.search, text: $viewModel.query)
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.top, ProfileV3Theme.Space.s40)
-            if viewModel.filters.count > 1 {
+            if viewModel.filters.count > 1 || viewModel.showsMarketToggle {
                 categoryChips
                     .padding(.top, ProfileV3Theme.Space.s24)
             }
@@ -299,15 +299,28 @@ struct ProfileV3AddProgrammeView: View {
 
     private var categoryChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: ProfileV3Theme.Space.s12) {
-                ForEach(viewModel.filters) { filter in
-                    ProfileV3FilterChip(title: filter.label, isSelected: viewModel.isSelected(filter)) {
-                        viewModel.selectFilter(filter)
+            HStack(spacing: ProfileV3Theme.Sizes.AddProgramme.marketGap) {
+                if viewModel.showsMarketToggle, let market = viewModel.market,
+                   let selected = viewModel.selectedMarketOption {
+                    ProfileV3MarketMenu(market: market, selected: selected, onSelect: viewModel.selectMarket)
+                    Rectangle()
+                        .fill(ProfileV3Theme.Palette.filterChipBorder)
+                        .frame(width: ProfileV3Theme.Stroke.hairline, height: ProfileV3Theme.Sizes.AddProgramme.marketDividerHeight)
+                        .accessibilityHidden(true)
+                }
+                HStack(spacing: ProfileV3Theme.Space.s12) {
+                    ForEach(viewModel.filters) { filter in
+                        ProfileV3FilterChip(title: filter.label, isSelected: viewModel.isSelected(filter)) {
+                            viewModel.selectFilter(filter)
+                        }
                     }
                 }
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+            .padding(.vertical, ProfileV3Theme.Sizes.AddProgramme.chipRowInset)
+            .animation(ProfileV3Theme.Motion.selection, value: viewModel.showsMarketToggle)
         }
+        .padding(.vertical, -ProfileV3Theme.Sizes.AddProgramme.chipRowInset)
     }
 
     private var catalogueLoader: some View {

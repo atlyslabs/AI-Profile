@@ -91,6 +91,14 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
         asksForWebsite || (canDelete && !credentials.website.isEmpty)
     }
 
+    var asksForPassword: Bool {
+        app?.asksForUsernameOnly != true
+    }
+
+    var usernameLabel: String {
+        asksForPassword ? ProfileV3Strings.appCredentialsUsername : ProfileV3Strings.appUsernameLabel
+    }
+
     var showsHeader: Bool {
         !canDelete
     }
@@ -128,6 +136,7 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
     }
 
     var title: String {
+        guard asksForPassword else { return ProfileV3Strings.appUsernameTitle }
         switch mode {
         case .newPassword, .vaultNew: return ProfileV3Strings.appPasswordTitle
         case .add, .edit, .vaultEdit: return ProfileV3Strings.appCredentialsTitle
@@ -152,6 +161,10 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
         if asksForWebsite, value.websiteURL == nil { return false }
         if case .vaultEdit(let entry) = mode, newPassword.isEmpty {
             return value.username != (entry.username ?? "")
+        }
+        guard asksForPassword else {
+            if case .edit(let app) = mode { return value.username != (app.username ?? "") }
+            return true
         }
         return !value.password.isEmpty
     }

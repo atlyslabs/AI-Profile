@@ -118,6 +118,27 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         try await submit(try JSONEncoder().encode(request), action: "disconnect_connector")
     }
 
+    func loadAIConnector(_ connector: String) async throws -> ProfileV3AIConnector {
+        let dto: ProfileV3AIConnectorScreenDTO = try await request(
+            ProfileV3API.aiConnector(connector: connector),
+            action: "ai_connector"
+        )
+        return ProfileV3AIConnectorMapper.detail(dto, fallback: connector)
+    }
+
+    func loadAIConnectorConnect(_ connector: String) async throws -> ProfileV3AIConnectorConnect {
+        let dto: ProfileV3AIConnectorConnectScreenDTO = try await request(
+            ProfileV3API.aiConnectorConnect(connector: connector),
+            action: "ai_connector_connect"
+        )
+        return ProfileV3AIConnectorMapper.connect(dto, fallback: connector)
+    }
+
+    func connectAIConnector(_ submit: ProfileV3AIConnectorConnect.Submit, text: String) async throws {
+        let request = ProfileV3ConnectAIConnectorRequest(action: submit.action, connector: submit.connector, text: text)
+        try await self.submit(try JSONEncoder().encode(request), action: submit.action)
+    }
+
     func loadAppAccess() async throws -> ProfileV3AppAccess {
         #if DEBUG
         try await Task.sleep(for: ProfileV3AppAccessStore.latency)
@@ -413,8 +434,8 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return ProfileV3BenefitsMapper.detail(dto)
     }
 
-    func loadProgrammeCatalogue(query: String?, kind: String?) async throws -> ProfileV3ProgrammePicker {
-        let endpoint = ProfileV3API.loyaltyCatalogue(query: query, kind: kind)
+    func loadProgrammeCatalogue(query: String?, kind: String?, market: String?) async throws -> ProfileV3ProgrammePicker {
+        let endpoint = ProfileV3API.loyaltyCatalogue(query: query, kind: kind, market: market)
         let dto: ProfileV3LoyaltyPickScreenDTO = try await request(endpoint, action: "loyalty_catalogue")
         return ProfileV3LoyaltyMapper.picker(dto)
     }

@@ -87,6 +87,15 @@ struct ProfileV3Connector: Identifiable, Equatable {
     let icon: ProfileV3ConnectorIcon
     let status: Status
     var accountEmail: String?
+    var next: ProfileV3Directive?
+    var connectLabel: String?
+    var statusLabel: String?
+    var syncedAt: Date?
+
+    var aiConnector: String? {
+        guard case .aiConnector(let connector) = next?.route() else { return nil }
+        return connector
+    }
 }
 
 struct ProfileV3ProgrammeOverview: Equatable {
@@ -301,6 +310,34 @@ struct ProfileV3ProgrammeFilter: Identifiable, Equatable {
 struct ProfileV3ProgrammePicker: Equatable {
     let items: [ProfileV3ProgrammeCatalogueItem]
     let filters: [ProfileV3ProgrammeFilter]
+    var market: ProfileV3ProgrammeMarket?
+}
+
+struct ProfileV3ProgrammeMarket: Equatable {
+    struct Option: Identifiable, Equatable {
+        let value: String
+        let label: String
+
+        var id: String { value }
+        var countryCode: String? { value.count == 2 ? value.uppercased() : nil }
+    }
+
+    let options: [Option]
+    let selected: String
+    let chips: [String]
+
+    func option(_ value: String?) -> Option? {
+        options.first { $0.value == value }
+    }
+
+    func appliesTo(chip label: String) -> Bool {
+        let key = Self.normalised(label)
+        return chips.contains { Self.normalised($0) == key }
+    }
+
+    private static func normalised(_ value: String) -> String {
+        value.lowercased().filter { $0.isLetter || $0.isNumber }
+    }
 }
 
 struct ProfileV3ProgrammeCatalogueItem: Identifiable, Equatable {

@@ -25,6 +25,7 @@ struct ProfileV3LinkedApp: Identifiable, Equatable, Sendable {
     let blurb: String
     var username: String?
     var isConnected: Bool
+    var asksForUsernameOnly = false
 }
 
 struct ProfileV3AppCredentials: Equatable, Sendable {

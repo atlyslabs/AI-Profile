@@ -46,16 +46,46 @@ struct ProfileV3LoyaltyPickScreenDTO: Decodable, Equatable {
     let title: String?
     private let rawFilters: [ProfileV3LossyDTO<String>]?
     private let rawPrograms: [ProfileV3LossyDTO<ProfileV3LoyaltyRowDTO>]?
+    private let rawMarket: ProfileV3LossyDTO<ProfileV3LoyaltyMarketDTO>?
 
     var filters: [String] { rawFilters?.compactMap(\.value) ?? [] }
     var programs: [ProfileV3LoyaltyRowDTO] { rawPrograms?.compactMap(\.value) ?? [] }
+    var market: ProfileV3LoyaltyMarketDTO? { rawMarket?.value }
 
     enum CodingKeys: String, CodingKey {
         case type
         case title
         case rawFilters = "filters"
         case rawPrograms = "programs"
+        case rawMarket = "market"
     }
+}
+
+struct ProfileV3LoyaltyMarketDTO: Decodable, Equatable {
+    let selected: String?
+    private let rawOptions: [ProfileV3LossyDTO<ProfileV3LoyaltyMarketOptionDTO>]?
+    private let rawChips: [ProfileV3LossyDTO<String>]?
+
+    var options: [ProfileV3LoyaltyMarketOptionDTO] { rawOptions?.compactMap(\.value) ?? [] }
+    var chips: [String] { rawChips?.compactMap(\.value) ?? [] }
+
+    enum CodingKeys: String, CodingKey {
+        case selected
+        case rawOptions = "options"
+        case rawChips = "chips"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        selected = container.lenientString(forKey: .selected)
+        rawOptions = try? container.decodeIfPresent([ProfileV3LossyDTO<ProfileV3LoyaltyMarketOptionDTO>].self, forKey: .rawOptions)
+        rawChips = try? container.decodeIfPresent([ProfileV3LossyDTO<String>].self, forKey: .rawChips)
+    }
+}
+
+struct ProfileV3LoyaltyMarketOptionDTO: Decodable, Equatable {
+    let value: String?
+    let label: String?
 }
 
 struct ProfileV3LoyaltyFieldDTO: Decodable, Equatable {

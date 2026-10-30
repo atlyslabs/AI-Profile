@@ -601,6 +601,7 @@ enum ProfileV3AgentFixtures {
             countryName: passport?.countryName ?? ProfileV3Strings.passportCountryIndia,
             countryNativeName: passport?.countryNativeName ?? ProfileV3Strings.passportCountryIndiaNative,
             passport: passport,
+            labels: ProfileV3PassportFixtures.labels,
             previous: previous,
             rescan: ProfileV3PassportFixtures.rescan,
             howUsed: ProfileV3PassportFixtures.howUsedDirective
