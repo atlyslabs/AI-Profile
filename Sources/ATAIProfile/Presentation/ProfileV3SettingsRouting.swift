@@ -18,6 +18,7 @@ enum ProfileV3SettingsDestination: Hashable {
     case addTraveller
     case addTravellerCitizenship
     case permissions
+    case inviteCode
 
     var isPage: Bool {
         switch self {
@@ -32,12 +33,15 @@ enum ProfileV3SettingsDestination: Hashable {
              .controlPanel, .deleteAccount, .editTraveller, .travellerRelationship, .addTraveller,
              .addTravellerCitizenship:
             return true
-        case .logout, .deleteAccountConfirm, .editTravellers, .deleteTravellerConfirm, .permissions:
+        case .logout, .deleteAccountConfirm, .editTravellers, .deleteTravellerConfirm, .permissions,
+             .inviteCode:
             return false
         }
     }
 
-    static let premeasured: [ProfileV3SettingsDestination] = [.logout, .deleteAccountConfirm, .permissions]
+    static let premeasured: [ProfileV3SettingsDestination] = [
+        .logout, .deleteAccountConfirm, .permissions, .inviteCode
+    ]
 }
 
 @MainActor
@@ -59,6 +63,7 @@ protocol ProfileV3SettingsSheetRouting: AnyObject {
     func dismissSettingsThenRestart(after pendingWrites: Task<Void, Never>?)
     func restartAfterSaving(_ pendingWrites: Task<Void, Never>?)
     func presentCoupons()
+    func presentInviteShare(_ invite: ProfileV3InviteCode)
     func presentLoyaltyProgrammes()
     func presentTermsOfService()
     func openExternalURL(_ url: URL)

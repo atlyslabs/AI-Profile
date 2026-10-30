@@ -50,6 +50,7 @@ enum ProfileV3Route: Equatable {
     case kycCapture(steps: [String])
     case coTravellerCapture(profileID: String, steps: [String])
     case coupons
+    case inviteCode
     case termsOfService
     case permissions
     case editTraveler
@@ -132,6 +133,8 @@ extension ProfileV3Directive {
             return .kycGate(reason: reason)
         case "coupons":
             return .coupons
+        case "invite_friends", "invite_code":
+            return .inviteCode
         case "terms":
             return .termsOfService
         case ProfileV3PermissionDefaults.rowKey:

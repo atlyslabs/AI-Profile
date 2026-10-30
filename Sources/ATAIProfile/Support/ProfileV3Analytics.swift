@@ -21,6 +21,7 @@ enum ProfileV3Analytics {
         case permissions = "aiProfilePermissions"
         case programmeSources = "aiProfileProgrammeSources"
         case pastTrips = "aiProfilePastTrips"
+        case inviteCode = "aiProfileInviteCode"
     }
 
     typealias EntrySource = ProfileV3EntrySource
@@ -118,6 +119,7 @@ enum ProfileV3Analytics {
         static let permissionChanged = "settings_permission_changed"
         static let permissionClosed = "settings_permission_closed"
         static let couponsClicked = "settings_coupons_clicked"
+        static let inviteShareClicked = "settings_invite_share_clicked"
         static let termsClicked = "settings_terms_clicked"
         static let logoutClicked = "settings_logout_clicked"
         static let loggedOut = "settings_logged_out"
@@ -573,6 +575,10 @@ enum ProfileV3Analytics {
 
     static func couponsClicked() {
         log(EventName.couponsClicked)
+    }
+
+    static func inviteShareClicked(remaining: Int) {
+        log(EventName.inviteShareClicked, ["invites_left": remaining])
     }
 
     static func termsClicked() {

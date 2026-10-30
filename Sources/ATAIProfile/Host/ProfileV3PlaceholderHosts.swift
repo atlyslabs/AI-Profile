@@ -111,4 +111,15 @@ final class ProfileV3PlaceholderFieldValidator: ProfileV3FieldValidating, @unche
     }
 }
 
+@MainActor
+final class ProfileV3PreviewInviteHost: ProfileV3InviteHost {
+    nonisolated init() {}
+
+    func loadInviteCode() async throws -> ProfileV3InviteCode? {
+        ProfileV3InviteCode(code: "047814", maxUses: 3, usedCount: 1)
+    }
+
+    func shareInviteCode(_ invite: ProfileV3InviteCode, from presenter: UIViewController) {}
+}
+
 #endif

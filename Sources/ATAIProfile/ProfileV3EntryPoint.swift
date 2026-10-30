@@ -32,6 +32,7 @@ public enum ProfileV3EntryPoint {
             kyc: environment.kyc,
             account: environment.account,
             coupons: environment.coupons,
+            invites: environment.invites,
             app: environment.app,
             session: environment.session,
             client: environment.client,
