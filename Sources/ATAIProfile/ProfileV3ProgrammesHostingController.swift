@@ -19,7 +19,7 @@ final class ProfileV3ProgrammesHostingController: UIHostingController<ProfileV3P
     private let selections: ProfileV3ProgrammeSelectionMemory?
     private let events: ProfileV3ProgrammesEvents
     private var addProgrammePresenter: ProfileV3AddProgrammeSheetPresenter?
-    private var isDeleteConfirmationPresented = false
+    private let deleteConfirmation = ProfileV3SheetSlot()
     private let pageTransition = ProfileV3PushTransition()
     private let cover = ProfileV3ScreenCoverToken()
 
@@ -92,7 +92,7 @@ extension ProfileV3ProgrammesHostingController: ProfileV3ProgrammesRouter {
                 guard case .loyaltySources(let programID, let profileID) = directive.route() else { return nil }
                 return { [weak self] in
                     ProfileV3Analytics.cta(directive, origin: .programmeInsight)
-                    self?.openSources(for: programme, programID: programID, profileID: profileID)
+                    self?.openSources(programID: programID, profileID: profileID)
                 }
             },
             onCopyNumber: { [weak viewModel] in viewModel?.copiedNumber(of: programme) }
@@ -121,11 +121,10 @@ extension ProfileV3ProgrammesHostingController: ProfileV3ProgrammesRouter {
         }
     }
 
-    private func openSources(for programme: ProfileV3LoyaltyProgramme, programID: String, profileID: String?) {
+    private func openSources(programID: String, profileID: String?) {
         guard let insightHost = presentedViewController, insightHost.presentedViewController == nil else { return }
         ProfileV3Analytics.screen(.programmeSources)
-        let model = ProfileV3ProgrammeSourcesViewModel(
-            programme: programme,
+        let model = ProfileV3SourcesViewModel(
             programID: programID,
             profileID: profileID ?? viewModel.pass.id,
             repository: repository
@@ -184,18 +183,13 @@ extension ProfileV3ProgrammesHostingController: ProfileV3ProgrammesRouter {
     }
 
     func presentDeleteConfirmation() {
-        guard !isDeleteConfirmationPresented else { return }
-        isDeleteConfirmationPresented = true
+        guard !deleteConfirmation.isPresented else { return }
         let count = viewModel.selectedIDs.count
-        ProfileV3SheetWindow.present(
-            cornerRadius: ProfileV3Theme.Sizes.Programmes.deleteSheetRadius,
-            dimOpacity: ProfileV3Theme.Opacity.programmesDeleteBackdrop,
+        deleteConfirmation.present(
+            cornerRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius,
+            dimOpacity: ProfileV3Theme.Opacity.sheetBackdropDeep,
             dismissOnBackdropTap: true,
-            onDismiss: { [weak self] in
-                guard let self, isDeleteConfirmationPresented else { return }
-                isDeleteConfirmationPresented = false
-                viewModel.deleteConfirmationDidDismiss()
-            }
+            onDismiss: { [weak viewModel] in viewModel?.deleteConfirmationDidDismiss() }
         ) { [viewModel] _, bottomInset in
             ProfileV3ProgrammesDeleteSheet(viewModel: viewModel, count: count)
                 .padding(.bottom, bottomInset)
@@ -203,8 +197,6 @@ extension ProfileV3ProgrammesHostingController: ProfileV3ProgrammesRouter {
     }
 
     func dismissDeleteConfirmation() {
-        guard isDeleteConfirmationPresented else { return }
-        isDeleteConfirmationPresented = false
-        ProfileV3SheetWindow.dismiss()
+        deleteConfirmation.dismiss()
     }
 }

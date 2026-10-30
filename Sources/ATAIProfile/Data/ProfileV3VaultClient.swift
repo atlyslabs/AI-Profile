@@ -14,17 +14,17 @@ final class ProfileV3VaultClient: @unchecked Sendable {
     }
 
     func credentials() async throws -> [ProfileV3VaultCredential] {
-        let rows: [CredentialDTO] = try await send(.vaultCredentials, action: "vault_credentials")
+        let rows: [CredentialDTO] = try await client.request(.vaultCredentials, action: "vault_credentials")
         return rows.map { $0.credential(includeUsername: false) }
     }
 
     func sites() async throws -> [ProfileV3VaultSite] {
-        let rows: [SiteDTO] = try await send(.vaultSites, action: "vault_sites")
+        let rows: [SiteDTO] = try await client.request(.vaultSites, action: "vault_sites")
         return rows.map { ProfileV3VaultSite(slug: $0.slug, displayName: $0.displayName, loginURL: $0.loginURL) }
     }
 
     func credential(id: String, includeUsername: Bool) async throws -> ProfileV3VaultCredential {
-        let row: CredentialDTO = try await send(
+        let row: CredentialDTO = try await client.request(
             .vaultCredential(id: id, includeUsername: includeUsername),
             action: "vault_credential"
         )
@@ -56,7 +56,7 @@ final class ProfileV3VaultClient: @unchecked Sendable {
     }
 
     func delete(id: String) async throws {
-        try await perform(.vaultDeleteCredential(id: id), action: "vault_delete")
+        try await client.perform(.vaultDeleteCredential(id: id), action: "vault_delete")
     }
 
     func revealPassword(id: String, deviceName: String) async throws -> String {
@@ -66,7 +66,7 @@ final class ProfileV3VaultClient: @unchecked Sendable {
         }
         let context = try await ProfileV3VaultDevice.authenticate()
         let deviceID = try await enrolledDeviceID(name: deviceName)
-        let challenge: ChallengeDTO = try await send(
+        let challenge: ChallengeDTO = try await client.request(
             .vaultRevealChallenge(id: id, body: try JSONEncoder().encode(DeviceBody(deviceID: deviceID))),
             action: "vault_reveal_challenge"
         )
@@ -79,7 +79,7 @@ final class ProfileV3VaultClient: @unchecked Sendable {
         }
         let response: RevealDTO
         do {
-            response = try await send(
+            response = try await client.request(
                 .vaultReveal(id: id, body: try JSONEncoder().encode(RevealBody(
                     deviceID: deviceID,
                     nonce: challenge.nonce,
@@ -104,7 +104,7 @@ final class ProfileV3VaultClient: @unchecked Sendable {
         guard await Self.signedInRecently() else { throw ProfileV3Error.server(code: "reauth", message: ProfileV3VaultStrings.confirmItsYou) }
         let pem = try ProfileV3VaultDevice.publicKeyPEM()
         let body = try JSONEncoder().encode(RegisterDeviceBody(name: name, platform: "ios", publicKeyPEM: pem))
-        let created: DeviceDTO = try await send(.vaultRegisterDevice(body: body), action: "vault_register_device")
+        let created: DeviceDTO = try await client.request(.vaultRegisterDevice(body: body), action: "vault_register_device")
         ProfileV3VaultDevice.saveDeviceID(created.id)
         return created.id
     }
@@ -123,7 +123,7 @@ final class ProfileV3VaultClient: @unchecked Sendable {
 
     private func publicKey() async throws -> ProfileV3VaultCrypto.PublicKey {
         try await keys.key {
-            let dto: PublicKeyDTO = try await self.send(.vaultPublicKey, action: "vault_public_key")
+            let dto: PublicKeyDTO = try await self.client.request(.vaultPublicKey, action: "vault_public_key")
             return ProfileV3VaultCrypto.PublicKey(id: dto.keyID, pem: dto.pem)
         }
     }
@@ -143,25 +143,13 @@ final class ProfileV3VaultClient: @unchecked Sendable {
     }
 
     private func write(_ endpoint: ProfileV3API, action: String) async throws -> ProfileV3VaultWriteResult {
-        let dto: WriteDTO = try await send(endpoint, action: action)
+        let dto: WriteDTO = try await client.request(endpoint, action: action)
         return ProfileV3VaultWriteResult(id: dto.id, status: ProfileV3VaultStatus(raw: dto.status))
     }
 
     private func uid() throws -> String {
         guard let uid = session.currentUserID?.nonEmpty else { throw ProfileV3Error.unauthorized }
         return uid
-    }
-
-    private func send<T: Decodable>(_ endpoint: ProfileV3API, action: String) async throws -> T {
-        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: action) {
-            try await client.request(endpoint)
-        }
-    }
-
-    private func perform(_ endpoint: ProfileV3API, action: String) async throws {
-        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: action) {
-            try await client.perform(endpoint)
-        }
     }
 
     @MainActor

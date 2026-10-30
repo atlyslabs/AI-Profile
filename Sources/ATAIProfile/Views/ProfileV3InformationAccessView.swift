@@ -15,28 +15,17 @@ struct ProfileV3InformationAccessView: View {
                     onBack: onBack,
                     onConnected: model.openControlPanel
                 )
-                ProfileV3InformationAccessHero()
-                    .padding(.top, Layout.heroTop)
-                Text(model.screen?.title.nonEmpty ?? ProfileV3Strings.informationAccess)
-                    .typoGraphy(.H5InterMedium20)
-                    .foregroundStyle(Color(at: .pureBlack))
-                    .frame(maxWidth: Layout.titleWidth)
-                    .padding(.top, Layout.titleTop)
-                Text(model.screen?.blurb.nonEmpty ?? ProfileV3Strings.informationAccessSubtitle)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.accessSubtitle))
-                    .frame(maxWidth: Layout.titleWidth)
-                    .padding(.top, Layout.subtitleTop)
+                ProfileV3AccessHeading(
+                    title: model.screen?.title.nonEmpty ?? ProfileV3Strings.informationAccess,
+                    subtitle: model.screen?.blurb.nonEmpty ?? ProfileV3Strings.informationAccessSubtitle
+                )
                 cards
                     .padding(.top, Layout.cardsTop)
             }
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
             .padding(.bottom, Layout.bottom)
-            .background(alignment: .top) {
-                ProfileV3AccessGlow()
-                    .offset(y: Layout.glowCentreY - Layout.glow / 2)
-            }
+            .profileV3AccessPageGlow()
         }
         .scrollBounceBehavior(.basedOnSize)
         .background(Color(at: .pureWhite))
@@ -261,7 +250,7 @@ struct ProfileV3ConnectorAction: View {
         }
         .buttonStyle(.profileV3Pressable)
         .disabled(action == nil)
-        .opacity(action == nil ? ProfileV3Theme.Motion.disabledOpacity : 1)
+        .opacity(action == nil ? ProfileV3Theme.Opacity.disabled : 1)
         .accessibilityLabel(title)
     }
 }
@@ -286,17 +275,6 @@ private struct ProfileV3ConnectedEmailChip: View {
         .padding(.trailing, Layout.chipTrailing)
         .background(Capsule().fill(ProfileV3Theme.Palette.background))
         .accessibilityElement(children: .combine)
-    }
-}
-
-extension View {
-    func profileV3AccessCard(cornerRadius: CGFloat = ProfileV3Theme.Sizes.InformationAccess.cardRadius) -> some View {
-        profileV3SettingsCard(cornerRadius: cornerRadius, fill: Color(at: .pureWhite))
-            .shadow(
-                color: ProfileV3Theme.Palette.accessCardShadow,
-                radius: ProfileV3Theme.Sizes.InformationAccess.cardShadowRadius,
-                y: ProfileV3Theme.Sizes.InformationAccess.cardShadowY
-            )
     }
 }
 

@@ -177,6 +177,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsButtonOtherWebsite: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-other-website", fallback: "Other website") }
   /// Button that saves a new custom rule.
   internal static var moAiprofileAgentsButtonSaveRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-save-rule", fallback: "Save") }
+  /// Action on the Instagram row in App access while the linked account hasn't messaged @ayl.chat yet. Opens the chat with @ayl.chat.
+  internal static var moAiprofileAgentsButtonSendDm: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-send-dm", fallback: "Send a DM") }
   /// Confirmation title before deleting a saved login.
   internal static var moAiprofileAgentsConfirmationDeleteCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-confirmation-delete-credentials", fallback: "Are you sure you want to delete your password credentials?") }
   /// Description for the app connector vault feature.
@@ -191,6 +193,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsDescriptionDataVault: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-data-vault", fallback: "A secure vault for your sources") }
   /// Introductory blurb for the Gmail connector functionality.
   internal static var moAiprofileAgentsDescriptionGmailConnector: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-gmail-connector", fallback: "Your travel details, bookings and updates are already there. Connecting email helps the agent understand and act on them without asking you to find or share everything manually.") }
+  /// Blurb for Instagram in App access and on its connected-apps card.
+  internal static var moAiprofileAgentsDescriptionInstagram: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-instagram", fallback: "Meet Ayl on Instagram\nFollow Ayl and say hi, so your agent can plan and recommend the best of everything for you.") }
   /// Detail under the third Instagram explainer step.
   internal static var moAiprofileAgentsDescriptionInstagramStepFollow: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-instagram-step-follow", fallback: "From here on, your agent will organize, plan, and recommend the best of everything for you.") }
   /// Detail under the second Instagram explainer step.
@@ -201,6 +205,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsDescriptionItrConnector: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-itr-connector", fallback: "Your filings confirm income and travel history, so the agent can prefill applications without asking you to dig up documents.") }
   /// Error when disconnecting a connector fails.
   internal static var moAiprofileAgentsErrorDisconnectFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-disconnect-failed", fallback: "Couldn't disconnect. Please try again.") }
+  /// Error under the username field when the text isn't a valid Instagram username (1-30 letters, numbers, dots or underscores).
+  internal static var moAiprofileAgentsErrorInstagramUsernameInvalid: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-instagram-username-invalid", fallback: "Enter a valid Instagram username") }
   /// Error under the password when showing it needs a recent sign-in.
   internal static var moAiprofileAgentsErrorVaultConfirmItsYou: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-vault-confirm-its-you", fallback: "For your security, sign in to Atlys again, then show the password within 10 minutes.") }
   /// Saved login status when the site needs a one-time code.
@@ -235,8 +241,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelInstagramFollow: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-instagram-follow", fallback: "Follow") }
   /// Message bubble drawn in the third Instagram explainer card.
   internal static var moAiprofileAgentsLabelInstagramHi: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-instagram-hi", fallback: "hi") }
-  /// Sample username drawn in the first Instagram explainer card.
-  internal static var moAiprofileAgentsLabelInstagramSampleHandle: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-instagram-sample-handle", fallback: "Johndoe") }
+  /// Ayl's Instagram handle, drawn without the @ in the first Instagram explainer card.
+  internal static var moAiprofileAgentsLabelInstagramSampleHandle: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-instagram-sample-handle", fallback: "ayl") }
   /// Credentials form field label for the password.
   internal static var moAiprofileAgentsLabelPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-password", fallback: "Password") }
   /// Travel persona loader: trait label on the processing dial.
@@ -285,6 +291,10 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsStatusAutoConnected: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-auto-connected", fallback: "Auto connected") }
   /// Status label indicating a connector is active.
   internal static var moAiprofileAgentsStatusConnected: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-connected", fallback: "Connected") }
+  /// Status under the Instagram row in App access while the linked account hasn't messaged @ayl.chat yet. The variable is the linked username.
+  internal static func moAiprofileAgentsStatusInstagramAwaitingMessage(_ p1: Any) -> String {
+    return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-instagram-awaiting-message", String(describing: p1), fallback: "Send any message to @ayl.chat from @%1$@ to finish connecting.")
+  }
   /// Shown while the app opens Instagram after a username is saved.
   internal static var moAiprofileAgentsStatusInstagramRedirecting: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-status-instagram-redirecting", fallback: "Redirecting you to instagram...") }
   /// Travel persona loader caption under the processing dial.

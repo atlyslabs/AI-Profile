@@ -45,36 +45,23 @@ private struct ProfileV3BaggageTabs: View {
 
     private typealias Sizes = ProfileV3Theme.Sizes.Baggage
 
-    @Namespace private var pill
-
     var body: some View {
-        HStack(spacing: Sizes.tabSpacing) {
-            ForEach(tabs) { tab in
-                let isSelected = tab.id == selectedID
-                Button { onSelect(tab.id) } label: {
-                    label(tab.title, isSelected: isSelected)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background {
-                            if isSelected {
-                                Capsule()
-                                    .fill(Color(at: .pureBlack))
-                                    .matchedGeometryEffect(id: Self.pillID, in: pill)
-                            }
-                        }
-                        .contentShape(Capsule())
-                }
-                .buttonStyle(.profileV3Pressable(.selection))
-                .accessibilityLabel(tab.title)
-                .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
-            }
+        ProfileV3SegmentTrack(
+            items: tabs,
+            selectedID: selectedID,
+            spacing: Sizes.tabSpacing,
+            onSelect: onSelect
+        ) { tab, isSelected in
+            label(tab.title, isSelected: isSelected)
+        } pill: {
+            Capsule()
+                .fill(Color(at: .pureBlack))
         }
         .padding(.horizontal, Sizes.tabInsetHorizontal)
         .padding(.vertical, Sizes.tabInsetVertical)
         .frame(height: Sizes.tabHeight)
         .background(Capsule().fill(ProfileV3Theme.Palette.tabTrack))
     }
-
-    private static let pillID = "pill"
 
     private func label(_ title: String, isSelected: Bool) -> some View {
         let split = title.range(of: " (")
@@ -205,7 +192,7 @@ private struct ProfileV3BaggageTile: View {
                 .typoGraphy(.H7InterSemibold16)
                 .foregroundStyle(Color(at: .pureWhite))
                 .frame(width: Sizes.stepperButton, height: Sizes.stepperButton)
-                .background(Circle().fill(ProfileV3Theme.Palette.stepperButton))
+                .background(Circle().fill(ProfileV3Theme.Palette.nearBlack))
                 .padding(Sizes.stepperHitInset)
                 .contentShape(Rectangle())
         }
@@ -213,6 +200,8 @@ private struct ProfileV3BaggageTile: View {
         .padding(-Sizes.stepperHitInset)
     }
 }
+
+extension ProfileV3BaggageTab: ProfileV3SegmentItem {}
 
 #if DEBUG
 private struct ProfileV3BaggagePickerPreview: View {

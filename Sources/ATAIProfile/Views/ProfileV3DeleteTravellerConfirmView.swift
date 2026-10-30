@@ -19,23 +19,7 @@ struct ProfileV3DeleteTravellerConfirmView: View {
                         .foregroundStyle(Color(at: .pureBlack))
                     ProfileV3TravellerCardLip()
                 }
-                VStack(spacing: ProfileV3Theme.Space.s12) {
-                    if let title = confirm?.title.nonEmpty {
-                        Text(title)
-                            .typoGraphy(.H6InterMedium18)
-                            .foregroundStyle(Color(at: .pureBlack))
-                            .fixedSize(horizontal: false, vertical: true)
-                            .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.titleWidth)
-                    }
-                    if let body = confirm?.body.nonEmpty {
-                        Text(body)
-                            .typoGraphy(.B2InterMedium12)
-                            .foregroundStyle(Color(at: .neutralGrey400))
-                            .fixedSize(horizontal: false, vertical: true)
-                            .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.bodyWidth)
-                    }
-                }
-                .multilineTextAlignment(.center)
+                ProfileV3ConfirmationCopy(title: confirm?.title ?? "", message: confirm?.body.nonEmpty)
             }
             .padding(.top, ProfileV3Theme.Sizes.Traveller.formNameTop)
             actions
@@ -45,19 +29,13 @@ struct ProfileV3DeleteTravellerConfirmView: View {
     }
 
     private var actions: some View {
-        VStack(spacing: ProfileV3Theme.Sizes.Traveller.cardSpacing) {
-            if let proceedLabel = confirm?.proceedLabel.nonEmpty {
-                ProfileV3ContinueButton(
-                    title: proceedLabel,
-                    tint: ProfileV3Theme.Palette.destructive,
-                    isLoading: isDeleting,
-                    action: onProceed
-                )
-            }
-            if let cancelLabel = confirm?.cancelLabel.nonEmpty {
-                ProfileV3ContinueButton(title: cancelLabel, isEnabled: !isDeleting, action: onBack)
-            }
-        }
+        ProfileV3ConfirmationActions(
+            primaryTitle: confirm?.proceedLabel ?? "",
+            secondaryTitle: confirm?.cancelLabel ?? "",
+            isPrimaryLoading: isDeleting,
+            onPrimary: onProceed,
+            onSecondary: onBack
+        )
         .profileV3CTABar(top: ProfileV3Theme.Sizes.Confirmation.buttonsTop)
     }
 }

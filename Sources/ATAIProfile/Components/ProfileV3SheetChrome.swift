@@ -38,6 +38,24 @@ private struct ProfileV3SheetHeaderIcon: View {
     }
 }
 
+struct ProfileV3SheetControls: View {
+    var onBack: (() -> Void)?
+    var onClose: (() -> Void)?
+
+    var body: some View {
+        HStack {
+            if let onBack {
+                ProfileV3CircleIconButton.back(action: onBack)
+            }
+            Spacer()
+            if let onClose {
+                ProfileV3CircleIconButton.close(action: onClose)
+            }
+        }
+        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+    }
+}
+
 struct ProfileV3SheetChrome: View {
     var icon: Image?
     let title: String
@@ -58,17 +76,8 @@ struct ProfileV3SheetChrome: View {
                     .top,
                     icon == nil ? ProfileV3Theme.Sizes.sheetTitleOnlyTop : ProfileV3Theme.Sizes.sheetHeaderIconTop
                 )
-                HStack {
-                    if let onBack {
-                        ProfileV3CircleIconButton.back(action: onBack)
-                    }
-                    Spacer()
-                    if let onClose {
-                        ProfileV3CircleIconButton.close(action: onClose)
-                    }
-                }
-                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                .frame(maxWidth: .infinity)
+                ProfileV3SheetControls(onBack: onBack, onClose: onClose)
+                    .frame(maxWidth: .infinity)
             }
             .frame(maxWidth: .infinity)
             .padding(.top, ProfileV3Theme.Sizes.sheetHeaderTop)

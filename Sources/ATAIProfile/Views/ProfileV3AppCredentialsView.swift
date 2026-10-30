@@ -11,7 +11,6 @@ struct ProfileV3AppCredentialsView: View {
     private struct Measured: Equatable {
         var content: CGFloat = 0
         var bar: CGFloat = 0
-        var bottomInset: CGFloat = 0
     }
 
     var body: some View {
@@ -21,58 +20,31 @@ struct ProfileV3AppCredentialsView: View {
             onContentHeight: { measured.content = $0 },
             onBarHeight: { measured.bar = $0 }
         )
-        .background {
-            Color.clear
-                .ignoresSafeArea(.keyboard)
-                .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
-        }
-        .profileV3FittedDetent(fittedHeight, until: .large)
-        .presentationCornerRadius(ProfileV3Theme.Sizes.AppCredentials.cornerRadius)
-        .presentationDragIndicator(.hidden)
-        .interactiveDismissDisabled(viewModel.phase == .submitting)
+        .profileV3Sheet(
+            .fitted(fittedHeight, until: .large, ignoresKeyboard: true),
+            isDismissDisabled: viewModel.phase == .saving
+        )
         .onDisappear(perform: viewModel.cancel)
     }
 
     private var fittedHeight: CGFloat? {
         guard measured.content > 0, measured.bar > 0 else { return nil }
-        return measured.content + measured.bar + measured.bottomInset
+        return measured.content + measured.bar
     }
 }
 
 struct ProfileV3DeleteLoginSheet: View {
     @ObservedObject var viewModel: ProfileV3AppCredentialsViewModel
 
-    @State private var measured = Measured()
-
-    private struct Measured: Equatable {
-        var content: CGFloat = 0
-        var bottomInset: CGFloat = 0
-    }
-
     var body: some View {
-        ProfileV3ConfirmationView.deleteLogin(
-            subject: viewModel.deleteSubject,
-            isDeleting: viewModel.isDeleting,
-            onBack: viewModel.cancelDelete,
-            onDelete: viewModel.confirmDelete
-        )
-        .fixedSize(horizontal: false, vertical: true)
-        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.content = $0 }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color(at: .pureWhite).ignoresSafeArea())
-        .background {
-            Color.clear
-                .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
+        ProfileV3FittedConfirmationSheet(isBusy: viewModel.isDeleting) {
+            ProfileV3ConfirmationView.deleteLogin(
+                subject: viewModel.deleteSubject,
+                isDeleting: viewModel.isDeleting,
+                onBack: viewModel.cancelDelete,
+                onDelete: viewModel.confirmDelete
+            )
         }
-        .profileV3FittedDetent(fittedHeight)
-        .presentationCornerRadius(ProfileV3Theme.Sizes.AppCredentials.cornerRadius)
-        .presentationDragIndicator(.hidden)
-        .interactiveDismissDisabled(viewModel.isDeleting)
-    }
-
-    private var fittedHeight: CGFloat? {
-        guard measured.content > 0 else { return nil }
-        return measured.content + measured.bottomInset
     }
 }
 
@@ -109,7 +81,7 @@ struct ProfileV3AppCredentialsSheet: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())
-        .sensoryFeedback(.success, trigger: viewModel.phase == .succeeded)
+        .sensoryFeedback(.success, trigger: viewModel.phase == .saved)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
             viewModel.hidePassword()
         }
@@ -124,21 +96,16 @@ struct ProfileV3AppCredentialsSheet: View {
     }
 
     private var header: some View {
-        ProfileV3AgentSheetChrome(control: .close(onClose), isEnabled: viewModel.phase != .submitting)
+        ProfileV3AgentSheetChrome(control: .close(onClose), isEnabled: viewModel.phase != .saving)
     }
 
     @ViewBuilder
     private var content: some View {
         if viewModel.showsHeader {
             VStack(spacing: 0) {
-                shield
-                Text(viewModel.title)
-                    .typoGraphy(.H5InterMedium20)
-                    .foregroundStyle(Color(at: .pureBlack))
-                    .multilineTextAlignment(.center)
-                    .frame(width: Layout.titleWidth)
-                    .padding(.top, Layout.titleTop)
-                    .accessibilityAddTraits(.isHeader)
+                ProfileV3ShieldHeading(title: viewModel.title) {
+                    ProfileV3OutlinedShield { glyph }
+                }
                 fields
                     .padding(.top, Layout.fieldsTop)
                     .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
@@ -164,29 +131,13 @@ struct ProfileV3AppCredentialsSheet: View {
                     tint: ProfileV3Theme.Palette.destructive,
                     action: viewModel.askToDelete
                 )
-                .disabled(viewModel.phase != .editing)
+                .disabled(viewModel.phase != .idle)
                 .padding(.top, Layout.deleteRowTop)
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, Layout.editFieldsTop)
             .padding(.bottom, Layout.editBottom)
         }
-    }
-
-    private var shield: some View {
-        ZStack(alignment: .top) {
-            ProfileV3ShieldShape()
-                .stroke(
-                    Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.appShieldStroke),
-                    lineWidth: Layout.shieldStroke
-                )
-                .clipShape(ProfileV3ShieldShape())
-            glyph
-                .frame(width: Layout.glyph, height: Layout.glyph)
-                .padding(.top, Layout.glyphTop)
-        }
-        .frame(width: Layout.shield.width, height: Layout.shield.height)
-        .accessibilityHidden(true)
     }
 
     @ViewBuilder
@@ -234,7 +185,7 @@ struct ProfileV3AppCredentialsSheet: View {
                 passwordField
             }
         }
-        .disabled(viewModel.phase != .editing)
+        .disabled(viewModel.phase != .idle)
     }
 
     private var passwordField: some View {
@@ -268,9 +219,7 @@ struct ProfileV3AppCredentialsSheet: View {
     @ViewBuilder
     private var inlineError: some View {
         if let error = viewModel.inlineError {
-            Text(error)
-                .typoGraphy(.B2InterMedium12)
-                .foregroundStyle(ProfileV3Theme.Palette.destructive)
+            ProfileV3ErrorText(text: error)
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -280,17 +229,17 @@ struct ProfileV3AppCredentialsSheet: View {
         ZStack {
             if viewModel.isEditing {
                 ProfileV3SaveButton(
-                    phase: viewModel.savePhase,
+                    phase: viewModel.phase,
                     title: viewModel.submitTitle,
                     savedTitle: viewModel.successMessage,
                     action: viewModel.submit
                 )
-                .disabled(!viewModel.canSubmit && viewModel.phase == .editing)
+                .disabled(!viewModel.canSubmit && viewModel.phase == .idle)
                 .opacity(saveOpacity)
                 .profileV3SaveEntrance(isShown: viewModel.showsSaveButton)
             } else {
                 ProfileV3SubmitControl(
-                    phase: viewModel.savePhase,
+                    phase: viewModel.phase,
                     title: viewModel.submitTitle,
                     successMessage: viewModel.successMessage,
                     isEnabled: viewModel.canSubmit,
@@ -305,7 +254,7 @@ struct ProfileV3AppCredentialsSheet: View {
     }
 
     private var saveOpacity: Double {
-        viewModel.canSubmit || viewModel.phase != .editing ? 1 : ProfileV3Theme.Motion.disabledOpacity
+        viewModel.canSubmit || viewModel.phase != .idle ? 1 : ProfileV3Theme.Opacity.disabled
     }
 }
 

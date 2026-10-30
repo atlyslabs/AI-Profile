@@ -5,6 +5,7 @@ final class ProfileV3AppAccessStore: @unchecked Sendable {
     static let shared = ProfileV3AppAccessStore()
     static let latency: Duration = .milliseconds(600)
     static let passwordPrefix = "password-"
+    static let takenInstagramUsername = "taken.handle"
 
     private let lock = NSLock()
     private var content: ProfileV3AppAccess
@@ -27,6 +28,34 @@ final class ProfileV3AppAccessStore: @unchecked Sendable {
             throw ProfileV3Error.invalidRequest(message: nil)
         }
         content.apps[index].username = credentials.username
+        content.apps[index].isConnected = true
+    }
+
+    func instagramAccount() -> ProfileV3InstagramAccount {
+        lock.lock()
+        defer { lock.unlock() }
+        guard let app = content.apps.first(where: \.isInstagram) else { return .unlinked }
+        return ProfileV3InstagramAccount(username: app.username, hasMessaged: app.isConnected)
+    }
+
+    func linkInstagram(_ username: String) throws {
+        lock.lock()
+        defer { lock.unlock() }
+        guard username != Self.takenInstagramUsername else {
+            throw ProfileV3Error.conflict(code: nil, message: "This Instagram account is linked to another Ayl account")
+        }
+        guard let index = content.apps.firstIndex(where: \.isInstagram) else {
+            throw ProfileV3Error.invalidRequest(message: nil)
+        }
+        guard content.apps[index].username != username else { return }
+        content.apps[index].username = username
+        content.apps[index].isConnected = false
+    }
+
+    func messageInstagram() {
+        lock.lock()
+        defer { lock.unlock() }
+        guard let index = content.apps.firstIndex(where: \.isInstagram), content.apps[index].username != nil else { return }
         content.apps[index].isConnected = true
     }
 
@@ -62,19 +91,10 @@ final class ProfileV3AppAccessStore: @unchecked Sendable {
 enum ProfileV3AppAccessFixtures {
     static let content = ProfileV3AppAccess(
         autoConnected: [
-            ProfileV3AutoConnectedApp(id: "splits", name: "Splits by Atlys", iconURL: ProfileV3AppAccessFixtureLogos.splits)
+            ProfileV3AutoConnectedApp(id: "splits", name: "Splits", iconURL: ProfileV3AppAccessFixtureLogos.splits)
         ],
         apps: [
-            ProfileV3LinkedApp(
-                id: "instagram",
-                name: "Instagram",
-                iconURL: ProfileV3AppAccessFixtureLogos.instagram,
-                blurb: "Meet Ayl on Instagram\nFollow Ayl and say hi, so your agent can plan and recommend the best "
-                    + "of everything for you.",
-                username: nil,
-                isConnected: false,
-                asksForUsernameOnly: true
-            ),
+            .instagram,
             app(
                 "grab",
                 "Grab",

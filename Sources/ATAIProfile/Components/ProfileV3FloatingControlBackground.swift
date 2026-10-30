@@ -4,9 +4,13 @@ struct ProfileV3FloatingControlBackground: View {
     var body: some View {
         Circle()
             .fill(Color.white)
-            .overlay { Circle().fill(Color.black.opacity(0.05)) }
+            .overlay { Circle().fill(ProfileV3Theme.Palette.floatingControlWash) }
             .profileV3LiquidGlassIfAvailable(in: Circle(), interactive: true)
-            .shadow(color: .black.opacity(0.06), radius: 8, y: 2)
+            .shadow(
+                color: ProfileV3Theme.Palette.floatingControlShadow,
+                radius: ProfileV3Theme.Shadow.floatingRadius,
+                y: ProfileV3Theme.Shadow.floatingY
+            )
     }
 }
 

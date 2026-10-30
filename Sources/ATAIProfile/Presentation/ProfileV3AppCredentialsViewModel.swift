@@ -18,12 +18,6 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
         case panel
     }
 
-    enum Phase: Equatable {
-        case editing
-        case submitting
-        case succeeded
-    }
-
     let id = UUID()
     let mode: Mode
     let origin: Origin
@@ -33,7 +27,7 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
     @Published var isPasswordRevealed = false
     @Published private(set) var isRevealingPassword = false
     @Published private(set) var inlineError: String?
-    @Published private(set) var phase: Phase = .editing
+    @Published private(set) var phase: ProfileV3SavePhase = .idle
     @Published private(set) var isConfirmingDelete = false {
         didSet {
             guard isConfirmingDelete != oldValue else { return }
@@ -109,7 +103,7 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
     }
 
     var showsSaveButton: Bool {
-        !canDelete || canSubmit || phase != .editing
+        !canDelete || canSubmit || phase != .idle
     }
 
     var passwordPrompt: String? {
@@ -157,13 +151,14 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
 
     var canSubmit: Bool {
         let value = credentials.trimmed
-        guard phase == .editing, !value.username.isEmpty else { return false }
+        guard phase == .idle, !value.username.isEmpty else { return false }
         if asksForWebsite, value.websiteURL == nil { return false }
         if case .vaultEdit(let entry) = mode, newPassword.isEmpty {
             return value.username != (entry.username ?? "")
         }
         guard asksForPassword else {
-            if case .edit(let app) = mode { return value.username != (app.username ?? "") }
+            let username = app?.isInstagram == true ? ProfileV3InstagramUsername.normalised(value.username) : value.username
+            if case .edit(let app) = mode { return username != (app.username ?? "") }
             return true
         }
         return !value.password.isEmpty
@@ -171,14 +166,6 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
 
     private var newPassword: String {
         credentials.password == storedPassword ? "" : credentials.password
-    }
-
-    var savePhase: ProfileV3SavePhase {
-        switch phase {
-        case .editing: return .idle
-        case .submitting: return .saving
-        case .succeeded: return .saved
-        }
     }
 
     func togglePasswordVisibility() {
@@ -225,7 +212,7 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
     }
 
     func askToDelete() {
-        guard canDelete, phase == .editing else { return }
+        guard canDelete, phase == .idle else { return }
         hidePassword()
         inlineError = nil
         isConfirmingDelete = true
@@ -259,7 +246,13 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
 
     func submit() {
         guard canSubmit else { return }
-        phase = .submitting
+        let linksInstagram = app?.isInstagram == true
+        let instagramUsername = ProfileV3InstagramUsername.normalised(credentials.username)
+        if linksInstagram, !ProfileV3InstagramUsername.isValid(instagramUsername) {
+            fail(ProfileV3Strings.instagramUsernameInvalid)
+            return
+        }
+        phase = .saving
         inlineError = nil
         let credentials = credentials.trimmed
         let newPassword = newPassword
@@ -270,7 +263,11 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
                 let saved: String?
                 switch mode {
                 case .add(let app), .edit(let app):
-                    try await repository.saveAppCredentials(credentials, appID: app.id)
+                    if linksInstagram {
+                        _ = try await repository.linkInstagram(username: instagramUsername)
+                    } else {
+                        try await repository.saveAppCredentials(credentials, appID: app.id)
+                    }
                     saved = nil
                 case .newPassword:
                     try await repository.addAppPassword(credentials)
@@ -292,21 +289,25 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
                 }
                 guard let self, !Task.isCancelled else { return }
                 savedID = saved
-                phase = .succeeded
-                try await Task.sleep(for: .seconds(ProfileV3Theme.Motion.appCredentialsSuccessSeconds))
+                phase = .saved
+                try await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds))
                 guard !Task.isCancelled else { return }
                 onFinish?()
             } catch let saved as ProfileV3VaultAlreadySaved {
                 guard let self, !Task.isCancelled else { return }
-                phase = .editing
+                phase = .idle
                 onAlreadySaved?(saved.id)
                 fail(saved.message)
             } catch is CancellationError {
                 return
             } catch {
                 guard let self, !Task.isCancelled else { return }
-                phase = .editing
-                fail(ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed))
+                phase = .idle
+                fail(
+                    linksInstagram
+                        ? ProfileV3InstagramUsername.errorMessage(for: error)
+                        : ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed)
+                )
             }
         }
     }
@@ -319,12 +320,12 @@ final class ProfileV3AppCredentialsViewModel: ObservableObject, Identifiable {
     }
 
     private func fail(_ message: String) {
-        if isVault { inlineError = message }
+        if isVault || app?.isInstagram == true { inlineError = message }
         onFailure?(message)
     }
 
     private func revealStoredPassword(_ id: String) {
-        guard !isRevealingPassword, phase == .editing else { return }
+        guard !isRevealingPassword, phase == .idle else { return }
         isRevealingPassword = true
         let repository = repository
         revealTask = Task { [weak self] in

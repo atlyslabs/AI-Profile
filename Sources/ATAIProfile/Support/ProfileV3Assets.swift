@@ -126,7 +126,6 @@ enum ProfileV3PersonaArt: String {
 
 enum ProfileV3GloveBoxArt: String {
     case attention = "profile_v3_glovebox_attention"
-    case bolt = "profile_v3_glovebox_bolt"
     case closeSmall = "profile_v3_glovebox_close_small"
     case glow = "profile_v3_glovebox_glow"
     case aylMark = "profile_v3_glovebox_ayl"

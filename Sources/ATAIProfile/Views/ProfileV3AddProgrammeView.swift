@@ -101,15 +101,9 @@ struct ProfileV3AddProgrammeView: View {
     private var backdrop: some View {
         switch viewModel.stage {
         case .kycRequired:
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .overlay(ProfileV3Theme.Palette.frostedBackdrop)
-                .ignoresSafeArea()
+            ProfileV3FrostedBackdrop()
         case .pick where drawsSheet, .details where drawsSheet:
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .overlay(ProfileV3Theme.Palette.sheetDim)
-                .ignoresSafeArea()
+            ProfileV3FrostedBackdrop(tint: ProfileV3Theme.Palette.sheetDim)
         case .scanning, .found, .failed, .pick, .details:
             Color.clear
         }
@@ -466,9 +460,7 @@ struct ProfileV3AddProgrammeView: View {
     private func ctaBar<Button: View>(error: String?, @ViewBuilder button: () -> Button) -> some View {
         VStack(spacing: ProfileV3Theme.Space.s12) {
             if let error {
-                Text(error)
-                    .typoGraphy(.T1InterBold11)
-                    .foregroundStyle(ProfileV3Theme.Palette.error)
+                ProfileV3ErrorText(text: error, style: .bar)
                     .multilineTextAlignment(.center)
             }
             button()

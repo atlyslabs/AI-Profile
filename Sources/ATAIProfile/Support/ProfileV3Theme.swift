@@ -48,6 +48,7 @@ enum ProfileV3Theme {
         static let lg: CGFloat = 20
         static let xl: CGFloat = 24
         static let xxl: CGFloat = 30
+        static let card: CGFloat = 32
         static let xxxl: CGFloat = 40
     }
 
@@ -68,6 +69,8 @@ enum ProfileV3Theme {
         static let regular: CGFloat = 2
         static let thick: CGFloat = 3
         static let heavy: CGFloat = 4
+        static let dash: [CGFloat] = [2, 2]
+        static let wideDash: [CGFloat] = [3, 3]
     }
 
     enum Sizes {
@@ -77,6 +80,7 @@ enum ProfileV3Theme {
         static let settingsRowHeight = Control.regular
         static let settingsRowIcon = Icon.lg
         static let sheetCornerRadius = Radius.xxxl
+        static let largeSheetCornerRadius: CGFloat = 44
         static let sheetHeaderIcon = Icon.xl
         static let sliderRulerSpacing: CGFloat = 19
         static let worldPassCornerRadius = Radius.xxl
@@ -171,8 +175,10 @@ enum ProfileV3Theme {
         static let pillY: CGFloat = 4.675
         static let chipRadius: CGFloat = 4.5
         static let chipY: CGFloat = 3.5
-        static let redeemRadius: CGFloat = 15
-        static let redeemY: CGFloat = 4
+        static let softRadius: CGFloat = 15
+        static let softY: CGFloat = 4
+        static let floatingRadius: CGFloat = 8
+        static let floatingY: CGFloat = 2
         static let savedRadius: CGFloat = 16
         static let savedY: CGFloat = 8
         static let plusRadius: CGFloat = 1.28
@@ -219,8 +225,8 @@ enum ProfileV3Theme {
         static let baggageTabMinScale: CGFloat = 0.8
         static let sourceStepDetailSize: CGFloat = 11
         static let worldPassHeaderTracking: CGFloat = -0.74
-        static let passportCountrySize: CGFloat = 14
-        static let passportCountryTracking: CGFloat = -0.56
+        static let monoLabelSize: CGFloat = 14
+        static let monoLabelTracking: CGFloat = -0.56
         static let passportCountryMinScale: CGFloat = 0.6
         static let passportBackLabelSize: CGFloat = 9
         static let passportBackLabelTracking: CGFloat = 0.72
@@ -241,6 +247,18 @@ enum ProfileV3Theme {
     }
 
     enum Opacity {
+        static let sheetBackdropDeep: Double = 0.8
+        static let passportGlow: Double = 0.5
+        static let passportStrip: Double = 0.2
+        static let passportGuilloche: Double = 0.05
+        static let passportExpired: Double = 0.5
+        static let passportPageLabel: Double = 0.5
+        static let passportBackLabel: Double = 0.3
+        static let orbRing: Double = 0.2
+        static let kycOverlayGlow: Double = 0.2
+        static let disabled: Double = 0.5
+        static let hiddenFace: Double = 0.01
+        static let hoverShadowRaised: Double = 0.6
         static let stagedTrack: Double = 0.2
         static let medicalSheen: Double = 0.2
         static let carSide: Double = 0.5

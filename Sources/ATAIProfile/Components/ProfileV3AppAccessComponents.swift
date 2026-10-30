@@ -24,6 +24,48 @@ struct ProfileV3AppLogo: View {
     }
 }
 
+struct ProfileV3OutlinedShield<Glyph: View>: View {
+    @ViewBuilder let glyph: Glyph
+
+    private typealias Layout = ProfileV3Theme.Sizes.AppCredentials
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            ProfileV3ShieldShape()
+                .stroke(
+                    Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.appShieldStroke),
+                    lineWidth: Layout.shieldStroke
+                )
+                .clipShape(ProfileV3ShieldShape())
+            glyph
+                .frame(width: Layout.glyph, height: Layout.glyph)
+                .padding(.top, Layout.glyphTop)
+        }
+        .frame(width: Layout.shield.width, height: Layout.shield.height)
+        .accessibilityHidden(true)
+    }
+}
+
+struct ProfileV3ShieldHeading<Shield: View>: View {
+    let title: String
+    @ViewBuilder let shield: Shield
+
+    private typealias Layout = ProfileV3Theme.Sizes.AppCredentials
+
+    var body: some View {
+        VStack(spacing: 0) {
+            shield
+            Text(title)
+                .typoGraphy(.H5InterMedium20)
+                .foregroundStyle(Color(at: .pureBlack))
+                .multilineTextAlignment(.center)
+                .frame(width: Layout.titleWidth)
+                .padding(.top, Layout.titleTop)
+                .accessibilityAddTraits(.isHeader)
+        }
+    }
+}
+
 struct ProfileV3CredentialField<Accessory: View>: View {
     let label: String
     @Binding var text: String
@@ -40,11 +82,7 @@ struct ProfileV3CredentialField<Accessory: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Layout.fieldGap) {
-            Text(label)
-                .typoGraphy(.T2InterBold12)
-                .textCase(.uppercase)
-                .foregroundStyle(Color(at: .pureBlack))
-                .accessibilityHidden(true)
+            ProfileV3FieldLabel(text: label)
             HStack(spacing: ProfileV3Theme.Space.s8) {
                 input
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -113,7 +151,7 @@ struct ProfileV3CredentialAccessory: View {
         .buttonStyle(.profileV3Pressable)
         .frame(width: ProfileV3Theme.Sizes.AppCredentials.accessory, height: ProfileV3Theme.Sizes.AppCredentials.accessory)
         .disabled(!isEnabled)
-        .opacity(isEnabled ? 1 : ProfileV3Theme.Motion.disabledOpacity)
+        .opacity(isEnabled ? 1 : ProfileV3Theme.Opacity.disabled)
         .accessibilityLabel(accessibilityLabel)
     }
 }
@@ -134,7 +172,7 @@ struct ProfileV3ConnectedAppsHint: View {
                 .padding(.top, Layout.hintTextTop)
                 .frame(width: Layout.hint.width, height: Layout.hint.height, alignment: .top)
                 .background {
-                    ProfileV3HintBubbleShape()
+                    shape
                         .fill(ProfileV3Theme.appHintGradient)
                         .shadow(
                             color: ProfileV3Theme.Palette.appHintShadow,
@@ -142,38 +180,18 @@ struct ProfileV3ConnectedAppsHint: View {
                             y: Layout.hintShadowY
                         )
                 }
-                .contentShape(ProfileV3HintBubbleShape())
+                .contentShape(shape)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(text)
     }
-}
 
-struct ProfileV3HintBubbleShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        let size = ProfileV3Theme.Sizes.AppAccess.hint
-        let sx = rect.width / size.width
-        let sy = rect.height / size.height
-        func point(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
-            CGPoint(x: rect.minX + x * sx, y: rect.minY + y * sy)
-        }
-        var path = Path()
-        path.move(to: point(133, 62.4884))
-        path.addCurve(to: point(145, 50.4884), control1: point(139.627, 62.4884), control2: point(145, 57.1158))
-        path.addLine(to: point(145, 18.4884))
-        path.addCurve(to: point(133, 6.4884), control1: point(145, 11.861), control2: point(139.627, 6.4884))
-        path.addLine(to: point(88.142, 6.4884))
-        path.addCurve(to: point(84.6068, 5.0239), control1: point(86.8163, 6.4884), control2: point(85.5445, 5.9616))
-        path.addLine(to: point(81.5355, 1.9526))
-        path.addCurve(to: point(74.4645, 1.9526), control1: point(79.5829, 0), control2: point(76.4171, 0))
-        path.addLine(to: point(71.3932, 5.0239))
-        path.addCurve(to: point(67.8576, 6.4884), control1: point(70.4555, 5.9616), control2: point(69.1837, 6.4884))
-        path.addLine(to: point(12, 6.4884))
-        path.addCurve(to: point(0, 18.4884), control1: point(5.3726, 6.4884), control2: point(0, 11.861))
-        path.addLine(to: point(0, 50.4884))
-        path.addCurve(to: point(12, 62.4884), control1: point(0, 57.1158), control2: point(5.3726, 62.4884))
-        path.closeSubpath()
-        return path
+    private var shape: ProfileV3PointerBubbleShape {
+        ProfileV3PointerBubbleShape(
+            pointer: Layout.hintPointer,
+            tipRun: Layout.hintTipRun,
+            pointerOffset: Layout.hintPointerOffset
+        )
     }
 }
 

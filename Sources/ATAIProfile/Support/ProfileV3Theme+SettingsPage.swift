@@ -2,7 +2,7 @@ import SwiftUI
 
 extension ProfileV3Theme.Sizes {
     static let headerRevealDistance = ProfileV3Theme.Space.s24
-    static let headerFadeGap: CGFloat = 12
+    static let headerFadeGap = ProfileV3Theme.Space.s12
 
     enum SettingsPage {
         static let headerTop: CGFloat = 21
@@ -11,16 +11,16 @@ extension ProfileV3Theme.Sizes {
         static let avatar: CGFloat = 80
         static let avatarTop: CGFloat = 38
         static let avatarLetterOffsetY: CGFloat = -3
-        static let cardsTop: CGFloat = 40
+        static let cardsTop = ProfileV3Theme.Space.s40
         static let cardSpacing: CGFloat = 25
         static let cardRadius = ProfileV3Theme.Radius.xxxl
         static let cardHeaderTop = ProfileV3Theme.Space.s24
         static let cardHeaderBottom = ProfileV3Theme.Space.s20
         static let cardHeaderTrailing = ProfileV3Theme.Space.s24
-        static let rowsTop: CGFloat = 30
+        static let rowsTop = ProfileV3Theme.Space.s30
         static let rowSpacing = ProfileV3Theme.Space.s14
         static let dangerIcon: CGFloat = 18
-        static let bottom: CGFloat = 40
+        static let bottom = ProfileV3Theme.Space.s40
         static let loadStateHeight: CGFloat = 240
         static let accessCardInset = ProfileV3Theme.Space.s30
         static let accessCardSpacing = ProfileV3Theme.Space.s12
@@ -30,8 +30,6 @@ extension ProfileV3Theme.Sizes {
         static let accessCardTitleTop: CGFloat = 26
         static let accessCardSubtitleTop: CGFloat = 11
         static let accessCardTextWidth: CGFloat = 122
-        static let accessCardShadowRadius: CGFloat = 15
-        static let accessCardShadowY: CGFloat = 4
         static let accessArtTop: CGFloat = 19
         static let informationArtSize = CGSize(width: 84, height: 81)
         static let informationArtTrailing: CGFloat = 38
@@ -48,18 +46,15 @@ extension ProfileV3Theme.Sizes {
         static let tagHeight: CGFloat = 14
         static let questionLineHeight: CGFloat = 19
         static let questionGap = ProfileV3Theme.Space.s24
-        static let dividerDash: [CGFloat] = [2, 2]
         static let bottom = ProfileV3Theme.Space.s40
         static let loadStateHeight: CGFloat = 240
     }
 
     enum SegmentedControl {
-        static let height = ProfileV3Theme.Space.s48
+        static let height = ProfileV3Theme.Control.comfortable
         static let inset = ProfileV3Theme.Space.s4
         static let segmentPadding = ProfileV3Theme.Space.s16
         static let minimumScale: CGFloat = 0.8
-        static let shadowRadius: CGFloat = 15
-        static let shadowY: CGFloat = 4
     }
 
     enum InformationAccess {
@@ -102,10 +97,8 @@ extension ProfileV3Theme.Sizes {
         static let chipPadding: CGFloat = 2
         static let chipTrailing = ProfileV3Theme.Space.s8
         static let chipGap = ProfileV3Theme.Space.s8
-        static let cardShadowRadius: CGFloat = 15
-        static let cardShadowY: CGFloat = 4
         static let loadStateHeight: CGFloat = 200
-        static let bottom: CGFloat = 40
+        static let bottom = ProfileV3Theme.Space.s40
         static let comingSoonArtTop: CGFloat = 120
         static let comingSoonTitleTop: CGFloat = 60
         static let comingSoonBodyWidth: CGFloat = 240
@@ -127,9 +120,7 @@ extension ProfileV3Theme {
 }
 
 extension ProfileV3Theme.Palette {
-    static let inkText = Color(hex: "0B0B0B")
-    static let inkGlyph = Color(hex: "323232")
-    static let segmentSelectedBorder = Color(hex: "E8E8E8")
+    static let inkText = Color(at: .backgroundDarkTheme)
 }
 
 extension ProfileV3Theme.Opacity {

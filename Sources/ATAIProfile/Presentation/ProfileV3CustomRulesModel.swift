@@ -3,12 +3,6 @@ import Foundation
 
 @MainActor
 final class ProfileV3CustomRulesModel: ObservableObject {
-    enum Phase: Equatable {
-        case editing
-        case saving
-        case saved
-    }
-
     enum Commit: Equatable {
         case saved
         case handedOff
@@ -24,7 +18,7 @@ final class ProfileV3CustomRulesModel: ObservableObject {
     @Published private(set) var field: ProfileV3CustomRulesField
     @Published private(set) var editor: Editor?
     @Published private(set) var draft = ""
-    @Published private(set) var phase: Phase = .editing
+    @Published private(set) var phase: ProfileV3SavePhase = .idle
     @Published private(set) var errorMessage: String?
     @Published private(set) var reveals = 0
     @Published var confirmsDelete = false
@@ -53,7 +47,7 @@ final class ProfileV3CustomRulesModel: ObservableObject {
     var trimmedDraft: String { draft.trimmingCharacters(in: .whitespacesAndNewlines) }
 
     var canSave: Bool {
-        guard let editor, phase == .editing, !trimmedDraft.isEmpty else { return false }
+        guard let editor, phase == .idle, !trimmedDraft.isEmpty else { return false }
         guard let index = editor.index, field.rules.indices.contains(index) else { return editor.isAdding }
         return trimmedDraft != field.rules[index]
     }
@@ -81,7 +75,7 @@ final class ProfileV3CustomRulesModel: ObservableObject {
         guard phase != .saving else { return }
         settleTask?.cancel()
         editor = nil
-        phase = .editing
+        phase = .idle
         errorMessage = nil
         confirmsDelete = false
         draft = ""
@@ -103,7 +97,7 @@ final class ProfileV3CustomRulesModel: ObservableObject {
     }
 
     func requestDelete() {
-        guard editor?.index != nil, phase == .editing else { return }
+        guard editor?.index != nil, phase == .idle else { return }
         errorMessage = nil
         confirmsDelete = true
     }
@@ -114,7 +108,7 @@ final class ProfileV3CustomRulesModel: ObservableObject {
     }
 
     func confirmDelete() {
-        guard let index = editor?.index, field.rules.indices.contains(index), phase == .editing else { return }
+        guard let index = editor?.index, field.rules.indices.contains(index), phase == .idle else { return }
         var rules = field.rules
         rules.remove(at: index)
         write(rules, reveals: false)
@@ -127,7 +121,7 @@ final class ProfileV3CustomRulesModel: ObservableObject {
 
     private func open(_ editor: Editor, draft: String) {
         settleTask?.cancel()
-        phase = .editing
+        phase = .idle
         errorMessage = nil
         confirmsDelete = false
         setDraft(draft)
@@ -145,7 +139,7 @@ final class ProfileV3CustomRulesModel: ObservableObject {
                 guard !Task.isCancelled else { return }
                 revealsOnClose = reveals
                 if outcome == .handedOff || isDelete {
-                    phase = .editing
+                    phase = .idle
                     close()
                 } else {
                     phase = .saved
@@ -155,7 +149,7 @@ final class ProfileV3CustomRulesModel: ObservableObject {
                 return
             } catch {
                 guard !Task.isCancelled else { return }
-                phase = .editing
+                phase = .idle
                 confirmsDelete = false
                 errorMessage = ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed)
             }
@@ -167,7 +161,7 @@ final class ProfileV3CustomRulesModel: ObservableObject {
         settleTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds))
             guard let self, !Task.isCancelled else { return }
-            phase = .editing
+            phase = .idle
             close()
         }
     }

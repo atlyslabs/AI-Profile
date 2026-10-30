@@ -6,14 +6,13 @@ extension ProfileV3Theme.Sizes {
         static let orbLarge: CGFloat = 72
         static let glowEndRadius: CGFloat = 170
         static let glowCentre = UnitPoint(x: 0.5, y: 1.15)
-        static let cardPaddingTop: CGFloat = 20
-        static let cardPaddingLeading: CGFloat = 24
-        static let cardPaddingTrailing: CGFloat = 20
-        static let cardPaddingBottom: CGFloat = 28
+        static let cardPaddingTop = ProfileV3Theme.Space.s20
+        static let cardPaddingLeading = ProfileV3Theme.Space.s24
+        static let cardPaddingTrailing = ProfileV3Theme.Space.s20
+        static let cardPaddingBottom = ProfileV3Theme.Space.s28
         static let summaryLineLimit = 3
-        static let sheetCornerRadius: CGFloat = 44
         static let sheetGrabberWidth: CGFloat = 24
-        static let backTop: CGFloat = 30
+        static let backTop = ProfileV3Theme.Space.s30
         static let tagTop = ProfileV3Theme.Space.s40
         static let tagLineHeight: CGFloat = 14
         static let orbTop: CGFloat = 73
@@ -29,11 +28,11 @@ extension ProfileV3Theme.Sizes {
         static let cardWidth: CGFloat = 173
         static let cardHeight: CGFloat = 159
         static let cardSpacing: CGFloat = 15
-        static let cornerRadius: CGFloat = 30
+        static let cornerRadius = ProfileV3Theme.Radius.xxl
         static let nameLeading: CGFloat = 23
-        static let nameTop: CGFloat = 24
+        static let nameTop = ProfileV3Theme.Space.s24
         static let nameWidth: CGFloat = 127
-        static let subtitleTop: CGFloat = 10
+        static let subtitleTop = ProfileV3Theme.Space.s10
         static let subtitleWidth: CGFloat = 381
         static let carouselTop: CGFloat = 19
     }
@@ -41,19 +40,19 @@ extension ProfileV3Theme.Sizes {
     enum Baggage {
         static let art = CGSize(width: 180, height: 184)
         static let tileHeight: CGFloat = 184
-        static let gridSpacing: CGFloat = 20
-        static let cornerRadius: CGFloat = 30
+        static let gridSpacing = ProfileV3Theme.Space.s20
+        static let cornerRadius = ProfileV3Theme.Radius.xxl
         static let contentInset: CGFloat = 23
         static let titleWidth: CGFloat = 106
         static let titleNudge: CGFloat = 1
         static let detailTop: CGFloat = 13.75
         static let mark: CGFloat = 18
         static let markTrailing: CGFloat = 25
-        static let stepperHeight: CGFloat = 48
+        static let stepperHeight = ProfileV3Theme.Control.comfortable
         static let stepperButton: CGFloat = 24
-        static let stepperInset: CGFloat = 14
-        static let stepperHitInset: CGFloat = 10
-        static let tabHeight: CGFloat = 40
+        static let stepperInset = ProfileV3Theme.Space.s14
+        static let stepperHitInset = ProfileV3Theme.Space.s10
+        static let tabHeight = ProfileV3Theme.Control.regular
         static let tabInsetHorizontal: CGFloat = 5
         static let tabInsetVertical: CGFloat = 4
         static let tabSpacing: CGFloat = 2
@@ -64,14 +63,14 @@ extension ProfileV3Theme.Sizes {
     enum MedicalCard {
         static let height: CGFloat = 271
         static let compactHeight: CGFloat = 214
-        static let padding: CGFloat = 32
-        static let flagSpacing: CGFloat = 8
+        static let padding = ProfileV3Theme.Space.s32
+        static let flagSpacing = ProfileV3Theme.Space.s8
         static let flag: CGFloat = 18
         static let valueLeading: CGFloat = 196
         static let emblem: CGFloat = 109
         static let emblemTop: CGFloat = 23
         static let emblemBleed: CGFloat = 35
-        static let nameEmblemGap: CGFloat = 8
+        static let nameEmblemGap = ProfileV3Theme.Space.s8
         static let nameTrailing = emblem - emblemBleed - padding + nameEmblemGap
         static let emblemFadeWidth: CGFloat = 50
         static let emblemFadeHeight: CGFloat = 73
@@ -90,9 +89,9 @@ extension ProfileV3Theme.Sizes {
         static let cardWidth: CGFloat = 190
         static let cardHeight: CGFloat = 302
         static let cardSideScale: CGFloat = 170 / 190
-        static let cardSpacing: CGFloat = 20
-        static let cardNamePadding: CGFloat = 20
-        static let nameTop: CGFloat = 20
+        static let cardSpacing = ProfileV3Theme.Space.s20
+        static let cardNamePadding = ProfileV3Theme.Space.s20
+        static let nameTop = ProfileV3Theme.Space.s20
         static let nameWidth: CGFloat = 142
         static let nameLines = 2
         static let nameHeight: CGFloat = 38
@@ -126,9 +125,9 @@ extension ProfileV3Theme.Sizes {
         static let sideWidth: CGFloat = 150
         static let spacing: CGFloat = 60
         static let sideScale: CGFloat = 0.92
-        static let nameTop: CGFloat = 20
-        static let buttonTop: CGFloat = 32
-        static let captionTop: CGFloat = 20
+        static let nameTop = ProfileV3Theme.Space.s20
+        static let buttonTop = ProfileV3Theme.Space.s32
+        static let captionTop = ProfileV3Theme.Space.s20
         static let captionWidth: CGFloat = 241
     }
 
@@ -140,7 +139,7 @@ extension ProfileV3Theme.Sizes {
         static let cardsTop: CGFloat = 37
         static let cardSpacing = ProfileV3Theme.Space.s16
         static let cardInset: CGFloat = 29
-        static let cardRadius: CGFloat = 32
+        static let cardRadius = ProfileV3Theme.Radius.card
         static let fallbackAspect: CGFloat = 1.819
         static let bottom = ProfileV3Theme.Space.s32
     }

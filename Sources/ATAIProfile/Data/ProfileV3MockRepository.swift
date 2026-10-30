@@ -122,6 +122,17 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         appAccess.disconnect(appID)
     }
 
+    func loadInstagramAccount() async throws -> ProfileV3InstagramAccount {
+        try await Task.sleep(for: delay)
+        return appAccess.instagramAccount()
+    }
+
+    func linkInstagram(username: String) async throws -> String {
+        try await Task.sleep(for: delay)
+        try appAccess.linkInstagram(username)
+        return username
+    }
+
     func loadVaultCredentials() async throws -> [ProfileV3VaultCredential] {
         try await Task.sleep(for: delay)
         return vault.list()

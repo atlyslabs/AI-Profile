@@ -36,7 +36,7 @@ struct ProfileV3AgentSaveBar: View {
 
     private var saveButton: some View {
         ProfileV3SaveButton(
-            phase: viewModel.savePhase,
+            phase: viewModel.saveState,
             title: ProfileV3Strings.saveChanges,
             savedTitle: ProfileV3Strings.agentPreferencesUpdated,
             action: viewModel.save

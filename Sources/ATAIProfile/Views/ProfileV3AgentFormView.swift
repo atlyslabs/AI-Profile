@@ -27,8 +27,6 @@ struct ProfileV3AgentFormView: View {
                 }
                 .sheet(item: $viewModel.rideRegions) { regions in
                     ProfileV3RideRegionsView(viewModel: regions)
-                        .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
-                        .presentationDragIndicator(.hidden)
                 }
                 .toolbar(.hidden, for: .navigationBar)
         }
@@ -42,15 +40,11 @@ struct ProfileV3AgentFormView: View {
         }
         .sheet(item: $viewModel.airportPickup) { pickup in
             ProfileV3AirportPickupView(viewModel: pickup)
-                .presentationDetents([.large])
-                .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
-                .presentationDragIndicator(.hidden)
+                .profileV3Sheet(.large, cornerRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius)
         }
         .sheet(item: householdSheet) { _ in
             ProfileV3HouseholdApplySheet(viewModel: viewModel)
-                .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
-                .presentationDragIndicator(.hidden)
-                .interactiveDismissDisabled(viewModel.householdApply?.phase == .saving)
+                .profileV3Sheet(cornerRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius, isDismissDisabled: viewModel.householdApply?.phase == .saving)
         }
         .onDisappear { viewModel.cancelPendingWork() }
         .sensoryFeedback(.success, trigger: viewModel.saveState) { _, state in state == .saved }
@@ -90,10 +84,6 @@ struct ProfileV3AgentFormView: View {
         }
     }
 
-    private var headerOffset: Binding<CGFloat> {
-        Binding(get: { headerPin.offset }, set: { headerPin.offset = $0 })
-    }
-
     private var householdSheet: Binding<ProfileV3HouseholdApplySession?> {
         Binding(
             get: { viewModel.householdApply },
@@ -110,8 +100,8 @@ struct ProfileV3AgentFormView: View {
 
     @ViewBuilder
     private var sectionSources: some View {
-        if let sources = viewModel.sources {
-            ProfileV3SectionSourcesView(viewModel: sources, form: viewModel, onBack: viewModel.closeSources)
+        if let sources = viewModel.sources, let section = viewModel.sourcesSection {
+            ProfileV3SectionSourcesView(viewModel: sources, section: section, form: viewModel, onBack: viewModel.closeSources)
         }
     }
 
@@ -126,19 +116,7 @@ struct ProfileV3AgentFormView: View {
             VStack(spacing: 0) {
                 ProfileV3AvatarOrb(imageURL: viewModel.avatarURL, size: ProfileV3Theme.Sizes.Agent.orbLarge)
                     .padding(.top, ProfileV3Theme.Sizes.Agent.orbTop)
-                ProfileV3TwoToneTitle(
-                    lead: ProfileV3Strings.found,
-                    emphasis: foundTitle,
-                    style: .H5InterMedium20
-                )
-                .frame(width: ProfileV3Theme.Sizes.Agent.titleWidth)
-                .padding(.top, ProfileV3Theme.Space.s16)
-                Text(form.summary)
-                    .typoGraphy(.B2InterSemibold12)
-                    .foregroundStyle(Color(at: .neutralGrey400))
-                    .multilineTextAlignment(.center)
-                    .frame(width: ProfileV3Theme.Sizes.Agent.summaryWidth)
-                    .padding(.top, ProfileV3Theme.Sizes.Agent.summaryTop)
+                ProfileV3FoundHeading(lead: ProfileV3Strings.found, emphasis: foundTitle, summary: form.summary)
                 if ProfileV3FeatureFlags.isAgentSourcesPillEnabled,
                    form.sources.count > 0 || !form.sources.icons.isEmpty {
                     ProfileV3SourcesPill(
@@ -152,9 +130,9 @@ struct ProfileV3AgentFormView: View {
                     .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                     .padding(.top, ProfileV3Theme.Space.s50)
             }
-            .profileV3ScrollOffsetAnchor(headerOffset)
+            .profileV3ScrollOffsetAnchor(headerPin.offsetBinding)
         }
-        .profileV3ScrollOffset(headerOffset)
+        .profileV3ScrollOffset(headerPin.offsetBinding)
         .overlay(alignment: .top) {
             ProfileV3AgentStickyHeader(tag: form.agentTag, pin: headerPin, onBack: viewModel.tapBack)
         }

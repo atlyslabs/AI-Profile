@@ -117,7 +117,7 @@ struct ProfileV3CustomRulesTests {
         model.save()
         try await waitUntil { model.errorMessage != nil }
         #expect(model.errorMessage == message)
-        #expect(model.phase == .editing)
+        #expect(model.phase == .idle)
         #expect(model.editor != nil)
     }
 

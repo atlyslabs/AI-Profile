@@ -4,12 +4,7 @@ import SwiftUI
 struct ProfileV3RideRegionsView: View {
     @ObservedObject var viewModel: ProfileV3RideRegionsViewModel
 
-    @State private var measured = Measured()
-
-    private struct Measured: Equatable {
-        var content: CGFloat = 0
-        var bottomInset: CGFloat = 0
-    }
+    @State private var contentHeight: CGFloat = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -17,7 +12,7 @@ struct ProfileV3RideRegionsView: View {
             if let content = viewModel.content {
                 ProfileV3FadingScroll {
                     ProfileV3RideRegionsContent(content: content)
-                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.content = $0 }
+                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { contentHeight = $0 }
                 }
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
@@ -25,14 +20,13 @@ struct ProfileV3RideRegionsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())
-        .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
-        .profileV3FittedDetent(fittedHeight)
+        .profileV3Sheet(.fitted(fittedHeight), cornerRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius)
         .onDisappear(perform: viewModel.cancel)
     }
 
     private var fittedHeight: CGFloat? {
-        guard viewModel.content != nil, measured.content > 0 else { return nil }
-        return Self.headerHeight + measured.content + measured.bottomInset
+        guard viewModel.content != nil, contentHeight > 0 else { return nil }
+        return Self.headerHeight + contentHeight
     }
 
     private static var headerHeight: CGFloat {
@@ -102,9 +96,7 @@ struct ProfileV3RideRegionsContent: View {
             .aspectRatio(region.aspectRatio, contentMode: .fit)
             .frame(maxWidth: .infinity)
             .clipShape(shape)
-            .overlay {
-                shape.strokeBorder(ProfileV3Theme.Palette.rideRegionBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
-            }
+            .profileV3Outlined(shape, border: ProfileV3Theme.Palette.rideRegionBorder)
             .accessibilityElement()
             .accessibilityLabel(region.name)
             .accessibilityAddTraits(.isImage)
@@ -120,8 +112,6 @@ struct ProfileV3RideRegionsContent: View {
                 viewModel.load()
                 return viewModel
             }())
-            .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
-            .presentationDragIndicator(.hidden)
         }
 }
 #endif

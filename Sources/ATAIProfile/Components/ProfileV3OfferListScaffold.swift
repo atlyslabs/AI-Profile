@@ -13,10 +13,7 @@ struct ProfileV3OfferListScaffold<Header: View, Rows: View, Overlay: View>: View
 
     var body: some View {
         ZStack(alignment: .top) {
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .overlay(ProfileV3Theme.Palette.benefitsBackdrop)
-                .ignoresSafeArea()
+            ProfileV3FrostedBackdrop(tint: ProfileV3Theme.Palette.benefitsBackdrop)
             if phase != .loaded {
                 ProfileV3LoadStateView(phase: phase) { onRetry?() }
             }

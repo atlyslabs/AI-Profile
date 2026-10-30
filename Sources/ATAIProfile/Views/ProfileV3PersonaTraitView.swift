@@ -13,30 +13,19 @@ struct ProfileV3PersonaTraitView: View {
             if let trait = viewModel.content {
                 ScrollView(showsIndicators: false) {
                     ProfileV3PersonaTraitContent(trait: trait, viewModel: viewModel, avatarURL: avatarURL)
-                        .profileV3ScrollOffsetAnchor(headerOffset)
+                        .profileV3ScrollOffsetAnchor(headerPin.offsetBinding)
                 }
-                .profileV3ScrollOffset(headerOffset)
+                .profileV3ScrollOffset(headerPin.offsetBinding)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
                     .padding(.top, ProfileV3AgentSheetHeader.height(showsOrb: false))
             }
             ProfileV3AgentStickyHeader(tag: "", pin: headerPin, onBack: onBack)
         }
-        .overlay(alignment: .bottom) {
-            if let toast = viewModel.toast {
-                ProfileV3Toast(message: toast, isError: true)
-                    .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                    .padding(.bottom, ProfileV3Theme.Space.s24)
-                    .transition(.opacity.combined(with: .move(edge: .bottom)))
-            }
-        }
-        .animation(ProfileV3Theme.Motion.expand, value: viewModel.toast)
+        .profileV3BottomToast(viewModel.toast, isError: true)
         .background(Color(at: .pureWhite))
     }
 
-    private var headerOffset: Binding<CGFloat> {
-        Binding(get: { headerPin.offset }, set: { headerPin.offset = $0 })
-    }
 }
 
 struct ProfileV3PersonaTraitContent: View {
@@ -98,11 +87,11 @@ struct ProfileV3PersonaTraitContent: View {
         return VStack(spacing: Persona.scaleLabelsTop) {
             ZStack(alignment: .leading) {
                 Capsule()
-                    .fill(ProfileV3Theme.Palette.personaScaleTrack.opacity(ProfileV3Theme.Opacity.personaScaleTrack))
-                    .frame(height: Persona.scaleTrackHeight)
+                    .fill(ProfileV3Theme.Palette.sliderTrack)
+                    .frame(height: ProfileV3Theme.Sizes.sliderTrackHeight)
                 Capsule()
                     .fill(ProfileV3Theme.personaScaleFill)
-                    .frame(width: fill, height: Persona.scaleTrackHeight)
+                    .frame(width: fill, height: ProfileV3Theme.Sizes.sliderTrackHeight)
                 ProfileV3PersonaArt.scaleMidpoint.image
                     .resizable()
                     .frame(width: Persona.scaleMidpoint, height: Persona.scaleMidpoint)
@@ -163,15 +152,12 @@ struct ProfileV3PersonaTraitContent: View {
                 rowView(row, connectsBelow: index < trait.rows.count - 1)
             }
             if trait.nextPage != nil {
-                if viewModel.loadMoreFailed {
-                    ProfileV3PillButton(title: ProfileV3Strings.tryAgain, action: viewModel.retryLoadMore)
-                        .frame(maxWidth: .infinity)
-                } else {
-                    ProfileV3Spinner()
-                        .frame(maxWidth: .infinity)
-                        .id(trait.rows.count)
-                        .onAppear(perform: viewModel.loadMore)
-                }
+                ProfileV3PagingFooter(
+                    hasFailed: viewModel.loadMoreFailed,
+                    page: trait.rows.count,
+                    loadMore: viewModel.loadMore,
+                    retry: viewModel.retryLoadMore
+                )
             }
             if let start = trait.startingPoint {
                 startingPointRow(start)
@@ -272,32 +258,23 @@ struct ProfileV3PersonaTraitContent: View {
                 .foregroundStyle(Color(at: .backgroundDarkTheme))
                 .padding(.horizontal, Persona.pillHorizontal)
                 .padding(.vertical, Persona.pillVertical)
-                .overlay {
-                    Capsule().strokeBorder(ProfileV3Theme.Palette.personaPillBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
-                }
+                .profileV3Outlined(Capsule(), border: ProfileV3Theme.Palette.personaPillBorder)
                 .contentShape(Capsule())
         }
         .buttonStyle(.profileV3Pressable)
         .disabled(isBusy)
-        .opacity(isBusy ? ProfileV3Theme.Motion.disabledOpacity : 1)
+        .opacity(isBusy ? ProfileV3Theme.Opacity.disabled : 1)
     }
 }
 
 private struct ProfileV3PersonaConnector: View {
     var body: some View {
-        GeometryReader { proxy in
-            Path { path in
-                path.move(to: CGPoint(x: proxy.size.width / 2, y: 0))
-                path.addLine(to: CGPoint(x: proxy.size.width / 2, y: proxy.size.height))
-            }
-            .stroke(
-                Color.black.opacity(ProfileV3Theme.Opacity.personaConnector),
-                style: StrokeStyle(lineWidth: ProfileV3Theme.Stroke.hairline, dash: ProfileV3Theme.Sizes.Persona.connectorDash)
-            )
-        }
-        .frame(width: ProfileV3Theme.Stroke.hairline)
+        ProfileV3DashedRule(
+            color: ProfileV3Theme.Palette.dashedRule,
+            dash: ProfileV3Theme.Sizes.Persona.connectorDash,
+            axis: .vertical
+        )
         .frame(maxHeight: .infinity)
-        .accessibilityHidden(true)
     }
 }
 

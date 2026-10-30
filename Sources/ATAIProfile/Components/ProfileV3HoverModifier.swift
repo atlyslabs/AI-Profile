@@ -33,7 +33,7 @@ private struct ProfileV3HoverModifier: ViewModifier {
             .overlay(alignment: .bottom) {
                 ProfileV3HoverShadow()
                     .scaleEffect(1 + (ProfileV3Theme.Motion.hoverShadowRaisedScale - 1) * raised)
-                    .opacity(1 + (ProfileV3Theme.Motion.hoverShadowRaisedOpacity - 1) * raised)
+                    .opacity(1 + (ProfileV3Theme.Opacity.hoverShadowRaised - 1) * raised)
                     .offset(y: ProfileV3Theme.Sizes.hoverShadowDrop + ProfileV3Theme.Sizes.hoverShadowHeight / 2)
                     .opacity(isActive ? 1 : 0)
                     .animation(

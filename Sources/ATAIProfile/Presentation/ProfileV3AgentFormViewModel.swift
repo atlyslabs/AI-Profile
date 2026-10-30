@@ -5,19 +5,13 @@ import ATUIKit
 @MainActor
 final class ProfileV3AgentFormViewModel: ObservableObject {
 
-    enum SaveState: Equatable {
-        case idle
-        case saving
-        case saved
-        case failed
-    }
-
     @Published private(set) var form: ProfileV3AgentForm {
         didSet { syncCustomRules() }
     }
-    @Published private(set) var saveState: SaveState = .idle
+    @Published private(set) var saveState: ProfileV3SavePhase = .idle
     @Published var pickerSectionID: String?
-    @Published private(set) var sources: ProfileV3PreferenceSourcesViewModel?
+    @Published private(set) var sources: ProfileV3SourcesViewModel?
+    private(set) var sourcesSection: ProfileV3FormSection?
     @Published private(set) var pickerOptions: [ProfileV3ChipOption] = []
     @Published private(set) var previousPassports: ProfileV3PreviousPassports?
     @Published private(set) var previousPassportsPhase: ProfileV3LoadPhase = .loading
@@ -215,23 +209,16 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     }
 
     func loadPreviousPassports() {
-        previousPassportsTask?.cancel()
-        previousPassportsPhase = previousPassports == nil ? .loading : .loaded
         let repository = repository
         let profileID = previousPassportsProfileID
-        previousPassportsTask = Task { [weak self] in
-            do {
-                let screen = try await repository.loadPreviousPassports(profileID: profileID)
-                guard let self, !Task.isCancelled else { return }
-                previousPassports = screen
-                previousPassportsPhase = .loaded
-            } catch is CancellationError {
-                return
-            } catch {
-                guard let self, !Task.isCancelled else { return }
-                previousPassportsPhase = previousPassports == nil ? .failed : .loaded
-            }
-        }
+        ProfileV3PhasedLoad.start(
+            on: self,
+            task: \.previousPassportsTask,
+            phase: \.previousPassportsPhase,
+            content: \.previousPassports,
+            fetch: { try await repository.loadPreviousPassports(profileID: profileID) },
+            apply: { $0.previousPassports = $1 }
+        )
     }
 
     func tapViewPreviousPassports() {
@@ -245,14 +232,6 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
 
     var pickerSection: ProfileV3FormSection? {
         pickerSectionID.flatMap { id in form.sections.first { $0.id == id } }
-    }
-
-    var savePhase: ProfileV3SavePhase {
-        switch saveState {
-        case .idle, .failed: return .idle
-        case .saving: return .saving
-        case .saved: return .saved
-        }
     }
 
     var showsSaveError: Bool { saveState == .failed }
@@ -444,19 +423,16 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
               let source = section.source(selectedTab: selectedTabs[sectionID]) else {
             return
         }
-        let sources = ProfileV3PreferenceSourcesViewModel(
-            section: section,
-            source: source,
-            profileID: profileID,
-            repository: repository
-        )
+        let sources = ProfileV3SourcesViewModel(source: source, profileID: profileID, repository: repository)
         sources.load()
+        sourcesSection = section
         self.sources = sources
     }
 
     func closeSources() {
         sources?.cancel()
         sources = nil
+        sourcesSection = nil
     }
 
     func openNoteLink(_ directive: ProfileV3Directive) {
@@ -479,19 +455,19 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     }
 
     func toggleHouseholdTraveller(_ id: String) {
-        guard var session = householdApply, session.phase == .choosing || session.phase == .failed else { return }
+        guard var session = householdApply, session.phase == .idle || session.phase == .failed else { return }
         if session.selection.contains(id) {
             session.selection.remove(id)
         } else {
             session.selection.insert(id)
         }
-        session.phase = .choosing
+        session.phase = .idle
         session.errorMessage = nil
         householdApply = session
     }
 
     func confirmHousehold() {
-        guard let session = householdApply, session.phase == .choosing || session.phase == .failed else { return }
+        guard let session = householdApply, session.phase == .idle || session.phase == .failed else { return }
         let ids = session.prompt.travellers.map(\.id).filter { session.selection.contains($0) }
         guard !ids.isEmpty else { return }
         submit(profileIDs: ids)
@@ -708,28 +684,21 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
 }
 
 struct ProfileV3HouseholdApplySession: Identifiable, Equatable {
-    enum Phase: Equatable {
-        case choosing
-        case saving
-        case saved
-        case failed
-    }
-
     let id = UUID()
     var prompt: ProfileV3HouseholdPrompt
     var selection: Set<String>
-    var phase: Phase
+    var phase: ProfileV3SavePhase
     var doneLabel = ""
     var errorMessage: String?
 
     init(prompt: ProfileV3HouseholdPrompt) {
         self.prompt = prompt
         selection = Set(prompt.travellers.filter(\.isSelected).map(\.id))
-        phase = .choosing
+        phase = .idle
     }
 
     var canConfirm: Bool {
-        !selection.isEmpty && (phase == .choosing || phase == .failed)
+        !selection.isEmpty && (phase == .idle || phase == .failed)
     }
 }
 
@@ -806,7 +775,7 @@ extension ProfileV3AgentFormViewModel {
     static func preview(
         _ form: ProfileV3AgentForm,
         avatarURL: URL?,
-        saveState: SaveState
+        saveState: ProfileV3SavePhase
     ) -> ProfileV3AgentFormViewModel {
         let viewModel = ProfileV3AgentFormViewModel(
             form: form,

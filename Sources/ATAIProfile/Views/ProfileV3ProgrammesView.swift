@@ -74,9 +74,7 @@ struct ProfileV3ProgrammesView: View {
                     .padding(.top, ProfileV3Theme.Sizes.Programmes.tabTop)
                 if let actionError = viewModel.actionError {
                     Button(action: viewModel.clearActionError) {
-                        Text(actionError)
-                            .typoGraphy(.B2InterMedium12)
-                            .foregroundStyle(ProfileV3Theme.Palette.error)
+                        ProfileV3ErrorText(text: actionError)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity)
                     }
@@ -102,20 +100,12 @@ struct ProfileV3ProgrammesView: View {
     }
 
     private var header: some View {
-        HStack {
-            ProfileV3CircleIconButton.back(size: ProfileV3Theme.Sizes.navButton, action: viewModel.tapBack)
-            Spacer()
-        }
-        .overlay {
+        ProfileV3TopBar(onBack: viewModel.tapBack, title: {
             Text(viewModel.overview?.holderName ?? viewModel.pass.holderName)
                 .typoGraphy(.H6InterMedium18)
                 .foregroundStyle(Color(at: .pureBlack))
-        }
-        .padding(.horizontal, ProfileV3Theme.Sizes.topBarInset)
-        .padding(.top, ProfileV3Theme.Sizes.topBarTop)
-        .frame(height: ProfileV3Theme.Sizes.topBarBackdropHeight, alignment: .top)
-        .frame(maxWidth: .infinity)
-        .background(Color(at: .pureWhite).ignoresSafeArea(edges: .top))
+        })
+        .profileV3TopBarBackdrop()
     }
 
     private var tabs: some View {

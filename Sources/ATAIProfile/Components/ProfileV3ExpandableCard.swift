@@ -103,11 +103,13 @@ extension View {
         fill: Color = ProfileV3Theme.Palette.background
     ) -> some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-        return background(shape.fill(fill))
-            .overlay(
-                shape.strokeBorder(ProfileV3Theme.Palette.settingsCardBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
-            )
+        return profileV3Outlined(shape, border: ProfileV3Theme.Palette.settingsCardBorder, fill: fill)
             .clipShape(shape)
+    }
+
+    func profileV3AccessCard(cornerRadius: CGFloat = ProfileV3Theme.Sizes.InformationAccess.cardRadius) -> some View {
+        profileV3SettingsCard(cornerRadius: cornerRadius, fill: Color(at: .pureWhite))
+            .profileV3SoftShadow()
     }
 }
 

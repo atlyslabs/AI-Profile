@@ -3,11 +3,11 @@ import SwiftUI
 extension ProfileV3Theme.Sizes {
     enum AddProgramme {
         static let orb: CGFloat = 48
-        static let marketSpacing: CGFloat = 10
-        static let marketPadding: CGFloat = 10
+        static let marketSpacing = ProfileV3Theme.Space.s10
+        static let marketPadding = ProfileV3Theme.Space.s10
         static let marketDividerHeight: CGFloat = 33
-        static let marketGap: CGFloat = 20
-        static let chipRowInset: CGFloat = 4
+        static let marketGap = ProfileV3Theme.Space.s20
+        static let chipRowInset = ProfileV3Theme.Space.s4
         static let ringInner: CGFloat = 90
         static let ringOuter: CGFloat = 109
         static let foundRing: CGFloat = 82
@@ -22,7 +22,7 @@ extension ProfileV3Theme.Sizes {
         static let kycOrbToCopy: CGFloat = 190
         static let kycCopyToStatus: CGFloat = 40
         static let kycBottom: CGFloat = 150
-        static let cardsTop: CGFloat = 32
+        static let cardsTop = ProfileV3Theme.Space.s32
         static let fieldsTop: CGFloat = 57
         static let fieldSpacing: CGFloat = 44
     }
@@ -42,12 +42,12 @@ extension ProfileV3Theme.Sizes {
         static let artAspectRatio: CGFloat = 1140 / 720
         static let artLogoInset: CGFloat = 68 / 1140
         static let cardWidths: [CGFloat] = [204, 215, 225]
-        static let contentInset: CGFloat = 20
-        static let logoTop: CGFloat = 8
+        static let contentInset = ProfileV3Theme.Space.s20
+        static let logoTop = ProfileV3Theme.Space.s8
         static let logoHeight: CGFloat = 29
         static let logoMaxWidth: CGFloat = 81
         static let numberGap: CGFloat = 3
-        static let pointsTop: CGFloat = 16
+        static let pointsTop = ProfileV3Theme.Space.s16
         static let pointsLabelGap: CGFloat = 3
     }
 
@@ -68,10 +68,10 @@ extension ProfileV3Theme.Sizes {
 
     enum Programmes {
         static let tabTop: CGFloat = 86
-        static let tabSpacing: CGFloat = 28
+        static let tabSpacing = ProfileV3Theme.Space.s28
         static let listSpacing = ProfileV3Theme.Space.s16
         static let reorderShift: CGFloat = 190
-        static let reorderHintLeading: CGFloat = 32
+        static let reorderHintLeading = ProfileV3Theme.Space.s32
         static let reorderHintTop: CGFloat = 53
         static let reorderHintTextWidth: CGFloat = 166
         static let reorderHintTextTop = ProfileV3Theme.Space.s24
@@ -84,10 +84,8 @@ extension ProfileV3Theme.Sizes {
         static let editButtonWidth: CGFloat = 65
         static let checkboxLeading = ProfileV3Theme.Space.s24
         static let checkboxGap = ProfileV3Theme.Space.s20
-        static let deleteSheetRadius: CGFloat = 44
     }
 }
 
 extension ProfileV3Theme.Opacity {
-    static let programmesDeleteBackdrop: Double = 0.8
 }

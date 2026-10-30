@@ -69,10 +69,8 @@ struct ProfileV3GloveBoxComingSoonSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             ProfileV3SheetGrabber()
-            ProfileV3CircleIconButton.back(action: onBack)
-                .padding(.top, Layout.detailBackTop)
-                .padding(.leading, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            ProfileV3SheetControls(onBack: onBack)
+                .padding(.top, ProfileV3Theme.Sizes.sheetHeaderTop)
             Canvas { context, size in
                 ProfileV3GloveBoxDial.draw(
                     ProfileV3GloveBoxArt.dialCreditCard.image,
@@ -84,19 +82,8 @@ struct ProfileV3GloveBoxComingSoonSheet: View {
             .frame(width: Layout.comingSoonDial, height: Layout.comingSoonDial + Layout.dialShadowDrop * 2)
             .padding(.top, Layout.comingSoonArtTop)
             .accessibilityHidden(true)
-            Text(ProfileV3Strings.comingSoon)
-                .typoGraphy(.H5InterMedium20)
-                .foregroundStyle(Color(at: .pureBlack))
-                .accessibilityAddTraits(.isHeader)
+            ProfileV3ComingSoonCopy(message: message)
                 .padding(.top, Layout.comingSoonTitleTop)
-            if !message.isEmpty {
-                Text(message)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.accessSubtitle))
-                    .frame(maxWidth: Layout.comingSoonBodyWidth)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, Layout.comingSoonBodyTop)
-            }
             Color.clear
                 .frame(height: Layout.comingSoonBottom + bottomInset)
         }
@@ -188,15 +175,12 @@ struct ProfileV3GloveBoxListSheet: View {
                     .revealed(Motion.row(index), at: time)
                 }
                 if viewModel.hasMoreEmails {
-                    if viewModel.emailPagingFailed {
-                        ProfileV3PillButton(title: ProfileV3GloveBoxCopy.tryAgain, action: viewModel.retryLoadMoreEmails)
-                            .frame(maxWidth: .infinity)
-                    } else {
-                        ProfileV3Spinner()
-                            .frame(maxWidth: .infinity)
-                            .id(home.email.emails.count)
-                            .onAppear(perform: viewModel.loadMoreEmails)
-                    }
+                    ProfileV3PagingFooter(
+                        hasFailed: viewModel.emailPagingFailed,
+                        page: home.email.emails.count,
+                        loadMore: viewModel.loadMoreEmails,
+                        retry: viewModel.retryLoadMoreEmails
+                    )
                 }
             }
         case .calls:
@@ -238,10 +222,7 @@ struct ProfileV3GloveBoxListSheet: View {
         let shape = RoundedRectangle(cornerRadius: Layout.callsCardRadius, style: .continuous)
         return HStack(alignment: .top, spacing: ProfileV3Theme.Space.s8) {
             VStack(alignment: .leading, spacing: Layout.callsCardSpacing) {
-                Text(trip.label)
-                    .typoGraphy(.T1InterBold11)
-                    .textCase(.uppercase)
-                    .foregroundStyle(Color(at: .pureBlack).opacity(Palette.sectionTitleOpacity))
+                ProfileV3TagLabel(text: trip.label, style: .solid(Color(at: .pureBlack).opacity(Palette.sectionTitleOpacity)))
                 ProfileV3GloveBoxCopyValue(
                     value: trip.number.value,
                     countryCode: trip.number.countryCode,
@@ -258,8 +239,7 @@ struct ProfileV3GloveBoxListSheet: View {
         }
         .padding(Layout.callsCardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(shape.fill(Palette.preview))
-        .overlay(shape.strokeBorder(Palette.sectionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+        .profileV3Outlined(shape, border: Palette.sectionBorder, fill: Palette.preview)
     }
 }
 
@@ -278,9 +258,8 @@ struct ProfileV3GloveBoxDetailSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ProfileV3SheetGrabber()
-            ProfileV3CircleIconButton.back(action: onBack)
-                .padding(.top, Layout.detailBackTop)
-                .padding(.leading, ProfileV3Theme.Sizes.screenHorizontalMargin)
+            ProfileV3SheetControls(onBack: onBack)
+                .padding(.top, ProfileV3Theme.Sizes.sheetHeaderTop)
             Group {
                 header
                     .padding(.top, Layout.detailHeaderTop)
@@ -342,8 +321,7 @@ struct ProfileV3GloveBoxDetailSheet: View {
             }
             .foregroundStyle(Color(at: .neutralGrey700))
             .padding(Layout.attachmentPadding)
-            .background(shape.fill(Palette.preview))
-            .overlay(shape.strokeBorder(Palette.sectionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+            .profileV3Outlined(shape, border: Palette.sectionBorder, fill: Palette.preview)
             .contentShape(shape)
         }
         .buttonStyle(.profileV3Pressable)

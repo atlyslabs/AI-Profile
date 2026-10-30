@@ -67,6 +67,8 @@ enum ProfileV3API {
     case gloveBoxAttachment(messageID: String, index: Int)
     case permissions
     case updatePermission(key: String, body: Data)
+    case instagramAccount(userID: String)
+    case linkInstagram(body: Data)
 }
 
 extension ProfileV3API: ATCoreTargetType {
@@ -75,6 +77,7 @@ extension ProfileV3API: ATCoreTargetType {
     private static let vaultBasePath = "/api/fort-knox/v1"
     private static let gloveBoxBasePath = "/gateway/jaqen/v1"
     private static let harnessBasePath = "/api/harness/v1"
+    private static let snapmapBasePath = "/api/snapmap"
 
     var baseURL: URL {
         URL(string: "https://profile.atlys.invalid")!
@@ -202,6 +205,8 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.harnessBasePath + "/permissions"
         case .updatePermission(let key, _):
             return Self.harnessBasePath + "/permissions/\(key)"
+        case .instagramAccount, .linkInstagram:
+            return Self.snapmapBasePath + "/instagram/accounts"
         }
     }
 
@@ -209,7 +214,7 @@ extension ProfileV3API: ATCoreTargetType {
         switch self {
         case .passportScan, .submit, .slackAlert, .captureStart, .captureAnswer, .coTraveller,
              .vaultCreateCredential, .vaultCredentialAction, .vaultRegisterDevice, .vaultRevealChallenge, .vaultReveal,
-             .gloveBoxCreate, .gloveBoxForwardingAddress:
+             .gloveBoxCreate, .gloveBoxForwardingAddress, .linkInstagram:
             return .post
         case .gloveBoxForwarding, .updatePermission:
             return .put
@@ -249,7 +254,12 @@ extension ProfileV3API: ATCoreTargetType {
             return includeUsername ? Self.query(("include_username", "true")) : .requestPlain
         case .gloveBoxMessages(let limit, let cursor):
             return Self.query(("limit", String(limit)), ("cursor", cursor))
-        case .gloveBoxForwarding(let body), .gloveBoxForwardingAddress(let body), .updatePermission(_, let body):
+        case .instagramAccount(let userID):
+            return Self.query(("user_id", userID))
+        case .gloveBoxForwarding(let body),
+             .gloveBoxForwardingAddress(let body),
+             .updatePermission(_, let body),
+             .linkInstagram(let body):
             return .requestData(body)
         case .vaultCreateCredential(let body),
              .vaultUpdateCredential(_, let body),

@@ -71,7 +71,7 @@ struct ProfileV3PastTripCard: View {
             ProfileV3RemoteImage(
                 url: trip.displayImageURL,
                 contentMode: .fill,
-                placeholder: ProfileV3Theme.Palette.tripPhotoPlaceholder
+                placeholder: ProfileV3Theme.Palette.nearBlack
             )
                 .frame(width: photoSize.width, height: photoSize.height)
                 .blur(radius: photoBlur, opaque: true)

@@ -186,6 +186,10 @@ enum ProfileV3Strings {
     static func removeOne(_ item: String) -> String { ProfileV3L10n.moAiprofileGeneralButtonRemoveItem(item) }
     static func addOne(_ item: String) -> String { ProfileV3L10n.moAiprofileGeneralButtonAddItem(item) }
     static func sourcesCount(_ count: Int, label: String) -> String { ProfileV3L10n.moAiprofileGeneralLabelCountWithLabel(count, label) }
+    static func sourcesCount(_ count: Int, label: String?) -> String {
+        guard let label, !label.isEmpty else { return sourcesCount(count) }
+        return sourcesCount(count, label: label)
+    }
     static var viewSources: String { ProfileV3L10n.moAiprofileLoyaltyButtonViewSources }
     static func bulleted(_ text: String) -> String { ProfileV3L10n.moAiprofileGeneralFormatBulleted(text) }
     static func nudgeAccessibility(message: String, action: String) -> String { ProfileV3L10n.moAiprofileGeneralAccessibilityNudge(message, action) }

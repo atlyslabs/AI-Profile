@@ -34,6 +34,13 @@ struct ProfileV3TagLabel: View {
     }
 }
 
+extension View {
+    func profileV3MonoLabel() -> some View {
+        font(.system(size: ProfileV3Theme.Typography.monoLabelSize, weight: .bold, design: .monospaced))
+            .tracking(ProfileV3Theme.Typography.monoLabelTracking)
+    }
+}
+
 extension ProfileV3TagLabel {
     static func kyc(_ text: String) -> ProfileV3TagLabel {
         ProfileV3TagLabel(text: text, icon: ATIcon.SwiftUIImage.error, style: .gradient)

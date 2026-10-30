@@ -111,16 +111,14 @@ final class ProfileV3PassportHowUsedHostingController: UIHostingController<Profi
             onScan: { [weak self] _ in self?.dismiss(animated: true) },
             onHeightChange: { [weak self] in self?.fit(height: $0) }
         )
-        modalPresentationStyle = .pageSheet
-        if let sheet = sheetPresentationController {
-            sheet.detents = [
+        profileV3UsePageSheet(
+            detents: [
                 .custom(identifier: Self.fittedDetent) { [weak self] context in
                     min(self?.fittedHeight ?? context.maximumDetentValue / 2, context.maximumDetentValue)
                 }
-            ]
-            sheet.prefersGrabberVisible = false
-            sheet.preferredCornerRadius = ProfileV3Theme.Sizes.Agent.sheetCornerRadius
-        }
+            ],
+            scrollingExpandsSheet: true
+        )
     }
 
     private func fit(height: CGFloat) {

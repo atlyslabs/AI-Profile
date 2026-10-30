@@ -173,7 +173,7 @@ struct ProfileV3WorldPassBackFace: View {
 
     private func emptySlot(width: CGFloat, isBack: Bool) -> some View {
         RoundedRectangle(cornerRadius: ProfileV3Theme.Radius.md, style: .continuous)
-            .fill(ProfileV3Theme.Palette.emptySlot)
+            .fill(ProfileV3Theme.Palette.whiteSmoke)
             .frame(
                 width: width,
                 height: isBack && isSingleProgramme

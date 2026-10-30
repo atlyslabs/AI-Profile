@@ -82,7 +82,7 @@ struct ProfileV3FlipAffordance: View {
             .frame(width: ProfileV3Theme.Sizes.Flip.notchWidth, height: ProfileV3Theme.Sizes.Flip.notchHeight)
             .background(alignment: .topLeading) {
                 EllipticalGradient(
-                    colors: [ProfileV3Theme.Palette.flipNotchGlow, ProfileV3Theme.Palette.flipNotchGlow.opacity(0)],
+                    colors: [ProfileV3Theme.Palette.passIndigo, ProfileV3Theme.Palette.passIndigo.opacity(0)],
                     center: .center,
                     startRadiusFraction: 0,
                     endRadiusFraction: 0.5

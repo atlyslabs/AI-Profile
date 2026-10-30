@@ -10,9 +10,7 @@ struct ProfileV3SectionSourcesRow: View {
     private var caption: String? { Self.caption(for: source) }
 
     static func caption(for source: ProfileV3SectionSource) -> String? {
-        guard let count = source.count else { return nil }
-        guard let label = source.label else { return ProfileV3Strings.sourcesCount(count) }
-        return ProfileV3Strings.sourcesCount(count, label: label)
+        source.count.map { ProfileV3Strings.sourcesCount($0, label: source.label) }
     }
 
     var body: some View {
@@ -21,9 +19,7 @@ struct ProfileV3SectionSourcesRow: View {
                 HStack(spacing: Row.captionGap) {
                     ProfileV3SourceIconStack(icons: source.icons, style: .logo)
                     if let caption {
-                        Text(caption)
-                            .typoGraphy(.B2InterSemibold12)
-                            .foregroundStyle(Color(at: .neutralGrey400))
+                        ProfileV3SourcesCaption(text: caption)
                     }
                 }
                 ATIcon.SwiftUIImage.chevronRight

@@ -6,7 +6,7 @@ struct ProfileV3Toast: View {
     var isError = false
 
     private var accent: Color {
-        isError ? ProfileV3Theme.Palette.error : ProfileV3Theme.Palette.toastEnd
+        isError ? ProfileV3Theme.Palette.destructive : ProfileV3Theme.Palette.toastEnd
     }
 
     var body: some View {
@@ -63,6 +63,24 @@ struct ProfileV3Toast: View {
         }
         .frame(width: ProfileV3Theme.Icon.lg, height: ProfileV3Theme.Icon.lg)
         .accessibilityHidden(true)
+    }
+}
+
+extension View {
+    func profileV3BottomToast(
+        _ message: String?,
+        isError: Bool,
+        bottom: CGFloat = ProfileV3Theme.Sizes.Persona.toastBottom
+    ) -> some View {
+        overlay(alignment: .bottom) {
+            if let message {
+                ProfileV3Toast(message: message, isError: isError)
+                    .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                    .padding(.bottom, bottom)
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+            }
+        }
+        .animation(ProfileV3Theme.Motion.expand, value: message)
     }
 }
 

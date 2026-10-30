@@ -356,17 +356,12 @@ struct ProfileV3HubView: View {
 
 private extension View {
     func profileV3NoticeAlert(_ viewModel: ProfileV3HubViewModel, isEnabled: Bool) -> some View {
-        alert(
+        profileV3ErrorAlert(
             ProfileV3Strings.loadFailedTitle,
-            isPresented: Binding(
-                get: { isEnabled && viewModel.notice != nil },
-                set: { if !$0 { viewModel.clearNotice() } }
-            )
-        ) {
-            Button(ProfileV3Strings.close, role: .cancel) { viewModel.clearNotice() }
-        } message: {
-            Text(viewModel.notice ?? "")
-        }
+            message: viewModel.notice ?? "",
+            isPresented: isEnabled && viewModel.notice != nil,
+            onDismiss: viewModel.clearNotice
+        )
     }
 }
 

@@ -1,8 +1,47 @@
 import ATUIKit
 import SwiftUI
 
+protocol ProfileV3SegmentItem: Identifiable where ID == String {
+    var title: String { get }
+}
+
+struct ProfileV3SegmentTrack<Item: ProfileV3SegmentItem, Title: View, Pill: View>: View {
+    let items: [Item]
+    let selectedID: String?
+    var spacing: CGFloat = 0
+    let onSelect: (String) -> Void
+    @ViewBuilder let title: (Item, Bool) -> Title
+    @ViewBuilder let pill: () -> Pill
+
+    @Namespace private var namespace
+
+    private static var pillID: String { "pill" }
+
+    var body: some View {
+        HStack(spacing: spacing) {
+            ForEach(items) { item in
+                let isSelected = item.id == selectedID
+                Button { onSelect(item.id) } label: {
+                    title(item, isSelected)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background {
+                            if isSelected {
+                                pill()
+                                    .matchedGeometryEffect(id: Self.pillID, in: namespace)
+                            }
+                        }
+                        .contentShape(Capsule())
+                }
+                .buttonStyle(.profileV3Pressable(.selection))
+                .accessibilityLabel(item.title)
+                .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+            }
+        }
+    }
+}
+
 struct ProfileV3SegmentedControl: View {
-    struct Segment: Identifiable, Equatable {
+    struct Segment: ProfileV3SegmentItem, Equatable {
         let id: String
         let title: String
     }
@@ -13,26 +52,11 @@ struct ProfileV3SegmentedControl: View {
 
     private typealias Sizes = ProfileV3Theme.Sizes.SegmentedControl
 
-    @Namespace private var pill
-
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(segments) { segment in
-                let isSelected = segment.id == selectedID
-                Button { onSelect(segment.id) } label: {
-                    label(segment.title, isSelected: isSelected)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background {
-                            if isSelected {
-                                selectedPill
-                                    .matchedGeometryEffect(id: Self.pillID, in: pill)
-                            }
-                        }
-                        .contentShape(Capsule())
-                }
-                .buttonStyle(.profileV3Pressable(.selection))
-                .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
-            }
+        ProfileV3SegmentTrack(items: segments, selectedID: selectedID, onSelect: onSelect) { segment, isSelected in
+            label(segment.title, isSelected: isSelected)
+        } pill: {
+            selectedPill
         }
         .padding(Sizes.inset)
         .frame(height: Sizes.height)
@@ -43,15 +67,11 @@ struct ProfileV3SegmentedControl: View {
         )
     }
 
-    private static let pillID = "pill"
-
     private var selectedPill: some View {
         Capsule()
             .fill(Color(at: .pureWhite))
-            .overlay(
-                Capsule().strokeBorder(ProfileV3Theme.Palette.segmentSelectedBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
-            )
-            .shadow(color: ProfileV3Theme.Palette.accessCardShadow, radius: Sizes.shadowRadius, y: Sizes.shadowY)
+            .profileV3Outlined(Capsule(), border: ProfileV3Theme.Palette.paleGrey)
+            .profileV3SoftShadow()
     }
 
     private func label(_ title: String, isSelected: Bool) -> some View {

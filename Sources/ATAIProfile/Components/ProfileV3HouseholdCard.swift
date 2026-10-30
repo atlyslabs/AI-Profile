@@ -41,7 +41,7 @@ struct ProfileV3HouseholdCard: View {
             .overlay {
                 shape.strokeBorder(
                     Color(at: .borderLightLight200),
-                    style: StrokeStyle(lineWidth: ProfileV3Theme.Stroke.hairline, dash: Household.dash)
+                    style: StrokeStyle(lineWidth: ProfileV3Theme.Stroke.hairline, dash: ProfileV3Theme.Stroke.dash)
                 )
             }
             .contentShape(shape)

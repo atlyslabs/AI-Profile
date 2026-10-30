@@ -20,6 +20,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
 
     private let repository: any ProfileV3SettingsRepository
     private let travellerID: String?
+    private let showsAIConnectors: Bool
     private var loadTask: Task<Void, Never>?
     private var controlPanelTask: Task<Void, Never>?
     private var confirmTask: Task<Void, Never>?
@@ -27,9 +28,14 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     private var syncTask: Task<Void, Never>?
     private var disconnectedKeys: Set<ProfileV3ConnectorKey> = []
 
-    init(repository: any ProfileV3SettingsRepository, travellerID: String? = nil) {
+    init(
+        repository: any ProfileV3SettingsRepository,
+        travellerID: String? = nil,
+        showsAIConnectors: Bool = ProfileV3FeatureFlags.isAIConnectorsEnabled
+    ) {
         self.repository = repository
         self.travellerID = travellerID
+        self.showsAIConnectors = showsAIConnectors
     }
 
     var connectedConnectors: [ProfileV3Connector] {
@@ -226,7 +232,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
             .compactMap { ProfileV3ConnectorKey(rawValue: $0.id) }
         disconnectedKeys.formIntersection(reportedConnected)
         self.screen = screen
-        connectors = reconciled(screen.connectors)
+        connectors = reconciled(screen.connectors.filter { showsAIConnectors || $0.aiConnector == nil })
     }
 
     private func syncDisconnected() {

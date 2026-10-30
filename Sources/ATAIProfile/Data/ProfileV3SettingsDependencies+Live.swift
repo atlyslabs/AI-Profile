@@ -125,9 +125,7 @@ extension ProfileV3SettingsDependencies {
     }
 
     private static func editProfile(_ body: Data, client: ProfileV3NetworkClient) async throws {
-        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: "edit_profile") {
-            try await client.perform(.editProfile(body: body))
-        }
+        try await client.perform(.editProfile(body: body), action: "edit_profile")
     }
 
     #if DEBUG

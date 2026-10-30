@@ -23,7 +23,7 @@ final class ProfileV3SettingsSheetPresenter {
     private var isAwaitingOnboarding = false
     private var didReportFinish = false
     private weak var disconnectHost: UIViewController?
-    private var isDisconnectProgressPresented = false
+    private let disconnectProgress = ProfileV3SheetSlot()
     private weak var pageHost: UIViewController?
     private let pageTransition = ProfileV3PushTransition()
     private var isPagePresented = false
@@ -288,21 +288,15 @@ extension ProfileV3SettingsSheetPresenter: ProfileV3ConnectorsRouting {
     }
 
     func presentDisconnectProgress() {
-        guard !isDisconnectProgressPresented else { return }
-        isDisconnectProgressPresented = true
+        guard !disconnectProgress.isPresented else { return }
         let connectors = viewModel.connectors
-        ProfileV3SheetWindow.present(
-            dismissOnBackdropTap: false,
-            onDismiss: {}
-        ) { _, bottomInset in
+        disconnectProgress.present(dismissOnBackdropTap: false) { _, bottomInset in
             ProfileV3DisconnectProgressSheet(bottomInset: bottomInset, onStop: connectors.stopDisconnecting)
         }
     }
 
     func dismissDisconnectProgress() {
-        guard isDisconnectProgressPresented else { return }
-        isDisconnectProgressPresented = false
-        ProfileV3SheetWindow.dismiss()
+        disconnectProgress.dismiss()
     }
 
     func connectorDidDisconnect(_ connector: ProfileV3ConnectorKey) {

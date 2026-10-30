@@ -31,7 +31,7 @@ struct ProfileV3PersonaCoachBubble: View {
             .padding(.bottom, steps > 1 ? Coach.bottom : Coach.textTop)
             .frame(width: Coach.width)
             .background {
-                ProfileV3PersonaCoachShape(pointerOffset: pointerOffset)
+                ProfileV3PointerBubbleShape(pointerOffset: pointerOffset)
                     .fill(ProfileV3Theme.personaCoachGradient)
                     .shadow(
                         color: ProfileV3Theme.Palette.appHintShadow,
@@ -39,7 +39,7 @@ struct ProfileV3PersonaCoachBubble: View {
                         y: ProfileV3Theme.Sizes.AppAccess.hintShadowY
                     )
             }
-            .contentShape(ProfileV3PersonaCoachShape(pointerOffset: pointerOffset))
+            .contentShape(ProfileV3PointerBubbleShape(pointerOffset: pointerOffset))
         }
         .buttonStyle(.profileV3Pressable)
         .accessibilityLabel(text)
@@ -58,44 +58,59 @@ struct ProfileV3PersonaCoachBubble: View {
     }
 }
 
-struct ProfileV3PersonaCoachShape: Shape {
+struct ProfileV3PointerBubbleShape: Shape {
+    var pointer: CGFloat = ProfileV3Theme.Sizes.Persona.Coach.pointer
+    var tipRun: CGFloat = ProfileV3Theme.Sizes.Persona.Coach.tipRun
     var pointerOffset: CGFloat = 0
+    var radius: CGFloat = ProfileV3Theme.Sizes.Persona.Coach.radius
 
-    private typealias Coach = ProfileV3Theme.Sizes.Persona.Coach
+    private static let shoulder = CGSize(width: 3.5355, height: 1.4645)
+    private static let tipControl = CGSize(width: 1.5829, height: 1.9526)
 
     func path(in rect: CGRect) -> Path {
-        let top = rect.minY + Coach.pointer
-        let limit = max(rect.width / 2 - Coach.radius - Coach.notch, 0)
+        let top = rect.minY + pointer
+        let shoulder = Self.shoulder
+        let notch = shoulder.width * 2 + tipRun
+        let tipY = -shoulder.height - tipRun
+        let limit = max(rect.width / 2 - radius - notch, 0)
         let x = rect.midX + min(max(pointerOffset, -limit), limit)
         func point(_ dx: CGFloat, _ dy: CGFloat) -> CGPoint {
             CGPoint(x: x + dx, y: top + dy)
         }
         var path = Path()
-        path.move(to: point(-Coach.notch, 0))
-        path.addCurve(to: point(-5.5199, -1.4645), control1: point(-7.7294, 0), control2: point(-6.4576, -0.5268))
-        path.addLine(to: point(-3.5355, -3.4489))
-        path.addCurve(to: point(3.5355, -3.4489), control1: point(-1.5829, -5.4015), control2: point(1.5829, -5.4015))
-        path.addLine(to: point(5.5199, -1.4645))
-        path.addCurve(to: point(Coach.notch, 0), control1: point(6.4576, -0.5268), control2: point(7.7294, 0))
+        path.move(to: point(-notch, 0))
+        path.addCurve(
+            to: point(-notch + shoulder.width, -shoulder.height),
+            control1: point(-notch + 1.326, 0),
+            control2: point(-notch + 2.5978, -0.5268)
+        )
+        path.addLine(to: point(-shoulder.width, tipY))
+        path.addCurve(
+            to: point(shoulder.width, tipY),
+            control1: point(-Self.tipControl.width, tipY - Self.tipControl.height),
+            control2: point(Self.tipControl.width, tipY - Self.tipControl.height)
+        )
+        path.addLine(to: point(notch - shoulder.width, -shoulder.height))
+        path.addCurve(to: point(notch, 0), control1: point(notch - 2.5978, -0.5268), control2: point(notch - 1.326, 0))
         path.addArc(
             tangent1End: CGPoint(x: rect.maxX, y: top),
             tangent2End: CGPoint(x: rect.maxX, y: rect.maxY),
-            radius: Coach.radius
+            radius: radius
         )
         path.addArc(
             tangent1End: CGPoint(x: rect.maxX, y: rect.maxY),
             tangent2End: CGPoint(x: rect.minX, y: rect.maxY),
-            radius: Coach.radius
+            radius: radius
         )
         path.addArc(
             tangent1End: CGPoint(x: rect.minX, y: rect.maxY),
             tangent2End: CGPoint(x: rect.minX, y: top),
-            radius: Coach.radius
+            radius: radius
         )
         path.addArc(
             tangent1End: CGPoint(x: rect.minX, y: top),
             tangent2End: CGPoint(x: rect.maxX, y: top),
-            radius: Coach.radius
+            radius: radius
         )
         path.closeSubpath()
         return path

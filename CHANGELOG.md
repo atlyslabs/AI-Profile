@@ -5,26 +5,11 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ## Unreleased
 
-## 1.0.16 — 2026-10-30
-
-### Changed
-
-- **One permission-changed event instead of two.** `settings_connector_permission_changed` and
-  `settings_action_permission_changed` are replaced by `settings_permission_changed`, which names
-  the kind in a `source` property (`connector` / `action` / `call`). The two old events are gone.
-
 ### Added
 
-- **`settings_permission_closed`** — reports what changed while the permission screen was up, with
-  `newPermission` and `oldPermission` each keyed by source. Silent when nothing changed.
-
-### Added
-
-- `ProfileV3EntryPoint.open(_:)` with `ProfileV3Destination.addTraveller` and
-  `.addLoyaltyProgramme`, for deep links. The hub opens the sheet once it is on screen with its board
-  loaded; a loyalty programme is added for the main traveller, behind the usual KYC gate.
-- Agent forms have custom rules, from the agent screen's `custom_rules` field (flight, stay,
-  airport logistics, food and itinerary). The rules show as note cards, newest first, under the
+- Agent forms' custom rules now come from the agent screen's `custom_rules` field (flight, stay,
+  airport logistics, food and itinerary) and save with the agent. Rules kept on the device in
+  1.0.13–1.0.16 are not carried over. The rules show as note cards, newest first, under the
   field's label; "+ Custom" (`add_label`) stays at the bottom left, next to "save changes" when
   there are unsaved edits, and hides once the list has `max_rules`. Tapping a card edits it, and
   its delete button asks first (`delete_confirm`). The editor's titles, note label, Save label and
@@ -37,15 +22,6 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   phones. `ProfileV3FeatureFlags.isAgentCustomRulesEnabled` turns the section off. Only
   `mo-aiprofile-agents-button-delete-rule` (the delete button's accessibility label) is client
   copy; the other seven custom rule keys added earlier are unused and don't need adding to Ditto.
-- The personal agent shows a passport placeholder when no passport is on file. The agent screen
-  sends `passport_empty` (`title`, `body`, `cta_label`) instead of `passport`, and the card shows
-  that copy under the traveler's name, with an Upload button that scans a passport for that
-  traveler. A first passport skips "What happened to your old passport" and the card refreshes.
-  The client strings `mo-aiprofile-documents-button-upload-passport`,
-  `mo-aiprofile-documents-text-upload-blurb-start` and `mo-aiprofile-documents-button-upload` are
-  now unused and can be deleted from Ditto.
-- The travel persona's loading dial plays a soft tap each time its colour wave lights a trait
-  label, and a success tap when the radar replaces it.
 - The personal agent shows the passport's back page beside the front, in a sideways FRONT/BACK
   row, when the passport card sends any of `father`, `mother`, `spouse` or `address` (up to three
   lines). Each row's label comes from the card's `labels`; a missing value keeps its label and an
@@ -64,16 +40,29 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   (`…/connect`): copy the prompt, paste the answer, Save (`connect_ai_connector` with `text`). A
   refusal shows the server's message; a save reloads the list. The page's title and blurb come
   from the overview. `ProfileV3SettingsRepository` gained the `ProfileV3AIConnectorRepository`
-  methods.
-- App access has an Instagram flow, UI only: "+ user name" opens an explainer, then a username
-  sheet, then "Follow us, drop in a text" before opening Instagram. App access itself still shows
-  "Coming soon" (`isAppAccessEnabled` is off). The Instagram destination is a placeholder until
-  Ayl's handle is known. Sixteen new keys need adding in Ditto: `mo-aiprofile-agents-button-add-username`,
-  `-title-add-username`, `-label-username`, `-toast-username-added`,
-  `-title-instagram-step-username`/`-redirect`/`-follow`,
+  methods. For now the assistants are hidden: Information access drops every row whose `next` is
+  `ai_connector` while `ProfileV3FeatureFlags.isAIConnectorsEnabled` is false.
+- App access links Instagram to Ayl through the snapmap service, so places from posts the user
+  DMs to @ayl.chat save to their Ayl map. "+ user name" opens an explainer, then a username sheet
+  (shown for 15 seconds, or until tapped; its sample handle reads "ayl") that saves with
+  `POST /api/snapmap/instagram/accounts` (the username normalised and checked on the
+  device first: no leading `@`, lowercase, 1–30 letters, numbers, dots or underscores), then "Follow
+  us, drop in a text" before opening a chat with @ayl.chat (`https://ig.me/m/ayl.chat`). The page
+  reads the link from `GET /api/snapmap/instagram/accounts`: until that account has messaged
+  @ayl.chat (`dm_connected` false), Instagram stays in the list with the saved handle and a "Send a
+  DM" action, and the page refreshes when the app becomes active again; once it has, Instagram
+  moves to Connected. A username linked to another Ayl account shows the server's 409 message.
+  Editing the username from the Connected panel links the new one, which then needs a DM again.
+  Instagram can't be disconnected, because snapmap has no unlink endpoint yet. Both calls send the
+  host's `currentUserID` as `user_id`, which must be the signed-in Firebase uid. For now App access lists
+  only Instagram and hides "+ Add new": the other apps are DEBUG demo data behind
+  `ProfileV3FeatureFlags.isAppAccessOtherAppsEnabled` (false). Twenty new keys need
+  adding in Ditto: `mo-aiprofile-agents-button-add-username`, `-title-add-username`,
+  `-label-username`, `-toast-username-added`, `-title-instagram-step-username`/`-redirect`/`-follow`,
   `-description-instagram-step-username`/`-redirect`/`-follow`, `-label-instagram-sample-handle`,
   `-label-instagram-follow`, `-label-instagram-hi`, `-title-instagram-come-say-hi`,
-  `-title-instagram-follow-us` and `-status-instagram-redirecting`.
+  `-title-instagram-follow-us`, `-status-instagram-redirecting`, `-description-instagram`,
+  `-button-send-dm`, `-error-instagram-username-invalid` and `-status-instagram-awaiting-message`.
 
 ### Changed
 
@@ -83,11 +72,29 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   copy button and its reset timer, the scroll view that fades under a fixed header, and the rainbow
   glow with its gradient and blur. Screens look the same, pixel for pixel, except "+ Custom" on
   agent forms, which now uses the save button's spacing: its icon sits 0.4pt further left.
+- More pieces share one component each: sheet settings and fitted confirmation sheets, back and
+  close controls, page top bars, confirmations, page headings (access pages, shield sheets, "Coming
+  soon", the agent "Found …" title), the load-more footer, bottom toast, error alerts and error
+  lines, header and bottom fades, dashed rules, uppercase labels, outlined boxes, the sources
+  caption, segmented tracks, the pass pill, the traveler card, the card tab, tooltip bubbles and
+  frosted backdrops. Four screen loaders, four save states, the signed-in request wrapper, the ISO
+  date parsers and the sheet-window guards are shared too. The theme defines each colour once and
+  uses the ATUIKit colour wherever one matches; it has one soft shadow, named easing curves and one
+  value per repeated timing, its spacing, radius and control-height tokens use the shared scales,
+  and 13 unused tokens are gone, as is the duplicate `profile_v3_glovebox_bolt` image. Screens look
+  the same, except that the pass detail's flag pill casts its shadow from the pill only, and agent
+  forms with an empty summary no longer leave a gap under the title.
 - Save buttons that appear once there is something to save now rise into place: "save changes" on
   agent forms, the saved login and app edit sheets, and the custom rule editor's Save and "save
   changes". With custom rules, "+ Custom" stays still while the save button enters beside it. On
   agent forms the save button now also fades out when an edit is undone or after "saved"; before,
   it vanished at once.
+- App access shows auto-connected apps (Splits) at the top of the same list as the other apps,
+  with "auto connected" in green where the action would be; the separate auto-connected cards and
+  the dashed divider are gone. Every row is now a white card with a soft shadow, and the list starts
+  44pt under the subtitle, as in the "1981" frame. Only Instagram shows for now (see above).
+  `mo-aiprofile-agents-label-instagram-sample-handle` is now "ayl" (was "Johndoe"); change it in
+  Ditto too.
 - Settings cards are in the order Accounts center, Connectors, Glove box, Secure credential store
   (the concierge card, when served, stays after Accounts center), all 25pt apart.
 - Glove box: an empty inbox shows only the Emirates sample email; any real email still replaces
@@ -104,6 +111,44 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   `mo-aiprofile-glovebox-description-pay-atlys`, `-pay-link` and
   `mo-aiprofile-glovebox-status-card-link-pending`; `mo-aiprofile-glovebox-description-how-you-pay`
   needs its new text. The four `mo-aiprofile-glovebox-sample-email-hotel-*` keys are unused.
+
+## 1.0.16 — 2026-10-30
+
+### Changed
+
+- **One permission-changed event instead of two.** `settings_connector_permission_changed` and
+  `settings_action_permission_changed` are replaced by `settings_permission_changed`, which names
+  the kind in a `source` property (`connector` / `action` / `call`). The two old events are gone.
+
+### Added
+
+- **`settings_permission_closed`** — reports what changed while the permission screen was up, with
+  `newPermission` and `oldPermission` each keyed by source. Silent when nothing changed.
+
+### Added
+
+- `ProfileV3EntryPoint.open(_:)` with `ProfileV3Destination.addTraveller` and
+  `.addLoyaltyProgramme`, for deep links. The hub opens the sheet once it is on screen with its board
+  loaded; a loyalty programme is added for the main traveller, behind the usual KYC gate.
+- Agent forms have custom rules: "+ Custom" opens a note editor, saved rules show in a CUSTOM
+  RULES section, and tapping one edits or deletes it. Saving a new rule closes the editor and
+  scrolls the form down to the rule, first in the row. With the keyboard up, the editor keeps
+  Save at least 16pt above it, closing the gaps and then shortening the note on smaller phones.
+  Until the backend supports them, rules are kept on the device per signed-in user, traveler and
+  agent (`ProfileV3FeatureFlags.isAgentCustomRulesEnabled`). Eight new `mo-aiprofile-agents-*`
+  string keys need adding in Ditto.
+- The personal agent shows a passport placeholder when no passport is on file. The agent screen
+  sends `passport_empty` (`title`, `body`, `cta_label`) instead of `passport`, and the card shows
+  that copy under the traveler's name, with an Upload button that scans a passport for that
+  traveler. A first passport skips "What happened to your old passport" and the card refreshes.
+  The client strings `mo-aiprofile-documents-button-upload-passport`,
+  `mo-aiprofile-documents-text-upload-blurb-start` and `mo-aiprofile-documents-button-upload` are
+  now unused and can be deleted from Ditto.
+- The travel persona's loading dial plays a soft tap each time its colour wave lights a trait
+  label, and a success tap when the radar replaces it.
+
+### Changed
+
 - Permissions read from the harness service: `GET /api/harness/v1/permissions`, saved one at a
   time with `PUT /api/harness/v1/permissions/{key}` and `{"value": …}`. The board's
   `/permissions` screen and the `save_permissions` submit are no longer used. Each top-level

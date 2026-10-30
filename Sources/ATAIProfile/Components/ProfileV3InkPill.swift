@@ -12,7 +12,7 @@ struct ProfileV3InkPill: View {
     var isLoading = false
     var width = Width.hugging(minimum: ProfileV3Theme.Sizes.InkPill.width)
     var typography: TypographyStyle = .B1InterSemibold14
-    var fill = ProfileV3Theme.Palette.inkButton
+    var fill = ProfileV3Theme.Palette.ink
     var shadowRadius: CGFloat?
 
     var body: some View {
@@ -58,7 +58,7 @@ private struct ProfileV3InkPillShadow: ViewModifier {
 
     func body(content: Content) -> some View {
         if let radius {
-            content.shadow(color: ProfileV3Theme.Palette.shadow, radius: radius, y: ProfileV3Theme.Shadow.redeemY)
+            content.shadow(color: ProfileV3Theme.Palette.shadow, radius: radius, y: ProfileV3Theme.Shadow.softY)
         } else {
             content
         }

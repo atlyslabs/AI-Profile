@@ -925,6 +925,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-button-send-dm": {
+      "comment": "Action on the Instagram row in App access while the linked account hasn't messaged @ayl.chat yet. Opens the chat with @ayl.chat.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send a DM"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-confirmation-delete-credentials": {
       "comment": "Confirmation title before deleting a saved login.",
       "extractionState": "manual",
@@ -1009,6 +1021,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-description-instagram": {
+      "comment": "Blurb for Instagram in App access and on its connected-apps card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meet Ayl on Instagram\nFollow Ayl and say hi, so your agent can plan and recommend the best of everything for you."
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-description-instagram-step-follow": {
       "comment": "Detail under the third Instagram explainer step.",
       "extractionState": "manual",
@@ -1065,6 +1089,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couldn't disconnect. Please try again."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-error-instagram-username-invalid": {
+      "comment": "Error under the username field when the text isn't a valid Instagram username (1-30 letters, numbers, dots or underscores).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a valid Instagram username"
           }
         }
       }
@@ -1274,13 +1310,13 @@
       }
     },
     "mo-aiprofile-agents-label-instagram-sample-handle": {
-      "comment": "Sample username drawn in the first Instagram explainer card.",
+      "comment": "Ayl's Instagram handle, drawn without the @ in the first Instagram explainer card.",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Johndoe"
+            "value": "ayl"
           }
         }
       }
@@ -1569,6 +1605,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Connected"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-status-instagram-awaiting-message": {
+      "comment": "Status under the Instagram row in App access while the linked account hasn't messaged @ayl.chat yet. The variable is the linked username.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send any message to @ayl.chat from @%1$@ to finish connecting."
           }
         }
       }

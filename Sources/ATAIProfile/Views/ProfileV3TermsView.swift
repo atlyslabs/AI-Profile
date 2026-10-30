@@ -99,20 +99,20 @@ struct ProfileV3TermsHost: View {
     let onBack: () -> Void
 
     init(repository: any ProfileV3SettingsRepository, onBack: @escaping () -> Void) {
-        _viewModel = StateObject(wrappedValue: ProfileV3TermsViewModel {
+        _viewModel = StateObject(wrappedValue: ProfileV3TermsViewModel(loadTerms: {
             try await repository.loadTerms(locale: Locale.current.language.languageCode?.identifier)
-        })
+        }))
         self.onBack = onBack
     }
 
     var body: some View {
         ProfileV3TermsView(
-            terms: viewModel.terms,
+            terms: viewModel.content,
             phase: viewModel.phase,
             onRetry: viewModel.load,
             onBack: onBack
         )
-        .onAppear(perform: viewModel.load)
+        .onAppear(perform: viewModel.loadIfNeeded)
     }
 }
 

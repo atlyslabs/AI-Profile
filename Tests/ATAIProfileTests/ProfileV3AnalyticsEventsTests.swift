@@ -254,7 +254,7 @@ struct ProfileV3AnalyticsEventsTests {
             editor.credentials.username = "ada@example.com"
             editor.credentials.password = "secret"
             editor.submit()
-            while editor.phase != .succeeded { try await Task.sleep(for: .milliseconds(10)) }
+            while editor.phase != .saved { try await Task.sleep(for: .milliseconds(10)) }
             store.pickOtherWebsite(" www.Example.org/login ")
 
             let saved = ProfileV3VaultFixtures.entries[0].credential

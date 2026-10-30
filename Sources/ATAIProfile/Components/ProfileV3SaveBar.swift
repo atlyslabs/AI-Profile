@@ -10,9 +10,7 @@ struct ProfileV3SaveBar<Content: View>: View {
             ProfileV3SaveBarFade()
             VStack(spacing: ProfileV3Theme.Space.s12) {
                 if let error {
-                    Text(error)
-                        .typoGraphy(.T1InterBold11)
-                        .foregroundStyle(ProfileV3Theme.Palette.error)
+                    ProfileV3ErrorText(text: error, style: .bar)
                         .multilineTextAlignment(.center)
                 }
                 content
@@ -32,7 +30,7 @@ struct ProfileV3SubmitControl: View {
     var body: some View {
         ZStack {
             switch phase {
-            case .idle:
+            case .idle, .failed:
                 ProfileV3ContinueButton(
                     title: title,
                     disabledTint: Color(at: .neutralGrey400),

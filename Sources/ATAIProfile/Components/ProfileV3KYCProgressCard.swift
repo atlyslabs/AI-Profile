@@ -59,10 +59,7 @@ struct ProfileV3KYCProgressCard: View {
     private var card: some View {
         VStack(spacing: ProfileV3Theme.Space.s16) {
             HStack(spacing: 0) {
-                Text(headline)
-                    .typoGraphy(.T1InterBold11)
-                    .textCase(.uppercase)
-                    .foregroundStyle(Color(at: .pureBlack))
+                ProfileV3TagLabel(text: headline)
                 Spacer(minLength: ProfileV3Theme.Space.s16)
                 HStack(spacing: 0) {
                     Text(ProfileV3Strings.kycStepFraction(done: progress.done, total: progress.total))

@@ -1,7 +1,7 @@
 import ATUIKit
 import SwiftUI
 
-private struct ProfileV3CollapsedTabShape: Shape {
+struct ProfileV3TabShape: Shape {
     func path(in rect: CGRect) -> Path {
         let sx = rect.width / 207.814
         let sy = rect.height / 7
@@ -24,7 +24,7 @@ private struct ProfileV3CollapsedTabShape: Shape {
 
 struct ProfileV3CollapsedTab: View {
     var body: some View {
-        ProfileV3CollapsedTabShape()
+        ProfileV3TabShape()
             .fill(ProfileV3Theme.collapseTabGradient)
             .frame(width: ProfileV3Theme.Sizes.Collapse.tabShapeWidth, height: ProfileV3Theme.Sizes.Collapse.tabHeight)
             .frame(width: ProfileV3Theme.Sizes.Collapse.tabWidth)

@@ -23,12 +23,7 @@ struct ProfileV3KYCRedirectView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background {
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .overlay(ProfileV3Theme.Palette.frostedBackdrop)
-                .ignoresSafeArea()
-        }
+        .background { ProfileV3FrostedBackdrop() }
         .task {
             try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.kycRedirectMilliseconds))
             guard !Task.isCancelled, !didClose else { return }

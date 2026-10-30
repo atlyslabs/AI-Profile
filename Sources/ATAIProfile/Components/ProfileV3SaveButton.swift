@@ -24,13 +24,13 @@ struct ProfileV3SaveButton: View {
                 fill: background,
                 border: isSaved ? Color(at: .pureWhite) : ProfileV3Theme.Palette.saveButtonBorder,
                 lineWidth: isSaved ? ProfileV3Theme.Stroke.hairline : ProfileV3Theme.Stroke.thin,
-                shadowRadius: isSaved ? ProfileV3Theme.Shadow.savedRadius : ProfileV3Theme.Shadow.redeemRadius,
-                shadowY: isSaved ? ProfileV3Theme.Shadow.savedY : ProfileV3Theme.Shadow.redeemY
+                shadowRadius: isSaved ? ProfileV3Theme.Shadow.savedRadius : ProfileV3Theme.Shadow.softRadius,
+                shadowY: isSaved ? ProfileV3Theme.Shadow.savedY : ProfileV3Theme.Shadow.softY
             )
             .animation(ProfileV3Theme.Motion.saveState, value: phase)
         }
         .buttonStyle(.profileV3Pressable(.impact(weight: .medium)))
-        .disabled(phase != .idle)
+        .disabled(phase == .saving || phase == .saved)
         .accessibilityLabel(displayTitle)
         .accessibilityValue(phase == .saving ? ProfileV3Strings.loading : "")
     }
@@ -42,7 +42,7 @@ struct ProfileV3SaveButton: View {
     @ViewBuilder
     private var leading: some View {
         switch phase {
-        case .idle:
+        case .idle, .failed:
             ATIcon.SwiftUIImage.check
                 .profileV3Icon(ProfileV3Theme.Sizes.Save.buttonIcon)
                 .foregroundStyle(Color(at: .pureBlack))

@@ -35,10 +35,7 @@ struct ProfileV3AIConnectorSheet: View {
             .ignoresSafeArea()
             .accessibilityHidden(true)
         }
-        .presentationDetents([.large])
-        .presentationCornerRadius(Layout.cornerRadius)
-        .presentationDragIndicator(.hidden)
-        .interactiveDismissDisabled(model.isSaving)
+        .profileV3Sheet(.large, isDismissDisabled: model.isSaving)
         .sensoryFeedback(.success, trigger: model.copies)
         .task { model.start() }
         .onDisappear(perform: model.cancel)
@@ -126,15 +123,9 @@ private struct ProfileV3AIConnectorDetailContent: View {
                 .padding(.top, Layout.benefitsTop)
             }
             if !detail.disclaimers.isEmpty {
-                ProfileV3HorizontalRule()
-                    .stroke(
-                        ProfileV3Theme.Palette.aiConnectorDivider,
-                        style: StrokeStyle(lineWidth: ProfileV3Theme.Stroke.hairline, dash: Layout.timelineDash)
-                    )
-                    .frame(height: ProfileV3Theme.Stroke.hairline)
+                ProfileV3DashedRule(color: ProfileV3Theme.Palette.dashedRule)
                     .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                     .padding(.top, Layout.dividerTop)
-                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: Layout.disclaimerSpacing) {
                     ForEach(detail.disclaimers) { disclaimer in
                         ProfileV3AIConnectorDisclaimerText(disclaimer: disclaimer)
@@ -157,7 +148,7 @@ private struct ProfileV3AIConnectorDetailContent: View {
                 ProfileV3ContinueButton(
                     title: detail.ctaLabel,
                     tint: Color(at: .pureWhite),
-                    fill: ProfileV3Theme.Palette.inkButton,
+                    fill: ProfileV3Theme.Palette.ink,
                     action: model.getStarted
                 )
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
@@ -291,7 +282,7 @@ private struct ProfileV3AIConnectorConnectContent: View {
 
     private func revealAnswer(_ proxy: ScrollViewProxy) {
         guard isAnswerFocused else { return }
-        withAnimation(reduceMotion ? nil : ProfileV3Theme.Motion.aiConnectorReveal) {
+        withAnimation(reduceMotion ? nil : ProfileV3Theme.Motion.expand) {
             proxy.scrollTo(ProfileV3AIConnectorStepView.answerCardID, anchor: .bottom)
         }
     }
@@ -299,10 +290,10 @@ private struct ProfileV3AIConnectorConnectContent: View {
     private func dots(largeFirst: Bool) -> some View {
         HStack(spacing: Layout.dotSpacing) {
             Circle()
-                .fill(ProfileV3Theme.Palette.aiConnectorDots)
+                .fill(ProfileV3Theme.Palette.lightGrey)
                 .frame(width: largeFirst ? Layout.dotLarge : Layout.dotSmall)
             Circle()
-                .fill(ProfileV3Theme.Palette.aiConnectorDots)
+                .fill(ProfileV3Theme.Palette.lightGrey)
                 .frame(width: largeFirst ? Layout.dotSmall : Layout.dotLarge)
         }
         .frame(height: Layout.dotLarge)
@@ -350,14 +341,9 @@ private struct ProfileV3AIConnectorStepView: View {
             let centre = Layout.stepLabelHeight / 2
             let end = isLast ? proxy.size.height - Layout.timelineTail : proxy.size.height + Layout.stepSpacing
             ZStack(alignment: .topLeading) {
-                Path { path in
-                    path.move(to: CGPoint(x: x, y: centre))
-                    path.addLine(to: CGPoint(x: x, y: max(end, centre)))
-                }
-                .stroke(
-                    ProfileV3Theme.Palette.aiConnectorDots,
-                    style: StrokeStyle(lineWidth: ProfileV3Theme.Stroke.hairline, dash: Layout.timelineDash)
-                )
+                ProfileV3DashedRule(color: ProfileV3Theme.Palette.lightGrey, axis: .vertical)
+                    .frame(height: max(end, centre) - centre)
+                    .offset(x: x - ProfileV3Theme.Stroke.hairline / 2, y: centre)
                 Circle()
                     .fill(ProfileV3Theme.Palette.aiConnectorStepDot)
                     .frame(width: Layout.stepDot, height: Layout.stepDot)
@@ -389,13 +375,10 @@ private struct ProfileV3AIConnectorStepView: View {
                         .foregroundStyle(ProfileV3Theme.Palette.aiConnectorCopyText)
                         .padding(.horizontal, Layout.copyHorizontal)
                         .padding(.vertical, Layout.copyVertical)
-                        .background(
-                            RoundedRectangle(cornerRadius: Layout.copyRadius, style: .continuous)
-                                .fill(Color(at: .pureWhite))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: Layout.copyRadius, style: .continuous)
-                                .strokeBorder(ProfileV3Theme.Palette.aiConnectorBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
+                        .profileV3Outlined(
+                            RoundedRectangle(cornerRadius: Layout.copyRadius, style: .continuous),
+                            border: ProfileV3Theme.Palette.aiConnectorBorder,
+                            fill: Color(at: .pureWhite)
                         )
                         .contentTransition(.opacity)
                 }
@@ -421,7 +404,7 @@ private struct ProfileV3AIConnectorStepView: View {
                 TextField(
                     "",
                     text: $model.answer,
-                    prompt: Text(input.placeholder).foregroundColor(ProfileV3Theme.Palette.aiConnectorPlaceholder),
+                    prompt: Text(input.placeholder).foregroundColor(ProfileV3Theme.Palette.greyPlaceholder),
                     axis: .vertical
                 )
                 .typoGraphy(.B1InterMedium14)
@@ -429,22 +412,17 @@ private struct ProfileV3AIConnectorStepView: View {
                 .focused(answerFocus)
                 .lineLimit(Layout.pasteMinLines ... Layout.pasteMaxLines)
                 .padding(Layout.pastePadding)
-                .background(
-                    RoundedRectangle(cornerRadius: Layout.pasteRadius, style: .continuous)
-                        .fill(Color(at: .pureWhite))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: Layout.pasteRadius, style: .continuous)
-                        .strokeBorder(ProfileV3Theme.Palette.aiConnectorBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
+                .profileV3Outlined(
+                    RoundedRectangle(cornerRadius: Layout.pasteRadius, style: .continuous),
+                    border: ProfileV3Theme.Palette.aiConnectorBorder,
+                    fill: Color(at: .pureWhite)
                 )
                 .disabled(model.isSaving)
                 .accessibilityLabel(input.placeholder)
                 .padding(.top, step.body.isEmpty ? 0 : Layout.bodyGap)
             }
             if let error = model.errorMessage {
-                Text(error)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(ProfileV3Theme.Palette.error)
+                ProfileV3ErrorText(text: error)
                     .padding(.top, Layout.errorTop)
                     .transition(.opacity)
             }
@@ -471,12 +449,12 @@ private struct ProfileV3AIConnectorStepView: View {
                 title: title,
                 isLoading: model.isSaving,
                 width: .fixed(ProfileV3Theme.Sizes.InkPill.width),
-                shadowRadius: ProfileV3Theme.Shadow.redeemRadius
+                shadowRadius: ProfileV3Theme.Shadow.softRadius
             )
         }
         .buttonStyle(.profileV3Pressable)
         .disabled(!model.canSave)
-        .opacity(model.canSave || model.isSaving ? 1 : ProfileV3Theme.Motion.disabledOpacity)
+        .opacity(model.canSave || model.isSaving ? 1 : ProfileV3Theme.Opacity.disabled)
         .accessibilityLabel(title)
     }
 

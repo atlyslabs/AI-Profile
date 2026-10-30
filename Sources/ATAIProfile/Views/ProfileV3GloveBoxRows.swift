@@ -420,8 +420,7 @@ struct ProfileV3GloveBoxPreviewCard<Content: View>: View {
         content
             .padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(shape.fill(Palette.preview))
-            .overlay(shape.strokeBorder(Palette.sectionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+            .profileV3Outlined(shape, border: Palette.sectionBorder, fill: Palette.preview)
             .overlay(alignment: .topTrailing) {
                 if let sampleLabel, !sampleLabel.isEmpty {
                     ProfileV3GloveBoxSampleTag(label: sampleLabel)

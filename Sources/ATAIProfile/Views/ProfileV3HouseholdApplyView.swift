@@ -53,33 +53,19 @@ struct ProfileV3HouseholdApplySheet: View {
     ) -> some View {
         let isSelected = session.selection.contains(traveller.id)
         return Button { viewModel.toggleHouseholdTraveller(traveller.id) } label: {
-            ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: ProfileV3Theme.Radius.xxl, style: .continuous)
-                    .fill(ProfileV3Theme.Palette.travellerCard)
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(traveller.name)
-                        .typoGraphy(.H7InterMedium16)
-                        .foregroundStyle(Color(at: .pureWhite))
-                        .opacity(isSelected ? 1 : ProfileV3Theme.Opacity.optionUnselected)
-                        .lineLimit(1)
-                    Spacer(minLength: 0)
-                    ProfileV3PassNumber(number: traveller.passNumber)
-                }
-                .padding(.leading, ProfileV3Theme.Space.s30)
-                .padding(.vertical, ProfileV3Theme.Space.s22)
-                checkbox(isSelected)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
-                    .padding(.trailing, ProfileV3Theme.Space.s30)
+            ProfileV3TravellerCardShell(passNumber: traveller.passNumber) {
+                Text(traveller.name)
+                    .typoGraphy(.H7InterMedium16)
+                    .foregroundStyle(Color(at: .pureWhite))
+                    .opacity(isSelected ? 1 : ProfileV3Theme.Opacity.optionUnselected)
+                    .lineLimit(1)
+            } trailing: {
+                ProfileV3CheckboxMark(
+                    isSelected: isSelected,
+                    size: ProfileV3Theme.Sizes.Picker.checkbox,
+                    tint: Color(at: .pureWhite)
+                )
             }
-            .frame(height: ProfileV3Theme.Sizes.Traveller.cardHeight)
-            .shadow(
-                color: ProfileV3Theme.Palette.shadow,
-                radius: ProfileV3Theme.Shadow.cardRadius,
-                y: ProfileV3Theme.Shadow.cardY
-            )
-            .contentShape(
-                RoundedRectangle(cornerRadius: ProfileV3Theme.Radius.xxl, style: .continuous)
-            )
         }
         .buttonStyle(.profileV3Pressable)
         .disabled(session.phase == .saving || session.phase == .saved)
@@ -87,36 +73,17 @@ struct ProfileV3HouseholdApplySheet: View {
         .accessibilityLabel(traveller.name)
     }
 
-    private func checkbox(_ isSelected: Bool) -> some View {
-        (isSelected ? ATIcon.SwiftUIImage.checkBox : ATIcon.SwiftUIImage.checkBoxOutlineBlank)
-            .profileV3Icon(ProfileV3Theme.Sizes.Picker.checkbox)
-            .foregroundStyle(Color(at: .pureWhite))
-            .frame(
-                width: ProfileV3Theme.Sizes.Picker.checkbox,
-                height: ProfileV3Theme.Sizes.Picker.checkbox
-            )
-            .accessibilityHidden(true)
-    }
-
     private func bar(_ session: ProfileV3HouseholdApplySession) -> some View {
         ProfileV3SaveBar(error: session.errorMessage) {
             ProfileV3SaveButton(
-                phase: savePhase(session),
+                phase: session.phase,
                 title: session.prompt.confirmLabel,
                 savedTitle: session.doneLabel,
                 action: viewModel.confirmHousehold
             )
             .disabled(!session.canConfirm && session.phase != .saving && session.phase != .saved)
-            .opacity(session.canConfirm || session.phase == .saving || session.phase == .saved ? 1 : ProfileV3Theme.Motion.disabledOpacity)
+            .opacity(session.canConfirm || session.phase == .saving || session.phase == .saved ? 1 : ProfileV3Theme.Opacity.disabled)
         }
         .animation(ProfileV3Theme.Motion.saveState, value: session.phase)
-    }
-
-    private func savePhase(_ session: ProfileV3HouseholdApplySession) -> ProfileV3SavePhase {
-        switch session.phase {
-        case .choosing, .failed: return .idle
-        case .saving: return .saving
-        case .saved: return .saved
-        }
     }
 }

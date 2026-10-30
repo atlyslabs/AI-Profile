@@ -43,9 +43,9 @@ struct ProfileV3SettingsView: View {
                 }
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.bottom, Layout.bottom)
-                .profileV3ScrollOffsetAnchor(headerOffset)
+                .profileV3ScrollOffsetAnchor(headerPin.offsetBinding)
             }
-            .profileV3ScrollOffset(headerOffset)
+            .profileV3ScrollOffset(headerPin.offsetBinding)
             ProfileV3SettingsPageHeader(title: viewModel.title, pin: headerPin, onBack: viewModel.tapBack)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -75,10 +75,6 @@ struct ProfileV3SettingsView: View {
                 ) { viewModel.isGloveBoxPresented = false }
             }
         }
-    }
-
-    private var headerOffset: Binding<CGFloat> {
-        Binding(get: { headerPin.offset }, set: { headerPin.offset = $0 })
     }
 
     private func panel(_ menu: ProfileV3SettingsMenu) -> some View {
@@ -124,9 +120,10 @@ struct ProfileV3SettingsView: View {
                 .padding(.top, ProfileV3Theme.Sizes.ErrorState.cardContentDrop)
                 .frame(maxWidth: .infinity)
                 .frame(height: ProfileV3Theme.Sizes.ErrorState.cardHeight)
-                .background(shape.fill(Color(at: .backgroundLightTheme)))
-                .overlay(
-                    shape.strokeBorder(ProfileV3Theme.Palette.errorStateCardBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
+                .profileV3Outlined(
+                    shape,
+                    border: ProfileV3Theme.Palette.settingsCardBorder,
+                    fill: Color(at: .backgroundLightTheme)
                 )
                 .profileV3FeedbackOnAppear(.error)
             ProfileV3SettingsRowList(rows: viewModel.failedMenuRows, account: viewModel.account, onSelect: viewModel.tap)
@@ -203,11 +200,9 @@ private struct ProfileV3SettingsPageHeader: View {
         ProfileV3BackTagHeader(title: title, top: Layout.headerTop, onBack: onBack)
             .padding(.bottom, Layout.headerBarBottom)
             .background(alignment: .bottom) {
-                ProfileV3Theme.whiteToClearFade
-                    .frame(height: Layout.headerFade)
+                ProfileV3FadeBand()
                     .offset(y: Layout.headerFade)
                     .opacity(progress)
-                    .allowsHitTesting(false)
             }
             .background {
                 Color(at: .pureWhite)
@@ -226,7 +221,7 @@ private struct ProfileV3SettingsAvatar: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(ProfileV3Theme.Palette.settingsAvatar)
+                .fill(ProfileV3Theme.Palette.nearBlack)
             ProfileV3RemoteImage(url: ProfileV3SettingsArt.avatarGlobe.url, contentMode: .fit, placeholder: .clear)
             if let initial {
                 Text(initial)
@@ -361,11 +356,7 @@ private struct ProfileV3SettingsAccessCard: View {
             .background(
                 shape
                     .fill(Color(at: .pureWhite))
-                    .shadow(
-                        color: ProfileV3Theme.Palette.shadow,
-                        radius: Layout.accessCardShadowRadius,
-                        y: Layout.accessCardShadowY
-                    )
+                    .profileV3SoftShadow()
             )
             .contentShape(shape)
         }

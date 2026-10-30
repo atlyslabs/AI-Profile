@@ -5,6 +5,7 @@ import SwiftUI
 final class ProfileV3PastTripsSheetPresenter {
     private typealias Sizes = ProfileV3Theme.Sizes.TripSheet
 
+    private let slot = ProfileV3SheetSlot()
     private var presented: ProfileV3PastTripsViewModel.Sheet?
 
     func show(_ sheet: ProfileV3PastTripsViewModel.Sheet?, for viewModel: ProfileV3PastTripsViewModel) {
@@ -18,13 +19,12 @@ final class ProfileV3PastTripsSheetPresenter {
     func dismiss() {
         guard presented != nil else { return }
         presented = nil
-        ProfileV3SheetWindow.dismiss()
+        slot.dismiss()
     }
 
     private func present(_ sheet: ProfileV3PastTripsViewModel.Sheet, for viewModel: ProfileV3PastTripsViewModel) {
         let onDismiss: () -> Void = { [weak self, weak viewModel] in
-            guard let self, presented == sheet else { return }
-            presented = nil
+            self?.presented = nil
             viewModel?.sheetDidDismiss(sheet)
         }
         switch sheet {
@@ -42,8 +42,8 @@ final class ProfileV3PastTripsSheetPresenter {
                 )
             }
         case .confirmDelete:
-            ProfileV3SheetWindow.present(
-                cornerRadius: Sizes.confirmRadius,
+            slot.present(
+                cornerRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius,
                 dimOpacity: ProfileV3Theme.Opacity.tripBackdrop,
                 dismissOnBackdropTap: true,
                 onDismiss: onDismiss
@@ -58,7 +58,7 @@ final class ProfileV3PastTripsSheetPresenter {
         onDismiss: @escaping () -> Void,
         @ViewBuilder content: () -> Content
     ) {
-        ProfileV3SheetWindow.present(
+        slot.present(
             cornerRadius: Sizes.radius,
             layout: .floating(horizontalInset: Sizes.inset, bottomInset: Sizes.bottom),
             dimOpacity: ProfileV3Theme.Opacity.tripBackdrop,

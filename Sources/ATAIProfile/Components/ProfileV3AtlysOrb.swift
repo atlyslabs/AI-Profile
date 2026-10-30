@@ -21,7 +21,7 @@ struct ProfileV3AtlysOrb: View {
             ringInner: ProfileV3Theme.Sizes.AddProgramme.ringInner,
             star: ProfileV3Theme.Sizes.AddProgramme.orb,
             lineWidth: ProfileV3Theme.Stroke.medium,
-            ringOpacity: ProfileV3Theme.Motion.orbRingOpacity
+            ringOpacity: ProfileV3Theme.Opacity.orbRing
         )
 
         static let insight = Metrics(

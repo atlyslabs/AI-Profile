@@ -73,9 +73,7 @@ struct ProfileV3ConnectorDeckView: View {
         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
         .background(Color(at: .pureWhite).ignoresSafeArea())
         .overlay(alignment: .bottom) {
-            ProfileV3Theme.clearToWhiteFade
-                .frame(height: Deck.bottomFade)
-                .allowsHitTesting(false)
+            ProfileV3FadeBand(fade: Deck.bottomFade, edge: .bottom)
                 .ignoresSafeArea(edges: .bottom)
         }
         .overlay(alignment: .bottom) {
@@ -104,10 +102,7 @@ struct ProfileV3ConnectorDeckView: View {
                 ATIcon.SwiftUIImage.database
                     .profileV3Icon(ProfileV3Theme.Icon.xl)
                     .foregroundStyle(Color(at: .pureBlack))
-                Text(ProfileV3Strings.connectors)
-                    .typoGraphy(.T1InterBold11)
-                    .textCase(.uppercase)
-                    .foregroundStyle(Color(at: .pureBlack))
+                ProfileV3TagLabel(text: ProfileV3Strings.connectors)
                     .padding(.top, ProfileV3Theme.Space.s16)
             }
             .padding(.top, Deck.headerIconTop)

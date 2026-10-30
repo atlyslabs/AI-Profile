@@ -27,7 +27,7 @@ struct ProfileV3CustomRulesSection: View {
                         .id(Self.rowStartID)
                     }
                     .onChange(of: model.reveals) {
-                        withAnimation(reduceMotion ? nil : ProfileV3Theme.Motion.customRuleReveal) {
+                        withAnimation(reduceMotion ? nil : ProfileV3Theme.Motion.scrollReveal) {
                             row.scrollTo(Self.rowStartID, anchor: .leading)
                             onReveal()
                         }
@@ -103,8 +103,7 @@ struct ProfileV3CustomRuleNote<Content: View>: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 .accessibilityHidden(true)
             Text(label)
-                .font(.system(size: Sizes.noteLabelSize, weight: .bold, design: .monospaced))
-                .tracking(Sizes.noteLabelTracking)
+                .profileV3MonoLabel()
                 .textCase(.uppercase)
                 .foregroundStyle(ProfileV3Theme.Palette.ruleNoteLabel)
                 .padding(.leading, Sizes.noteLabelLeading)
@@ -133,7 +132,7 @@ struct ProfileV3CustomRuleEditorHost: View {
                     .transition(.opacity)
             }
         }
-        .animation(ProfileV3Theme.Motion.customRuleEditor, value: model.editor)
+        .animation(ProfileV3Theme.Motion.expand, value: model.editor)
     }
 }
 
@@ -153,10 +152,7 @@ private struct ProfileV3CustomRuleEditor: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
-            Color(at: .pureWhite)
-                .opacity(ProfileV3Theme.Opacity.ruleBackdrop)
-                .background(.ultraThinMaterial)
-                .ignoresSafeArea()
+            ProfileV3FrostedBackdrop(tint: Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.ruleBackdrop))
         }
         .animation(ProfileV3Theme.Motion.saveState, value: model.phase)
         .animation(ProfileV3Theme.Motion.saveState, value: model.canSave)
@@ -186,10 +182,10 @@ private struct ProfileV3CustomRuleEditor: View {
             ProfileV3CustomRuleNote(label: model.field.editor.noteLabel) {
                 TextField("", text: Binding(get: { model.draft }, set: model.setDraft), axis: .vertical)
                     .typoGraphy(.H7InterMedium16)
-                    .foregroundStyle(ProfileV3Theme.Palette.ruleNoteText)
-                    .tint(ProfileV3Theme.Palette.ruleNoteText)
+                    .foregroundStyle(ProfileV3Theme.Palette.ink)
+                    .tint(ProfileV3Theme.Palette.ink)
                     .focused($isFocused)
-                    .disabled(model.phase != .editing)
+                    .disabled(model.phase != .idle)
                     .accessibilityLabel(model.field.editor.noteLabel)
             }
         }
@@ -212,7 +208,7 @@ private struct ProfileV3CustomRuleEditor: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.profileV3Pressable(.selection))
-        .disabled(model.phase != .editing)
+        .disabled(model.phase != .idle)
         .accessibilityLabel(ProfileV3Strings.deleteRule)
     }
 
@@ -220,9 +216,7 @@ private struct ProfileV3CustomRuleEditor: View {
     private var bottom: some View {
         VStack(spacing: ProfileV3Theme.Space.s12) {
             if let error = model.errorMessage {
-                Text(error)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(ProfileV3Theme.Palette.error)
+                ProfileV3ErrorText(text: error)
                     .multilineTextAlignment(.center)
                     .transition(.opacity)
             }
@@ -240,13 +234,13 @@ private struct ProfileV3CustomRuleEditor: View {
                         )
                     }
                     .buttonStyle(.profileV3Pressable(.impact(weight: .medium)))
-                    .disabled(model.phase != .editing)
+                    .disabled(model.phase != .idle)
                     .profileV3SaveEntrance()
                     .transition(.asymmetric(insertion: .identity, removal: .opacity))
                 }
-            } else if model.canSave || model.phase != .editing {
+            } else if model.canSave || model.phase != .idle {
                 ProfileV3SaveButton(
-                    phase: savePhase,
+                    phase: model.phase,
                     title: ProfileV3Strings.saveChanges,
                     savedTitle: model.field.editor.savedToast,
                     action: model.save
@@ -256,14 +250,6 @@ private struct ProfileV3CustomRuleEditor: View {
             }
         }
         .frame(minHeight: ProfileV3Theme.Sizes.InkPill.height, alignment: .top)
-    }
-
-    private var savePhase: ProfileV3SavePhase {
-        switch model.phase {
-        case .editing: return .idle
-        case .saving: return .saving
-        case .saved: return .saved
-        }
     }
 }
 
@@ -324,32 +310,15 @@ private struct ProfileV3CustomRuleEditorLayout: Layout {
 struct ProfileV3CustomRuleDeleteSheet: View {
     @ObservedObject var model: ProfileV3CustomRulesModel
 
-    @State private var measured = Measured()
-
-    private struct Measured: Equatable {
-        var content: CGFloat = 0
-        var bottomInset: CGFloat = 0
-    }
-
     var body: some View {
-        ProfileV3ConfirmationView.deleteRule(
-            model.field.deleteConfirm,
-            isDeleting: model.phase == .saving,
-            onBack: model.cancelDelete,
-            onConfirm: model.confirmDelete
-        )
-        .fixedSize(horizontal: false, vertical: true)
-        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.content = $0 }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color(at: .pureWhite).ignoresSafeArea())
-        .background {
-            Color.clear
-                .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
+        ProfileV3FittedConfirmationSheet(cornerRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius, isBusy: model.phase == .saving) {
+            ProfileV3ConfirmationView.deleteRule(
+                model.field.deleteConfirm,
+                isDeleting: model.phase == .saving,
+                onBack: model.cancelDelete,
+                onConfirm: model.confirmDelete
+            )
         }
-        .profileV3FittedDetent(measured.content > 0 ? measured.content + measured.bottomInset : nil)
-        .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
-        .presentationDragIndicator(.hidden)
-        .interactiveDismissDisabled(model.phase == .saving)
     }
 }
 

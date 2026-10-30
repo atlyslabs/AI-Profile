@@ -105,3 +105,17 @@ enum ProfileV3APIErrorMapper {
         }
     }
 }
+
+extension ProfileV3NetworkClient {
+    func request<T: Decodable>(_ target: ProfileV3API, action: String) async throws -> T {
+        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: action) { try await request(target) }
+    }
+
+    func requestData(_ target: ProfileV3API, action: String) async throws -> Data {
+        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: action) { try await requestData(target) }
+    }
+
+    func perform(_ target: ProfileV3API, action: String) async throws {
+        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: action) { try await perform(target) }
+    }
+}

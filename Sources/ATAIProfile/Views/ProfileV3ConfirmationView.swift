@@ -62,65 +62,31 @@ struct ProfileV3ConfirmationView: View {
                     if let icon {
                         iconCircle(icon)
                     }
-                    VStack(spacing: ProfileV3Theme.Sizes.Confirmation.textSpacing) {
-                        if !title.isEmpty {
-                            Text(title)
-                                .typoGraphy(.H6InterMedium18)
-                                .foregroundStyle(Color(at: .pureBlack))
-                                .fixedSize(horizontal: false, vertical: true)
-                                .frame(width: ProfileV3Theme.Sizes.Confirmation.titleWidth)
-                        }
-                        if let message {
-                            messageText(message)
-                                .frame(width: metrics.bodyWidth)
-                        }
-                    }
-                    .multilineTextAlignment(.center)
+                    ProfileV3ConfirmationCopy(
+                        title: title,
+                        message: message,
+                        messageStyle: metrics.showsSubject ? .subject : .body,
+                        messageWidth: metrics.bodyWidth
+                    )
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.top, metrics.top)
-                HStack {
-                    ProfileV3CircleIconButton.back(action: onBack)
-                        .disabled(isPrimaryLoading)
-                    Spacer()
-                }
-                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                .padding(.top, ProfileV3Theme.Sizes.sheetHeaderTop)
+                ProfileV3SheetControls(onBack: onBack)
+                    .disabled(isPrimaryLoading)
+                    .padding(.top, ProfileV3Theme.Sizes.sheetHeaderTop)
             }
-            VStack(spacing: ProfileV3Theme.Sizes.Confirmation.buttonSpacing) {
-                if !primaryTitle.isEmpty {
-                    ProfileV3ContinueButton(
-                        title: primaryTitle,
-                        tint: ProfileV3Theme.Palette.destructive,
-                        isLoading: isPrimaryLoading,
-                        action: onPrimary
-                    )
-                }
-                if !secondaryTitle.isEmpty {
-                    ProfileV3ContinueButton(title: secondaryTitle, isEnabled: !isPrimaryLoading, action: onSecondary)
-                }
-            }
+            ProfileV3ConfirmationActions(
+                primaryTitle: primaryTitle,
+                secondaryTitle: secondaryTitle,
+                isPrimaryLoading: isPrimaryLoading,
+                onPrimary: onPrimary,
+                onSecondary: onSecondary
+            )
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, metrics.buttonsTop)
             .padding(.bottom, ProfileV3Theme.Sizes.ctaBarBottom)
         }
         .background(Color(at: .pureWhite))
-    }
-
-    @ViewBuilder
-    private func messageText(_ message: String) -> some View {
-        if metrics.showsSubject {
-            Text(message)
-                .typoGraphy(.B1InterMedium14)
-                .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.credentialDeleteSubject))
-                .lineLimit(1)
-                .truncationMode(.tail)
-        } else {
-            Text(message)
-                .typoGraphy(.B2InterMedium12)
-                .foregroundStyle(Color(at: .neutralGrey400))
-                .fixedSize(horizontal: false, vertical: true)
-        }
     }
 
     private func iconCircle(_ icon: Image) -> some View {
@@ -136,6 +102,78 @@ struct ProfileV3ConfirmationView: View {
                 .foregroundStyle(style.glyph)
         }
         .accessibilityHidden(true)
+    }
+}
+
+struct ProfileV3ConfirmationCopy: View {
+    enum MessageStyle {
+        case body
+        case subject
+    }
+
+    let title: String
+    var message: String?
+    var messageStyle = MessageStyle.body
+    var messageWidth = ProfileV3Theme.Sizes.Confirmation.bodyWidth
+    var titleColor = Color(at: .pureBlack)
+    var messageColor = Color(at: .neutralGrey400)
+
+    var body: some View {
+        VStack(spacing: ProfileV3Theme.Sizes.Confirmation.textSpacing) {
+            if !title.isEmpty {
+                Text(title)
+                    .typoGraphy(.H6InterMedium18)
+                    .foregroundStyle(titleColor)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(width: ProfileV3Theme.Sizes.Confirmation.titleWidth)
+            }
+            if let message {
+                messageText(message)
+                    .frame(width: messageWidth)
+            }
+        }
+        .multilineTextAlignment(.center)
+    }
+
+    @ViewBuilder
+    private func messageText(_ message: String) -> some View {
+        switch messageStyle {
+        case .subject:
+            Text(message)
+                .typoGraphy(.B1InterMedium14)
+                .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.credentialDeleteSubject))
+                .lineLimit(1)
+                .truncationMode(.tail)
+        case .body:
+            Text(message)
+                .typoGraphy(.B2InterMedium12)
+                .foregroundStyle(messageColor)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
+
+struct ProfileV3ConfirmationActions: View {
+    let primaryTitle: String
+    let secondaryTitle: String
+    var isPrimaryLoading = false
+    let onPrimary: () -> Void
+    let onSecondary: () -> Void
+
+    var body: some View {
+        VStack(spacing: ProfileV3Theme.Sizes.Confirmation.buttonSpacing) {
+            if !primaryTitle.isEmpty {
+                ProfileV3ContinueButton(
+                    title: primaryTitle,
+                    tint: ProfileV3Theme.Palette.destructive,
+                    isLoading: isPrimaryLoading,
+                    action: onPrimary
+                )
+            }
+            if !secondaryTitle.isEmpty {
+                ProfileV3ContinueButton(title: secondaryTitle, isEnabled: !isPrimaryLoading, action: onSecondary)
+            }
+        }
     }
 }
 
@@ -213,6 +251,25 @@ extension ProfileV3ConfirmationView {
             secondaryTitle: ProfileV3Strings.cancel,
             isPrimaryLoading: isDeleting,
             metrics: .plain,
+            onBack: onBack,
+            onPrimary: onConfirm,
+            onSecondary: onBack
+        )
+    }
+
+    static func deletePastTrip(
+        _ confirm: ProfileV3TripDeleteConfirm,
+        isDeleting: Bool,
+        onBack: @escaping () -> Void,
+        onConfirm: @escaping () -> Void
+    ) -> ProfileV3ConfirmationView {
+        ProfileV3ConfirmationView(
+            icon: ATIcon.SwiftUIImage.delete,
+            style: .destructive,
+            title: confirm.title,
+            primaryTitle: confirm.confirmLabel,
+            secondaryTitle: confirm.cancelLabel,
+            isPrimaryLoading: isDeleting,
             onBack: onBack,
             onPrimary: onConfirm,
             onSecondary: onBack

@@ -48,9 +48,7 @@ struct ProfileV3AddPastTripSheet: View {
     private var ctaBar: some View {
         VStack(spacing: Sizes.errorBottom) {
             if let error = viewModel.errorMessage {
-                Text(error)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(ProfileV3Theme.Palette.error)
+                ProfileV3ErrorText(text: error)
                     .multilineTextAlignment(.center)
                     .transition(.opacity)
             }
@@ -67,9 +65,7 @@ struct ProfileV3AddPastTripSheet: View {
         .padding(.bottom, Sizes.ctaBottom)
         .frame(maxWidth: .infinity)
         .background(alignment: .bottom) {
-            ProfileV3Theme.clearToWhiteFade
-                .frame(height: Sizes.fadeHeight)
-                .allowsHitTesting(false)
+            ProfileV3FadeBand(fade: Sizes.fadeHeight, edge: .bottom)
         }
     }
 }
@@ -110,7 +106,7 @@ struct ProfileV3PastTripActionsSheet: View {
                     HStack(spacing: Sizes.actionGap) {
                         ATIcon.SwiftUIImage.delete
                             .profileV3Icon(Sizes.actionIcon)
-                            .foregroundStyle(ProfileV3Theme.Palette.tripActionIcon)
+                            .foregroundStyle(ProfileV3Theme.Palette.silverGrey)
                             .accessibilityHidden(true)
                         Text(deleteTitle)
                             .typoGraphy(.H7InterMedium16)

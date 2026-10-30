@@ -37,7 +37,7 @@ struct ProfileV3KYCRedirectOverlay<Centre: View>: View {
             diameter: ProfileV3Theme.Sizes.AddProgramme.glow,
             gradient: ProfileV3Theme.kycOverlayGlowGradient
         )
-        .opacity(ProfileV3Theme.Motion.kycOverlayGlowOpacity)
+        .opacity(ProfileV3Theme.Opacity.kycOverlayGlow)
     }
 }
 

@@ -10,7 +10,7 @@ struct ProfileV3AppAccessTests {
         model.load()
         try await waitUntil { model.phase == .loaded }
 
-        #expect(model.autoConnected.map(\.name) == ["Splits by Atlys"])
+        #expect(model.autoConnected.map(\.name) == ["Splits"])
         #expect(model.pendingApps.map(\.id) == ["instagram", "grab", "uber", "stripe", "plaid", "spotify", "strava"])
         #expect(model.pendingApps.first?.asksForUsernameOnly == true)
         #expect(model.connectedApps.isEmpty)
@@ -37,8 +37,8 @@ struct ProfileV3AppAccessTests {
         #expect(editor.canSubmit)
 
         editor.submit()
-        #expect(editor.phase == .submitting)
-        try await waitUntil { editor.phase == .succeeded }
+        #expect(editor.phase == .saving)
+        try await waitUntil { editor.phase == .saved }
         try await waitUntil { model.editor == nil }
         try await waitUntil { model.connectedApps.map(\.id) == ["grab"] }
 
@@ -108,8 +108,8 @@ struct ProfileV3AppAccessTests {
 
         editor.credentials.password = "new"
         editor.submit()
-        #expect(editor.savePhase == .saving)
-        try await waitUntil { editor.savePhase == .saved }
+        #expect(editor.phase == .saving)
+        try await waitUntil { editor.phase == .saved }
         try await waitUntil { model.editor == nil }
     }
 
@@ -145,7 +145,7 @@ struct ProfileV3AppAccessTests {
         editor.submit()
         try await waitUntil { reported != nil }
 
-        #expect(editor.phase == .editing)
+        #expect(editor.phase == .idle)
         #expect(reported == ProfileV3Strings.saveFailed)
     }
 

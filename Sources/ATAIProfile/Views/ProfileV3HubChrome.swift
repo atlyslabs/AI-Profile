@@ -50,29 +50,24 @@ struct ProfileV3HubHeader: View {
     let onSettings: () -> Void
 
     var body: some View {
-        HStack {
-            ProfileV3CircleIconButton.back(size: ProfileV3Theme.Sizes.navButton, action: onBack)
-            Spacer()
-            ProfileV3CircleIconButton.settings(size: ProfileV3Theme.Sizes.navButton, action: onSettings)
-        }
-        .overlay {
-            if let name {
-                Text(ProfileV3Traveller.shortName(fullName: name))
-                    .typoGraphy(.H6InterMedium18)
-                    .foregroundStyle(Color(at: .pureBlack))
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .padding(.horizontal, ProfileV3Theme.Sizes.navButton + ProfileV3Theme.Space.s12)
-                    .opacity(nameOpacity)
-                    .accessibilityLabel(name)
-                    .accessibilityHidden(nameOpacity < 1)
+        ProfileV3TopBar(
+            onBack: onBack,
+            trailing: { ProfileV3CircleIconButton.settings(size: ProfileV3Theme.Sizes.navButton, action: onSettings) },
+            title: {
+                if let name {
+                    Text(ProfileV3Traveller.shortName(fullName: name))
+                        .typoGraphy(.H6InterMedium18)
+                        .foregroundStyle(Color(at: .pureBlack))
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .padding(.horizontal, ProfileV3Theme.Sizes.navButton + ProfileV3Theme.Space.s12)
+                        .opacity(nameOpacity)
+                        .accessibilityLabel(name)
+                        .accessibilityHidden(nameOpacity < 1)
+                }
             }
-        }
-        .padding(.horizontal, ProfileV3Theme.Sizes.topBarInset)
-        .padding(.top, ProfileV3Theme.Sizes.topBarTop)
-        .frame(height: ProfileV3Theme.Sizes.topBarBackdropHeight, alignment: .top)
-        .frame(maxWidth: .infinity)
-        .background(Color(at: .pureWhite).ignoresSafeArea(edges: .top))
+        )
+        .profileV3TopBarBackdrop()
     }
 
     private var nameOpacity: Double {
@@ -194,19 +189,10 @@ struct ProfileV3HubPinnedBlock: View {
     }
 
     private var backdrop: some View {
-        VStack(spacing: 0) {
-            Color(at: .pureWhite)
-                .frame(
-                    height: ProfileV3Theme.Sizes.Collapse.backdropSolidBottom
-                        - ProfileV3Theme.Sizes.Collapse.backdropTop
-                )
-            ProfileV3Theme.whiteToClearFade
-                .frame(
-                    height: ProfileV3Theme.Sizes.Collapse.backdropFadeBottom
-                        - ProfileV3Theme.Sizes.Collapse.backdropSolidBottom
-                )
-        }
-        .allowsHitTesting(false)
+        ProfileV3FadeBand(
+            solid: ProfileV3Theme.Sizes.Collapse.backdropSolidBottom - ProfileV3Theme.Sizes.Collapse.backdropTop,
+            fade: ProfileV3Theme.Sizes.Collapse.backdropFadeBottom - ProfileV3Theme.Sizes.Collapse.backdropSolidBottom
+        )
     }
 
     private func pinnedY(_ contentY: CGFloat) -> CGFloat {
@@ -237,10 +223,7 @@ struct ProfileV3HubPassOverlay: View {
             let pass = latestPasses[expanded.id] ?? expanded
             ZStack {
                 Button(action: stage.collapse) {
-                    Rectangle()
-                        .fill(.ultraThinMaterial)
-                        .overlay(ProfileV3Theme.Palette.frostedBackdrop)
-                        .ignoresSafeArea()
+                    ProfileV3FrostedBackdrop()
                         .opacity(hero.backdropOpacity)
                 }
                 .buttonStyle(.plain)

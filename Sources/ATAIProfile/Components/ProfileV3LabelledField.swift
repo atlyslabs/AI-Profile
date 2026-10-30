@@ -25,9 +25,7 @@ struct ProfileV3LabelledField: View {
                 onFocusChange: onFocusChange
             )
             if let error {
-                Text(error)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(ProfileV3Theme.Palette.error)
+                ProfileV3ErrorText(text: error)
             }
         }
         .frame(maxWidth: width ?? .infinity, alignment: .leading)

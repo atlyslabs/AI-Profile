@@ -124,8 +124,19 @@ struct ProfileV3AIConnectorTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func connectingCopiesThePromptSavesTheAnswerAndRefreshesTheRow() async throws {
+    func aiAssistantsStayHiddenUntilTheClientShowsThem() async throws {
+        #expect(!ProfileV3FeatureFlags.isAIConnectorsEnabled)
         let settings = ProfileV3ConnectorsSettingsModel(repository: ProfileV3MockRepository(delay: .zero))
+        settings.load()
+        try await Self.waitUntil { settings.phase == .loaded }
+        #expect(!settings.connectors.isEmpty)
+        #expect(settings.connectors.allSatisfy { $0.aiConnector == nil })
+        #expect(settings.connectors.contains { $0.id == "gmail" })
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func connectingCopiesThePromptSavesTheAnswerAndRefreshesTheRow() async throws {
+        let settings = ProfileV3ConnectorsSettingsModel(repository: ProfileV3MockRepository(delay: .zero), showsAIConnectors: true)
         settings.load()
         try await Self.waitUntil { settings.phase == .loaded }
         let claude = try #require(settings.connectors.first { $0.id == "claude" })

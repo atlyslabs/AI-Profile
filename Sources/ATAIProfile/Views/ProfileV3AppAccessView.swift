@@ -13,7 +13,7 @@ struct ProfileV3AppAccessView: View {
         .scrollBounceBehavior(.basedOnSize)
         .background(Color(at: .pureWhite))
         .overlay(alignment: .bottom) {
-            if model.phase == .loaded {
+            if model.phase == .loaded, ProfileV3FeatureFlags.isAppAccessOtherAppsEnabled {
                 addNewBar
             }
         }
@@ -24,6 +24,9 @@ struct ProfileV3AppAccessView: View {
             ProfileV3InstagramConnectSheet(model: instagram)
         }
         .sensoryFeedback(.success, trigger: model.disconnectCompletions)
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            model.refreshIfAwaitingMessage()
+        }
     }
 
     private var editor: Binding<ProfileV3AppCredentialsViewModel?> {
@@ -42,7 +45,6 @@ struct ProfileV3AppAccessContent: View {
     @ObservedObject var model: ProfileV3AppAccessModel
     let showsConnected: Bool
     let onBack: () -> Void
-    var scrollsCarousel = true
 
     private typealias Layout = ProfileV3Theme.Sizes.AppAccess
     private typealias Access = ProfileV3Theme.Sizes.InformationAccess
@@ -62,75 +64,35 @@ struct ProfileV3AppAccessContent: View {
                 }
             }
             .zIndex(1)
-            ProfileV3InformationAccessHero()
-                .padding(.top, Access.heroTop)
-            Text(ProfileV3Strings.appAccess)
-                .typoGraphy(.H5InterMedium20)
-                .foregroundStyle(Color(at: .pureBlack))
-                .frame(maxWidth: Access.titleWidth)
-                .padding(.top, Access.titleTop)
-                .accessibilityAddTraits(.isHeader)
-            Text(ProfileV3Strings.informationAccessSubtitle)
-                .typoGraphy(.B2InterMedium12)
-                .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.accessSubtitle))
-                .frame(maxWidth: Access.titleWidth)
-                .padding(.top, Access.subtitleTop)
+            ProfileV3AccessHeading(
+                title: ProfileV3Strings.appAccess,
+                subtitle: ProfileV3Strings.informationAccessSubtitle
+            )
             apps
-                .padding(.top, model.autoConnected.isEmpty ? Access.cardsTop : Layout.contentTop)
+                .padding(.top, Layout.listTop)
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
         .padding(.bottom, Layout.listBottom)
-        .background(alignment: .top) {
-            ProfileV3AccessGlow()
-                .offset(y: Access.glowCentreY - Access.glow / 2)
-        }
+        .profileV3AccessPageGlow()
         .animation(ProfileV3Theme.Motion.selection, value: model.showsConnectedHint)
     }
 
     @ViewBuilder
     private var apps: some View {
         if model.phase == .loaded {
-            VStack(spacing: 0) {
-                if !model.autoConnected.isEmpty {
-                    autoConnected
-                    ProfileV3DashedDivider()
-                        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                        .padding(.vertical, Layout.dividerGap)
+            VStack(spacing: Access.cardSpacing) {
+                ForEach(model.autoConnected) { app in
+                    ProfileV3AutoConnectedRow(app: app)
                 }
-                VStack(spacing: Access.cardSpacing) {
-                    ForEach(model.pendingApps) { app in
-                        ProfileV3AppAccessRow(app: app) { model.tapAddCredentials(app) }
-                    }
+                ForEach(model.pendingApps) { app in
+                    ProfileV3AppAccessRow(app: app) { model.tapAddCredentials(app) }
                 }
-                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             }
+            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
         } else {
             ProfileV3LoadStateView(phase: model.phase, retry: model.load)
                 .frame(height: Access.loadStateHeight)
-        }
-    }
-
-    @ViewBuilder
-    private var autoConnected: some View {
-        if scrollsCarousel {
-            ScrollView(.horizontal, showsIndicators: false) {
-                autoConnectedCards
-            }
-            .contentMargins(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin, for: .scrollContent)
-        } else {
-            autoConnectedCards
-                .padding(.leading, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .clipped()
-        }
-    }
-
-    private var autoConnectedCards: some View {
-        HStack(spacing: Layout.autoCardSpacing) {
-            ForEach(model.autoConnected) { app in
-                ProfileV3AutoConnectedCard(app: app)
-            }
         }
     }
 }
@@ -142,54 +104,65 @@ private struct ProfileV3AppAccessRow: View {
     private typealias Access = ProfileV3Theme.Sizes.InformationAccess
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ProfileV3ConnectorCardTitle(
+                icon: ATIcon.SwiftUIImage.globe,
+                iconURL: app.iconURL,
+                isIconRound: true,
+                title: app.name
+            ) {
+                ProfileV3ConnectorAction(title: actionTitle, action: onAdd)
+            }
+            if let status {
+                Text(status)
+                    .typoGraphy(.B2InterMedium12)
+                    .foregroundStyle(ProfileV3Theme.Palette.accessChipText)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, Access.cardLeading + Access.cardIcon + ProfileV3Theme.Space.s12)
+                    .padding(.trailing, Access.cardTrailing)
+                    .padding(.top, ProfileV3Theme.Space.s8)
+                    .padding(.bottom, ProfileV3Theme.Space.s24)
+            }
+        }
+        .frame(minHeight: Access.cardHeight, alignment: .top)
+        .fixedSize(horizontal: false, vertical: true)
+        .profileV3AccessCard(cornerRadius: Access.cardRadius)
+        .accessibilityElement(children: .combine)
+        .accessibilityAction(named: actionTitle, onAdd)
+    }
+
+    private var status: String? {
+        guard app.isAwaitingMessage, let username = app.username else { return nil }
+        return ProfileV3Strings.instagramAwaitingMessage(username)
+    }
+
+    private var actionTitle: String {
+        if app.isAwaitingMessage { return ProfileV3Strings.instagramSendMessage }
+        return app.asksForUsernameOnly ? ProfileV3Strings.appAccessAddUsername : ProfileV3Strings.appAccessAddCredentials
+    }
+}
+
+private struct ProfileV3AutoConnectedRow: View {
+    let app: ProfileV3AutoConnectedApp
+
+    private typealias Access = ProfileV3Theme.Sizes.InformationAccess
+
+    var body: some View {
         ProfileV3ConnectorCardTitle(
             icon: ATIcon.SwiftUIImage.globe,
             iconURL: app.iconURL,
             isIconRound: true,
             title: app.name
         ) {
-            ProfileV3ConnectorAction(title: actionTitle, action: onAdd)
+            Text(ProfileV3Strings.appAccessAutoConnected)
+                .typoGraphy(.H7InterSemibold16)
+                .textCase(.lowercase)
+                .foregroundStyle(Color(at: .accentEmerald600))
         }
         .frame(height: Access.cardHeight, alignment: .top)
-        .profileV3SettingsCard(cornerRadius: Access.cardRadius)
-        .accessibilityElement(children: .combine)
-        .accessibilityAction(named: actionTitle, onAdd)
-    }
-
-    private var actionTitle: String {
-        app.asksForUsernameOnly ? ProfileV3Strings.appAccessAddUsername : ProfileV3Strings.appAccessAddCredentials
-    }
-}
-
-private struct ProfileV3AutoConnectedCard: View {
-    let app: ProfileV3AutoConnectedApp
-
-    private typealias Layout = ProfileV3Theme.Sizes.AppAccess
-
-    var body: some View {
-        ZStack(alignment: .topLeading) {
-            Text(app.name)
-                .typoGraphy(.H7InterMedium16)
-                .foregroundStyle(Color(at: .pureBlack))
-                .multilineTextAlignment(.leading)
-                .lineLimit(2)
-                .frame(width: Layout.autoCardNameWidth, alignment: .leading)
-                .padding(.leading, Layout.autoCardLeading)
-                .padding(.top, Layout.autoCardNameTop)
-            Text(ProfileV3Strings.appAccessAutoConnected)
-                .typoGraphy(.T1InterBold11)
-                .textCase(.uppercase)
-                .foregroundStyle(ProfileV3Theme.autoConnectedGradient)
-                .opacity(ProfileV3Theme.Opacity.autoConnectedStatus)
-                .padding(.leading, Layout.autoCardLeading)
-                .padding(.top, Layout.autoCardStatusTop)
-            ProfileV3AppLogo(url: app.iconURL, size: Layout.logo)
-                .padding(.top, Layout.autoCardLogoTop)
-                .padding(.trailing, Layout.autoCardLogoTrailing)
-                .frame(maxWidth: .infinity, alignment: .topTrailing)
-        }
-        .frame(width: Layout.autoCard.width, height: Layout.autoCard.height, alignment: .topLeading)
-        .profileV3SettingsCard(cornerRadius: ProfileV3Theme.Sizes.InformationAccess.cardRadius)
+        .profileV3AccessCard(cornerRadius: Access.cardRadius)
         .accessibilityElement(children: .combine)
     }
 }
@@ -214,15 +187,8 @@ struct ProfileV3AppAccessComingSoonView: View {
                 .background { ProfileV3AccessGlow() }
                 .padding(.top, Layout.comingSoonArtTop)
                 .accessibilityHidden(true)
-            Text(ProfileV3Strings.comingSoon)
-                .typoGraphy(.H5InterMedium20)
-                .foregroundStyle(Color(at: .pureBlack))
+            ProfileV3ComingSoonCopy(message: ProfileV3Strings.appAccessComingSoon)
                 .padding(.top, Layout.comingSoonTitleTop)
-            Text(ProfileV3Strings.appAccessComingSoon)
-                .typoGraphy(.B2InterMedium12)
-                .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.accessSubtitle))
-                .frame(maxWidth: Layout.comingSoonBodyWidth)
-                .padding(.top, Layout.subtitleTop)
             Spacer(minLength: 0)
         }
         .multilineTextAlignment(.center)
