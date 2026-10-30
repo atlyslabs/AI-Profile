@@ -61,6 +61,7 @@ extension ProfileV3SettingsRowItem {
         case "connectors": return ATIcon.SwiftUIImage.plugConnect
         case "edit_traveler": return ATIcon.SwiftUIImage.edit
         case "coupons": return ATIcon.SwiftUIImage.add
+        case "invite_friends", "invite_code": return ATIcon.SwiftUIImage.drafts
         case "loyalty_programs": return ATIcon.SwiftUIImage.cardGiftcard
         case "terms": return ATIcon.SwiftUIImage.infoOutline
         case ProfileV3PermissionDefaults.rowKey: return ProfileV3Vector.mobileCheck.image
