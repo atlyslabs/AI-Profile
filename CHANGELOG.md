@@ -5,8 +5,29 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ## Unreleased
 
+## 1.0.19 — 2026-10-30
+
+### Changed
+
+- **The invite card is one supplied image.** Its rounded corners and drop shadow are baked into
+  the art, so the card no longer draws a shape, border or shadow of its own, and the layered
+  foil reconstruction is gone.
+
+## 1.0.18 — 2026-10-30
+
 ### Added
 
+- **Invite code sheet** behind the settings row `go: "invite_friends"` / `"invite_code"` — the
+  foil card, the spaced code, invites-left pips and a share CTA. The data comes from the host
+  through the new `ProfileV3InviteHost` seam; with no host conformer the sheet shows its empty
+  state, so hosts on an older build are unaffected.
+- The row takes its envelope from `ATMS.drafts`, which adds **ATMaterialIcons** to the package.
+
+- `ProfileV3EntryPoint.open(_:)` with `ProfileV3Destination.addTraveller` and
+  `.addLoyaltyProgramme`, for deep links. The hub opens the sheet once it is on screen with its board
+  loaded; a loyalty programme is added for the main traveller, behind the usual KYC gate.
+- Agent forms have custom rules, from the agent screen's `custom_rules` field (flight, stay,
+  airport logistics, food and itinerary). The rules show as note cards, newest first, under the
 - Agent forms' custom rules now come from the agent screen's `custom_rules` field (flight, stay,
   airport logistics, food and itinerary) and save with the agent. Rules kept on the device in
   1.0.13–1.0.16 are not carried over. The rules show as note cards, newest first, under the
@@ -22,6 +43,15 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   phones. `ProfileV3FeatureFlags.isAgentCustomRulesEnabled` turns the section off. Only
   `mo-aiprofile-agents-button-delete-rule` (the delete button's accessibility label) is client
   copy; the other seven custom rule keys added earlier are unused and don't need adding to Ditto.
+- The personal agent shows a passport placeholder when no passport is on file. The agent screen
+  sends `passport_empty` (`title`, `body`, `cta_label`) instead of `passport`, and the card shows
+  that copy under the traveler's name, with an Upload button that scans a passport for that
+  traveler. A first passport skips "What happened to your old passport" and the card refreshes.
+  The client strings `mo-aiprofile-documents-button-upload-passport`,
+  `mo-aiprofile-documents-text-upload-blurb-start` and `mo-aiprofile-documents-button-upload` are
+  now unused and can be deleted from Ditto.
+- The travel persona's loading dial plays a soft tap each time its colour wave lights a trait
+  label, and a success tap when the radar replaces it.
 - The personal agent shows the passport's back page beside the front, in a sideways FRONT/BACK
   row, when the passport card sends any of `father`, `mother`, `spouse` or `address` (up to three
   lines). Each row's label comes from the card's `labels`; a missing value keeps its label and an
@@ -40,6 +70,13 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   (`…/connect`): copy the prompt, paste the answer, Save (`connect_ai_connector` with `text`). A
   refusal shows the server's message; a save reloads the list. The page's title and blurb come
   from the overview. `ProfileV3SettingsRepository` gained the `ProfileV3AIConnectorRepository`
+  methods.
+- App access has an Instagram flow, UI only: "+ user name" opens an explainer, then a username
+  sheet, then "Follow us, drop in a text" before opening Instagram. App access itself still shows
+  "Coming soon" (`isAppAccessEnabled` is off). The Instagram destination is a placeholder until
+  Ayl's handle is known. Sixteen new keys need adding in Ditto: `mo-aiprofile-agents-button-add-username`,
+  `-title-add-username`, `-label-username`, `-toast-username-added`,
+  `-title-instagram-step-username`/`-redirect`/`-follow`,
   methods. For now the assistants are hidden: Information access drops every row whose `next` is
   `ai_connector` while `ProfileV3FeatureFlags.isAIConnectorsEnabled` is false.
 - App access links Instagram to Ayl through the snapmap service, so places from posts the user
@@ -61,6 +98,7 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   `-label-username`, `-toast-username-added`, `-title-instagram-step-username`/`-redirect`/`-follow`,
   `-description-instagram-step-username`/`-redirect`/`-follow`, `-label-instagram-sample-handle`,
   `-label-instagram-follow`, `-label-instagram-hi`, `-title-instagram-come-say-hi`,
+  `-title-instagram-follow-us` and `-status-instagram-redirecting`.
   `-title-instagram-follow-us`, `-status-instagram-redirecting`, `-description-instagram`,
   `-button-send-dm`, `-error-instagram-username-invalid` and `-status-instagram-awaiting-message`.
 

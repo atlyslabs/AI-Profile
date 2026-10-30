@@ -114,6 +114,12 @@ enum ProfileV3ConnectorGlyph: String {
     }
 }
 
+enum ProfileV3InviteArt: String {
+    case codeCard = "profile_v3_invite_code_card"
+
+    var image: Image { Image(rawValue, bundle: .module) }
+}
+
 enum ProfileV3PersonaArt: String {
     case gmail = "profile_v3_persona_gmail"
     case edited = "profile_v3_persona_edited"
