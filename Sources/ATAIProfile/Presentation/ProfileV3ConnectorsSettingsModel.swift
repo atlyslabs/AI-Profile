@@ -239,7 +239,13 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
             guard let key = ProfileV3ConnectorKey(rawValue: connector.id), disconnectedKeys.contains(key) else {
                 return connector
             }
-            return connector.withStatus(.needsAttention)
+            return ProfileV3Connector(
+                id: connector.id,
+                name: connector.name,
+                icon: connector.icon,
+                status: .needsAttention,
+                accountEmail: connector.accountEmail
+            )
         }
     }
 
