@@ -11,6 +11,7 @@ final class ProfileV3SettingsSheetPresenter {
     private let kyc: any ProfileV3KYCHost
     private let account: any ProfileV3AccountHost
     private let coupons: any ProfileV3CouponsHost
+    private let invites: any ProfileV3InviteHost
     private let app: any ProfileV3AppHost
     private let viewModel: ProfileV3SettingsViewModel
     private let onConnectConnector: ((String) -> Void)?
@@ -38,6 +39,7 @@ final class ProfileV3SettingsSheetPresenter {
         kyc: any ProfileV3KYCHost,
         account: any ProfileV3AccountHost,
         coupons: any ProfileV3CouponsHost,
+        invites: any ProfileV3InviteHost,
         app: any ProfileV3AppHost,
         session: any ProfileV3SessionProviding,
         client: ProfileV3NetworkClient,
@@ -56,6 +58,7 @@ final class ProfileV3SettingsSheetPresenter {
         self.kyc = kyc
         self.account = account
         self.coupons = coupons
+        self.invites = invites
         self.app = app
         self.onConnectConnector = onConnectConnector
         self.onTravellersChanged = onTravellersChanged
@@ -68,6 +71,7 @@ final class ProfileV3SettingsSheetPresenter {
             board: board,
             profileID: profileID,
             profileName: profileName,
+            invites: invites,
             photoPlaces: photoPlaces
         )
         viewModel.router = self
@@ -227,6 +231,11 @@ extension ProfileV3SettingsSheetPresenter: ProfileV3SettingsSheetRouting {
     func presentCoupons() {
         guard let presenter = Self.topPresented() else { return }
         coupons.presentCoupons(from: presenter)
+    }
+
+    func presentInviteShare(_ invite: ProfileV3InviteCode) {
+        guard let presenter = Self.topPresented() else { return }
+        invites.shareInviteCode(invite, from: presenter)
     }
 
 }

@@ -38,6 +38,8 @@ struct ProfileV3SettingsDestinationView: View {
                 viewModel.permissions.close()
                 viewModel.tapClose()
             }
+        case .inviteCode:
+            ProfileV3InviteCodeView(model: viewModel.invites, onBack: viewModel.pop)
         }
     }
 }

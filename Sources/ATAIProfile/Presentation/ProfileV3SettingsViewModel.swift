@@ -23,6 +23,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     let travellers: ProfileV3TravellersSettingsModel
     let account: ProfileV3AccountSettingsModel
     let permissions: ProfileV3PermissionsSettingsModel
+    let invites: ProfileV3InviteSettingsModel
     private(set) var monogram: String?
     var isGloveBoxPresented = false
     private(set) var gloveBoxHasAddress: Bool?
@@ -35,6 +36,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
             appAccess.router = router
             travellers.router = router
             account.router = router
+            invites.router = router
         }
     }
 
@@ -54,6 +56,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         board: (any ProfileV3BoardRepository)? = nil,
         profileID: String? = nil,
         profileName: String? = nil,
+        invites: any ProfileV3InviteHost = ProfileV3UnavailableInviteHost(),
         photoPlaces: ProfileV3PhotoPlacesSync? = nil
     ) {
         self.repository = repository
@@ -76,12 +79,14 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         )
         account = ProfileV3AccountSettingsModel(deps: deps, repository: repository)
         permissions = ProfileV3PermissionsSettingsModel(repository: repository)
+        self.invites = ProfileV3InviteSettingsModel(host: invites)
         fields.navigator = self
         connectors.navigator = self
         appAccess.navigator = self
         travellers.navigator = self
         account.navigator = self
         permissions.navigator = self
+        self.invites.navigator = self
     }
 
     var path: [ProfileV3SettingsDestination] {
@@ -198,6 +203,9 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
                 if menu.rows.contains(where: { $0.route == .permissions }) {
                     model.permissions.preload()
                 }
+                if menu.rows.contains(where: { $0.route == .inviteCode }) {
+                    model.invites.preload()
+                }
                 model.fields.applyCitizenship(code: menu.citizenshipCode)
             }
         )
@@ -222,6 +230,8 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         case .coupons:
             ProfileV3Analytics.couponsClicked()
             router?.presentCoupons()
+        case .inviteCode:
+            invites.open()
         case .loyaltyAdd:
             router?.presentLoyaltyProgrammes()
         case .termsOfService:
@@ -284,6 +294,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         credentialStore.cancelReads()
         travellers.cancelReads()
         permissions.cancelReads()
+        invites.cancelReads()
     }
 
     private func route(to newPath: [ProfileV3SettingsDestination]) {

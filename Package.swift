@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/atlyslabs/ATCore.git", from: "1.0.16"),
         .package(url: "https://github.com/atlyslabs/ATUIKit", from: "1.3.7"),
+        .package(url: "https://github.com/atlyslabs/ATMaterialIcons.git", from: "1.0.1"),
         .package(url: "https://github.com/atlyslabs/ATAuthKit.git", from: "1.0.44"),
         .package(url: "https://github.com/atlyslabs/ditto-migrate-toolkit.git", from: "0.0.1"),
         .package(url: "https://github.com/marmelroy/PhoneNumberKit.git", from: "3.6.0"),
@@ -30,6 +31,7 @@ let package = Package(
                 .product(name: "ATCore", package: "ATCore"),
                 .product(name: "Moya", package: "Moya"),
                 .product(name: "ATUIKit", package: "ATUIKit"),
+                .product(name: "ATMaterialIcons", package: "ATMaterialIcons"),
                 .product(name: "ATAuthKit", package: "ATAuthKit"),
                 .product(name: "DittoRuntimeStrings", package: "ditto-migrate-toolkit"),
                 .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),

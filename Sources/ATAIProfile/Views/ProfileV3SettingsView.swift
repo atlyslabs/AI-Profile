@@ -55,7 +55,8 @@ struct ProfileV3SettingsView: View {
                 ProfileV3SettingsPremeasure(
                     viewModel: viewModel,
                     permissions: viewModel.permissions,
-                    account: viewModel.account
+                    account: viewModel.account,
+                    invites: viewModel.invites
                 )
             }
         }
@@ -159,6 +160,7 @@ private struct ProfileV3SettingsPremeasure: View {
     let viewModel: ProfileV3SettingsViewModel
     @ObservedObject var permissions: ProfileV3PermissionsSettingsModel
     @ObservedObject var account: ProfileV3AccountSettingsModel
+    @ObservedObject var invites: ProfileV3InviteSettingsModel
     @State private var measured: Set<ProfileV3SettingsDestination> = []
 
     private var pending: [ProfileV3SettingsDestination] {
@@ -167,6 +169,7 @@ private struct ProfileV3SettingsPremeasure: View {
             switch destination {
             case .permissions: return permissions.permissions != nil
             case .deleteAccountConfirm: return account.deleteConfirm != nil
+            case .inviteCode: return invites.invite != nil
             default: return true
             }
         }
