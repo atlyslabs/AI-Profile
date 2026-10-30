@@ -115,7 +115,7 @@ enum ProfileV3ConnectorGlyph: String {
 }
 
 enum ProfileV3InviteArt: String {
-    case codeFoil = "profile_v3_invite_code_foil"
+    case codeCard = "profile_v3_invite_code_card"
 
     var image: Image { Image(rawValue, bundle: .module) }
 }

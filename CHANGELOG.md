@@ -5,6 +5,14 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ## Unreleased
 
+## 1.0.19 — 2026-10-30
+
+### Changed
+
+- **The invite card is one supplied image.** Its rounded corners and drop shadow are baked into
+  the art, so the card no longer draws a shape, border or shadow of its own, and the layered
+  foil reconstruction is gone.
+
 ## 1.0.18 — 2026-10-30
 
 ### Added

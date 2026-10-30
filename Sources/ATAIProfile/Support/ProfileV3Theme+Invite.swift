@@ -8,13 +8,12 @@ extension ProfileV3Theme.Sizes {
         static let cardRadius = ProfileV3Theme.Radius.xl
         static let subtitleTop: CGFloat = 7
         static let cardTop: CGFloat = 54
-        static let cardShadowRadius: CGFloat = 12
-        static let cardShadowY: CGFloat = 8
 
-        static let foilCore = CGSize(width: 260, height: 395)
-        static let foilBox = CGSize(width: 395, height: 260)
-        static let foilOrigin = CGPoint(x: -34, y: -32)
-        static let foilRadius = ProfileV3Theme.Radius.lg
+        /// The card art carries its own corners and shadow: its body is 1320x788 inside a
+        /// 1416x884 canvas, and the shadow falls downward, so the inset is not symmetric.
+        static let cardArtWidthRatio: CGFloat = 1416.0 / 1320.0
+        static let cardArtHeightRatio: CGFloat = 884.0 / 788.0
+        static let cardArtInsetRatio = CGSize(width: 48.0 / 1320.0, height: 16.0 / 788.0)
 
         static let codeSize: CGFloat = 32
         static let codeTracking: CGFloat = 0
@@ -36,8 +35,6 @@ extension ProfileV3Theme.Sizes {
 }
 
 extension ProfileV3Theme.Palette {
-    static let inviteFoilWash = Color(hex: "E5F4E4").opacity(0.33)
-    static let inviteFoilLift = Color(at: .pureWhite).opacity(0.2)
     static let invitePipRing = Color(hex: "1C1F21")
     static let inviteCaption = Color(hex: "586464")
 }
