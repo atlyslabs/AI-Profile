@@ -35,7 +35,7 @@ struct ProfileV3EditTravellerFormView: View {
                 onBack: onBack,
                 onClose: onClose
             )
-            ProfileV3FocusScroll(focused: focusedField, fillsViewport: true) {
+            ProfileV3FadingScroll(focused: focusedField, fillsViewport: true) {
                 VStack(spacing: 0) {
                     Text(traveller.shortName)
                         .typoGraphy(.H6InterMedium18)
@@ -61,17 +61,8 @@ struct ProfileV3EditTravellerFormView: View {
         .background(Color(at: .pureWhite).ignoresSafeArea())
         .safeAreaInset(edge: .bottom) { confirmBar }
         .onChange(of: isPhoneFocused) { _, focused in track(.phone, isFocused: focused) }
-        .sheet(isPresented: $showsDialPicker) {
-            LoginCountryPickerSheet(
-                countries: LoginCountryOption.profileV3Options,
-                selected: traveller.phoneOption,
-                onSelect: { option in
-                    traveller.selectDial(option)
-                    showsDialPicker = false
-                }
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
+        .profileV3DialCodePicker(isPresented: $showsDialPicker, selected: traveller.phoneOption) { option in
+            traveller.selectDial(option)
         }
     }
 
@@ -104,10 +95,18 @@ struct ProfileV3EditTravellerFormView: View {
                 .id(Field.lastName)
             }
             if let relationshipLabel {
-                relationshipField(relationshipLabel)
+                ProfileV3PickerField(label: relationshipLabel, value: relationshipValue, action: onRelationshipTap)
             }
-            phoneField
-                .id(Field.phone)
+            ProfileV3PhoneField(
+                label: ProfileV3Strings.numberLabel,
+                regionISO: traveller.regionISO,
+                dialCode: traveller.dialCode,
+                digits: $traveller.phoneDigits,
+                isFocused: $isPhoneFocused,
+                isValid: isPhoneValid,
+                onDialTap: { showsDialPicker = true }
+            )
+            .id(Field.phone)
             ProfileV3LabelledField(
                 label: ProfileV3Strings.passportNumber,
                 placeholder: ProfileV3Strings.typeHere,
@@ -118,48 +117,6 @@ struct ProfileV3EditTravellerFormView: View {
             )
             .postHogMask()
             .id(Field.passport)
-        }
-    }
-
-    private func relationshipField(_ label: String) -> some View {
-        VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s12) {
-            ProfileV3FieldLabel(text: label)
-            Button(action: onRelationshipTap) {
-                HStack(spacing: ProfileV3Theme.Space.s12) {
-                    Text(relationshipValue ?? ProfileV3Strings.selectPlaceholder)
-                        .typoGraphy(.B1InterMedium14)
-                        .foregroundStyle(relationshipValue == nil ? Color(at: .neutralGrey200) : Color(at: .pureBlack))
-                    Spacer(minLength: 0)
-                    ATIcon.SwiftUIImage.expandMore
-                        .profileV3Icon(ProfileV3Theme.Icon.md)
-                        .foregroundStyle(Color(at: .neutralGrey400))
-                }
-                .padding(.bottom, ProfileV3Theme.Space.s8)
-                .atFormFieldBottomLine(isError: false, isFocused: false, style: .dashed, tintsOnFocus: false)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.profileV3Pressable)
-            .accessibilityLabel(label)
-            .accessibilityValue(relationshipValue ?? "")
-        }
-    }
-
-    private var phoneField: some View {
-        VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s12) {
-            ProfileV3FieldLabel(text: ProfileV3Strings.numberLabel)
-            ProfileV3PhoneInput(
-                regionISO: traveller.regionISO,
-                dialCode: traveller.dialCode,
-                digits: $traveller.phoneDigits,
-                isFocused: $isPhoneFocused,
-                isError: !isPhoneValid,
-                onDialTap: { showsDialPicker = true }
-            )
-            if !isPhoneValid {
-                Text(ProfileV3Strings.phoneInvalid)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(ProfileV3Theme.Palette.error)
-            }
         }
     }
 

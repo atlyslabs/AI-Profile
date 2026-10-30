@@ -12,7 +12,6 @@ extension ProfileV3Theme.Sizes {
         static let ringOuter: CGFloat = 109
         static let foundRing: CGFloat = 82
         static let glow: CGFloat = 319
-        static let glowBlur: CGFloat = 50
         static let copyWidth: CGFloat = 258
         static let kycCopyWidth: CGFloat = 242
         static let orbToTitle: CGFloat = 24

@@ -43,7 +43,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     var onIntroAction: (ProfileV3GloveBoxIntro.Action) -> Void = { _ in }
     var onFollowUp: (Entry) -> Void = { _ in }
 
-    private var copiedTask: Task<Void, Never>?
+    private var copyTimer = ProfileV3CopyTimer()
     private var loadTask: Task<Void, Never>?
     private let repository: (any ProfileV3GloveBoxRepository)?
     private let isKYCComplete: @MainActor () async -> Bool
@@ -168,10 +168,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
         UIPasteboard.general.string = value
         copies += 1
         withAnimation(ProfileV3Theme.Motion.selection) { copied = target }
-        copiedTask?.cancel()
-        copiedTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(ProfileV3Theme.Motion.copiedResetSeconds))
-            guard !Task.isCancelled else { return }
+        copyTimer.restart { [weak self] in
             withAnimation(ProfileV3Theme.Motion.selection) { self?.copied = nil }
         }
     }

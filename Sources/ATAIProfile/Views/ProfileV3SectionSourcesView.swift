@@ -8,8 +8,6 @@ struct ProfileV3SectionSourcesView: View {
 
     private typealias Sources = ProfileV3Theme.Sizes.Sources
 
-    @State private var headerPin = ProfileV3HeaderPin()
-
     private var section: ProfileV3FormSection {
         form.form.sections.first { $0.id == viewModel.section.id } ?? viewModel.section
     }
@@ -18,11 +16,9 @@ struct ProfileV3SectionSourcesView: View {
         VStack(spacing: 0) {
             header
             if let content = viewModel.content {
-                ScrollView(showsIndicators: false) {
+                ProfileV3FadingScroll(bounceBehavior: .automatic) {
                     loaded(content)
-                        .profileV3HeaderFadeAnchor(headerPin)
                 }
-                .profileV3HeaderFade(headerPin)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
             }
@@ -66,23 +62,8 @@ struct ProfileV3SectionSourcesView: View {
     }
 
     private var header: some View {
-        ZStack(alignment: .top) {
-            ProfileV3SheetGrabber(
-                width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
-                color: Color(at: .neutralGrey200),
-                top: ProfileV3Theme.Space.s10
-            )
-            ZStack {
-                HStack {
-                    ProfileV3CircleIconButton.back(action: onBack)
-                    Spacer()
-                }
-                ProfileV3TagLabel(text: section.title)
-            }
-            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
-        }
-        .frame(maxWidth: .infinity)
+        ProfileV3AgentSheetChrome(control: .back(onBack), title: { ProfileV3TagLabel(text: section.title) })
+            .frame(maxWidth: .infinity)
     }
 
     private var hasOptions: Bool {

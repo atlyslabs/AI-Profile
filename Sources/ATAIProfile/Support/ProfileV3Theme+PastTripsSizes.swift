@@ -33,7 +33,6 @@ extension ProfileV3Theme.Sizes {
         static let revealYearBlur: CGFloat = 5.5
         static let glow: CGFloat = 381
         static let glowOffsetY: CGFloat = 38.5
-        static let glowBlur: CGFloat = 50
         static let sheenTravel: CGFloat = 120
         static let sheenOuterWidth: CGFloat = 20
         static let sheenOuterBlur: CGFloat = 40
@@ -61,7 +60,6 @@ extension ProfileV3Theme.Sizes {
         static let closeTrailing = ProfileV3Theme.Space.s16
         static let countryListTop: CGFloat = 80
         static let fadeHeight: CGFloat = 139
-        static let ctaHeight: CGFloat = 40
         static let ctaInset: CGFloat = 21.5
         static let ctaBottom = ProfileV3Theme.Space.s20
         static let countryHeight: CGFloat = 612

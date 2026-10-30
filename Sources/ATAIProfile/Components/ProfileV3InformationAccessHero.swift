@@ -98,17 +98,11 @@ struct ProfileV3InformationAccessHero: View {
 
 struct ProfileV3AccessGlow: View {
     var body: some View {
-        Circle()
-            .fill(ProfileV3Theme.accessGlowGradient)
-            .opacity(ProfileV3Theme.Opacity.accessGlowFill)
-            .frame(
-                width: ProfileV3Theme.Sizes.InformationAccess.glow,
-                height: ProfileV3Theme.Sizes.InformationAccess.glow
-            )
-            .blur(radius: ProfileV3Theme.Sizes.InformationAccess.glowBlur)
-            .opacity(ProfileV3Theme.Opacity.accessGlow)
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
+        ProfileV3RainbowGlow(
+            diameter: ProfileV3Theme.Sizes.InformationAccess.glow,
+            fillOpacity: ProfileV3Theme.Opacity.accessGlowFill
+        )
+        .opacity(ProfileV3Theme.Opacity.accessGlow)
     }
 }
 

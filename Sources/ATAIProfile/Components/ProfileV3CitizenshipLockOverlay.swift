@@ -73,16 +73,8 @@ struct ProfileV3CitizenshipLockOverlay: View {
         .accessibilityHidden(true)
     }
 
-    @ViewBuilder
     private var flag: some View {
-        if let flagCountry = ATCountry(isoCode: country.code) {
-            ATCountryFlagView(country: flagCountry)
-                .frame(
-                    width: ProfileV3Theme.Sizes.CitizenshipLock.flag,
-                    height: ProfileV3Theme.Sizes.CitizenshipLock.flag
-                )
-                .clipShape(Circle())
-        }
+        ProfileV3CountryFlag(isoCode: country.code, size: ProfileV3Theme.Sizes.CitizenshipLock.flag)
     }
 }
 

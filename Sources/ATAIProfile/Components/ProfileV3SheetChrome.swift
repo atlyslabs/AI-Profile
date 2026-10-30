@@ -3,15 +3,27 @@ import SwiftUI
 
 struct ProfileV3SheetGrabber: View {
     var width: CGFloat = ProfileV3Theme.Sizes.sheetGrabberWidth
+    var height: CGFloat = ProfileV3Theme.Sizes.sheetGrabberHeight
     var color = Color(at: .neutralGrey300)
     var top: CGFloat = ProfileV3Theme.Sizes.sheetGrabberTop
+
+    static var agent: ProfileV3SheetGrabber {
+        ProfileV3SheetGrabber(
+            width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
+            color: Color(at: .neutralGrey200),
+            top: ProfileV3Theme.Space.s10
+        )
+    }
+
+    var occupiedHeight: CGFloat { top + height }
 
     var body: some View {
         Capsule()
             .fill(color)
-            .frame(width: width, height: ProfileV3Theme.Sizes.sheetGrabberHeight)
+            .frame(width: width, height: height)
             .padding(.top, top)
             .frame(maxWidth: .infinity)
+            .allowsHitTesting(false)
             .accessibilityHidden(true)
     }
 }

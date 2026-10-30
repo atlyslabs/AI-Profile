@@ -14,7 +14,6 @@ struct ProfileV3TravellerRelationshipView: View {
     let onSelect: (String) -> Void
     let onConfirm: () -> Void
 
-    @State private var headerPin = ProfileV3HeaderPin()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -37,7 +36,7 @@ struct ProfileV3TravellerRelationshipView: View {
     }
 
     private func options(_ field: ProfileV3EditField) -> some View {
-        ScrollView(showsIndicators: false) {
+        ProfileV3FadingScroll {
             VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s24) {
                 if let subtitle = field.subtitle?.nonEmpty {
                     Text(subtitle)
@@ -57,10 +56,7 @@ struct ProfileV3TravellerRelationshipView: View {
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, ProfileV3Theme.Space.s32)
             .padding(.bottom, ProfileV3Theme.Sizes.settingsSheetBottom)
-            .profileV3HeaderFadeAnchor(headerPin)
         }
-        .profileV3HeaderFade(headerPin)
-        .scrollBounceBehavior(.basedOnSize)
     }
 
     @ViewBuilder

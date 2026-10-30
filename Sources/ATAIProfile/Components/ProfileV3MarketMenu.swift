@@ -45,17 +45,8 @@ struct ProfileV3MarketMenu: View {
         .accessibilityLabel(selected.label)
     }
 
-    @ViewBuilder
     private func mark(for option: ProfileV3ProgrammeMarket.Option) -> some View {
-        if let code = option.countryCode, let country = ATCountry(isoCode: code) {
-            ATCountryFlagView(country: country)
-                .frame(width: ProfileV3Theme.Icon.lg, height: ProfileV3Theme.Icon.lg)
-                .clipShape(Circle())
-        } else {
-            ATIcon.SwiftUIImage.globe
-                .profileV3Icon(ProfileV3Theme.Icon.lg)
-                .foregroundStyle(Color(at: .pureBlack))
-        }
+        ProfileV3CountryFlag(isoCode: option.countryCode, size: ProfileV3Theme.Icon.lg, placeholder: .globe)
     }
 }
 

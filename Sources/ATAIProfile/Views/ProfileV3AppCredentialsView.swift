@@ -124,20 +124,7 @@ struct ProfileV3AppCredentialsSheet: View {
     }
 
     private var header: some View {
-        ZStack(alignment: .top) {
-            ProfileV3SheetGrabber(
-                width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
-                color: Color(at: .neutralGrey200),
-                top: ProfileV3Theme.Space.s10
-            )
-            HStack {
-                Spacer()
-                ProfileV3CircleIconButton.close(action: onClose)
-                    .disabled(viewModel.phase == .submitting)
-            }
-            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
-        }
+        ProfileV3AgentSheetChrome(control: .close(onClose), isEnabled: viewModel.phase != .submitting)
     }
 
     @ViewBuilder
@@ -300,40 +287,25 @@ struct ProfileV3AppCredentialsSheet: View {
                 )
                 .disabled(!viewModel.canSubmit && viewModel.phase == .editing)
                 .opacity(saveOpacity)
-                .allowsHitTesting(viewModel.showsSaveButton)
-                .accessibilityHidden(!viewModel.showsSaveButton)
+                .profileV3SaveEntrance(isShown: viewModel.showsSaveButton)
             } else {
-                switch viewModel.phase {
-                case .editing:
-                    ProfileV3ContinueButton(
-                        title: viewModel.submitTitle,
-                        disabledTint: Color(at: .neutralGrey400),
-                        isEnabled: viewModel.canSubmit,
-                        action: viewModel.submit
-                    )
-                    .transition(.opacity)
-                case .submitting:
-                    ProfileV3Spinner(size: ProfileV3Theme.Icon.xl, lineWidth: ProfileV3Theme.Stroke.regular)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: ProfileV3Theme.Sizes.Save.buttonHeight)
-                        .profileV3CapsuleChrome()
-                        .transition(.opacity)
-                case .succeeded:
-                    ProfileV3Toast(message: viewModel.successMessage)
-                        .transition(.opacity)
-                }
+                ProfileV3SubmitControl(
+                    phase: viewModel.savePhase,
+                    title: viewModel.submitTitle,
+                    successMessage: viewModel.successMessage,
+                    isEnabled: viewModel.canSubmit,
+                    action: viewModel.submit
+                )
             }
         }
         .animation(ProfileV3Theme.Motion.saveState, value: viewModel.phase)
-        .animation(ProfileV3Theme.Motion.saveState, value: viewModel.showsSaveButton)
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
         .padding(.top, Layout.barTop)
         .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
     }
 
     private var saveOpacity: Double {
-        guard viewModel.showsSaveButton else { return 0 }
-        return viewModel.canSubmit || viewModel.phase != .editing ? 1 : ProfileV3Theme.Motion.disabledOpacity
+        viewModel.canSubmit || viewModel.phase != .editing ? 1 : ProfileV3Theme.Motion.disabledOpacity
     }
 }
 

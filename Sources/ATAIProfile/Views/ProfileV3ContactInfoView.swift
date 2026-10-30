@@ -30,7 +30,7 @@ struct ProfileV3ContactInfoView: View {
                 title: ProfileV3Strings.contactInfo,
                 onBack: viewModel.tapBack
             )
-            ProfileV3FocusScroll(focused: focusedField) {
+            ProfileV3FadingScroll(focused: focusedField) {
                 VStack(spacing: 0) {
                     Text(ProfileV3Strings.contactHelper)
                         .typoGraphy(.B2InterMedium12)
@@ -63,15 +63,11 @@ struct ProfileV3ContactInfoView: View {
             .profileV3CTABar()
         }
         .sensoryFeedback(.error, trigger: viewModel.serverEmailError) { _, error in error != nil }
-        .sheet(isPresented: $viewModel.showsDialPicker) {
-            LoginCountryPickerSheet(
-                countries: LoginCountryOption.profileV3Options,
-                selected: viewModel.countryOption,
-                onSelect: viewModel.selectCountry
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-        }
+        .profileV3DialCodePicker(
+            isPresented: $viewModel.showsDialPicker,
+            selected: viewModel.countryOption,
+            onSelect: viewModel.selectCountry
+        )
     }
 
     private var emailField: some View {

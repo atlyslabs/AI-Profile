@@ -190,18 +190,16 @@ struct ProfileV3ProgrammeTile: View {
                     .lineLimit(1)
             }
             if let number = programme.membershipNumber {
-                Button { copy(number) } label: {
-                    (isCopied ? ATIcon.SwiftUIImage.check : ATIcon.SwiftUIImage.contentCopy)
-                        .profileV3Icon(ProfileV3Theme.Icon.md)
-                        .foregroundStyle(shade.primary)
-                        .padding(ProfileV3Theme.Sizes.ProgrammeTile.copyHitInset)
-                        .contentShape(Rectangle())
-                        .padding(-ProfileV3Theme.Sizes.ProgrammeTile.copyHitInset)
+                ProfileV3CopyButton(
+                    isCopied: isCopied,
+                    size: ProfileV3Theme.Icon.md,
+                    tint: shade.primary,
+                    hitInset: ProfileV3Theme.Sizes.ProgrammeTile.copyHitInset,
+                    copyLabel: ProfileV3Strings.copyMembershipNumber,
+                    copiedLabel: ProfileV3Strings.membershipNumberCopied
+                ) {
+                    copy(number)
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel(
-                    isCopied ? ProfileV3Strings.membershipNumberCopied : ProfileV3Strings.copyMembershipNumber
-                )
                 .padding(.leading, ProfileV3Theme.Sizes.ProgrammeTile.copyGap)
             }
         }

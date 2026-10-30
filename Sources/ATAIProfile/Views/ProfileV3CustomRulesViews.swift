@@ -169,18 +169,12 @@ private struct ProfileV3CustomRuleEditor: View {
     }
 
     private var header: some View {
-        ZStack {
-            HStack {
-                ProfileV3CircleIconButton.back(action: model.close)
-                Spacer(minLength: 0)
-            }
+        ProfileV3AgentSheetChrome(control: .back(model.close), showsGrabber: false, title: {
             Text(editor.isAdding ? model.field.editor.addTitle : model.field.editor.editTitle)
                 .typoGraphy(.H5InterSemibold20)
                 .foregroundStyle(Color(at: .pureBlack))
                 .accessibilityAddTraits(.isHeader)
-        }
-        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-        .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
+        })
     }
 
     private var notes: some View {
@@ -234,16 +228,21 @@ private struct ProfileV3CustomRuleEditor: View {
             }
             if editor.isAdding {
                 if model.phase == .saved {
-                    ProfileV3CustomRulePill(title: model.field.editor.savedToast)
+                    ProfileV3InkPill(title: model.field.editor.savedToast, shadowRadius: Sizes.pillShadowRadius)
                         .transition(.opacity)
                         .accessibilityAddTraits(.updatesFrequently)
                 } else if model.canSave || model.phase == .saving {
                     Button(action: model.save) {
-                        ProfileV3CustomRulePill(title: model.field.editor.saveLabel, isLoading: model.phase == .saving)
+                        ProfileV3InkPill(
+                            title: model.field.editor.saveLabel,
+                            isLoading: model.phase == .saving,
+                            shadowRadius: Sizes.pillShadowRadius
+                        )
                     }
                     .buttonStyle(.profileV3Pressable(.impact(weight: .medium)))
                     .disabled(model.phase != .editing)
-                    .transition(.opacity)
+                    .profileV3SaveEntrance()
+                    .transition(.asymmetric(insertion: .identity, removal: .opacity))
                 }
             } else if model.canSave || model.phase != .editing {
                 ProfileV3SaveButton(
@@ -252,10 +251,11 @@ private struct ProfileV3CustomRuleEditor: View {
                     savedTitle: model.field.editor.savedToast,
                     action: model.save
                 )
-                .transition(.opacity)
+                .profileV3SaveEntrance()
+                .transition(.asymmetric(insertion: .identity, removal: .opacity))
             }
         }
-        .frame(minHeight: Sizes.pillHeight, alignment: .top)
+        .frame(minHeight: ProfileV3Theme.Sizes.InkPill.height, alignment: .top)
     }
 
     private var savePhase: ProfileV3SavePhase {
@@ -264,38 +264,6 @@ private struct ProfileV3CustomRuleEditor: View {
         case .saving: return .saving
         case .saved: return .saved
         }
-    }
-}
-
-private struct ProfileV3CustomRulePill: View {
-    let title: String
-    var isLoading = false
-
-    private typealias Sizes = ProfileV3Theme.Sizes.CustomRules
-
-    var body: some View {
-        ZStack {
-            if isLoading {
-                ProgressView()
-                    .tint(Color(at: .pureWhite))
-            } else {
-                Text(title)
-                    .typoGraphy(.B1InterSemibold14)
-                    .foregroundStyle(Color(at: .pureWhite))
-            }
-        }
-        .padding(.horizontal, Sizes.pillHorizontal)
-        .frame(minWidth: Sizes.pillMinWidth)
-        .frame(height: Sizes.pillHeight)
-        .background(Capsule().fill(ProfileV3Theme.Palette.rulePill))
-        .shadow(
-            color: Color.black.opacity(ProfileV3Theme.Opacity.rulePillShadow),
-            radius: Sizes.pillShadowRadius,
-            y: Sizes.pillShadowY
-        )
-        .contentShape(Capsule())
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(title)
     }
 }
 
@@ -350,34 +318,6 @@ private struct ProfileV3CustomRuleEditorLayout: Layout {
         )
         y += fit.noteHeight + fit.pillGap
         bottom.place(at: CGPoint(x: bounds.midX, y: y), anchor: .top, proposal: width)
-    }
-}
-
-struct ProfileV3CustomRuleButton: View {
-    let title: String
-    var accessibilityTitle = ""
-    let action: () -> Void
-
-    private typealias Sizes = ProfileV3Theme.Sizes.CustomRules
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: Sizes.customPillGap) {
-                ATIcon.SwiftUIImage.add
-                    .profileV3Icon(Sizes.customPillIcon)
-                if !title.isEmpty {
-                    Text(title)
-                        .typoGraphy(.B1InterSemibold14)
-                }
-            }
-            .foregroundStyle(Color(at: .pureBlack))
-            .padding(.leading, Sizes.customPillLeading)
-            .padding(.trailing, title.isEmpty ? Sizes.customPillLeading : Sizes.customPillTrailing)
-            .frame(height: Sizes.customPillHeight)
-            .profileV3CapsuleChrome()
-        }
-        .buttonStyle(.profileV3Pressable(.impact(weight: .medium)))
-        .accessibilityLabel(accessibilityTitle.isEmpty ? title : accessibilityTitle)
     }
 }
 

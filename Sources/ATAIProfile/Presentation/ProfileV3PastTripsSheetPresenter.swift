@@ -66,21 +66,15 @@ final class ProfileV3PastTripsSheetPresenter {
             onDismiss: onDismiss
         ) { _, _ in
             content()
-                .overlay(alignment: .top) { ProfileV3TripSheetGrabber() }
+                .overlay(alignment: .top) {
+                    ProfileV3SheetGrabber(
+                        width: Sizes.grabberWidth,
+                        height: Sizes.grabberHeight,
+                        color: ProfileV3Theme.Palette.tripSheetGrabber,
+                        top: Sizes.grabberTop
+                    )
+                }
                 .profileV3TapToDismissKeyboard()
         }
-    }
-}
-
-private struct ProfileV3TripSheetGrabber: View {
-    private typealias Sizes = ProfileV3Theme.Sizes.TripSheet
-
-    var body: some View {
-        Capsule()
-            .fill(ProfileV3Theme.Palette.tripSheetGrabber)
-            .frame(width: Sizes.grabberWidth, height: Sizes.grabberHeight)
-            .padding(.top, Sizes.grabberTop)
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
     }
 }

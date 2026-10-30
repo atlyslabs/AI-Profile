@@ -34,7 +34,7 @@ final class ProfileV3AIConnectorModel: ObservableObject, Identifiable {
     private var detailTask: Task<Void, Never>?
     private var connectTask: Task<Void, Never>?
     private var saveTask: Task<Void, Never>?
-    private var copiedTask: Task<Void, Never>?
+    private var copyTimer = ProfileV3CopyTimer()
 
     init(
         connector: String,
@@ -111,11 +111,8 @@ final class ProfileV3AIConnectorModel: ObservableObject, Identifiable {
         copyText(prompt.text)
         copies += 1
         isCopied = true
-        copiedTask?.cancel()
-        copiedTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(ProfileV3Theme.Motion.aiConnectorCopiedSeconds))
-            guard let self, !Task.isCancelled else { return }
-            isCopied = false
+        copyTimer.restart { [weak self] in
+            self?.isCopied = false
         }
     }
 
@@ -150,7 +147,7 @@ final class ProfileV3AIConnectorModel: ObservableObject, Identifiable {
     func cancel() {
         detailTask?.cancel()
         connectTask?.cancel()
-        copiedTask?.cancel()
+        copyTimer.cancel()
     }
 
     private var connectorForConnect: String {

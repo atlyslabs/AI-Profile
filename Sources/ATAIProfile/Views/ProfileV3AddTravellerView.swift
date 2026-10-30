@@ -40,22 +40,13 @@ struct ProfileV3AddTravellerView: View {
         .background(Color(at: .pureWhite).ignoresSafeArea())
         .safeAreaInset(edge: .bottom) { confirmBar }
         .onChange(of: isPhoneFocused) { _, focused in track(ProfileV3AddTravellerField.mobileNumberKey, focused) }
-        .sheet(isPresented: $showsDialPicker) {
-            LoginCountryPickerSheet(
-                countries: LoginCountryOption.profileV3Options,
-                selected: submission.phoneOption,
-                onSelect: { option in
-                    submission.selectDial(option)
-                    showsDialPicker = false
-                }
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
+        .profileV3DialCodePicker(isPresented: $showsDialPicker, selected: submission.phoneOption) { option in
+            submission.selectDial(option)
         }
     }
 
     private func content(_ screen: ProfileV3AddTravellerScreen) -> some View {
-        ProfileV3FocusScroll(focused: focusedKey) {
+        ProfileV3FadingScroll(focused: focusedKey) {
             VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s40) {
                 if !screen.subtitle.isEmpty {
                     Text(screen.subtitle)
@@ -132,56 +123,25 @@ struct ProfileV3AddTravellerView: View {
     }
 
     private func phoneField(_ field: ProfileV3AddTravellerField) -> some View {
-        VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s12) {
-            ProfileV3FieldLabel(text: label(for: field))
-            ProfileV3PhoneInput(
-                regionISO: submission.regionISO,
-                dialCode: submission.dialCode,
-                digits: $submission.phoneDigits,
-                isFocused: $isPhoneFocused,
-                isError: !submission.isPhoneValid,
-                onDialTap: { showsDialPicker = true }
-            )
-            if !submission.isPhoneValid {
-                Text(ProfileV3Strings.phoneInvalid)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(ProfileV3Theme.Palette.error)
-            }
-        }
+        ProfileV3PhoneField(
+            label: label(for: field),
+            regionISO: submission.regionISO,
+            dialCode: submission.dialCode,
+            digits: $submission.phoneDigits,
+            isFocused: $isPhoneFocused,
+            isValid: submission.isPhoneValid,
+            onDialTap: { showsDialPicker = true }
+        )
         .id(ProfileV3AddTravellerField.mobileNumberKey)
     }
 
     private func citizenshipField(_ field: ProfileV3AddTravellerField) -> some View {
-        VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s12) {
-            ProfileV3FieldLabel(text: label(for: field))
-            Button(action: onCitizenshipTap) {
-                HStack(spacing: ProfileV3Theme.Space.s12) {
-                    if let code = submission.citizenship?.code, let country = ATCountry(isoCode: code) {
-                        ATCountryFlagView(country: country)
-                            .frame(
-                                width: ProfileV3Theme.Sizes.Contact.dialFlag,
-                                height: ProfileV3Theme.Sizes.Contact.dialFlag
-                            )
-                            .clipShape(Circle())
-                    }
-                    Text(submission.citizenship?.name ?? ProfileV3Strings.selectPlaceholder)
-                        .typoGraphy(.B1InterMedium14)
-                        .foregroundStyle(
-                            submission.citizenship == nil ? Color(at: .neutralGrey200) : Color(at: .pureBlack)
-                        )
-                    Spacer(minLength: 0)
-                    ATIcon.SwiftUIImage.expandMore
-                        .profileV3Icon(ProfileV3Theme.Icon.md)
-                        .foregroundStyle(Color(at: .neutralGrey400))
-                }
-                .padding(.bottom, ProfileV3Theme.Space.s8)
-                .atFormFieldBottomLine(isError: false, isFocused: false, style: .dashed, tintsOnFocus: false)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.profileV3Pressable)
-            .accessibilityLabel(label(for: field))
-            .accessibilityValue(submission.citizenship?.name ?? "")
-        }
+        ProfileV3PickerField(
+            label: label(for: field),
+            value: submission.citizenship?.name,
+            flagCode: submission.citizenship?.code,
+            action: onCitizenshipTap
+        )
         .id(field.key)
     }
 

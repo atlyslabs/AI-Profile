@@ -96,6 +96,7 @@ enum ProfileV3Theme {
         static let statusDotCore: CGFloat = 5
         static let sheetGrabberWidth: CGFloat = 36
         static let sheetGrabberHeight: CGFloat = 5
+        static let rainbowGlowBlur: CGFloat = 50
         static let skeletonCardHeight: CGFloat = 154
         static let couponCardHeight: CGFloat = 102
         static let progressRing: CGFloat = 62

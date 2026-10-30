@@ -39,6 +39,24 @@ extension ProfileV3EntryReveal {
     }
 }
 
+private struct ProfileV3SaveEntrance: ViewModifier {
+    let isShown: Bool
+    let revealsOnAppear: Bool
+    @State private var hasAppeared = false
+
+    func body(content: Content) -> some View {
+        content
+            .modifier(
+                ProfileV3EntryReveal(
+                    isRevealed: isShown && (hasAppeared || !revealsOnAppear),
+                    offsetY: ProfileV3Theme.Motion.saveEntranceRise,
+                    animation: ProfileV3Theme.Motion.entry
+                )
+            )
+            .onAppear { hasAppeared = true }
+    }
+}
+
 extension View {
     func profileV3EntryReveal(
         _ isRevealed: Bool,
@@ -46,5 +64,13 @@ extension View {
         offsetY: CGFloat = ProfileV3Theme.Motion.entryOffsetY
     ) -> some View {
         modifier(ProfileV3EntryReveal(isRevealed: isRevealed, scale: scale, offsetY: offsetY))
+    }
+
+    func profileV3SaveEntrance() -> some View {
+        modifier(ProfileV3SaveEntrance(isShown: true, revealsOnAppear: true))
+    }
+
+    func profileV3SaveEntrance(isShown: Bool) -> some View {
+        modifier(ProfileV3SaveEntrance(isShown: isShown, revealsOnAppear: false))
     }
 }

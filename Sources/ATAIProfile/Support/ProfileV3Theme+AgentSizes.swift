@@ -112,6 +112,12 @@ extension ProfileV3Theme.Sizes {
         static let barBottom = ProfileV3Theme.Space.s16
     }
 
+    enum InkPill {
+        static let height = ProfileV3Theme.Control.regular
+        static let width: CGFloat = 149
+        static let padding = ProfileV3Theme.Space.s24
+    }
+
     enum Pickup {
         static let stageHeight: CGFloat = 330
         static let ring: CGFloat = 206

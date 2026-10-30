@@ -27,11 +27,7 @@ extension ProfileV3Theme.Sizes {
         static let pillTop: CGFloat = 64
         static let pillMinTop = ProfileV3Theme.Space.s24
         static let pillMinBottom = ProfileV3Theme.Space.s16
-        static let pillHeight: CGFloat = 40
-        static let pillMinWidth: CGFloat = 149
-        static let pillHorizontal = ProfileV3Theme.Space.s24
         static let pillShadowRadius: CGFloat = 7.5
-        static let pillShadowY: CGFloat = 4
         static let trash: CGFloat = 50
         static let trashInset: CGFloat = 13
         static let trashFromCorner: CGFloat = 10
@@ -45,11 +41,6 @@ extension ProfileV3Theme.Sizes {
         static let cardTextLines = 5
         static let cardSpacing: CGFloat = 17
         static let cardsTop: CGFloat = 30
-        static let customPillHeight: CGFloat = 48
-        static let customPillLeading: CGFloat = 14.4
-        static let customPillTrailing = ProfileV3Theme.Space.s24
-        static let customPillGap: CGFloat = 5.6
-        static let customPillIcon = ProfileV3Theme.Icon.xl
     }
 }
 
@@ -61,7 +52,6 @@ extension ProfileV3Theme.Palette {
     static let ruleNoteText = Color(hex: "1C1B1F")
     static let ruleWatermarkTop = Color(hex: "E3DCCA")
     static let ruleWatermarkBottom = Color(hex: "D9D1BD")
-    static let rulePill = Color(hex: "1C1B1F")
     static let ruleTrash = Color(hex: "523600")
     static let ruleTrashBorder = Color(hex: "DFDFDF")
 }
@@ -69,7 +59,6 @@ extension ProfileV3Theme.Palette {
 extension ProfileV3Theme.Opacity {
     static let ruleBackNote: Double = 0.5
     static let ruleBackdrop: Double = 0.6
-    static let rulePillShadow: Double = 0.05
 }
 
 extension ProfileV3Theme.Motion {

@@ -5,48 +5,33 @@ struct ProfileV3AgentSaveBar: View {
     @ObservedObject var viewModel: ProfileV3AgentFormViewModel
 
     var body: some View {
-        if viewModel.showsSaveBar {
-            controls
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-        } else if let customRules = viewModel.customRules, customRules.canAdd {
-            ZStack(alignment: .bottom) {
-                ProfileV3SaveBarFade()
-                HStack {
-                    customRuleButton(customRules)
-                    Spacer(minLength: 0)
-                }
-                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
-            }
-            .transition(.opacity)
-        }
-    }
-
-    private var controls: some View {
         ZStack(alignment: .bottom) {
-            ProfileV3SaveBarFade()
-            VStack(spacing: ProfileV3Theme.Space.s12) {
-                if viewModel.showsSaveError {
-                    Text(ProfileV3Strings.saveFailed)
-                        .typoGraphy(.T1InterBold11)
-                        .foregroundStyle(ProfileV3Theme.Palette.error)
-                        .multilineTextAlignment(.center)
-                        .accessibilityLabel(ProfileV3Strings.saveFailed)
-                }
-                if let customRules = viewModel.customRules, customRules.canAdd {
+            if let customRules = viewModel.customRules, customRules.canAdd {
+                bar {
                     HStack(spacing: ProfileV3Theme.Space.s12) {
                         customRuleButton(customRules)
                         Spacer(minLength: 0)
-                        saveButton
+                        if viewModel.showsSaveBar {
+                            saveButton
+                        }
                     }
                     .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                } else {
-                    saveButton
                 }
+                .transition(.opacity)
+            } else if viewModel.showsSaveBar {
+                bar { saveButton }
+                    .transition(.opacity)
             }
-            .animation(ProfileV3Theme.Motion.saveState, value: viewModel.showsSaveError)
-            .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
         }
+        .animation(ProfileV3Theme.Motion.saveState, value: viewModel.showsSaveBar)
+    }
+
+    private func bar(@ViewBuilder content: () -> some View) -> some View {
+        ProfileV3SaveBar(
+            error: viewModel.showsSaveBar && viewModel.showsSaveError ? ProfileV3Strings.saveFailed : nil,
+            content: content
+        )
+        .animation(ProfileV3Theme.Motion.saveState, value: viewModel.showsSaveError)
     }
 
     private var saveButton: some View {
@@ -56,12 +41,15 @@ struct ProfileV3AgentSaveBar: View {
             savedTitle: ProfileV3Strings.agentPreferencesUpdated,
             action: viewModel.save
         )
+        .profileV3SaveEntrance()
+        .transition(.asymmetric(insertion: .identity, removal: .opacity))
     }
 
     private func customRuleButton(_ customRules: ProfileV3CustomRulesModel) -> some View {
-        ProfileV3CustomRuleButton(
+        ProfileV3IconPillButton(
+            icon: ATIcon.SwiftUIImage.add,
             title: customRules.field.addLabel,
-            accessibilityTitle: customRules.field.editor.addTitle,
+            accessibilityLabel: customRules.field.editor.addTitle,
             action: customRules.startAdding
         )
     }

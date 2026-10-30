@@ -16,7 +16,7 @@ struct ProfileV3DeleteReasonView: View {
     var body: some View {
         VStack(spacing: 0) {
             ProfileV3SheetGrabber()
-            ProfileV3FocusScroll {
+            ProfileV3FadingScroll {
                 VStack(spacing: 0) {
                     ZStack(alignment: .top) {
                         VStack(spacing: ProfileV3Theme.Sizes.Confirmation.textSpacing) {

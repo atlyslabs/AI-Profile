@@ -5,7 +5,6 @@ struct ProfileV3RideRegionsView: View {
     @ObservedObject var viewModel: ProfileV3RideRegionsViewModel
 
     @State private var measured = Measured()
-    @State private var headerPin = ProfileV3HeaderPin()
 
     private struct Measured: Equatable {
         var content: CGFloat = 0
@@ -16,13 +15,10 @@ struct ProfileV3RideRegionsView: View {
         VStack(spacing: 0) {
             header
             if let content = viewModel.content {
-                ScrollView(showsIndicators: false) {
+                ProfileV3FadingScroll {
                     ProfileV3RideRegionsContent(content: content)
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.content = $0 }
-                        .profileV3HeaderFadeAnchor(headerPin)
                 }
-                .profileV3HeaderFade(headerPin)
-                .scrollBounceBehavior(.basedOnSize)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)
             }
@@ -44,24 +40,11 @@ struct ProfileV3RideRegionsView: View {
     }
 
     private var header: some View {
-        ZStack(alignment: .top) {
-            ProfileV3SheetGrabber(
-                width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
-                color: Color(at: .neutralGrey200),
-                top: ProfileV3Theme.Space.s10
-            )
-            ZStack {
-                if let title = viewModel.content?.title, !title.isEmpty {
-                    ProfileV3TagLabel(text: title)
-                }
-                HStack {
-                    ProfileV3CircleIconButton.back(action: viewModel.close)
-                    Spacer()
-                }
+        ProfileV3AgentSheetChrome(control: .back(viewModel.close), title: {
+            if let title = viewModel.content?.title, !title.isEmpty {
+                ProfileV3TagLabel(text: title)
             }
-            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
-        }
+        })
         .frame(maxWidth: .infinity)
         .frame(height: Self.headerHeight, alignment: .top)
     }

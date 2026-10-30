@@ -38,20 +38,7 @@ struct ProfileV3InstagramConnectSheet: View {
     }
 
     private var header: some View {
-        ZStack(alignment: .top) {
-            ProfileV3SheetGrabber(
-                width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
-                color: Color(at: .neutralGrey200),
-                top: ProfileV3Theme.Space.s10
-            )
-            HStack {
-                Spacer()
-                ProfileV3CircleIconButton.close(action: model.close)
-                    .disabled(model.phase == .saving)
-            }
-            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
-        }
+        ProfileV3AgentSheetChrome(control: .close(model.close), isEnabled: model.phase != .saving)
     }
 
     @ViewBuilder
@@ -60,10 +47,7 @@ struct ProfileV3InstagramConnectSheet: View {
             Color(at: .pureWhite)
             switch model.step {
             case .explainer:
-                Circle()
-                    .fill(ProfileV3Theme.aiConnectorWashGradient)
-                    .frame(width: Layout.wash, height: Layout.wash)
-                    .blur(radius: ProfileV3Theme.Sizes.AIConnector.washBlur)
+                ProfileV3RainbowGlow(diameter: Layout.wash)
                     .opacity(ProfileV3Theme.Opacity.aiConnectorWash)
                     .offset(y: Layout.washCentreY - Layout.wash / 2)
             case .redirect:
@@ -180,28 +164,13 @@ struct ProfileV3InstagramConnectSheet: View {
                 .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.appCredentialsNote))
                 .multilineTextAlignment(.center)
                 .frame(width: Credentials.noteWidth)
-            ZStack {
-                switch model.phase {
-                case .idle:
-                    ProfileV3ContinueButton(
-                        title: ProfileV3Strings.appCredentialsAdd,
-                        disabledTint: Color(at: .neutralGrey400),
-                        isEnabled: model.canSubmit,
-                        action: model.submit
-                    )
-                    .transition(.opacity)
-                case .saving:
-                    ProfileV3Spinner(size: ProfileV3Theme.Icon.xl, lineWidth: ProfileV3Theme.Stroke.regular)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: ProfileV3Theme.Sizes.Save.buttonHeight)
-                        .profileV3CapsuleChrome()
-                        .transition(.opacity)
-                case .saved:
-                    ProfileV3Toast(message: ProfileV3Strings.appUsernameAdded)
-                        .transition(.opacity)
-                }
-            }
-            .animation(ProfileV3Theme.Motion.saveState, value: model.phase)
+            ProfileV3SubmitControl(
+                phase: model.phase,
+                title: ProfileV3Strings.appCredentialsAdd,
+                successMessage: ProfileV3Strings.appUsernameAdded,
+                isEnabled: model.canSubmit,
+                action: model.submit
+            )
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
         }
         .padding(.top, Credentials.barTop)

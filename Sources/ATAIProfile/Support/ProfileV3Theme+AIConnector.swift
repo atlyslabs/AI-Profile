@@ -61,11 +61,8 @@ extension ProfileV3Theme.Sizes {
         static let pasteMaxLines = 12
         static let errorTop: CGFloat = 8
         static let saveTop: CGFloat = 16
-        static let saveWidth: CGFloat = 149
-        static let saveHeight: CGFloat = 40
         static let wash: CGFloat = 585
         static let washCentreY: CGFloat = 573.5
-        static let washBlur: CGFloat = 50
         static let bottom: CGFloat = 40
         static let revealMargin: CGFloat = 16
     }
@@ -79,7 +76,6 @@ extension ProfileV3Theme.Typography {
 }
 
 extension ProfileV3Theme.Palette {
-    static let aiConnectorButton = Color(hex: "1C1B1F")
     static let aiConnectorStrip = Color(hex: "FFFEF9")
     static let aiConnectorBorder = Color(hex: "E0E0E0")
     static let aiConnectorPlaceholder = Color(hex: "999999")
@@ -94,7 +90,6 @@ extension ProfileV3Theme.Opacity {
     static let aiConnectorDisclaimer: Double = 0.5
     static let aiConnectorStepLabel: Double = 0.5
     static let aiConnectorWash: Double = 0.2
-    static let aiConnectorButtonShadow: Double = 0.05
 }
 
 extension ProfileV3Theme {
@@ -108,18 +103,5 @@ extension ProfileV3Theme {
         colors: [Palette.aiConnectorStrip.opacity(0), Palette.aiConnectorStrip],
         startPoint: .top,
         endPoint: .bottom
-    )
-
-    static let aiConnectorWashGradient = LinearGradient(
-        stops: [
-            .init(color: Color(at: .pureWhite), location: 0),
-            .init(color: Color(at: .pureWhite), location: 0.163),
-            .init(color: Color(hex: "E5E6F7"), location: 0.456),
-            .init(color: Color(hex: "5D64FF"), location: 0.605),
-            .init(color: Color(hex: "FF5959"), location: 0.745),
-            .init(color: Color(hex: "FFE23D"), location: 0.926)
-        ],
-        startPoint: UnitPoint(x: -0.774, y: 1.411),
-        endPoint: UnitPoint(x: 0.056, y: -0.070)
     )
 }

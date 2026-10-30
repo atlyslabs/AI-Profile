@@ -30,6 +30,7 @@ extension ProfileV3Theme {
         static let agentGlowPeach = Color(at: .accentAmber100)
         static let countryText = Color(at: .backgroundDarkTheme)
         static let shadow = Color(at: .pureBlack).opacity(0.05)
+        static let inkButton = Color(hex: "1C1B1F")
         static let artTextShadow = Color(at: .pureBlack).opacity(0.35)
         static let artTextShadowOnLight = Color(at: .pureWhite).opacity(0.6)
         static let cardDarkSecondary = Color(at: .pureBlack).opacity(0.6)

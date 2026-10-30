@@ -1,3 +1,4 @@
+import ATUIKit
 import SwiftUI
 import UIKit
 
@@ -152,9 +153,12 @@ private final class ProfileV3KeyboardDismissView: UIView, UIGestureRecognizerDel
     }
 }
 
-struct ProfileV3FocusScroll<ID: Hashable, Content: View>: View {
+struct ProfileV3FadingScroll<ID: Hashable, Content: View>: View {
     let focused: ID?
     var fillsViewport = false
+    var fadeGap = ProfileV3Theme.Sizes.headerFadeGap
+    var fadeColor = Color(at: .pureWhite)
+    var bounceBehavior = ScrollBounceBehavior.basedOnSize
     @ViewBuilder let content: () -> Content
 
     @State private var viewportHeight: CGFloat = 0
@@ -167,8 +171,8 @@ struct ProfileV3FocusScroll<ID: Hashable, Content: View>: View {
                     .frame(minHeight: fillsViewport ? viewportHeight : nil, alignment: .top)
                     .profileV3HeaderFadeAnchor(headerPin)
             }
-            .profileV3HeaderFade(headerPin)
-            .scrollBounceBehavior(.basedOnSize)
+            .profileV3HeaderFade(headerPin, gap: fadeGap, color: fadeColor)
+            .scrollBounceBehavior(bounceBehavior)
             .scrollDismissesKeyboard(.interactively)
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
             .onChange(of: focused) { _, id in reveal(id, with: proxy) }
@@ -184,8 +188,21 @@ struct ProfileV3FocusScroll<ID: Hashable, Content: View>: View {
     }
 }
 
-extension ProfileV3FocusScroll where ID == Never {
-    init(fillsViewport: Bool = false, @ViewBuilder content: @escaping () -> Content) {
-        self.init(focused: nil, fillsViewport: fillsViewport, content: content)
+extension ProfileV3FadingScroll where ID == Never {
+    init(
+        fillsViewport: Bool = false,
+        fadeGap: CGFloat = ProfileV3Theme.Sizes.headerFadeGap,
+        fadeColor: Color = Color(at: .pureWhite),
+        bounceBehavior: ScrollBounceBehavior = .basedOnSize,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            focused: nil,
+            fillsViewport: fillsViewport,
+            fadeGap: fadeGap,
+            fadeColor: fadeColor,
+            bounceBehavior: bounceBehavior,
+            content: content
+        )
     }
 }

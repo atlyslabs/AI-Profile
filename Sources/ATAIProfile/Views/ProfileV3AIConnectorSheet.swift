@@ -4,8 +4,6 @@ import SwiftUI
 struct ProfileV3AIConnectorSheet: View {
     @ObservedObject var model: ProfileV3AIConnectorModel
 
-    @State private var headerPin = ProfileV3HeaderPin()
-
     private typealias Layout = ProfileV3Theme.Sizes.AIConnector
 
     var body: some View {
@@ -14,10 +12,10 @@ struct ProfileV3AIConnectorSheet: View {
             ZStack {
                 switch model.step {
                 case .detail:
-                    ProfileV3AIConnectorDetailContent(model: model, headerPin: headerPin)
+                    ProfileV3AIConnectorDetailContent(model: model)
                         .transition(.opacity)
                 case .connect:
-                    ProfileV3AIConnectorConnectContent(model: model, headerPin: headerPin)
+                    ProfileV3AIConnectorConnectContent(model: model)
                         .transition(.opacity)
                 }
             }
@@ -28,10 +26,7 @@ struct ProfileV3AIConnectorSheet: View {
             ZStack(alignment: .top) {
                 Color(at: .pureWhite)
                 if model.step == .connect {
-                    Circle()
-                        .fill(ProfileV3Theme.aiConnectorWashGradient)
-                        .frame(width: Layout.wash, height: Layout.wash)
-                        .blur(radius: Layout.washBlur)
+                    ProfileV3RainbowGlow(diameter: Layout.wash)
                         .opacity(ProfileV3Theme.Opacity.aiConnectorWash)
                         .offset(y: Layout.washCentreY - Layout.wash / 2)
                         .transition(.opacity)
@@ -65,12 +60,7 @@ private struct ProfileV3AIConnectorHeader: View {
     private typealias Layout = ProfileV3Theme.Sizes.AIConnector
 
     var body: some View {
-        ZStack(alignment: .top) {
-            ProfileV3SheetGrabber(
-                width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
-                color: Color(at: .neutralGrey200),
-                top: ProfileV3Theme.Space.s10
-            )
+        ProfileV3AgentSheetChrome(control: .close(onClose), isEnabled: isClosable, accessory: {
             VStack(spacing: Layout.eyebrowGap) {
                 ATIcon.SwiftUIImage.settings
                     .profileV3Icon(Layout.gear)
@@ -82,32 +72,21 @@ private struct ProfileV3AIConnectorHeader: View {
                 }
             }
             .padding(.top, Layout.gearTop)
-            HStack {
-                Spacer()
-                ProfileV3CircleIconButton.close(action: onClose)
-                    .disabled(!isClosable)
-            }
-            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
-        }
+        })
         .frame(height: Layout.headerHeight, alignment: .top)
     }
 }
 
 private struct ProfileV3AIConnectorDetailContent: View {
     @ObservedObject var model: ProfileV3AIConnectorModel
-    let headerPin: ProfileV3HeaderPin
 
     private typealias Layout = ProfileV3Theme.Sizes.AIConnector
 
     var body: some View {
         if let detail = model.detail, model.detailPhase == .loaded {
-            ScrollView(showsIndicators: false) {
+            ProfileV3FadingScroll(fadeGap: 0) {
                 content(detail)
-                    .profileV3HeaderFadeAnchor(headerPin)
             }
-            .profileV3HeaderFade(headerPin, gap: 0)
-            .scrollBounceBehavior(.basedOnSize)
             .safeAreaInset(edge: .bottom, spacing: 0) { cta(detail) }
         } else {
             ProfileV3LoadStateView(phase: model.detailPhase, retry: model.loadDetail)
@@ -174,16 +153,14 @@ private struct ProfileV3AIConnectorDetailContent: View {
     @ViewBuilder
     private func cta(_ detail: ProfileV3AIConnector) -> some View {
         if !detail.ctaLabel.isEmpty {
-            ZStack(alignment: .bottom) {
-                ProfileV3SaveBarFade()
+            ProfileV3SaveBar {
                 ProfileV3ContinueButton(
                     title: detail.ctaLabel,
                     tint: Color(at: .pureWhite),
-                    fill: ProfileV3Theme.Palette.aiConnectorButton,
+                    fill: ProfileV3Theme.Palette.inkButton,
                     action: model.getStarted
                 )
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
             }
         }
     }
@@ -242,7 +219,6 @@ private struct ProfileV3AIConnectorDisclaimerText: View {
 
 private struct ProfileV3AIConnectorConnectContent: View {
     @ObservedObject var model: ProfileV3AIConnectorModel
-    let headerPin: ProfileV3HeaderPin
 
     @FocusState private var isAnswerFocused: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -252,13 +228,9 @@ private struct ProfileV3AIConnectorConnectContent: View {
     var body: some View {
         if let connect = model.connect, model.connectPhase == .loaded {
             ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
+                ProfileV3FadingScroll(fadeGap: 0) {
                     content(connect)
-                        .profileV3HeaderFadeAnchor(headerPin)
                 }
-                .profileV3HeaderFade(headerPin, gap: 0)
-                .scrollDismissesKeyboard(.interactively)
-                .scrollBounceBehavior(.basedOnSize)
                 .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
                     revealAnswer(proxy)
                 }
@@ -495,23 +467,11 @@ private struct ProfileV3AIConnectorStepView: View {
 
     private func saveButton(_ title: String) -> some View {
         Button(action: model.save) {
-            ZStack {
-                if model.isSaving {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .tint(Color(at: .pureWhite))
-                } else {
-                    Text(title)
-                        .typoGraphy(.B1InterSemibold14)
-                        .foregroundStyle(Color(at: .pureWhite))
-                }
-            }
-            .frame(width: Layout.saveWidth, height: Layout.saveHeight)
-            .background(Capsule().fill(ProfileV3Theme.Palette.aiConnectorButton))
-            .shadow(
-                color: Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.aiConnectorButtonShadow),
-                radius: ProfileV3Theme.Shadow.redeemRadius,
-                y: ProfileV3Theme.Shadow.redeemY
+            ProfileV3InkPill(
+                title: title,
+                isLoading: model.isSaving,
+                width: .fixed(ProfileV3Theme.Sizes.InkPill.width),
+                shadowRadius: ProfileV3Theme.Shadow.redeemRadius
             )
         }
         .buttonStyle(.profileV3Pressable)

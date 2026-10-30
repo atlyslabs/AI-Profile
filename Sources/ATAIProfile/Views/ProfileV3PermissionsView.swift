@@ -5,7 +5,6 @@ struct ProfileV3PermissionsView: View {
     @ObservedObject var model: ProfileV3PermissionsSettingsModel
     let onClose: () -> Void
 
-    @State private var headerPin = ProfileV3HeaderPin()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -17,11 +16,9 @@ struct ProfileV3PermissionsView: View {
             if let permissions = model.permissions {
                 ViewThatFits(in: .vertical) {
                     cards(permissions)
-                    ScrollView(showsIndicators: false) {
+                    ProfileV3FadingScroll(bounceBehavior: .automatic) {
                         cards(permissions)
-                            .profileV3HeaderFadeAnchor(headerPin)
                     }
-                    .profileV3HeaderFade(headerPin)
                 }
                 .transition(.opacity)
             } else {

@@ -64,6 +64,17 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
+- Elements that were built several times now share one component each: the agent-style sheet
+  header and grabber, the save bar and the continue-spinner-toast control, the dark and white pill
+  buttons, the round country flag, the traveler phone field, picker row and dial-code sheet, the
+  copy button and its reset timer, the scroll view that fades under a fixed header, and the rainbow
+  glow with its gradient and blur. Screens look the same, pixel for pixel, except "+ Custom" on
+  agent forms, which now uses the save button's spacing: its icon sits 0.4pt further left.
+- Save buttons that appear once there is something to save now rise into place: "save changes" on
+  agent forms, the saved login and app edit sheets, and the custom rule editor's Save and "save
+  changes". With custom rules, "+ Custom" stays still while the save button enters beside it. On
+  agent forms the save button now also fades out when an edit is undone or after "saved"; before,
+  it vanished at once.
 - Settings cards are in the order Accounts center, Connectors, Glove box, Secure credential store
   (the concierge card, when served, stays after Accounts center), all 25pt apart.
 - Glove box: an empty inbox shows only the Emirates sample email; any real email still replaces

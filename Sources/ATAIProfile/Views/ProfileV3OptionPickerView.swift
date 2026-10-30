@@ -9,7 +9,6 @@ struct ProfileV3OptionPickerView: View {
     let onToggle: (String) -> Void
 
     @State private var query = ""
-    @State private var headerPin = ProfileV3HeaderPin()
 
     private var trimmedQuery: String { query.trimmingCharacters(in: .whitespacesAndNewlines) }
 
@@ -35,7 +34,7 @@ struct ProfileV3OptionPickerView: View {
     }
 
     private func list(_ filtered: [ProfileV3ChipOption]) -> some View {
-        ScrollView(showsIndicators: false) {
+        ProfileV3FadingScroll(bounceBehavior: .automatic) {
             LazyVStack(spacing: 0) {
                 ForEach(filtered) { option in
                     ProfileV3OptionPickerRow(option: option, isSelected: selection.contains(option.id)) {
@@ -45,10 +44,7 @@ struct ProfileV3OptionPickerView: View {
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, ProfileV3Theme.Space.s40)
-            .profileV3HeaderFadeAnchor(headerPin)
         }
-        .profileV3HeaderFade(headerPin)
-        .scrollDismissesKeyboard(.interactively)
     }
 
     private var emptyState: some View {

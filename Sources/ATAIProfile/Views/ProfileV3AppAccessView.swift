@@ -31,11 +31,9 @@ struct ProfileV3AppAccessView: View {
     }
 
     private var addNewBar: some View {
-        ZStack(alignment: .bottom) {
-            ProfileV3SaveBarFade()
+        ProfileV3SaveBar {
             ProfileV3ContinueButton(title: ProfileV3Strings.appAccessAddNew, action: model.tapAddNew)
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
         }
     }
 }

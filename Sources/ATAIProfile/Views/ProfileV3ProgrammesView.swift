@@ -394,14 +394,17 @@ struct ProfileV3ProgrammesView: View {
                 }
             } else {
                 HStack {
-                    ProfileV3BarButton(
-                        title: ProfileV3Strings.connectMoreProgrammes,
+                    ProfileV3IconPillButton(
                         icon: ATIcon.SwiftUIImage.insertLink,
+                        title: ProfileV3Strings.connectMoreProgrammes,
+                        feedback: nil,
                         action: viewModel.tapConnectMore
                     )
                     Spacer()
-                    ProfileV3BarButton(
+                    ProfileV3IconPillButton(
                         icon: ATIcon.SwiftUIImage.edit,
+                        iconOnlyWidth: ProfileV3Theme.Sizes.Programmes.editButtonWidth,
+                        feedback: nil,
                         accessibilityLabel: ProfileV3Strings.editProgrammes,
                         action: viewModel.tapEdit
                     )
@@ -464,34 +467,6 @@ private extension View {
         offset(x: isShifted ? ProfileV3Theme.Sizes.Programmes.reorderShift : 0)
             .allowsHitTesting(!isShifted)
             .accessibilityHidden(isShifted)
-    }
-}
-
-private struct ProfileV3BarButton: View {
-    var title: String?
-    let icon: Image
-    var accessibilityLabel: String?
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: ProfileV3Theme.Sizes.Save.buttonSpacing) {
-                icon
-                    .profileV3Icon(ProfileV3Theme.Sizes.Save.buttonIcon)
-                if let title {
-                    Text(title)
-                        .typoGraphy(.B1InterSemibold14)
-                }
-            }
-            .foregroundStyle(Color(at: .pureBlack))
-            .padding(.leading, title == nil ? 0 : ProfileV3Theme.Sizes.Save.buttonLeading)
-            .padding(.trailing, title == nil ? 0 : ProfileV3Theme.Sizes.Save.buttonTrailing)
-            .frame(width: title == nil ? ProfileV3Theme.Sizes.Programmes.editButtonWidth : nil)
-            .frame(height: ProfileV3Theme.Sizes.Save.buttonHeight)
-            .profileV3CapsuleChrome()
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(accessibilityLabel ?? title ?? "")
     }
 }
 

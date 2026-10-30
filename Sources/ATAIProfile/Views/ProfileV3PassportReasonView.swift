@@ -7,14 +7,12 @@ struct ProfileV3PassportReasonView: View {
     let onBack: () -> Void
     var onHowUsed: (() -> Void)?
 
-    @State private var headerPin = ProfileV3HeaderPin()
-
     private var screen: ProfileV3PassportReasonScreen { viewModel.screen }
 
     var body: some View {
         VStack(spacing: 0) {
             header
-            ScrollView(showsIndicators: false) {
+            ProfileV3FadingScroll(fadeColor: ProfileV3Theme.Palette.background) {
                 VStack(spacing: 0) {
                     Text(screen.title ?? "")
                         .typoGraphy(.H5InterMedium20)
@@ -32,10 +30,7 @@ struct ProfileV3PassportReasonView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.bottom, ProfileV3Theme.Sizes.Passport.listBottom)
-                .profileV3HeaderFadeAnchor(headerPin)
             }
-            .profileV3HeaderFade(headerPin, color: ProfileV3Theme.Palette.background)
-            .scrollBounceBehavior(.basedOnSize)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ProfileV3Theme.passportScreenGradient.ignoresSafeArea())

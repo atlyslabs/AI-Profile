@@ -163,7 +163,7 @@ private final class ProgrammesRouterSpy: ProfileV3ProgrammesRouter {
 }
 
 private actor RemovalStub: ProfileV3LoyaltyRepository {
-    private let mock = ProfileV3MockRepository(delay: .zero)
+    private let mock = ProfileV3MockRepository(delay: .zero, session: ProfileV3SessionStore())
     private var failing: Set<String> = []
     private(set) var removed: [String] = []
 

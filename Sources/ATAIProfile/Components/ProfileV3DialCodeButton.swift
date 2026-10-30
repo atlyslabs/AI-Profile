@@ -10,14 +10,7 @@ struct ProfileV3DialCodeButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: ProfileV3Theme.Sizes.Contact.dialSpacing) {
-                if let country = ATCountry(isoCode: regionISO) {
-                    ATCountryFlagView(country: country)
-                        .frame(
-                            width: ProfileV3Theme.Sizes.Contact.dialFlag,
-                            height: ProfileV3Theme.Sizes.Contact.dialFlag
-                        )
-                        .clipShape(Circle())
-                }
+                ProfileV3CountryFlag(isoCode: regionISO, size: ProfileV3Theme.Sizes.Contact.dialFlag)
                 Text(ProfileV3Strings.dialCodeDisplay(dialCode))
                     .typoGraphy(.B1InterMedium14)
                 if isInteractive {
