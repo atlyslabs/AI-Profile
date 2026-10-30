@@ -4,7 +4,7 @@ import SwiftUI
 struct ProfileV3RadioMark: View {
     let isSelected: Bool
     var size: CGFloat = ProfileV3Theme.Sizes.radioMark
-    var tint: Color = ProfileV3Theme.Palette.inkGlyph
+    var tint: Color = ProfileV3Theme.Palette.graphite
 
     var body: some View {
         (isSelected ? ATIcon.SwiftUIImage.radioButtonChecked : ATIcon.SwiftUIImage.radioButtonUnchecked)

@@ -12,13 +12,7 @@ final class ProfileV3TravelPersonaHostingController: UIHostingController<Profile
         self.profileID = profileID
         super.init(rootView: ProfileV3TravelPersonaView(viewModel: viewModel))
         viewModel.onClose = { [weak self] in self?.presentingViewController?.dismiss(animated: true) }
-        modalPresentationStyle = .pageSheet
-        if let sheet = sheetPresentationController {
-            sheet.detents = [.large()]
-            sheet.prefersGrabberVisible = false
-            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
-            sheet.preferredCornerRadius = ProfileV3Theme.Sizes.Agent.sheetCornerRadius
-        }
+        profileV3UsePageSheet()
     }
 
     @MainActor required dynamic init?(coder aDecoder: NSCoder) {

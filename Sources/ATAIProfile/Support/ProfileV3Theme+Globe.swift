@@ -66,7 +66,7 @@ extension ProfileV3Theme {
         static let restPitch = 0.44
         static let pitchRange = -0.6 ... 0.9
         static let sphereWidthRatio: CGFloat = 262 / 380
-        static let sphereVerticalInset: CGFloat = 8
+        static let sphereVerticalInset = ProfileV3Theme.Space.s8
         static let shade = Gradient(stops: [
             .init(color: Palette.globeShade.opacity(0), location: 0.45),
             .init(color: Palette.globeShade.opacity(0.55), location: 1)

@@ -221,11 +221,7 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
     }
 
     private static func timestamp(_ value: String?) -> Date? {
-        guard let value = text(value) else { return nil }
-        if let date = fractionalTimestampParser.withLock({ $0.date(from: value) }) {
-            return date
-        }
-        return timestampParser.withLock { $0.date(from: value) }
+        text(value).flatMap(ProfileV3ISODate.parse)
     }
 
     private static func agentsUpdatedAt(_ raw: String?) -> String {
@@ -234,14 +230,6 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
             .replacingOccurrences(of: "AM", with: "am")
             .replacingOccurrences(of: "PM", with: "pm")
     }
-
-    private static let fractionalTimestampParser: OSAllocatedUnfairLock<ISO8601DateFormatter> = {
-        let parser = ISO8601DateFormatter()
-        parser.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return OSAllocatedUnfairLock(uncheckedState: parser)
-    }()
-
-    private static let timestampParser = OSAllocatedUnfairLock(uncheckedState: ISO8601DateFormatter())
 
     private static let agentsUpdatedAtFormatter: DateFormatter = {
         let formatter = DateFormatter()

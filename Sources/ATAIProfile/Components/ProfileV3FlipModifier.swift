@@ -11,7 +11,7 @@ private struct ProfileV3FlipModifier<Back: View>: ViewModifier, Animatable {
 
     func body(content: Content) -> some View {
         let showsBack = angle >= 90
-        let hidden = ProfileV3Theme.Motion.hiddenFaceOpacity
+        let hidden = ProfileV3Theme.Opacity.hiddenFace
         ZStack {
             back
                 .rotation3DEffect(.degrees(ProfileV3Theme.Rotation.half), axis: (x: 0, y: 1, z: 0))

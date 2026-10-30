@@ -2,7 +2,7 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3ProgrammeSourcesView: View {
-    @ObservedObject var viewModel: ProfileV3ProgrammeSourcesViewModel
+    @ObservedObject var viewModel: ProfileV3SourcesViewModel
     let onBack: () -> Void
 
     private typealias Sources = ProfileV3Theme.Sizes.Sources
@@ -24,15 +24,7 @@ struct ProfileV3ProgrammeSourcesView: View {
     }
 
     private var backBar: some View {
-        ZStack {
-            HStack {
-                ProfileV3CircleIconButton.back(size: ProfileV3Theme.Sizes.navButton, action: onBack)
-                Spacer()
-            }
-            ProfileV3TagLabel(text: ProfileV3Strings.sources)
-        }
-        .padding(.horizontal, ProfileV3Theme.Sizes.topBarInset)
-        .padding(.top, ProfileV3Theme.Sizes.topBarTop)
+        ProfileV3TopBar(onBack: onBack, title: { ProfileV3TagLabel(text: ProfileV3Strings.sources) })
     }
 
     private func loaded(_ content: ProfileV3PreferenceSources) -> some View {
@@ -62,8 +54,7 @@ struct ProfileV3ProgrammeSourcesView: View {
 
 #if DEBUG
 #Preview("Programme sources") {
-    let viewModel = ProfileV3ProgrammeSourcesViewModel(
-        programme: ProfileV3ProgrammeFixtures.extraProgrammes[0],
+    let viewModel = ProfileV3SourcesViewModel(
         programID: ProfileV3ProgrammeFixtures.extraProgrammes[0].id,
         profileID: nil,
         repository: ProfileV3MockRepository()

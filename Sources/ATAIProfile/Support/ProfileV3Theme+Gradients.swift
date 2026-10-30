@@ -5,10 +5,10 @@ extension ProfileV3Theme {
     static let rainbowStops: [Gradient.Stop] = [
         .init(color: Color(at: .pureWhite), location: 0),
         .init(color: Color(at: .pureWhite), location: 0.1635),
-        .init(color: Color(hex: "E5E6F7"), location: 0.456),
-        .init(color: Color(hex: "5D64FF"), location: 0.6048),
-        .init(color: Color(hex: "FF5959"), location: 0.7449),
-        .init(color: Color(hex: "FFE23D"), location: 0.9258)
+        .init(color: Palette.rainbowLavender, location: 0.456),
+        .init(color: Palette.rainbowIndigo, location: 0.6048),
+        .init(color: Palette.rainbowCoral, location: 0.7449),
+        .init(color: Palette.rainbowGold, location: 0.9258)
     ]
 
     static let rainbowGlowGradient = LinearGradient(
@@ -115,12 +115,6 @@ extension ProfileV3Theme {
         endPoint: .bottom
     )
 
-    static let whiteToClearFade = LinearGradient(
-        colors: [Color(at: .pureWhite), Color(at: .pureWhite).opacity(0)],
-        startPoint: .top,
-        endPoint: .bottom
-    )
-
     static let tyreTrackFade = LinearGradient(
         stops: [
             .init(color: .black, location: 0),
@@ -145,8 +139,8 @@ extension ProfileV3Theme {
         stops: [
             .init(color: Color(at: .pureWhite), location: 0),
             .init(color: Color(at: .pureWhite), location: 0.163),
-            .init(color: Palette.washLavender, location: 0.456),
-            .init(color: Palette.washCoral, location: 0.574),
+            .init(color: ProfileV3Theme.Palette.rainbowLavender, location: 0.456),
+            .init(color: ProfileV3Theme.Palette.rainbowCoral, location: 0.574),
             .init(color: Palette.washMagenta, location: 0.926)
         ],
         startPoint: UnitPoint(x: -0.683, y: 1.411),
@@ -157,10 +151,10 @@ extension ProfileV3Theme {
         stops: [
             .init(color: Color(at: .pureBlack), location: 0),
             .init(color: Color(at: .pureBlack), location: 0.163),
-            .init(color: Palette.pendingRingIndigo, location: 0.303),
-            .init(color: Palette.pendingRingFuchsia, location: 0.464),
-            .init(color: Palette.pendingRingRed, location: 0.75),
-            .init(color: Palette.pendingRingGold, location: 1)
+            .init(color: Color(at: .primaryBrandBlue500), location: 0.303),
+            .init(color: Color(at: .accentOrchid500), location: 0.464),
+            .init(color: Color(at: .accentRed500), location: 0.75),
+            .init(color: Color(at: .accentSoftGold500), location: 1)
         ],
         startPoint: UnitPoint(x: -0.346, y: 0.416),
         endPoint: UnitPoint(x: 1, y: 0.42)
@@ -169,7 +163,7 @@ extension ProfileV3Theme {
     static let plusRingGradient = LinearGradient(
         stops: [
             .init(color: Palette.plusRingNavy, location: 0),
-            .init(color: Palette.plusRingBlue, location: 0.5),
+            .init(color: ProfileV3Theme.Palette.passIndigo, location: 0.5),
             .init(color: Palette.plusRingPlum, location: 0.75),
             .init(color: Palette.plusRingOrange, location: 1)
         ],
@@ -178,7 +172,7 @@ extension ProfileV3Theme {
     )
 
     static let travellerCardLipGradient = LinearGradient(
-        colors: [Palette.travellerCardLipTop, Palette.travellerCardLipBottom],
+        colors: [Palette.travellerCardLipTop, ProfileV3Theme.Palette.tabBottom],
         startPoint: UnitPoint(x: 0.5, y: -0.429),
         endPoint: .bottom
     )
@@ -317,9 +311,9 @@ extension ProfileV3Theme {
             .init(color: Color(at: .pureWhite), location: 0),
             .init(color: Color(at: .pureWhite), location: 0.16),
             .init(color: Palette.kycOverlayLavender, location: 0.46),
-            .init(color: Palette.kycOverlayIndigo, location: 0.6),
-            .init(color: Palette.kycOverlayCoral, location: 0.74),
-            .init(color: Palette.kycOverlayGold, location: 0.93)
+            .init(color: ProfileV3Theme.Palette.rainbowIndigo, location: 0.6),
+            .init(color: ProfileV3Theme.Palette.rainbowCoral, location: 0.74),
+            .init(color: ProfileV3Theme.Palette.rainbowGold, location: 0.93)
         ],
         startPoint: UnitPoint(x: -0.28, y: 1.06),
         endPoint: UnitPoint(x: 0.23, y: 0.15)
@@ -338,7 +332,7 @@ extension ProfileV3Theme {
     )
 
     static let collapseTabGradient = LinearGradient(
-        colors: [Palette.collapseTabTop, Palette.collapseTabBottom],
+        colors: [Palette.collapseTabTop, ProfileV3Theme.Palette.tabBottom],
         startPoint: UnitPoint(x: 0.5, y: -0.43),
         endPoint: .bottom
     )
@@ -364,14 +358,14 @@ extension ProfileV3Theme {
         endPoint: .trailing
     )
 
-    static let sliderKnobRimGradient = LinearGradient(
-        colors: [Color(at: .pureBlack), Palette.sliderKnobLight],
+    static let blackToGreyGradient = LinearGradient(
+        colors: [Color(at: .pureBlack), Color(at: .neutralGrey600)],
         startPoint: .top,
         endPoint: .bottom
     )
 
-    static let sliderKnobFaceGradient = LinearGradient(
-        colors: [Palette.sliderKnobLight, Color(at: .pureBlack)],
+    static let greyToBlackGradient = LinearGradient(
+        colors: [Color(at: .neutralGrey600), Color(at: .pureBlack)],
         startPoint: .top,
         endPoint: .bottom
     )

@@ -8,18 +8,18 @@ extension ProfileV3Theme.Sizes {
         static let washCentreY: CGFloat = 510.5
         static let followWashTop: CGFloat = 453
         static let followWashHeight: CGFloat = 399
-        static let cardsTop: CGFloat = 48
-        static let cardSpacing: CGFloat = 24
+        static let cardsTop = ProfileV3Theme.Space.s48
+        static let cardSpacing = ProfileV3Theme.Space.s24
         static let cardHeight: CGFloat = 109
-        static let cardRadius: CGFloat = 32
+        static let cardRadius = ProfileV3Theme.Radius.card
         static let cardLeading: CGFloat = 31
         static let handleTrailing: CGFloat = 23
         static let orbTrailing: CGFloat = 21
-        static let followTrailing: CGFloat = 12
+        static let followTrailing = ProfileV3Theme.Space.s12
         static let handleArtWidth: CGFloat = 84
         static let orbArtWidth: CGFloat = 61
         static let followArtWidth: CGFloat = 68
-        static let cardTextSpacing: CGFloat = 6
+        static let cardTextSpacing = ProfileV3Theme.Space.s6
         static let cardTitleMinScale: CGFloat = 0.8
         static let followDetailWidth: CGFloat = 260
         static let handleSpacing: CGFloat = 5
@@ -46,7 +46,7 @@ extension ProfileV3Theme.Sizes {
         static let redirectOrb: CGFloat = 65
         static let redirectOrbTop: CGFloat = 78
         static let redirectLeadTop: CGFloat = 35
-        static let redirectTitleTop: CGFloat = 6
+        static let redirectTitleTop = ProfileV3Theme.Space.s6
         static let redirectingBottom: CGFloat = 36
     }
 }

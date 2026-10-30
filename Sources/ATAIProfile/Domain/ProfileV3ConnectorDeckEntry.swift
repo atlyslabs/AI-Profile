@@ -8,4 +8,5 @@ struct ProfileV3ConnectorDeckEntry: Identifiable, Equatable {
     let hint: String
     let icon: ProfileV3ConnectorIcon
     var isApp = false
+    var canDisconnect = true
 }

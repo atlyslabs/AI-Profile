@@ -104,15 +104,13 @@ struct ProfileV3PassportReasonView: View {
     private var footer: some View {
         VStack(spacing: ProfileV3Theme.Space.s12) {
             if viewModel.submitFailed {
-                Text(ProfileV3Strings.passportUpdateFailed)
-                    .typoGraphy(.T1InterBold11)
-                    .foregroundStyle(ProfileV3Theme.Palette.error)
+                ProfileV3ErrorText(text: ProfileV3Strings.passportUpdateFailed, style: .bar)
                     .multilineTextAlignment(.center)
             }
             if let ctaTitle = screen.ctaTitle {
                 ProfileV3GradientButton(title: ctaTitle, action: viewModel.submit)
                     .disabled(viewModel.selection == nil || viewModel.isSubmitting)
-                    .opacity(viewModel.selection == nil ? ProfileV3Theme.Motion.disabledOpacity : 1)
+                    .opacity(viewModel.selection == nil ? ProfileV3Theme.Opacity.disabled : 1)
             }
         }
         .animation(ProfileV3Theme.Motion.saveState, value: viewModel.submitFailed)

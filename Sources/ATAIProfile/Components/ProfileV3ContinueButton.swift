@@ -45,7 +45,7 @@ struct ProfileV3ContinueButton: View {
         }
         .buttonStyle(.profileV3Pressable(.impact(weight: .medium)))
         .disabled(!isEnabled || isLoading)
-        .opacity(isEnabled || disabledTint != nil ? 1 : ProfileV3Theme.Motion.disabledOpacity)
+        .opacity(isEnabled || disabledTint != nil ? 1 : ProfileV3Theme.Opacity.disabled)
         .accessibilityLabel(title)
         .accessibilityValue(isLoading ? ProfileV3Strings.loading : "")
     }

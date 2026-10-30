@@ -146,7 +146,7 @@ struct ProfileV3VaultLoginTests {
         #expect(!editor.isPasswordRevealed)
 
         editor.submit()
-        try await waitUntil { editor.phase == .succeeded }
+        try await waitUntil { editor.phase == .saved }
         #expect(await vault.updates == [.init(id: Self.saved.id, username: nil, password: "new-password")])
     }
 
@@ -158,7 +158,7 @@ struct ProfileV3VaultLoginTests {
         try await waitUntil { editor.isPasswordRevealed }
         editor.credentials.username = "new@gmail.com"
         editor.submit()
-        try await waitUntil { editor.phase == .succeeded }
+        try await waitUntil { editor.phase == .saved }
 
         #expect(await vault.updates == [.init(id: Self.saved.id, username: "new@gmail.com", password: nil)])
     }
@@ -323,7 +323,7 @@ struct ProfileV3VaultLoginTests {
         editor.credentials.password = "secret"
 
         editor.submit()
-        try await waitUntil { editor.phase == .succeeded }
+        try await waitUntil { editor.phase == .saved }
 
         #expect(await vault.saves == [
             ProfileV3VaultDraft(
@@ -509,6 +509,8 @@ private actor VaultStub: ProfileV3AppAccessRepository {
     func saveAppCredentials(_: ProfileV3AppCredentials, appID _: String) async throws {}
     func addAppPassword(_: ProfileV3AppCredentials) async throws {}
     func disconnectApp(_: String) async throws {}
+    func loadInstagramAccount() async throws -> ProfileV3InstagramAccount { .unlinked }
+    func linkInstagram(username: String) async throws -> String { username }
 
     func retestVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult {
         ProfileV3VaultWriteResult(id: id, status: .added)

@@ -117,11 +117,11 @@ struct ProfileV3PreferenceSlider: View {
 private struct ProfileV3SliderKnob: View {
     var body: some View {
         Circle()
-            .fill(ProfileV3Theme.sliderKnobRimGradient)
+            .fill(ProfileV3Theme.blackToGreyGradient)
             .overlay {
                 Circle()
                     .fill(
-                        ProfileV3Theme.sliderKnobFaceGradient.shadow(
+                        ProfileV3Theme.greyToBlackGradient.shadow(
                             .inner(
                                 color: ProfileV3Theme.Palette.sliderKnobShadow,
                                 radius: ProfileV3Theme.Shadow.sliderKnobRadius,

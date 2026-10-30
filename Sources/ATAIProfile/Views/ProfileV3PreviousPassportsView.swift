@@ -46,13 +46,7 @@ struct ProfileV3PreviousPassportsView: View {
                         showsBackPage: showsBackPages
                     )
                     if index == 0, screen.passports.count > 1 {
-                        ProfileV3HorizontalRule()
-                            .stroke(
-                                ProfileV3Theme.Palette.passportListDivider,
-                                style: StrokeStyle(lineWidth: ProfileV3Theme.Stroke.hairline, dash: Passport.listDividerDash)
-                            )
-                            .frame(height: ProfileV3Theme.Stroke.hairline)
-                            .accessibilityHidden(true)
+                        ProfileV3DashedRule(color: ProfileV3Theme.Palette.dashedRule)
                     }
                 }
             }

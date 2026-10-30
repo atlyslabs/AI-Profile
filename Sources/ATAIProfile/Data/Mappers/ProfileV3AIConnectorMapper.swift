@@ -75,13 +75,7 @@ enum ProfileV3AIConnectorMapper: ProfileV3DTOReading {
     }
 
     static func syncedAt(_ raw: String?) -> Date? {
-        guard let raw = text(raw) else { return nil }
-        let precise = ISO8601DateFormatter()
-        precise.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let date = precise.date(from: raw) { return date }
-        let plain = ISO8601DateFormatter()
-        plain.formatOptions = [.withInternetDateTime]
-        return plain.date(from: raw)
+        text(raw).flatMap(ProfileV3ISODate.parse)
     }
 
     static func statusLabel(_ template: String?, syncedAt: Date?, timeZone: TimeZone = .autoupdatingCurrent) -> String? {

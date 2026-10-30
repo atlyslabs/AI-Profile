@@ -127,9 +127,7 @@ struct ProfileV3ContactInfoView: View {
     }
 
     private func fieldError(_ text: String) -> some View {
-        Text(text)
-            .typoGraphy(.B2InterMedium12)
-            .foregroundStyle(ProfileV3Theme.Palette.error)
+        ProfileV3ErrorText(text: text)
     }
 }
 

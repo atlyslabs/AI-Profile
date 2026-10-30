@@ -115,7 +115,7 @@ enum ProfileV3ConnectorGlyph: String {
 }
 
 enum ProfileV3InviteArt: String {
-    case codeFoil = "profile_v3_invite_code_foil"
+    case codeCard = "profile_v3_invite_code_card"
 
     var image: Image { Image(rawValue, bundle: .module) }
 }
@@ -132,7 +132,6 @@ enum ProfileV3PersonaArt: String {
 
 enum ProfileV3GloveBoxArt: String {
     case attention = "profile_v3_glovebox_attention"
-    case bolt = "profile_v3_glovebox_bolt"
     case closeSmall = "profile_v3_glovebox_close_small"
     case glow = "profile_v3_glovebox_glow"
     case aylMark = "profile_v3_glovebox_ayl"

@@ -51,7 +51,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
             throw ProfileV3RepositoryError.agentNotFound
         }
         let endpoint = ProfileV3API.agent(type: agent, profileID: profileID)
-        let dto: ProfileV3AgentScreenDTO = try await request(endpoint, action: "agent")
+        let dto: ProfileV3AgentScreenDTO = try await client.request(endpoint, action: "agent")
         let country = await accountCountry(for: profileID)
         let name = await travellerName(for: profileID)
         let mapped = ProfileV3AgentMapper.flow(from: dto, accountCountry: country, holderName: name)
@@ -71,20 +71,18 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
             residuals: residuals,
             profileIDs: profileIDs
         )
-        let data = try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: "save_agent_preferences") {
-            try await client.requestData(.submit(body: body))
-        }
+        let data = try await client.requestData(.submit(body: body), action: "save_agent_preferences")
         await store.invalidate()
         return (try? JSONDecoder().decode(ProfileV3AgentSaveResponseDTO.self, from: data))?.doneLabel
     }
 
     func loadSettings() async throws -> ProfileV3SettingsMenu {
-        let dto: ProfileV3SettingsMenuDTO = try await request(ProfileV3API.settings, action: "settings")
+        let dto: ProfileV3SettingsMenuDTO = try await client.request(ProfileV3API.settings, action: "settings")
         return ProfileV3SettingsMapper.menu(dto)
     }
 
     func loadEditField(_ field: ProfileV3ProfileField) async throws -> ProfileV3EditField {
-        let dto: ProfileV3EditFieldScreenDTO = try await request(
+        let dto: ProfileV3EditFieldScreenDTO = try await client.request(
             ProfileV3API.editField(field.rawValue, profileID: nil),
             action: "edit_field"
         )
@@ -95,7 +93,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadTravellerRelationship(profileID: String) async throws -> ProfileV3EditField {
-        let dto: ProfileV3EditFieldScreenDTO = try await request(
+        let dto: ProfileV3EditFieldScreenDTO = try await client.request(
             ProfileV3API.editField(ProfileV3AddTravellerField.relationshipKey, profileID: profileID),
             action: "edit_field"
         )
@@ -106,7 +104,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadConnectors() async throws -> ProfileV3ConnectorsScreen {
-        let dto: ProfileV3ConnectorsScreenDTO = try await request(
+        let dto: ProfileV3ConnectorsScreenDTO = try await client.request(
             ProfileV3API.connectors,
             action: "connectors"
         )
@@ -123,7 +121,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadAIConnector(_ connector: String) async throws -> ProfileV3AIConnector {
-        let dto: ProfileV3AIConnectorScreenDTO = try await request(
+        let dto: ProfileV3AIConnectorScreenDTO = try await client.request(
             ProfileV3API.aiConnector(connector: connector),
             action: "ai_connector"
         )
@@ -131,7 +129,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadAIConnectorConnect(_ connector: String) async throws -> ProfileV3AIConnectorConnect {
-        let dto: ProfileV3AIConnectorConnectScreenDTO = try await request(
+        let dto: ProfileV3AIConnectorConnectScreenDTO = try await client.request(
             ProfileV3API.aiConnectorConnect(connector: connector),
             action: "ai_connector_connect"
         )
@@ -144,12 +142,30 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadAppAccess() async throws -> ProfileV3AppAccess {
+        let instagram = try await loadInstagramAccount()
+        var content = ProfileV3AppAccess(autoConnected: [], apps: [.instagram])
         #if DEBUG
-        try await Task.sleep(for: ProfileV3AppAccessStore.latency)
-        return ProfileV3AppAccessStore.shared.snapshot()
-        #else
-        throw ProfileV3Error.notImplemented(action: "app_access")
+        if ProfileV3FeatureFlags.isAppAccessOtherAppsEnabled {
+            content = ProfileV3AppAccessStore.shared.snapshot()
+        }
         #endif
+        return content.applying(instagram)
+    }
+
+    func loadInstagramAccount() async throws -> ProfileV3InstagramAccount {
+        guard let userID = session.currentUserID?.nonEmpty else { throw ProfileV3Error.unauthorized }
+        let dto: ProfileV3InstagramAccountDTO = try await client.request(
+            .instagramAccount(userID: userID),
+            action: "instagram_account"
+        )
+        return ProfileV3InstagramMapper.account(dto)
+    }
+
+    func linkInstagram(username: String) async throws -> String {
+        guard let userID = session.currentUserID?.nonEmpty else { throw ProfileV3Error.unauthorized }
+        let body = try JSONEncoder().encode(ProfileV3InstagramLinkRequest(username: username, userID: userID))
+        let dto: ProfileV3InstagramLinkDTO = try await client.request(.linkInstagram(body: body), action: "link_instagram")
+        return ProfileV3InstagramMapper.linkedUsername(dto, requested: username)
     }
 
     func saveAppCredentials(_ credentials: ProfileV3AppCredentials, appID: String) async throws {
@@ -220,7 +236,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadTerms(locale: String?) async throws -> ProfileV3Terms? {
-        let dto: ProfileV3TermsScreenDTO = try await request(
+        let dto: ProfileV3TermsScreenDTO = try await client.request(
             ProfileV3API.terms(locale: locale),
             action: "terms"
         )
@@ -228,7 +244,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadEditTravellers() async throws -> ProfileV3EditTravellersScreen {
-        let dto: ProfileV3EditTravellersScreenDTO = try await request(
+        let dto: ProfileV3EditTravellersScreenDTO = try await client.request(
             ProfileV3API.editTravellers,
             action: "edit_travellers"
         )
@@ -236,7 +252,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadDeleteTravellerConfirm(profileID: String) async throws -> ProfileV3DeleteTravellerConfirm {
-        let dto: ProfileV3DeleteTravellerConfirmScreenDTO = try await request(
+        let dto: ProfileV3DeleteTravellerConfirmScreenDTO = try await client.request(
             ProfileV3API.deleteTravellerConfirm(profileID: profileID),
             action: "delete_traveller_confirm"
         )
@@ -244,7 +260,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadAddTraveller() async throws -> ProfileV3AddTravellerScreen {
-        let dto: ProfileV3AddTravellerScreenDTO = try await request(
+        let dto: ProfileV3AddTravellerScreenDTO = try await client.request(
             ProfileV3API.addTraveller,
             action: "add_traveller"
         )
@@ -271,9 +287,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
             passportNumber: passportNumber
         )
         let body = try JSONEncoder().encode(edit)
-        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: "edit_traveler") {
-            try await client.perform(.editProfile(body: body))
-        }
+        try await client.perform(.editProfile(body: body), action: "edit_traveler")
         await store.invalidate()
     }
 
@@ -287,7 +301,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
             citizenship: submission.citizenship?.code
         )
         let body = try JSONEncoder().encode(request)
-        let response: ProfileV3AddTravellerResponseDTO = try await self.request(
+        let response: ProfileV3AddTravellerResponseDTO = try await client.request(
             ProfileV3API.submit(body: body),
             action: "add_traveler"
         )
@@ -296,12 +310,12 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadCoupons() async throws -> ProfileV3CouponsSheet {
-        let dto: ProfileV3CouponsSheetDTO = try await request(ProfileV3API.coupons, action: "coupons")
+        let dto: ProfileV3CouponsSheetDTO = try await client.request(ProfileV3API.coupons, action: "coupons")
         return ProfileV3CouponsMapper.sheet(dto)
     }
 
     func loadCoupon(id: String) async throws -> ProfileV3CouponDetail? {
-        let dto: ProfileV3CouponDetailDTO = try await request(
+        let dto: ProfileV3CouponDetailDTO = try await client.request(
             ProfileV3API.coupon(id: id),
             action: "coupon_detail"
         )
@@ -309,7 +323,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadConnectorControlPanel() async throws -> ProfileV3ConnectorControlPanel {
-        let dto: ProfileV3ConnectorControlPanelScreenDTO = try await request(
+        let dto: ProfileV3ConnectorControlPanelScreenDTO = try await client.request(
             ProfileV3API.connectorControlPanel,
             action: "connector_control_panel"
         )
@@ -317,7 +331,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadDisconnectConfirm(_ connector: ProfileV3ConnectorKey) async throws -> ProfileV3DisconnectConfirm {
-        let dto: ProfileV3DisconnectConfirmScreenDTO = try await request(
+        let dto: ProfileV3DisconnectConfirmScreenDTO = try await client.request(
             ProfileV3API.disconnectConfirm(connector: connector),
             action: "disconnect_confirm"
         )
@@ -325,7 +339,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadPreviousPassports(profileID: String?) async throws -> ProfileV3PreviousPassports {
-        let dto: ProfileV3PreviousPassportsScreenDTO = try await request(
+        let dto: ProfileV3PreviousPassportsScreenDTO = try await client.request(
             ProfileV3API.passportPrevious(profileID: profileID),
             action: "passport_previous"
         )
@@ -334,7 +348,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadPassportScan(profileID: String?) async throws -> ProfileV3PassportScan {
-        let dto: ProfileV3PassportScanScreenDTO = try await request(
+        let dto: ProfileV3PassportScanScreenDTO = try await client.request(
             ProfileV3API.passportUpdate(profileID: profileID),
             action: "passport_update"
         )
@@ -345,7 +359,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         -> ProfileV3PassportScanResult {
         let body = ProfileV3PassportScanEncoder.body(side: side, data: data, profileID: profileID)
         let country = await accountCountry(for: profileID)
-        let dto: ProfileV3PassportScanResponseDTO = try await request(
+        let dto: ProfileV3PassportScanResponseDTO = try await client.request(
             ProfileV3API.passportScan(body: body.data, contentType: body.contentType),
             action: "passport_scan"
         )
@@ -358,7 +372,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadRidePicker(agentType: String, profileID: String?) async throws -> ProfileV3RidePicker {
-        let dto: ProfileV3RidePickerScreenDTO = try await request(
+        let dto: ProfileV3RidePickerScreenDTO = try await client.request(
             ProfileV3API.ridePicker(agentType: agentType, profileID: profileID),
             action: "ride_picker"
         )
@@ -366,12 +380,12 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadRideRegions() async throws -> ProfileV3RideRegions {
-        let dto: ProfileV3RideRegionsScreenDTO = try await request(ProfileV3API.rideRegions, action: "ride_regions")
+        let dto: ProfileV3RideRegionsScreenDTO = try await client.request(ProfileV3API.rideRegions, action: "ride_regions")
         return ProfileV3AgentMapper.rideRegions(dto)
     }
 
     func loadTravelPersona(profileID: String?) async throws -> ProfileV3TravelPersona {
-        let dto: ProfileV3PersonaScreenDTO = try await request(
+        let dto: ProfileV3PersonaScreenDTO = try await client.request(
             ProfileV3API.travelPersona(profileID: profileID),
             action: "travel_persona"
         )
@@ -379,7 +393,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadPersonaTrait(_ trait: String, profileID: String?, page: Int) async throws -> ProfileV3PersonaTrait {
-        let dto: ProfileV3PersonaTraitScreenDTO = try await request(
+        let dto: ProfileV3PersonaTraitScreenDTO = try await client.request(
             ProfileV3API.personaTrait(trait: trait, profileID: profileID, page: page),
             action: "persona_trait"
         )
@@ -392,7 +406,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadPassportReason() async throws -> ProfileV3PassportReasonScreen {
-        let dto: ProfileV3PassportReasonScreenDTO = try await request(
+        let dto: ProfileV3PassportReasonScreenDTO = try await client.request(
             ProfileV3API.passportReason,
             action: "passport_reason"
         )
@@ -400,7 +414,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadPassportHowUsed() async throws -> ProfileV3PassportHowUsed {
-        let dto: ProfileV3PassportHowUsedScreenDTO = try await request(
+        let dto: ProfileV3PassportHowUsedScreenDTO = try await client.request(
             ProfileV3API.passportHowUsed,
             action: "passport_how_used"
         )
@@ -420,7 +434,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
             fieldKey: source.fieldKey,
             profileID: profileID
         )
-        let dto: ProfileV3PreferenceSourcesDTO = try await request(endpoint, action: "preference_sources")
+        let dto: ProfileV3PreferenceSourcesDTO = try await client.request(endpoint, action: "preference_sources")
         guard let sources = ProfileV3AgentMapper.preferenceSources(dto) else {
             throw ProfileV3RepositoryError.unavailable
         }
@@ -429,18 +443,18 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
 
     func loadBenefits(profileID: String?) async throws -> ProfileV3BenefitsSheet {
         let endpoint = ProfileV3API.benefits(profileID: profileID)
-        let dto: ProfileV3BenefitsSheetDTO = try await request(endpoint, action: "benefits")
+        let dto: ProfileV3BenefitsSheetDTO = try await client.request(endpoint, action: "benefits")
         return ProfileV3BenefitsMapper.sheet(dto)
     }
 
     func loadBenefit(id: String) async throws -> ProfileV3Benefit? {
-        let dto: ProfileV3BenefitDetailDTO = try await request(ProfileV3API.benefit(id: id), action: "benefit")
+        let dto: ProfileV3BenefitDetailDTO = try await client.request(ProfileV3API.benefit(id: id), action: "benefit")
         return ProfileV3BenefitsMapper.detail(dto)
     }
 
     func loadProgrammeCatalogue(query: String?, kind: String?, market: String?) async throws -> ProfileV3ProgrammePicker {
         let endpoint = ProfileV3API.loyaltyCatalogue(query: query, kind: kind, market: market)
-        let dto: ProfileV3LoyaltyPickScreenDTO = try await request(endpoint, action: "loyalty_catalogue")
+        let dto: ProfileV3LoyaltyPickScreenDTO = try await client.request(endpoint, action: "loyalty_catalogue")
         return ProfileV3LoyaltyMapper.picker(dto)
     }
 
@@ -454,7 +468,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
             programName: programName,
             kind: kind
         )
-        let dto: ProfileV3LoyaltyEnterScreenDTO = try await request(endpoint, action: "loyalty_enter_details")
+        let dto: ProfileV3LoyaltyEnterScreenDTO = try await client.request(endpoint, action: "loyalty_enter_details")
         return ProfileV3LoyaltyMapper.entryForm(dto, programID: programID, programName: programName, kind: kind)
     }
 
@@ -481,12 +495,12 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadDeleteAccountReason() async throws -> ProfileV3DeleteAccountReason {
-        let dto: ProfileV3DeleteAccountReasonDTO = try await request(ProfileV3API.deleteAccount, action: "delete_account")
+        let dto: ProfileV3DeleteAccountReasonDTO = try await client.request(ProfileV3API.deleteAccount, action: "delete_account")
         return ProfileV3SettingsMapper.deleteAccountReason(dto)
     }
 
     func loadDeleteAccountConfirm() async throws -> ProfileV3DeleteAccountConfirm {
-        let dto: ProfileV3DeleteAccountConfirmDTO = try await request(
+        let dto: ProfileV3DeleteAccountConfirmDTO = try await client.request(
             ProfileV3API.deleteAccountConfirm,
             action: "delete_confirm"
         )
@@ -494,7 +508,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadPermissions() async throws -> ProfileV3Permissions {
-        let dto: ProfileV3PermissionsDTO = try await request(ProfileV3API.permissions, action: "permissions")
+        let dto: ProfileV3PermissionsDTO = try await client.request(ProfileV3API.permissions, action: "permissions")
         guard let permissions = ProfileV3PermissionsMapper.permissions(dto) else {
             throw ProfileV3RepositoryError.unavailable
         }
@@ -503,18 +517,16 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
 
     func savePermission(_ value: String, for key: String) async throws {
         let body = try JSONEncoder().encode(ProfileV3UpdatePermissionRequest(value: value))
-        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: "update_permission") {
-            try await client.perform(.updatePermission(key: key, body: body))
-        }
+        try await client.perform(.updatePermission(key: key, body: body), action: "update_permission")
     }
 
     func loadPastTrips(profileID: String) async throws -> ProfileV3PastTripsScreen {
-        let dto: ProfileV3PastTripsScreenDTO = try await request(.pastTrips(profileID: profileID), action: "past_trips")
+        let dto: ProfileV3PastTripsScreenDTO = try await client.request(.pastTrips(profileID: profileID), action: "past_trips")
         return ProfileV3PastTripsMapper.screen(dto)
     }
 
     func loadAddTrip(profileID: String) async throws -> ProfileV3AddTripScreen {
-        let dto: ProfileV3AddTripScreenDTO = try await request(.addTrip(profileID: profileID), action: "add_trip")
+        let dto: ProfileV3AddTripScreenDTO = try await client.request(.addTrip(profileID: profileID), action: "add_trip")
         return ProfileV3PastTripsMapper.addScreen(dto)
     }
 
@@ -534,7 +546,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
 
     func requestAccountDeletion() async throws {
         let body = try JSONEncoder().encode(ProfileV3SlackAlertRequest.accountDeletion)
-        let response: ProfileV3SlackAlertResponseDTO = try await request(
+        let response: ProfileV3SlackAlertResponseDTO = try await client.request(
             ProfileV3API.slackAlert(body: body),
             action: "account_deletion"
         )
@@ -543,13 +555,13 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
 
     func loadProgrammeInsight(programID: String, profileID: String?) async throws -> ProfileV3ProgrammeInsight {
         let endpoint = ProfileV3API.loyaltyInsight(programID: programID, profileID: profileID)
-        let dto: ProfileV3ProgrammeInsightScreenDTO = try await request(endpoint, action: "program_insight")
+        let dto: ProfileV3ProgrammeInsightScreenDTO = try await client.request(endpoint, action: "program_insight")
         return ProfileV3LoyaltyMapper.insight(dto)
     }
 
     func loadProgrammeSources(programID: String, profileID: String?) async throws -> ProfileV3PreferenceSources {
         let endpoint = ProfileV3API.loyaltySources(programID: programID, profileID: profileID)
-        let dto: ProfileV3PreferenceSourcesDTO = try await request(endpoint, action: "loyalty_sources")
+        let dto: ProfileV3PreferenceSourcesDTO = try await client.request(endpoint, action: "loyalty_sources")
         guard let sources = ProfileV3AgentMapper.preferenceSources(dto) else {
             throw ProfileV3RepositoryError.unavailable
         }
@@ -566,7 +578,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
 
     func loadProgrammes(passID: String) async throws -> ProfileV3ProgrammeOverview {
         let endpoint = ProfileV3API.loyaltyPage(profileID: passID)
-        let dto: ProfileV3ProgrammesPageScreenDTO = try await request(endpoint, action: "programs_page")
+        let dto: ProfileV3ProgrammesPageScreenDTO = try await client.request(endpoint, action: "programs_page")
         return ProfileV3LoyaltyMapper.overview(dto, profileID: passID)
     }
 
@@ -625,7 +637,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         let body = try ProfileV3CaptureEncoder.coTraveller(image, data: data, profileID: profileID)
         let endpoint = ProfileV3API.coTraveller(body: body.data, contentType: body.contentType)
         do {
-            let dto: ProfileV3CoTravellerUploadDTO = try await request(endpoint, action: "co_traveler")
+            let dto: ProfileV3CoTravellerUploadDTO = try await client.request(endpoint, action: "co_traveler")
             await store.invalidate()
             try throwIfFailed(dto.error)
         } catch {
@@ -634,7 +646,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     private func capture(_ endpoint: ProfileV3API, action: String) async throws -> ProfileV3CaptureStep? {
-        let dto: ProfileV3CaptureEnvelopeDTO = try await request(endpoint, action: action)
+        let dto: ProfileV3CaptureEnvelopeDTO = try await client.request(endpoint, action: action)
         await store.invalidate()
         try throwIfFailed(dto.error)
         return ProfileV3CaptureMapper.step(dto.nextStep)
@@ -659,16 +671,8 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         try await submit(try JSONEncoder().encode(request), action: action)
     }
 
-    private func request<T: Decodable>(_ endpoint: ProfileV3API, action: String) async throws -> T {
-        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: action) {
-            try await client.request(endpoint)
-        }
-    }
-
     private func submit(_ body: Data, action: String) async throws {
-        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: action) {
-            try await client.perform(.submit(body: body))
-        }
+        try await client.perform(.submit(body: body), action: action)
         await store.invalidate()
     }
 }

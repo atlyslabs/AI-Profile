@@ -134,6 +134,14 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
+    func loadInstagramAccount() async throws -> ProfileV3InstagramAccount {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func linkInstagram(username _: String) async throws -> String {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
     func loadVaultCredentials() async throws -> [ProfileV3VaultCredential] {
         throw ProfileV3RepositoryError.unavailable
     }

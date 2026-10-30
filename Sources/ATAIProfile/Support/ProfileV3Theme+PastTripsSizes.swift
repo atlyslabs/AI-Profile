@@ -47,13 +47,12 @@ extension ProfileV3Theme.Sizes {
 
     enum TripSheet {
         static let inset = ProfileV3Theme.Space.s30
-        static let bottom: CGFloat = 28
+        static let bottom = ProfileV3Theme.Space.s28
         static let radius: CGFloat = 36
-        static let confirmRadius: CGFloat = 44
         static let grabberWidth = ProfileV3Theme.Space.s24
         static let grabberHeight: CGFloat = 2
         static let grabberTop: CGFloat = 9
-        static let titleTop: CGFloat = 40
+        static let titleTop = ProfileV3Theme.Space.s40
         static let titleLine: CGFloat = 14
         static let closeButton = ProfileV3Theme.Control.regular
         static let closeTop = titleTop + titleLine / 2 - closeButton / 2
@@ -72,7 +71,7 @@ extension ProfileV3Theme.Sizes {
     }
 
     enum PastTripsPill {
-        static let leading: CGFloat = 18
+        static let leading = ProfileV3Theme.Space.s18
         static let trailing: CGFloat = 13.4
         static let gap: CGFloat = 14.9
         static let icon: CGFloat = 22
@@ -95,8 +94,6 @@ extension ProfileV3Theme.Palette {
     static let pastTripsBackground = Color(hex: "100F0F")
     static let tripScrim = Color(hex: "051528")
     static let tripSheetGrabber = Color(hex: "A9A9A9")
-    static let tripActionIcon = Color(hex: "C2C2C2")
-    static let tripPhotoPlaceholder = Color(hex: "1E1E1E")
 }
 
 extension ProfileV3Theme.Opacity {
@@ -117,8 +114,7 @@ extension ProfileV3Theme.Motion {
     static var pastTripsPageTransition: AnyTransition {
         .opacity.animation(.easeInOut(duration: pastTripsPageSeconds))
     }
-    static let pastTripsEntrance: Animation = .timingCurve(0.16, 1, 0.3, 1, duration: 0.6)
-    static let pastTripsFocus: Animation = .easeInOut(duration: 0.4)
+    static let pastTripsEntrance: Animation = .timingCurve(easeOutExpo, duration: 0.6)
     static let pastTripsStaggerSeconds: Double = 0.25
     static let pastTripsEntranceWindowSeconds: Double = 2
     static let pastTripsSheenDelaySeconds: Double = 0.7
@@ -130,7 +126,6 @@ extension ProfileV3Theme.Motion {
     static let pastTripsGlowIn: Animation = .easeOut(duration: pastTripsGlowInSeconds)
     static let pastTripsGlowOut: Animation = .easeOut(duration: pastTripsGlowOutSeconds)
     static let pastTripsDelete: Animation = .easeInOut(duration: 0.5)
-    static let pastTripsReflow: Animation = .easeInOut(duration: 0.6).delay(0.2)
     static let tripSheet: Animation = .spring(response: 0.35, dampingFraction: 0.9)
     static let pastTripsAutoAddMilliseconds = 350
     static let pulseCycleSeconds: Double = 3

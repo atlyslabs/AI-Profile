@@ -102,15 +102,11 @@ struct ProfileV3BenefitHeroOverlay: View {
                 onClose: { presenter.dismiss() },
                 onRedeem: onRedeem.map { redeem in { redeem(shown) } }
             )
-            .alert(
+            .profileV3ErrorAlert(
                 redeemError ?? ProfileV3Strings.redeemFailed,
-                isPresented: Binding(
-                    get: { redeemError != nil },
-                    set: { if !$0 { onClearRedeemError?() } }
-                )
-            ) {
-                Button(ProfileV3Strings.close, role: .cancel) { onClearRedeemError?() }
-            }
+                isPresented: redeemError != nil,
+                onDismiss: { onClearRedeemError?() }
+            )
         }
     }
 }

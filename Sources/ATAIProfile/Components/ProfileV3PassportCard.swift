@@ -83,12 +83,12 @@ struct ProfileV3PassportCard: View {
             VStack(alignment: .leading, spacing: 0) {
                 fields(for: passport)
             }
-            .opacity(passport.status == .expired ? ProfileV3Theme.Motion.passportExpiredOpacity : 1)
+            .opacity(passport.status == .expired ? ProfileV3Theme.Opacity.passportExpired : 1)
             .padding(.horizontal, Sizes.contentInset)
             .padding(.top, Sizes.fieldsTop)
         case .back(let passport):
             backRows(passport.back.rows(labels: labels))
-                .opacity(passport.status == .expired ? ProfileV3Theme.Motion.passportExpiredOpacity : 1)
+                .opacity(passport.status == .expired ? ProfileV3Theme.Opacity.passportExpired : 1)
                 .padding(.leading, Sizes.backLeading)
                 .padding(.trailing, Sizes.backTrailing)
                 .padding(.top, Sizes.backTop)
@@ -116,7 +116,7 @@ struct ProfileV3PassportCard: View {
             endPoint: .bottom
         )
         .frame(height: Sizes.glowHeight)
-        .opacity(ProfileV3Theme.Motion.passportGlowOpacity)
+        .opacity(ProfileV3Theme.Opacity.passportGlow)
         .padding(.top, Sizes.glowTop)
         .frame(maxWidth: .infinity)
         .accessibilityHidden(true)
@@ -141,15 +141,12 @@ struct ProfileV3PassportCard: View {
                         .typoGraphy(.H7InterMedium16)
                 }
                 Text(countryName)
-                    .font(
-                        .system(size: ProfileV3Theme.Typography.passportCountrySize, weight: .bold, design: .monospaced)
-                    )
-                    .tracking(ProfileV3Theme.Typography.passportCountryTracking)
+                    .profileV3MonoLabel()
             }
             .lineLimit(1)
             .minimumScaleFactor(ProfileV3Theme.Typography.passportCountryMinScale)
             .foregroundStyle(Color(at: .pureBlack))
-            .opacity(ProfileV3Theme.Motion.passportStripOpacity)
+            .opacity(ProfileV3Theme.Opacity.passportStrip)
             .frame(height: Sizes.stripHeight)
             .padding(.horizontal, Sizes.contentInset)
             .frame(maxWidth: .infinity)
@@ -165,7 +162,7 @@ struct ProfileV3PassportCard: View {
         let origin = Sizes.guillocheOrigin
         return ProfileV3RemoteImage(url: ProfileV3PlaceholderArt.passportGuilloche.url, placeholder: .clear)
             .frame(width: size, height: size)
-            .opacity(ProfileV3Theme.Motion.passportGuillocheOpacity)
+            .opacity(ProfileV3Theme.Opacity.passportGuilloche)
             .offset(x: origin.x, y: origin.y)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
@@ -223,7 +220,7 @@ struct ProfileV3PassportCard: View {
                         .tracking(ProfileV3Theme.Typography.passportBackLabelTracking)
                         .textCase(.uppercase)
                         .foregroundStyle(Color(at: .pureBlack))
-                        .opacity(ProfileV3Theme.Motion.passportBackLabelOpacity)
+                        .opacity(ProfileV3Theme.Opacity.passportBackLabel)
                         .lineLimit(1)
                         .frame(height: Sizes.backLabelHeight)
                     ForEach(Array(row.lines.enumerated()), id: \.offset) { _, line in
@@ -275,7 +272,7 @@ struct ProfileV3PassportCard: View {
                 Capsule().fill(
                     status == .active
                         ? ProfileV3Theme.Palette.passportBadgeActive
-                        : ProfileV3Theme.Palette.passportBadgeExpired
+                        : ProfileV3Theme.Palette.warmGrey
                 )
             )
     }
@@ -344,7 +341,7 @@ struct ProfileV3PassportPagesRow<Front: View, Back: View>: View {
     private func page(_ label: String, @ViewBuilder card: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: Sizes.pageLabelSpacing) {
             ProfileV3TagLabel(text: label)
-                .opacity(ProfileV3Theme.Motion.passportPageLabelOpacity)
+                .opacity(ProfileV3Theme.Opacity.passportPageLabel)
                 .accessibilityAddTraits(.isHeader)
             card()
         }

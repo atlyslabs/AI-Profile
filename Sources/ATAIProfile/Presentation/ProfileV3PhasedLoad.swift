@@ -4,6 +4,7 @@ enum ProfileV3SavePhase: Equatable {
     case idle
     case saving
     case saved
+    case failed
 }
 
 enum ProfileV3LoadPhase: Equatable {

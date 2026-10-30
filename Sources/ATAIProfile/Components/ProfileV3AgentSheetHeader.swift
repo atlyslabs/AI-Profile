@@ -136,14 +136,11 @@ struct ProfileV3AgentStickyHeader: View {
     }
 
     private func backdrop(_ progress: CGFloat) -> some View {
-        VStack(spacing: 0) {
-            Color(at: .pureWhite)
-                .frame(height: ProfileV3Theme.Sizes.Agent.stickyBarHeight)
-                .allowsHitTesting(progress > 0)
-            ProfileV3Theme.whiteToClearFade
-                .frame(height: ProfileV3Theme.Sizes.Agent.stickyFadeHeight)
-                .allowsHitTesting(false)
-        }
+        ProfileV3FadeBand(
+            solid: ProfileV3Theme.Sizes.Agent.stickyBarHeight,
+            fade: ProfileV3Theme.Sizes.Agent.stickyFadeHeight,
+            blocksTouches: progress > 0
+        )
         .opacity(progress)
         .accessibilityHidden(true)
     }

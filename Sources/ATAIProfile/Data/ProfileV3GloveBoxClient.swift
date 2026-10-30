@@ -131,27 +131,27 @@ final class ProfileV3GloveBoxClient: @unchecked Sendable {
     }
 
     func card() async throws -> ProfileV3GloveBoxAccount {
-        ProfileV3GloveBoxMapper.account(try await send(.gloveBoxMe, action: "glove_box_me"))
+        ProfileV3GloveBoxMapper.account(try await client.request(.gloveBoxMe, action: "glove_box_me"))
     }
 
     func create() async throws -> ProfileV3GloveBoxAccount {
-        ProfileV3GloveBoxMapper.account(try await send(.gloveBoxCreate, action: "glove_box_create"))
+        ProfileV3GloveBoxMapper.account(try await client.request(.gloveBoxCreate, action: "glove_box_create"))
     }
 
     func setPaused(_ paused: Bool) async throws -> ProfileV3GloveBoxAccount {
         let body = try JSONEncoder().encode(PauseBody(paused: paused))
-        return ProfileV3GloveBoxMapper.account(try await send(.gloveBoxForwarding(body: body), action: "glove_box_forwarding"))
+        return ProfileV3GloveBoxMapper.account(try await client.request(.gloveBoxForwarding(body: body), action: "glove_box_forwarding"))
     }
 
     func addForwardingAddress(_ email: String) async throws -> ProfileV3GloveBoxAccount {
         let body = try JSONEncoder().encode(EmailBody(email: email))
         return ProfileV3GloveBoxMapper.account(
-            try await send(.gloveBoxForwardingAddress(body: body), action: "glove_box_forwarding_address")
+            try await client.request(.gloveBoxForwardingAddress(body: body), action: "glove_box_forwarding_address")
         )
     }
 
     func messages(cursor: String?) async throws -> ProfileV3GloveBoxInboxPage {
-        let dto: ProfileV3GloveBoxMessagesDTO = try await send(
+        let dto: ProfileV3GloveBoxMessagesDTO = try await client.request(
             .gloveBoxMessages(limit: ProfileV3GloveBoxMapper.pageSize, cursor: cursor),
             action: "glove_box_messages"
         )
@@ -159,19 +159,11 @@ final class ProfileV3GloveBoxClient: @unchecked Sendable {
     }
 
     func message(id: String) async throws -> ProfileV3GloveBoxMessageDTO {
-        try await send(.gloveBoxMessage(id: id), action: "glove_box_message")
+        try await client.request(.gloveBoxMessage(id: id), action: "glove_box_message")
     }
 
     func attachment(messageID: String, index: Int) async throws -> Data {
-        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: "glove_box_attachment") {
-            try await client.requestData(.gloveBoxAttachment(messageID: messageID, index: index))
-        }
-    }
-
-    private func send<T: Decodable>(_ endpoint: ProfileV3API, action: String) async throws -> T {
-        try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: action) {
-            try await client.request(endpoint)
-        }
+        try await client.requestData(.gloveBoxAttachment(messageID: messageID, index: index), action: "glove_box_attachment")
     }
 
     private struct PauseBody: Encodable {

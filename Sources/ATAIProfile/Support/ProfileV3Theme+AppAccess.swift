@@ -3,22 +3,14 @@ import SwiftUI
 
 extension ProfileV3Theme.Sizes {
     enum AppAccess {
-        static let contentTop: CGFloat = 33
-        static let autoCard = CGSize(width: 208, height: 116)
-        static let autoCardSpacing = ProfileV3Theme.Space.s20
-        static let autoCardLeading: CGFloat = 24
-        static let autoCardNameTop: CGFloat = 22
-        static let autoCardNameWidth: CGFloat = 107
-        static let autoCardLogoTop: CGFloat = 23
-        static let autoCardLogoTrailing: CGFloat = 25
-        static let autoCardStatusTop: CGFloat = 82
-        static let dividerGap: CGFloat = 36
-        static let logo: CGFloat = 20
+        static let listTop: CGFloat = 44
         static let listBottom: CGFloat = 120
         static let hintTop: CGFloat = 53
-        static let hintTrailing: CGFloat = 28
+        static let hintTrailing = ProfileV3Theme.Space.s28
         static let hint = CGSize(width: 145, height: 62.4884)
         static let hintPointer: CGFloat = 6.4884
+        static let hintTipRun: CGFloat = 3.0713
+        static let hintPointerOffset: CGFloat = 5.5
         static let hintTextTop: CGFloat = 19
         static let hintTextWidth: CGFloat = 116
         static let hintShadowRadius: CGFloat = 6
@@ -30,7 +22,7 @@ extension ProfileV3Theme.Sizes {
         static let shieldTop: CGFloat = 49
         static let shieldStroke: CGFloat = 2
         static let glyph: CGFloat = 32
-        static let glyphTop: CGFloat = 32
+        static let glyphTop = ProfileV3Theme.Space.s32
         static let titleTop: CGFloat = 23
         static let titleWidth: CGFloat = 219
         static let fieldsTop: CGFloat = 58
@@ -41,10 +33,9 @@ extension ProfileV3Theme.Sizes {
         static let passwordNoteTop: CGFloat = 127
         static let noteWidth: CGFloat = 296
         static let barTop: CGFloat = 33
-        static let cornerRadius: CGFloat = 40
         static let editFieldsTop: CGFloat = 134
         static let deleteDividerTop: CGFloat = 164
-        static let deleteRowTop: CGFloat = 20
+        static let deleteRowTop = ProfileV3Theme.Space.s20
         static let deleteIcon: CGFloat = 15
         static let editBottom: CGFloat = 49
     }
@@ -52,10 +43,10 @@ extension ProfileV3Theme.Sizes {
     enum CredentialStore {
         static let cardTop: CGFloat = 5
         static let cardHeight: CGFloat = 122
-        static let cardRadius: CGFloat = 30
+        static let cardRadius = ProfileV3Theme.Radius.xxl
         static let cardTextLeading: CGFloat = 26
         static let cardTitleTop: CGFloat = 26
-        static let cardBlurbTop: CGFloat = 18
+        static let cardBlurbTop = ProfileV3Theme.Space.s18
         static let cardBlurbWidth: CGFloat = 108.7222
         static let cardInsetShadow: CGFloat = 2.368
         static let cardArt = CGSize(width: 144, height: 119)
@@ -67,15 +58,15 @@ extension ProfileV3Theme.Sizes {
         static let subtitleTop: CGFloat = 17
         static let rowsTop: CGFloat = 67
         static let rowHeight: CGFloat = 86
-        static let rowSpacing: CGFloat = 18
-        static let rowRadius: CGFloat = 30
+        static let rowSpacing = ProfileV3Theme.Space.s18
+        static let rowRadius = ProfileV3Theme.Radius.xxl
         static let rowLeading: CGFloat = 29
         static let rowIcon: CGFloat = 20
         static let rowTextGap: CGFloat = 17
         static let rowTrailing: CGFloat = 26
         static let listBottom: CGFloat = 54
-        static let pickerSearchTop: CGFloat = 24
-        static let pickerRowsTop: CGFloat = 32
+        static let pickerSearchTop = ProfileV3Theme.Space.s24
+        static let pickerRowsTop = ProfileV3Theme.Space.s32
     }
 }
 
@@ -83,7 +74,7 @@ extension ProfileV3Theme.Sizes.Confirmation {
     static let subjectTop = 60 - ProfileV3Theme.Sizes.sheetGrabberTop - ProfileV3Theme.Sizes.sheetGrabberHeight
     static let subjectIconSpacing: CGFloat = 26
     static let subjectWidth: CGFloat = 317
-    static let subjectButtonsTop: CGFloat = 40
+    static let subjectButtonsTop = ProfileV3Theme.Space.s40
 }
 
 extension ProfileV3Theme.Sizes.ConnectorDeck {
@@ -91,27 +82,23 @@ extension ProfileV3Theme.Sizes.ConnectorDeck {
     static let appTitleTop: CGFloat = 230
     static let appBodyTop: CGFloat = 269
     static let editTop: CGFloat = 397
-    static let editLeading: CGFloat = 12
-    static let editTrailing: CGFloat = 18
+    static let editLeading = ProfileV3Theme.Space.s12
+    static let editTrailing = ProfileV3Theme.Space.s18
     static let editVertical: CGFloat = 5
     static let editGlyph: CGFloat = 16
 }
 
 extension ProfileV3Theme.Palette {
-    static let autoConnectedStart = Color(hex: "003715")
-    static let autoConnectedEnd = Color(hex: "019D3C")
     static let appHintStart = Color(hex: "555555")
     static let appHintEnd = Color(hex: "020202")
     static let appHintShadow = Color.black.opacity(0.12)
     static let deckEditPill = Color.black.opacity(0.4)
     static let credentialCardStart = Color(hex: "3A3937")
     static let credentialCardEnd = Color(hex: "8D9295")
-    static let credentialShieldStart = Color(hex: "3A3937")
     static let credentialShieldEnd = Color(hex: "C8D0D5")
 }
 
 extension ProfileV3Theme.Opacity {
-    static let autoConnectedStatus: Double = 0.6
     static let appShieldStroke: Double = 0.1
     static let appCredentialsNote: Double = 0.4
     static let credentialCardBlurb: Double = 0.7
@@ -120,17 +107,7 @@ extension ProfileV3Theme.Opacity {
     static let credentialDeleteSubject: Double = 0.5
 }
 
-extension ProfileV3Theme.Motion {
-    static let appCredentialsSuccessSeconds: Double = 1.2
-}
-
 extension ProfileV3Theme {
-    static let autoConnectedGradient = LinearGradient(
-        colors: [Palette.autoConnectedStart, Palette.autoConnectedEnd],
-        startPoint: .leading,
-        endPoint: .trailing
-    )
-
     static let appHintGradient = LinearGradient(
         colors: [Palette.appHintStart, Palette.appHintEnd],
         startPoint: UnitPoint(x: 0.4276, y: 1.2387),
@@ -147,7 +124,7 @@ extension ProfileV3Theme {
     )
 
     static let credentialShieldGradient = LinearGradient(
-        colors: [Palette.credentialShieldStart, Palette.credentialShieldEnd],
+        colors: [ProfileV3Theme.Palette.credentialCardStart, Palette.credentialShieldEnd],
         startPoint: UnitPoint(x: 1, y: -0.0297),
         endPoint: UnitPoint(x: -0.2761, y: 0.2861)
     )

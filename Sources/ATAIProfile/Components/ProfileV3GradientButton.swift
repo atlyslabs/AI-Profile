@@ -58,11 +58,7 @@ struct ProfileV3GradientButton: View {
                 .overlay(
                     Capsule().stroke(ProfileV3Theme.Palette.redeemBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
                 )
-                .shadow(
-                    color: ProfileV3Theme.Palette.shadow,
-                    radius: ProfileV3Theme.Shadow.redeemRadius,
-                    y: ProfileV3Theme.Shadow.redeemY
-                )
+                .profileV3SoftShadow()
         }
     }
 }

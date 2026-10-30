@@ -30,9 +30,6 @@ struct ProfileV3InviteCodeCard: View {
         }
         .frame(width: width, height: Sizes.cardHeight)
         .background(foil)
-        .clipShape(shape)
-        .overlay(shape.strokeBorder(Color(at: .pureWhite), lineWidth: ProfileV3Theme.Stroke.hairline))
-        .shadow(color: ProfileV3Theme.Palette.shadow, radius: Sizes.cardShadowRadius, y: Sizes.cardShadowY)
         .contentShape(shape)
     }
 
@@ -67,24 +64,22 @@ struct ProfileV3InviteCodeCard: View {
         }
     }
 
+    /// The supplied art is the whole card - rounded corners and drop shadow baked in - so the
+    /// card draws no shape, border or shadow of its own. Its body measures 1320x788 inside a
+    /// 1416x884 canvas, which is the margin the frame below restores at the design's size.
     private var foil: some View {
-        ZStack(alignment: .topLeading) {
-            Color(at: .pureWhite)
-            ProfileV3InviteArt.codeFoil.image
-                .resizable()
-                .scaledToFill()
-                .frame(width: Sizes.foilCore.width, height: Sizes.foilCore.height)
-                .clipped()
-                .rotationEffect(.degrees(90))
-                .frame(width: Sizes.foilBox.width, height: Sizes.foilBox.height)
-                .overlay { ProfileV3Theme.Palette.inviteFoilLift }
-                .clipShape(RoundedRectangle(cornerRadius: Sizes.foilRadius, style: .continuous))
-                .offset(x: Sizes.foilOrigin.x, y: Sizes.foilOrigin.y)
-            ProfileV3Theme.Palette.inviteFoilWash
-        }
-        .frame(width: width, height: Sizes.cardHeight, alignment: .topLeading)
-        .clipped()
-        .accessibilityHidden(true)
+        ProfileV3InviteArt.codeCard.image
+            .resizable()
+            .frame(
+                width: width * Sizes.cardArtWidthRatio,
+                height: Sizes.cardHeight * Sizes.cardArtHeightRatio
+            )
+            .offset(
+                x: -width * Sizes.cardArtInsetRatio.width,
+                y: -Sizes.cardHeight * Sizes.cardArtInsetRatio.height
+            )
+            .frame(width: width, height: Sizes.cardHeight, alignment: .topLeading)
+            .accessibilityHidden(true)
     }
 }
 

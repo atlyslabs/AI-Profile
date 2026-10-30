@@ -20,7 +20,7 @@ struct SettingsSearchField: View {
         }
         .padding(.horizontal, ProfileV3Theme.Space.s16)
         .frame(height: ProfileV3Theme.Control.tapTarget)
-        .overlay(Capsule().stroke(Color(hex: "D6D9DC"), lineWidth: ProfileV3Theme.Stroke.hairline))
+        .overlay(Capsule().stroke(Color(at: .border), lineWidth: ProfileV3Theme.Stroke.hairline))
     }
 }
 

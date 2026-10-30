@@ -177,7 +177,7 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
             let foundCount = scannedCount ?? picker.items.count
             if foundCount > 0 {
                 setStage(.found(count: foundCount))
-                try await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.foundHoldMilliseconds))
+                try await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds))
                 guard !Task.isCancelled else { return }
             }
             setStage(.pick)

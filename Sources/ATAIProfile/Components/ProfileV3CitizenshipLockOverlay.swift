@@ -28,8 +28,7 @@ struct ProfileV3CitizenshipLockOverlay: View {
                     .padding(.top, cover.gap)
             }
             .offset(y: cover.overhang)
-            ProfileV3Theme.clearToWhiteFade
-                .frame(height: ProfileV3Theme.Sizes.CitizenshipLock.bottomFadeHeight)
+            ProfileV3FadeBand(fade: ProfileV3Theme.Sizes.CitizenshipLock.bottomFadeHeight, edge: .bottom)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         .keyframeAnimator(
@@ -45,26 +44,26 @@ struct ProfileV3CitizenshipLockOverlay: View {
                 LinearKeyframe(
                     1,
                     duration: ProfileV3Theme.Motion.citizenshipLockFadeInSeconds,
-                    timingCurve: ProfileV3Theme.Motion.citizenshipLockEnter
+                    timingCurve: ProfileV3Theme.Motion.easeOutExpo
                 )
                 LinearKeyframe(1, duration: ProfileV3Theme.Motion.citizenshipLockVisibleSeconds)
                 LinearKeyframe(
                     0,
                     duration: ProfileV3Theme.Motion.citizenshipLockFadeOutSeconds,
-                    timingCurve: ProfileV3Theme.Motion.citizenshipLockExit
+                    timingCurve: ProfileV3Theme.Motion.easeInExpo
                 )
             }
             KeyframeTrack(\.offset) {
                 LinearKeyframe(
                     0,
                     duration: ProfileV3Theme.Motion.citizenshipLockRiseSeconds,
-                    timingCurve: ProfileV3Theme.Motion.citizenshipLockEnter
+                    timingCurve: ProfileV3Theme.Motion.easeOutExpo
                 )
                 LinearKeyframe(0, duration: ProfileV3Theme.Motion.citizenshipLockHoldSeconds)
                 LinearKeyframe(
                     rise,
                     duration: ProfileV3Theme.Motion.citizenshipLockRiseSeconds,
-                    timingCurve: ProfileV3Theme.Motion.citizenshipLockExit
+                    timingCurve: ProfileV3Theme.Motion.easeInExpo
                 )
             }
         }

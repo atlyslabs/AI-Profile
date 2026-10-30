@@ -1,5 +1,5 @@
 {
-  "originHash" : "ab9594f28cf62a75c1cb4ff7958c308466afdd5097786648d346cf4eef3ba810",
+  "originHash" : "c434f26391166284bd55ef542c9c684740e1046723032fc5b03fe30e6df0bf39",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -89,6 +89,15 @@
       "state" : {
         "revision" : "0fca9b1582cb88adf64bc9e03802e93d327278bd",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "atmaterialicons",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/atlyslabs/ATMaterialIcons.git",
+      "state" : {
+        "revision" : "ef039dd560548118963874ac2c8803b039ffb6fb",
+        "version" : "1.0.1"
       }
     },
     {

@@ -27,20 +27,12 @@ struct ProfileV3PastTripsView: View {
         .onDisappear { sheets.dismiss() }
         .sensoryFeedback(.success, trigger: viewModel.completions)
         .sensoryFeedback(.error, trigger: viewModel.notice) { _, notice in notice != nil }
-        .alert(ProfileV3Strings.loadFailedTitle, isPresented: noticeBinding) {
-            if viewModel.canRetryNotice {
-                Button(ProfileV3Strings.retry) { viewModel.retryAfterNotice() }
-            }
-            Button(ProfileV3Strings.close, role: .cancel) { viewModel.clearNotice() }
-        } message: {
-            Text(viewModel.notice ?? "")
-        }
-    }
-
-    private var noticeBinding: Binding<Bool> {
-        Binding(
-            get: { viewModel.notice != nil },
-            set: { if !$0 { viewModel.clearNotice() } }
+        .profileV3ErrorAlert(
+            ProfileV3Strings.loadFailedTitle,
+            message: viewModel.notice ?? "",
+            isPresented: viewModel.notice != nil,
+            retry: viewModel.canRetryNotice ? viewModel.retryAfterNotice : nil,
+            onDismiss: viewModel.clearNotice
         )
     }
 
@@ -91,7 +83,7 @@ struct ProfileV3PastTripsView: View {
             }
             .onChange(of: viewModel.focus) { _, focus in
                 guard let focus else { return }
-                let animation = reduceMotion ? nil : Motion.pastTripsFocus
+                let animation = reduceMotion ? nil : ProfileV3Theme.Motion.scrollReveal
                 DispatchQueue.main.async {
                     withAnimation(animation) { proxy.scrollTo(focus.tripID, anchor: .center) }
                 }
@@ -139,18 +131,12 @@ struct ProfileV3PastTripsView: View {
     }
 
     private var header: some View {
-        HStack {
-            ProfileV3CircleIconButton.back(size: ProfileV3Theme.Sizes.navButton, action: viewModel.close)
-            Spacer()
-        }
-        .overlay {
+        ProfileV3TopBar(onBack: viewModel.close, title: {
             Text(viewModel.title)
                 .typoGraphy(.H4DentonMedium24)
                 .foregroundStyle(Color(at: .pureWhite))
                 .accessibilityAddTraits(.isHeader)
-        }
-        .padding(.horizontal, ProfileV3Theme.Sizes.topBarInset)
-        .padding(.top, ProfileV3Theme.Sizes.topBarTop)
+        })
         .frame(maxWidth: .infinity)
         .background(alignment: .top) {
             LinearGradient(
@@ -235,17 +221,11 @@ struct ProfileV3PastTripDeleteSheet: View {
     @ObservedObject var viewModel: ProfileV3PastTripsViewModel
 
     var body: some View {
-        let copy = viewModel.deleteConfirm
-        ProfileV3ConfirmationView(
-            icon: ATIcon.SwiftUIImage.delete,
-            style: .destructive,
-            title: copy.title,
-            primaryTitle: copy.confirmLabel,
-            secondaryTitle: copy.cancelLabel,
-            isPrimaryLoading: viewModel.isDeleting,
+        ProfileV3ConfirmationView.deletePastTrip(
+            viewModel.deleteConfirm,
+            isDeleting: viewModel.isDeleting,
             onBack: viewModel.cancelDelete,
-            onPrimary: viewModel.confirmDelete,
-            onSecondary: viewModel.cancelDelete
+            onConfirm: viewModel.confirmDelete
         )
     }
 }

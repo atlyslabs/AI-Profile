@@ -121,9 +121,7 @@ final class ProfileV3BoardStore {
         client: ProfileV3NetworkClient,
         cache: ProfileV3DiskCache
     ) async throws -> ProfileV3Board {
-        let data = try await ProfileV3APIErrorMapper.withUnauthorizedRetry(action: "board") {
-            try await client.requestData(.board)
-        }
+        let data = try await client.requestData(.board, action: "board")
         let board = try decode(data)
         cache.save(data, forKey: cacheKey, maxAge: diskMaxAge)
         return board

@@ -10,18 +10,17 @@ extension ProfileV3Theme.Sizes {
         static let retryTop: CGFloat = 36.35
         static let retryIcon: CGFloat = 18
         static let retrySpacing: CGFloat = 3
-        static let retryHitInset: CGFloat = 12
+        static let retryHitInset = ProfileV3Theme.Space.s12
         static let cardTop: CGFloat = 44
         static let cardHeight: CGFloat = 421
         static let cardContentDrop: CGFloat = 11
-        static let cardRadius: CGFloat = 40
+        static let cardRadius = ProfileV3Theme.Radius.xxxl
         static let rowsTop: CGFloat = 47
     }
 }
 
 extension ProfileV3Theme.Palette {
     static let errorStateSubtitle = Color(hex: "787878")
-    static let errorStateCardBorder = Color(hex: "E6E7E8")
 }
 
 extension ProfileV3Theme {

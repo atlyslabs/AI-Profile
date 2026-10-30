@@ -71,6 +71,8 @@ protocol ProfileV3AppAccessRepository: Sendable {
     func saveAppCredentials(_ credentials: ProfileV3AppCredentials, appID: String) async throws
     func addAppPassword(_ credentials: ProfileV3AppCredentials) async throws
     func disconnectApp(_ appID: String) async throws
+    func loadInstagramAccount() async throws -> ProfileV3InstagramAccount
+    func linkInstagram(username: String) async throws -> String
     func loadVaultCredentials() async throws -> [ProfileV3VaultCredential]
     func loadVaultSites() async throws -> [ProfileV3VaultSite]
     func saveVault(_ draft: ProfileV3VaultDraft) async throws -> ProfileV3VaultWriteResult

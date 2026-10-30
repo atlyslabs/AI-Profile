@@ -19,29 +19,11 @@ struct ProfileV3DeleteReasonView: View {
             ProfileV3FadingScroll {
                 VStack(spacing: 0) {
                     ZStack(alignment: .top) {
-                        VStack(spacing: ProfileV3Theme.Sizes.Confirmation.textSpacing) {
-                            if !screen.title.isEmpty {
-                                Text(screen.title)
-                                    .typoGraphy(.H6InterMedium18)
-                                    .foregroundStyle(Color(at: .pureBlack))
-                                    .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.titleWidth)
-                            }
-                            if !screen.subtitle.isEmpty {
-                                Text(screen.subtitle)
-                                    .typoGraphy(.B2InterMedium12)
-                                    .foregroundStyle(Color(at: .neutralGrey400))
-                                    .frame(maxWidth: ProfileV3Theme.Sizes.Confirmation.bodyWidth)
-                            }
-                        }
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
+                        ProfileV3ConfirmationCopy(title: screen.title, message: screen.subtitle.nonEmpty)
+                            .frame(maxWidth: .infinity)
                         .padding(.top, ProfileV3Theme.Sizes.deleteReasonTitleTop)
-                        HStack {
-                            ProfileV3CircleIconButton.back(action: onBack)
-                            Spacer()
-                        }
-                        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                        .padding(.top, ProfileV3Theme.Sizes.sheetHeaderTop)
+                        ProfileV3SheetControls(onBack: onBack)
+                            .padding(.top, ProfileV3Theme.Sizes.sheetHeaderTop)
                     }
                     reasonField
                         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
@@ -81,13 +63,13 @@ struct ProfileV3DeleteReasonView: View {
                 ProfileV3Theme.Palette.reasonBorder,
                 style: StrokeStyle(
                     lineWidth: ProfileV3Theme.Stroke.hairline,
-                    dash: ProfileV3Theme.Sizes.deleteReasonDash
+                    dash: ProfileV3Theme.Stroke.wideDash
                 )
             )
             if reason.isEmpty, !screen.placeholder.isEmpty {
                 Text(screen.placeholder)
                     .typoGraphy(.B1InterMedium14)
-                    .foregroundStyle(ProfileV3Theme.Palette.reasonPlaceholder)
+                    .foregroundStyle(ProfileV3Theme.Palette.greyPlaceholder)
                     .padding(ProfileV3Theme.Sizes.deleteReasonFieldPadding)
                     .allowsHitTesting(false)
             }

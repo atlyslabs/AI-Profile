@@ -19,8 +19,25 @@ struct ProfileV3AddPastTripsPill: View {
                     .profileV3Icon(Sizes.icon)
             }
             .foregroundStyle(Color(at: .pureWhite))
-            .padding(.leading, Sizes.leading)
-            .padding(.trailing, Sizes.trailing)
+            .profileV3PassPill(leading: Sizes.leading, trailing: Sizes.trailing)
+            .background {
+                if !reduceMotion {
+                    ProfileV3PulseRings()
+                }
+            }
+        }
+        .buttonStyle(.profileV3Pressable(.selection))
+        .accessibilityLabel(title)
+    }
+}
+
+extension View {
+    func profileV3PassPill(
+        leading: CGFloat = ProfileV3Theme.Space.s12,
+        trailing: CGFloat = ProfileV3Theme.Space.s12
+    ) -> some View {
+        padding(.leading, leading)
+            .padding(.trailing, trailing)
             .frame(height: ProfileV3Theme.Control.tapTarget)
             .background(
                 Capsule()
@@ -31,14 +48,6 @@ struct ProfileV3AddPastTripsPill: View {
                         y: ProfileV3Theme.Shadow.chipY
                     )
             )
-            .background {
-                if !reduceMotion {
-                    ProfileV3PulseRings()
-                }
-            }
-        }
-        .buttonStyle(.profileV3Pressable(.selection))
-        .accessibilityLabel(title)
     }
 }
 

@@ -76,14 +76,40 @@ struct ProfileV3HeaderFade: View {
     var color = Color(at: .pureWhite)
 
     var body: some View {
+        ProfileV3FadeBand(solid: gap, color: color)
+            .opacity(pin.progress)
+    }
+}
+
+struct ProfileV3FadeBand: View {
+    var solid: CGFloat = 0
+    var fade: CGFloat = ProfileV3Theme.Sizes.SettingsPage.headerFade
+    var edge: VerticalEdge = .top
+    var color = Color(at: .pureWhite)
+    var blocksTouches = false
+
+    var body: some View {
         VStack(spacing: 0) {
-            color
-                .frame(height: gap)
-            LinearGradient(colors: [color, color.opacity(0)], startPoint: .top, endPoint: .bottom)
-                .frame(height: ProfileV3Theme.Sizes.SettingsPage.headerFade)
+            if edge == .top {
+                solidBand
+            }
+            LinearGradient(
+                colors: edge == .top ? [color, color.opacity(0)] : [color.opacity(0), color],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: fade)
+            .allowsHitTesting(false)
+            if edge == .bottom {
+                solidBand
+            }
         }
-        .opacity(pin.progress)
-        .allowsHitTesting(false)
+    }
+
+    private var solidBand: some View {
+        color
+            .frame(height: solid)
+            .allowsHitTesting(blocksTouches)
     }
 }
 

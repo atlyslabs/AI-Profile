@@ -63,20 +63,13 @@ struct ProfileV3DisconnectEmailView: View {
             ProfileV3RemoteImage(url: ProfileV3ConnectorArt.gmail.url, contentMode: .fit, placeholder: .clear)
                 .frame(width: ProfileV3Theme.Sizes.Disconnect.logo, height: ProfileV3Theme.Sizes.Disconnect.logo)
                 .accessibilityHidden(true)
-            if let title = confirm?.title.nonEmpty {
-                Text(title)
-                    .typoGraphy(.H6InterMedium18)
-                    .foregroundStyle(ProfileV3Theme.Palette.confirmTitle)
-                    .frame(width: ProfileV3Theme.Sizes.Confirmation.titleWidth)
-                    .padding(.top, ProfileV3Theme.Sizes.Disconnect.titleTop)
-            }
-            if let warning = confirm?.warning.nonEmpty {
-                Text(warning)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(ProfileV3Theme.Palette.confirmBody)
-                    .frame(width: ProfileV3Theme.Sizes.Confirmation.bodyWidth)
-                    .padding(.top, ProfileV3Theme.Sizes.Disconnect.bodyTop)
-            }
+            ProfileV3ConfirmationCopy(
+                title: confirm?.title ?? "",
+                message: confirm?.warning.nonEmpty,
+                titleColor: ProfileV3Theme.Palette.confirmTitle,
+                messageColor: ProfileV3Theme.Palette.confirmBody
+            )
+            .padding(.top, ProfileV3Theme.Sizes.Disconnect.titleTop)
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)

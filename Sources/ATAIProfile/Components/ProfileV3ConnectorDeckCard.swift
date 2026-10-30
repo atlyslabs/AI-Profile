@@ -170,7 +170,7 @@ struct ProfileV3ConnectorDeckCard: View {
                     .offset(y: badgeOffset)
                     .animation(ProfileV3Theme.Motion.connectorDeckAbsorb, value: hasDropped)
                     .padding(.top, Deck.badgeTop)
-                    .gesture(dragGesture)
+                    .gesture(dragGesture, isEnabled: entry.canDisconnect)
                     .allowsHitTesting(!hasDropped)
             }
             .frame(width: Deck.cardWidth, height: Deck.cardHeight, alignment: .top)
@@ -215,7 +215,7 @@ struct ProfileV3ConnectorDeckCard: View {
         .animation(ProfileV3Theme.Motion.selection, value: isDragging)
         .accessibilityElement(children: .combine)
         .accessibilityAction(named: entry.isApp ? ProfileV3Strings.disconnectApp : ProfileV3Strings.disconnectEmail) {
-            guard !hasDropped else { return }
+            guard entry.canDisconnect, !hasDropped else { return }
             drop()
         }
         .accessibilityActions {
@@ -278,7 +278,7 @@ struct ProfileV3ConnectorDeckCard: View {
     private var well: some View {
         ZStack(alignment: .top) {
             wellBody
-            rim(mouth: ProfileV3Theme.connectorDeckPodiumRim).offset(y: nearRimTop)
+            rim(mouth: ProfileV3Theme.greyToBlackGradient).offset(y: nearRimTop)
             ProfileV3ConnectorGlowShape()
                 .fill(ProfileV3Theme.connectorDeckGlow)
                 .frame(width: Deck.glowWidth, height: beamRestHeight)
@@ -288,7 +288,7 @@ struct ProfileV3ConnectorDeckCard: View {
                 .animation(ProfileV3Theme.Motion.connectorDeckDim, value: isDimmed)
                 .offset(y: wellMouth)
             floatBadge
-            rim(mouth: ProfileV3Theme.connectorDeckWellMouth).offset(y: farRimTop)
+            rim(mouth: ProfileV3Theme.blackToGreyGradient).offset(y: farRimTop)
             secondPodium
                 .offset(y: secondRimTop)
                 .animation(ProfileV3Theme.Motion.connectorDeckSubmerge, value: stage)
@@ -361,7 +361,7 @@ struct ProfileV3ConnectorDeckCard: View {
     private func rim(mouth: LinearGradient) -> some View {
         ZStack(alignment: .top) {
             Ellipse()
-                .fill(ProfileV3Theme.Palette.connectorRim)
+                .fill(ProfileV3Theme.Palette.lightGrey)
                 .frame(width: Deck.podiumWidth, height: Deck.podiumRim)
             Ellipse()
                 .fill(mouth)

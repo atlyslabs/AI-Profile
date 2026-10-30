@@ -64,14 +64,8 @@ struct ProfileV3AirportPickupView: View {
     }
 
     private var headerBackdrop: some View {
-        VStack(spacing: 0) {
-            Color(at: .pureWhite)
-                .frame(height: ProfileV3AgentSheetHeader.height(showsOrb: true))
-            ProfileV3Theme.whiteToClearFade
-                .frame(height: ProfileV3Theme.Space.s24)
-        }
-        .opacity(min(max(scrollOffset / ProfileV3Theme.Space.s24, 0), 1))
-        .allowsHitTesting(false)
+        ProfileV3FadeBand(solid: ProfileV3AgentSheetHeader.height(showsOrb: true), fade: ProfileV3Theme.Space.s24)
+            .opacity(min(max(scrollOffset / ProfileV3Theme.Sizes.headerRevealDistance, 0), 1))
     }
 
     private var intro: some View {
@@ -188,15 +182,9 @@ struct ProfileV3AirportPickupView: View {
     }
 
     private var topFade: some View {
-        VStack(spacing: 0) {
-            Color(at: .pureWhite)
-                .frame(height: Staged.fadeSolidHeight)
-            ProfileV3Theme.whiteToClearFade
-                .frame(height: Staged.fadeGradientHeight)
-        }
-        .opacity(isConfirming ? 1 : 0)
-        .animation(ProfileV3Theme.Motion.launchFade, value: isConfirming)
-        .allowsHitTesting(false)
+        ProfileV3FadeBand(solid: Staged.fadeSolidHeight, fade: Staged.fadeGradientHeight)
+            .opacity(isConfirming ? 1 : 0)
+            .animation(ProfileV3Theme.Motion.launchFade, value: isConfirming)
     }
 
     private var footer: some View {
@@ -204,10 +192,7 @@ struct ProfileV3AirportPickupView: View {
             if let car = cars.selectedCar {
                 let brand = viewModel.brand(for: car)
                 if let brand {
-                    Text(brand)
-                        .typoGraphy(.T1InterBold11)
-                        .textCase(.uppercase)
-                        .foregroundStyle(Color(at: .neutralGrey400))
+                    ProfileV3TagLabel(text: brand, style: .solid(Color(at: .neutralGrey400)))
                         .padding(.top, Pickup.nameTop)
                         .contentTransition(.opacity)
                 }

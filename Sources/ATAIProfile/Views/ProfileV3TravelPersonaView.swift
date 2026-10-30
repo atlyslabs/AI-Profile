@@ -34,10 +34,6 @@ struct ProfileV3TravelPersonaView: View {
         }
     }
 
-    private var headerOffset: Binding<CGFloat> {
-        Binding(get: { headerPin.offset }, set: { headerPin.offset = $0 })
-    }
-
     private var content: some View {
         ZStack(alignment: .top) {
             if viewModel.isDecoding {
@@ -50,9 +46,9 @@ struct ProfileV3TravelPersonaView: View {
             } else if let persona = viewModel.content {
                 ScrollView(showsIndicators: false) {
                     ProfileV3TravelPersonaContent(persona: persona, viewModel: viewModel)
-                        .profileV3ScrollOffsetAnchor(headerOffset)
+                        .profileV3ScrollOffsetAnchor(headerPin.offsetBinding)
                 }
-                .profileV3ScrollOffset(headerOffset)
+                .profileV3ScrollOffset(headerPin.offsetBinding)
                 .scrollDisabled(viewModel.isDragging)
                 .transition(.opacity)
             } else {
@@ -64,15 +60,7 @@ struct ProfileV3TravelPersonaView: View {
         }
         .animation(ProfileV3Theme.Motion.contentSwitch, value: viewModel.isDecoding)
         .sensoryFeedback(.success, trigger: viewModel.decodedReveals)
-        .overlay(alignment: .bottom) {
-            if let notice = viewModel.notice {
-                ProfileV3Toast(message: notice.message, isError: notice.isError)
-                    .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                    .padding(.bottom, ProfileV3Theme.Sizes.Persona.toastBottom)
-                    .transition(.opacity.combined(with: .move(edge: .bottom)))
-            }
-        }
-        .animation(ProfileV3Theme.Motion.expand, value: viewModel.notice)
+        .profileV3BottomToast(viewModel.notice?.message, isError: viewModel.notice?.isError ?? false)
         .background(Color(at: .pureWhite))
     }
 }
@@ -125,20 +113,12 @@ private struct ProfileV3TravelPersonaHeader: View {
             ProfileV3AvatarOrb(imageURL: persona?.iconURL ?? ProfileV3PlaceholderArt.agentPersonal.url, size: Agent.orbLarge)
                 .padding(.top, Agent.orbTop)
             if let persona {
-                foundTitle(persona.foundLabel)
-                    .frame(width: Agent.titleWidth)
-                    .padding(.top, ProfileV3Theme.Space.s16)
-                    .transition(.opacity)
-                if !persona.subtitle.isEmpty {
-                    Text(persona.subtitle)
-                        .typoGraphy(.B2InterSemibold12)
-                        .foregroundStyle(Color(at: .neutralGrey400))
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(width: Persona.subtitleWidth)
-                        .padding(.top, Agent.summaryTop)
-                        .transition(.opacity)
-                }
+                ProfileV3FoundHeading(
+                    label: persona.foundLabel,
+                    summary: persona.subtitle,
+                    summaryWidth: Persona.subtitleWidth
+                )
+                .transition(.opacity)
             } else {
                 Color.clear
                     .frame(
@@ -147,19 +127,6 @@ private struct ProfileV3TravelPersonaHeader: View {
                     )
                     .accessibilityHidden(true)
             }
-        }
-    }
-
-    @ViewBuilder
-    private func foundTitle(_ label: String) -> some View {
-        if let space = label.firstIndex(of: " ") {
-            ProfileV3TwoToneTitle(
-                lead: String(label[...space]),
-                emphasis: String(label[label.index(after: space)...]),
-                style: .H5InterMedium20
-            )
-        } else {
-            ProfileV3TwoToneTitle(lead: "", emphasis: label, style: .H5InterMedium20)
         }
     }
 }

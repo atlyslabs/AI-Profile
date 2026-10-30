@@ -28,8 +28,8 @@ extension View {
         fill: some ShapeStyle = Color(at: .pureWhite),
         border: Color = ProfileV3Theme.Palette.saveButtonBorder,
         lineWidth: CGFloat = ProfileV3Theme.Stroke.thin,
-        shadowRadius: CGFloat = ProfileV3Theme.Shadow.redeemRadius,
-        shadowY: CGFloat = ProfileV3Theme.Shadow.redeemY
+        shadowRadius: CGFloat = ProfileV3Theme.Shadow.softRadius,
+        shadowY: CGFloat = ProfileV3Theme.Shadow.softY
     ) -> some View {
         modifier(
             ProfileV3ShapeChrome(
@@ -41,6 +41,19 @@ extension View {
                 shadowY: shadowY
             )
         )
+    }
+
+    func profileV3SoftShadow() -> some View {
+        shadow(color: ProfileV3Theme.Palette.shadow, radius: ProfileV3Theme.Shadow.softRadius, y: ProfileV3Theme.Shadow.softY)
+    }
+
+    func profileV3Outlined(_ shape: some InsettableShape, border: Color) -> some View {
+        overlay(shape.strokeBorder(border, lineWidth: ProfileV3Theme.Stroke.hairline))
+    }
+
+    func profileV3Outlined(_ shape: some InsettableShape, border: Color, fill: some ShapeStyle) -> some View {
+        background(shape.fill(fill))
+            .overlay(shape.strokeBorder(border, lineWidth: ProfileV3Theme.Stroke.hairline))
     }
 
     func profileV3TileChrome(_ shape: some InsettableShape, border: Color) -> some View {
@@ -61,8 +74,8 @@ extension View {
         fill: some ShapeStyle = Color(at: .pureWhite),
         border: Color = ProfileV3Theme.Palette.saveButtonBorder,
         lineWidth: CGFloat = ProfileV3Theme.Stroke.thin,
-        shadowRadius: CGFloat = ProfileV3Theme.Shadow.redeemRadius,
-        shadowY: CGFloat = ProfileV3Theme.Shadow.redeemY
+        shadowRadius: CGFloat = ProfileV3Theme.Shadow.softRadius,
+        shadowY: CGFloat = ProfileV3Theme.Shadow.softY
     ) -> some View {
         profileV3Chrome(
             Capsule(),
@@ -72,6 +85,17 @@ extension View {
             shadowRadius: shadowRadius,
             shadowY: shadowY
         )
+    }
+}
+
+struct ProfileV3FrostedBackdrop: View {
+    var tint = ProfileV3Theme.Palette.frostedBackdrop
+
+    var body: some View {
+        Rectangle()
+            .fill(.ultraThinMaterial)
+            .overlay(tint)
+            .ignoresSafeArea()
     }
 }
 

@@ -25,6 +25,25 @@ struct ProfileV3Spinner: View {
     }
 }
 
+struct ProfileV3PagingFooter<Page: Hashable>: View {
+    let hasFailed: Bool
+    let page: Page
+    let loadMore: () -> Void
+    let retry: () -> Void
+
+    var body: some View {
+        if hasFailed {
+            ProfileV3PillButton(title: ProfileV3Strings.tryAgain, action: retry)
+                .frame(maxWidth: .infinity)
+        } else {
+            ProfileV3Spinner()
+                .frame(maxWidth: .infinity)
+                .id(page)
+                .onAppear(perform: loadMore)
+        }
+    }
+}
+
 #if DEBUG
 #Preview("Spinner") {
     ProfileV3Spinner()

@@ -28,10 +28,7 @@ struct ProfileV3InstagramConnectSheet: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(alignment: .top) { background }
-        .presentationDetents([.height(Layout.sheetHeight)])
-        .presentationCornerRadius(Credentials.cornerRadius)
-        .presentationDragIndicator(.hidden)
-        .interactiveDismissDisabled(model.phase == .saving)
+        .profileV3Sheet(.height(Layout.sheetHeight), isDismissDisabled: model.phase == .saving)
         .sensoryFeedback(.success, trigger: model.phase == .saved)
         .task { model.start() }
         .onDisappear(perform: model.cancel)
@@ -64,20 +61,10 @@ struct ProfileV3InstagramConnectSheet: View {
     }
 
     private var shield: some View {
-        ZStack(alignment: .top) {
-            ProfileV3ShieldShape()
-                .stroke(
-                    Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.appShieldStroke),
-                    lineWidth: Credentials.shieldStroke
-                )
-                .clipShape(ProfileV3ShieldShape())
+        ProfileV3OutlinedShield {
             ProfileV3AppLogo(url: model.app.iconURL, size: Credentials.glyph)
-                .frame(width: Credentials.glyph, height: Credentials.glyph)
-                .padding(.top, Credentials.glyphTop)
         }
-        .frame(width: Credentials.shield.width, height: Credentials.shield.height)
         .padding(.top, ProfileV3Theme.Sizes.Agent.backTop + Credentials.shieldTop)
-        .accessibilityHidden(true)
     }
 
     private var explainer: some View {
@@ -125,14 +112,7 @@ struct ProfileV3InstagramConnectSheet: View {
     private var usernameStep: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
-                shield
-                Text(ProfileV3Strings.appUsernameTitle)
-                    .typoGraphy(.H5InterMedium20)
-                    .foregroundStyle(Color(at: .pureBlack))
-                    .multilineTextAlignment(.center)
-                    .frame(width: Credentials.titleWidth)
-                    .padding(.top, Credentials.titleTop)
-                    .accessibilityAddTraits(.isHeader)
+                ProfileV3ShieldHeading(title: ProfileV3Strings.appUsernameTitle) { shield }
                 VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s8) {
                     ProfileV3CredentialField(
                         label: ProfileV3Strings.appUsernameLabel,
@@ -141,9 +121,7 @@ struct ProfileV3InstagramConnectSheet: View {
                         contentType: .username
                     )
                     if let error = model.errorMessage {
-                        Text(error)
-                            .typoGraphy(.B2InterMedium12)
-                            .foregroundStyle(ProfileV3Theme.Palette.destructive)
+                        ProfileV3ErrorText(text: error)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
@@ -182,7 +160,7 @@ struct ProfileV3InstagramConnectSheet: View {
             shield
             ProfileV3CredentialField(
                 label: ProfileV3Strings.appUsernameLabel,
-                text: .constant(model.trimmedUsername),
+                text: .constant(model.linkedUsername ?? model.normalisedUsername),
                 isEditable: false
             ) {
                 ProfileV3StatusDot(kind: .complete)
@@ -304,25 +282,6 @@ private struct ProfileV3InstagramFollowArt: View {
                     .frame(width: Layout.hiWidth, height: Layout.hiHeight, alignment: .topLeading)
                 }
         }
-    }
-}
-
-struct ProfileV3AylOrb: View {
-    let size: CGFloat
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(ProfileV3Theme.aylOrbGradient)
-            ProfileV3GloveBoxArt.aylMark.image
-                .resizable()
-                .renderingMode(.template)
-                .scaledToFit()
-                .foregroundStyle(ProfileV3Theme.Palette.aylOrbMark)
-                .frame(width: size * ProfileV3Theme.Sizes.InstagramConnect.orbMarkRatio)
-        }
-        .frame(width: size, height: size)
-        .accessibilityHidden(true)
     }
 }
 

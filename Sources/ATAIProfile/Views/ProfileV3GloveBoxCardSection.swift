@@ -41,12 +41,12 @@ struct ProfileV3GloveBoxCardSectionView: View {
                 ProfileV3DashedDivider()
                     .padding(.top, Layout.payDividerTop)
                 if !section.payTitle.isEmpty {
-                    Text(section.payTitle)
-                        .typoGraphy(.T1InterBold11)
-                        .textCase(.uppercase)
-                        .foregroundStyle(Color(at: .pureBlack).opacity(Palette.sectionTitleOpacity))
-                        .accessibilityAddTraits(.isHeader)
-                        .padding(.top, Layout.payTitleTop)
+                    ProfileV3TagLabel(
+                        text: section.payTitle,
+                        style: .solid(Color(at: .pureBlack).opacity(Palette.sectionTitleOpacity))
+                    )
+                    .accessibilityAddTraits(.isHeader)
+                    .padding(.top, Layout.payTitleTop)
                 }
                 if !section.payBody.isEmpty {
                     Text(section.payBody)
@@ -93,9 +93,9 @@ struct ProfileV3GloveBoxCardSectionView: View {
                 }
                 .padding(Layout.statPadding)
                 .frame(maxWidth: .infinity, minHeight: Layout.statHeight, alignment: .topLeading)
-                .overlay(
-                    RoundedRectangle(cornerRadius: Layout.statRadius, style: .continuous)
-                        .strokeBorder(Palette.sectionBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
+                .profileV3Outlined(
+                    RoundedRectangle(cornerRadius: Layout.statRadius, style: .continuous),
+                    border: Palette.sectionBorder
                 )
                 .accessibilityElement(children: .combine)
             }
@@ -167,9 +167,9 @@ struct ProfileV3GloveBoxCardSectionView: View {
             }
         }
         .padding(Layout.optionPadding)
-        .overlay(
-            RoundedRectangle(cornerRadius: Layout.optionRadius, style: .continuous)
-                .strokeBorder(Palette.sectionBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
+        .profileV3Outlined(
+            RoundedRectangle(cornerRadius: Layout.optionRadius, style: .continuous),
+            border: Palette.sectionBorder
         )
     }
 
@@ -194,8 +194,7 @@ struct ProfileV3GloveBoxCardSectionView: View {
             .padding(.leading, Layout.chipLeading)
             .padding(.trailing, Layout.chipTrailing)
             .frame(height: Layout.chipHeight)
-            .background(Capsule().fill(Color(at: .pureWhite)))
-            .overlay(Capsule().strokeBorder(Palette.sectionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+            .profileV3Outlined(Capsule(), border: Palette.sectionBorder, fill: Color(at: .pureWhite))
             .padding(.leading, Layout.chipInset)
             HStack {
                 Spacer(minLength: 0)

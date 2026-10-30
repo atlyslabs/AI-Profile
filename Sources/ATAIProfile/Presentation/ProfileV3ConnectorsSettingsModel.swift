@@ -20,6 +20,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
 
     private let repository: any ProfileV3SettingsRepository
     private let travellerID: String?
+    private let showsAIConnectors: Bool
     private let photoPlaces: ProfileV3PhotoPlacesSync?
     private var loadTask: Task<Void, Never>?
     private var controlPanelTask: Task<Void, Never>?
@@ -32,10 +33,12 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     init(
         repository: any ProfileV3SettingsRepository,
         travellerID: String? = nil,
+        showsAIConnectors: Bool = ProfileV3FeatureFlags.isAIConnectorsEnabled,
         photoPlaces: ProfileV3PhotoPlacesSync? = nil
     ) {
         self.repository = repository
         self.travellerID = travellerID
+        self.showsAIConnectors = showsAIConnectors
         self.photoPlaces = photoPlaces
     }
 
@@ -255,7 +258,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
             .compactMap { ProfileV3ConnectorKey(rawValue: $0.id) }
         disconnectedKeys.formIntersection(reportedConnected)
         self.screen = screen
-        connectors = reconciled(withPhotoPlaces(screen.connectors))
+        connectors = reconciled(withPhotoPlaces(screen.connectors.filter { showsAIConnectors || $0.aiConnector == nil }))
     }
 
     private func withPhotoPlaces(_ connectors: [ProfileV3Connector]) -> [ProfileV3Connector] {

@@ -31,13 +31,7 @@ final class ProfileV3AgentFlowHostingController: UIHostingController<ProfileV3Ag
         self.identityCapture = identityCapture
         super.init(rootView: ProfileV3AgentFlowView(viewModel: viewModel))
         viewModel.router = self
-        modalPresentationStyle = .pageSheet
-        if let sheet = sheetPresentationController {
-            sheet.detents = [.large()]
-            sheet.prefersGrabberVisible = false
-            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
-            sheet.preferredCornerRadius = ProfileV3Theme.Sizes.Agent.sheetCornerRadius
-        }
+        profileV3UsePageSheet()
     }
 
     @MainActor required dynamic init?(coder aDecoder: NSCoder) {

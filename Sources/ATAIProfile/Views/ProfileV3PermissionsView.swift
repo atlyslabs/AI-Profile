@@ -55,14 +55,8 @@ private struct ProfileV3PermissionSectionCard: View {
             }
             ForEach(Array(section.rows.enumerated()), id: \.element.id) { index, row in
                 if index > 0 {
-                    ProfileV3HorizontalRule()
-                        .stroke(
-                            ProfileV3Theme.Palette.settingsCardBorder,
-                            style: StrokeStyle(lineWidth: ProfileV3Theme.Stroke.hairline, dash: Sizes.dividerDash)
-                        )
-                        .frame(height: ProfileV3Theme.Stroke.hairline)
+                    ProfileV3DashedRule(color: ProfileV3Theme.Palette.settingsCardBorder)
                         .padding(.vertical, -ProfileV3Theme.Stroke.hairline / 2)
-                        .accessibilityHidden(true)
                 }
                 ProfileV3PermissionRowView(row: row) { onSelect($0, row.id) }
             }

@@ -24,7 +24,7 @@ extension ProfileV3Theme.Sizes {
         static let indiaCoverRadius: CGFloat = 15
         static let genericCoverWidth: CGFloat = 193
         static let genericCoverHeight: CGFloat = 259
-        static let genericCoverGap: CGFloat = 10
+        static let genericCoverGap = ProfileV3Theme.Space.s10
         static let genericCoverOverhang: CGFloat = 23
     }
 
@@ -55,7 +55,6 @@ extension ProfileV3Theme.Sizes {
         static let titleTop: CGFloat = 21
         static let subtitleTop: CGFloat = 11
         static let subtitleWidth: CGFloat = 190
-        static let dash: [CGFloat] = [2, 2]
         static let shellHeights: [CGFloat] = [Benefit.cardHeight, 144]
         static let shellSpacing = ProfileV3Theme.Space.s20
     }
@@ -72,10 +71,8 @@ extension ProfileV3Theme.Sizes {
         static let titleLineLimit = 2
         static let titleOverhang: CGFloat = 18
         static let titleSpacing = ProfileV3Theme.Space.s10
-        static let imageWidth: CGFloat = 322
-        static let imageHeight: CGFloat = 181
         static let ringTop: CGFloat = 19
-        static let ringTrailing: CGFloat = 22
+        static let ringTrailing = ProfileV3Theme.Space.s22
         static let meterWidth: CGFloat = 255
         static let meterHeight: CGFloat = 8
     }
@@ -156,7 +153,7 @@ extension ProfileV3Theme.Sizes {
         static let shadowOffsetY: CGFloat = 7.5
         static let shadowBlur: CGFloat = 7
         static let renderSpill: CGFloat = 48
-        static let topSpacing: CGFloat = 24
+        static let topSpacing = ProfileV3Theme.Space.s24
         static let contentGap = ProfileV3Theme.Space.s22
         static var slot: CGFloat { Podium.topSpacing + Podium.height }
     }

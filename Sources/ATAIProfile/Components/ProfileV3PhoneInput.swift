@@ -71,9 +71,7 @@ struct ProfileV3PhoneField: View {
                 onDialTap: onDialTap
             )
             if !isValid {
-                Text(ProfileV3Strings.phoneInvalid)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(ProfileV3Theme.Palette.error)
+                ProfileV3ErrorText(text: ProfileV3Strings.phoneInvalid)
             }
         }
     }

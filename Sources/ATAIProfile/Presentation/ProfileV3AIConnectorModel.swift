@@ -65,21 +65,16 @@ final class ProfileV3AIConnectorModel: ObservableObject, Identifiable {
     }
 
     func loadDetail() {
-        detailTask?.cancel()
-        detailPhase = .loading
         let repository = repository
         let connector = id
-        detailTask = Task { [weak self] in
-            do {
-                let screen = try await repository.loadAIConnector(connector)
-                guard let self, !Task.isCancelled else { return }
-                detail = screen
-                detailPhase = .loaded
-            } catch {
-                guard let self, !Task.isCancelled else { return }
-                detailPhase = .failed
-            }
-        }
+        ProfileV3PhasedLoad.start(
+            on: self,
+            task: \.detailTask,
+            phase: \.detailPhase,
+            content: \.detail,
+            fetch: { try await repository.loadAIConnector(connector) },
+            apply: { $0.detail = $1 }
+        )
     }
 
     func getStarted() {
@@ -89,21 +84,16 @@ final class ProfileV3AIConnectorModel: ObservableObject, Identifiable {
     }
 
     func loadConnect() {
-        connectTask?.cancel()
-        connectPhase = .loading
         let repository = repository
         let connector = connectorForConnect
-        connectTask = Task { [weak self] in
-            do {
-                let screen = try await repository.loadAIConnectorConnect(connector)
-                guard let self, !Task.isCancelled else { return }
-                connect = screen
-                connectPhase = .loaded
-            } catch {
-                guard let self, !Task.isCancelled else { return }
-                connectPhase = .failed
-            }
-        }
+        ProfileV3PhasedLoad.start(
+            on: self,
+            task: \.connectTask,
+            phase: \.connectPhase,
+            content: \.connect,
+            fetch: { try await repository.loadAIConnectorConnect(connector) },
+            apply: { $0.connect = $1 }
+        )
     }
 
     func copyPrompt() {

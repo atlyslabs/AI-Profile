@@ -3,8 +3,7 @@ import SwiftUI
 
 struct ProfileV3SaveBarFade: View {
     var body: some View {
-        ProfileV3Theme.clearToWhiteFade
-            .frame(height: ProfileV3Theme.Sizes.Save.barFadeHeight + ProfileV3Theme.Sizes.Save.buttonHeight)
+        ProfileV3FadeBand(fade: ProfileV3Theme.Sizes.Save.barFadeHeight + ProfileV3Theme.Sizes.Save.buttonHeight, edge: .bottom)
             .background(alignment: .bottom) {
                 Color(at: .pureWhite)
                     .ignoresSafeArea(edges: .bottom)

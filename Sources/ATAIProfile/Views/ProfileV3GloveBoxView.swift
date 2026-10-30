@@ -61,7 +61,7 @@ struct ProfileV3GloveBoxView: View {
     private var resolving: some View {
         ZStack(alignment: .top) {
             ProfileV3LoadStateView(phase: .loading, retry: {})
-            ProfileV3GloveBoxHeader(onBack: onBack)
+            ProfileV3BackTagHeader(title: nil, top: ProfileV3Theme.GloveBox.Layout.headerTop, onBack: onBack)
         }
     }
 
@@ -84,28 +84,6 @@ struct ProfileV3GloveBoxView: View {
     }
 }
 
-struct ProfileV3GloveBoxHeader: View {
-    var title: String?
-    var titleOpacity: Double = 1
-    let onBack: () -> Void
-
-    var body: some View {
-        ZStack {
-            if let title {
-                ProfileV3TagLabel(text: title)
-                    .opacity(titleOpacity)
-                    .accessibilityHidden(titleOpacity == 0)
-            }
-            HStack {
-                ProfileV3CircleIconButton.back(action: onBack)
-                Spacer()
-            }
-        }
-        .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-        .padding(.top, ProfileV3Theme.GloveBox.Layout.headerTop)
-    }
-}
-
 struct ProfileV3GloveBoxIntroView: View {
     let title: String
     let intro: ProfileV3GloveBoxIntro
@@ -117,7 +95,7 @@ struct ProfileV3GloveBoxIntroView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ProfileV3GloveBoxHeader(onBack: onBack)
+            ProfileV3BackTagHeader(title: nil, top: ProfileV3Theme.GloveBox.Layout.headerTop, onBack: onBack)
             GeometryReader { proxy in
                 ScrollView(showsIndicators: false) {
                     ProfileV3GloveBoxIntroContent(
@@ -213,7 +191,12 @@ struct ProfileV3GloveBoxHomeView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ProfileV3GloveBoxHeader(title: title, titleOpacity: headerPin.progress, onBack: onBack)
+            ProfileV3BackTagHeader(
+                title: title,
+                titleOpacity: headerPin.progress,
+                top: ProfileV3Theme.GloveBox.Layout.headerTop,
+                onBack: onBack
+            )
             GeometryReader { proxy in
                 ScrollView(showsIndicators: false) {
                     ProfileV3GloveBoxHomeContent(
@@ -317,8 +300,8 @@ struct ProfileV3GloveBoxHomeContent: View {
         .frame(maxWidth: .infinity)
         .background(
             UnevenRoundedRectangle(
-                topLeadingRadius: Layout.sheetRadius,
-                topTrailingRadius: Layout.sheetRadius,
+                topLeadingRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius,
+                topTrailingRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius,
                 style: .continuous
             )
             .fill(Color(at: .pureWhite))
@@ -359,8 +342,7 @@ struct ProfileV3GloveBoxSectionCard<Content: View>: View {
         .padding(.trailing, Layout.sectionTrailing)
         .padding(.bottom, viewAllTitle?.isEmpty == false ? Layout.viewAllBottom : Layout.sectionBottom)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(shape.fill(ProfileV3Theme.GloveBox.sectionFill))
-        .overlay(shape.strokeBorder(Palette.sectionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+        .profileV3Outlined(shape, border: Palette.sectionBorder, fill: ProfileV3Theme.GloveBox.sectionFill)
         .shadow(color: Palette.sectionShadow, radius: Layout.sectionShadowRadius, y: Layout.sectionShadowY)
     }
 
@@ -369,10 +351,7 @@ struct ProfileV3GloveBoxSectionCard<Content: View>: View {
             icon
                 .profileV3Icon(Layout.sectionIcon)
                 .foregroundStyle(Palette.dialIcon)
-            Text(title)
-                .typoGraphy(.T1InterBold11)
-                .textCase(.uppercase)
-                .foregroundStyle(Color(at: .pureBlack).opacity(Palette.sectionTitleOpacity))
+            ProfileV3TagLabel(text: title, style: .solid(Color(at: .pureBlack).opacity(Palette.sectionTitleOpacity)))
             Spacer(minLength: ProfileV3Theme.Space.s8)
             if let badge {
                 ProfileV3GloveBoxBadgeView(badge: badge)
@@ -451,9 +430,7 @@ struct ProfileV3GloveBoxEmailSectionView: View {
                 .padding(.top, Layout.forwardingTop)
             }
             if let forwardingError, !forwardingError.isEmpty {
-                Text(forwardingError)
-                    .typoGraphy(.T1InterBold11)
-                    .foregroundStyle(ProfileV3Theme.Palette.error)
+                ProfileV3ErrorText(text: forwardingError, style: .bar)
                     .padding(.top, ProfileV3Theme.Space.s8)
             }
             if let notice = section.forwardingNotice {
@@ -490,8 +467,7 @@ struct ProfileV3GloveBoxEmailSectionView: View {
         }
         .padding(Layout.forwardingNoticePadding)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(shape.fill(Palette.preview))
-        .overlay(shape.strokeBorder(Palette.sectionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+        .profileV3Outlined(shape, border: Palette.sectionBorder, fill: Palette.preview)
         .accessibilityElement(children: .combine)
     }
 
@@ -500,7 +476,7 @@ struct ProfileV3GloveBoxEmailSectionView: View {
             Text(title)
                 .typoGraphy(.B2InterMedium12)
                 .foregroundStyle(Palette.control)
-                .opacity(isEnabled ? 1 : ProfileV3Theme.Motion.disabledOpacity)
+                .opacity(isEnabled ? 1 : ProfileV3Theme.Opacity.disabled)
         }
         .buttonStyle(.profileV3Pressable(.selection))
         .disabled(!isEnabled)

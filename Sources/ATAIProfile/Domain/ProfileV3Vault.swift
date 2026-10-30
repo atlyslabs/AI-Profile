@@ -169,12 +169,4 @@ enum ProfileV3VaultParsing {
         let id = String(token)
         return id.count >= 32 ? id : nil
     }
-
-    static func date(_ value: String?) -> Date? {
-        guard let value else { return nil }
-        let formatter = ISO8601DateFormatter()
-        if let date = formatter.date(from: value) { return date }
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter.date(from: value)
-    }
 }

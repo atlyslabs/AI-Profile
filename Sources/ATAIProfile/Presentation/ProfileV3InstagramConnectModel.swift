@@ -10,8 +10,6 @@ final class ProfileV3InstagramConnectModel: ObservableObject, Identifiable {
         case redirect
     }
 
-    static let instagramURL = URL(string: "https://www.instagram.com/")!
-
     @Published private(set) var step: Step = .explainer
     @Published var username = "" {
         didSet {
@@ -21,11 +19,13 @@ final class ProfileV3InstagramConnectModel: ObservableObject, Identifiable {
     }
     @Published private(set) var phase: ProfileV3SavePhase = .idle
     @Published private(set) var errorMessage: String?
+    @Published private(set) var linkedUsername: String?
 
     let id = UUID()
     let app: ProfileV3LinkedApp
 
     private let repository: any ProfileV3AppAccessRepository
+    private let explainerSeconds: Double
     private let openURL: @MainActor (URL) -> Void
     private let onFinish: () -> Void
     private var explainerTask: Task<Void, Never>?
@@ -35,27 +35,30 @@ final class ProfileV3InstagramConnectModel: ObservableObject, Identifiable {
     init(
         app: ProfileV3LinkedApp,
         repository: any ProfileV3AppAccessRepository,
+        explainerSeconds: Double = ProfileV3Theme.Motion.instagramExplainerSeconds,
         openURL: @escaping @MainActor (URL) -> Void = { UIApplication.shared.open($0) },
         onFinish: @escaping () -> Void
     ) {
         self.app = app
         self.repository = repository
+        self.explainerSeconds = explainerSeconds
         self.openURL = openURL
         self.onFinish = onFinish
     }
 
-    var trimmedUsername: String {
-        username.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: "@"))
+    var normalisedUsername: String {
+        ProfileV3InstagramUsername.normalised(username)
     }
 
     var canSubmit: Bool {
-        step == .username && phase == .idle && !trimmedUsername.isEmpty
+        step == .username && phase == .idle && !normalisedUsername.isEmpty
     }
 
     func start() {
         guard step == .explainer, explainerTask == nil else { return }
+        let seconds = explainerSeconds
         explainerTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(ProfileV3Theme.Motion.instagramExplainerSeconds))
+            try? await Task.sleep(for: .seconds(seconds))
             guard let self, !Task.isCancelled else { return }
             continueFromExplainer()
         }
@@ -69,17 +72,21 @@ final class ProfileV3InstagramConnectModel: ObservableObject, Identifiable {
 
     func submit() {
         guard canSubmit else { return }
+        let username = normalisedUsername
+        guard ProfileV3InstagramUsername.isValid(username) else {
+            errorMessage = ProfileV3Strings.instagramUsernameInvalid
+            return
+        }
         phase = .saving
         errorMessage = nil
-        let credentials = ProfileV3AppCredentials(username: trimmedUsername)
-        let appID = app.id
         let repository = repository
         submitTask = Task { [weak self] in
             do {
-                try await repository.saveAppCredentials(credentials, appID: appID)
+                let linked = try await repository.linkInstagram(username: username)
                 guard let self, !Task.isCancelled else { return }
+                linkedUsername = linked
                 phase = .saved
-                try await Task.sleep(for: .seconds(ProfileV3Theme.Motion.appCredentialsSuccessSeconds))
+                try await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds))
                 guard !Task.isCancelled else { return }
                 step = .redirect
                 redirect()
@@ -88,7 +95,7 @@ final class ProfileV3InstagramConnectModel: ObservableObject, Identifiable {
             } catch {
                 guard let self, !Task.isCancelled else { return }
                 phase = .idle
-                errorMessage = ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed)
+                errorMessage = ProfileV3InstagramUsername.errorMessage(for: error)
             }
         }
     }
@@ -108,7 +115,7 @@ final class ProfileV3InstagramConnectModel: ObservableObject, Identifiable {
         redirectTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(ProfileV3Theme.Motion.instagramRedirectSeconds))
             guard let self, !Task.isCancelled else { return }
-            openURL(Self.instagramURL)
+            openURL(ProfileV3InstagramUsername.messageURL)
             onFinish()
         }
     }

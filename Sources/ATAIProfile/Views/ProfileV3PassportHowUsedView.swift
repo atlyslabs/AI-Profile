@@ -87,10 +87,7 @@ struct ProfileV3PassportHowUsedView: View {
                 .profileV3Icon(HowUsed.tileGlyph)
                 .foregroundStyle(Color(at: .pureBlack))
                 .frame(width: HowUsed.tile, height: HowUsed.tile)
-                .background(Circle().fill(Color(at: .backgroundLightTheme)))
-                .overlay(
-                    Circle().strokeBorder(Color(at: .borderLightLight200), lineWidth: ProfileV3Theme.Stroke.hairline)
-                )
+                .profileV3Outlined(Circle(), border: Color(at: .borderLightLight200), fill: Color(at: .backgroundLightTheme))
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: HowUsed.textSpacing) {
                 Text(step.title)
@@ -108,12 +105,7 @@ struct ProfileV3PassportHowUsedView: View {
     }
 
     private var separator: some View {
-        ProfileV3HorizontalRule()
-            .stroke(
-                Color(at: .borderLightLight200),
-                style: StrokeStyle(lineWidth: ProfileV3Theme.Stroke.hairline, dash: HowUsed.separatorDash)
-            )
-            .frame(height: ProfileV3Theme.Stroke.hairline)
+        ProfileV3DashedRule(color: Color(at: .borderLightLight200), dash: ProfileV3Theme.Stroke.wideDash)
             .padding(.leading, HowUsed.tile + HowUsed.tileSpacing)
             .padding(.vertical, HowUsed.sectionGap)
     }
@@ -172,17 +164,7 @@ struct ProfileV3PassportHowUsedSheet: View {
             fittedHeight = height
         })
         .profileV3FittedDetent(fittedHeight)
-        .presentationCornerRadius(ProfileV3Theme.Sizes.Agent.sheetCornerRadius)
-        .presentationDragIndicator(.hidden)
-    }
-}
-
-struct ProfileV3HorizontalRule: Shape {
-    func path(in rect: CGRect) -> Path {
-        Path { path in
-            path.move(to: CGPoint(x: rect.minX, y: rect.midY))
-            path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
-        }
+        .profileV3Sheet(cornerRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius)
     }
 }
 

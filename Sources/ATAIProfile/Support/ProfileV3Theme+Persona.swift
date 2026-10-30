@@ -3,7 +3,7 @@ import SwiftUI
 
 extension ProfileV3Theme.Sizes {
     enum Persona {
-        static let cardRadius: CGFloat = 40
+        static let cardRadius = ProfileV3Theme.Radius.xxxl
         static let radarTop: CGFloat = 39
         static let radarHeight: CGFloat = 314
         static let cardBottom: CGFloat = 69
@@ -11,7 +11,7 @@ extension ProfileV3Theme.Sizes {
         static let subtitleWidth: CGFloat = 244
         static let loadingTitleHeight: CGFloat = 50
         static let loadingSubtitleHeight: CGFloat = 32
-        static let hintTop: CGFloat = 28
+        static let hintTop = ProfileV3Theme.Space.s28
         static let hintWidth: CGFloat = 240
         static let hintBottom: CGFloat = 9
         static let radarRadius: CGFloat = 105.6
@@ -20,7 +20,7 @@ extension ProfileV3Theme.Sizes {
         static let ringsOverPolygon = 2
         static let ringLineWidth: CGFloat = 0.57
         static let spokeLineWidth: CGFloat = 0.5
-        static let labelGap: CGFloat = 12
+        static let labelGap = ProfileV3Theme.Space.s12
         static let labelWidth: CGFloat = 72
         static let labelSpacing = ProfileV3Theme.Space.s4
         static let handle: CGFloat = 15
@@ -37,29 +37,28 @@ extension ProfileV3Theme.Sizes {
         enum Coach {
             static let width: CGFloat = 131
             static let pointer: CGFloat = 4.913
-            static let notch: CGFloat = 9.0554
-            static let radius: CGFloat = 12
+            static let tipRun: CGFloat = 1.9844
+            static let radius = ProfileV3Theme.Radius.sm
             static let textWidth: CGFloat = 107
-            static let textTop: CGFloat = 12
-            static let dotsTop: CGFloat = 10
+            static let textTop = ProfileV3Theme.Space.s12
+            static let dotsTop = ProfileV3Theme.Space.s10
             static let bottom: CGFloat = 9
             static let dot = CGSize(width: 8, height: 2)
             static let dotSpacing: CGFloat = 2
             static let tipGap: CGFloat = 23.3
-            static let edgeInset: CGFloat = 12
+            static let edgeInset = ProfileV3Theme.Space.s12
             static let enterScale: CGFloat = 0.8
             static let targetMinimumRise = 0.3
         }
 
-        static let detailTop: CGFloat = 28
+        static let detailTop = ProfileV3Theme.Space.s28
         static let detailCardHeight: CGFloat = 328
         static let detailNameTop: CGFloat = 42
         static let detailScoreTop: CGFloat = 11
         static let detailSubtitleTop: CGFloat = 21
         static let detailSubtitleWidth: CGFloat = 202
         static let scaleWidth: CGFloat = 300
-        static let scaleTrackHeight: CGFloat = 6
-        static let scaleLabelsTop: CGFloat = 22
+        static let scaleLabelsTop = ProfileV3Theme.Space.s22
         static let scaleBottom: CGFloat = 43
         static let scaleKnob: CGFloat = 20
         static let scaleMidpoint: CGFloat = 17
@@ -73,7 +72,7 @@ extension ProfileV3Theme.Sizes {
         static let rowSpacing = ProfileV3Theme.Space.s20
         static let rowGap = ProfileV3Theme.Space.s24
         static let rowMinHeight: CGFloat = 77
-        static let rowSubtitleTop: CGFloat = 6
+        static let rowSubtitleTop = ProfileV3Theme.Space.s6
         static let rowSubtitleWidth: CGFloat = 200
         static let connectorTop: CGFloat = 11
         static let connectorBottom: CGFloat = 13
@@ -90,16 +89,11 @@ extension ProfileV3Theme.Palette {
     static let personaInk = Color(hex: "101010")
     static let personaLabel = Color(hex: "111827")
     static let personaGrid = Color(at: .neutralGrey600)
-    static let personaScaleTrack = Color(hex: "D9D9D9")
     static let personaPillBorder = Color(at: .neutralGrey200)
     static let personaHandleRimTop = Color(hex: "BBBBBC")
     static let personaHandleRimBottom = Color(hex: "DFE1EA")
     static let personaHandleShadow = Color.black.opacity(0.15)
     static let personaCardEdge = Color(hex: "E9E9E9")
-    static let personaYellow = Color(hex: "FFE23D")
-    static let personaRed = Color(hex: "FF5959")
-    static let personaBlue = Color(hex: "5D64FF")
-    static let personaScaleEnd = Color(hex: "101010")
 }
 
 extension ProfileV3Theme.Opacity {
@@ -108,8 +102,6 @@ extension ProfileV3Theme.Opacity {
     static let personaRing: Double = 0.3
     static let personaSpoke: Double = 0.2
     static let personaScore: Double = 0.6
-    static let personaScaleTrack: Double = 0.2
-    static let personaConnector: Double = 0.2
     static let personaIgnored: Double = 0.4
     static let personaRippleInner: Double = 0.1
     static let personaRippleOuter: Double = 0.05
@@ -122,7 +114,7 @@ extension ProfileV3Theme.Shadow {
 }
 
 extension ProfileV3Theme.Motion {
-    static let personaEntrance = Animation.timingCurve(0.22, 1, 0.36, 1, duration: 0.5).delay(0.59)
+    static let personaEntrance = Animation.timingCurve(easeOutQuint, duration: 0.5).delay(0.59)
     static let personaLabelEntrance = Animation.timingCurve(0.4, 0, 0.2, 1, duration: 0.55)
     static let personaLabelDelay: Double = 0.95
     static let personaLabelStagger: Double = 0.07
@@ -166,9 +158,9 @@ extension ProfileV3Theme {
 
     static let personaCaptionGradient = LinearGradient(
         stops: [
-            .init(color: Palette.personaCaptionEdge, location: 0.054),
+            .init(color: ProfileV3Theme.Palette.silverGrey, location: 0.054),
             .init(color: Palette.personaCaptionMid, location: 0.462),
-            .init(color: Palette.personaCaptionEdge, location: 0.946)
+            .init(color: ProfileV3Theme.Palette.silverGrey, location: 0.946)
         ],
         startPoint: UnitPoint(x: 0.19, y: -1.579),
         endPoint: UnitPoint(x: 0.81, y: 2.579)
@@ -176,10 +168,10 @@ extension ProfileV3Theme {
 
     static let personaScaleFill = LinearGradient(
         stops: [
-            .init(color: Palette.personaYellow.opacity(0.5), location: 0.022),
-            .init(color: Palette.personaRed.opacity(0.7), location: 0.157),
-            .init(color: Palette.personaBlue, location: 0.404),
-            .init(color: Palette.personaScaleEnd, location: 0.907)
+            .init(color: ProfileV3Theme.Palette.rainbowGold.opacity(0.5), location: 0.022),
+            .init(color: ProfileV3Theme.Palette.rainbowCoral.opacity(0.7), location: 0.157),
+            .init(color: ProfileV3Theme.Palette.rainbowIndigo, location: 0.404),
+            .init(color: ProfileV3Theme.Palette.personaInk, location: 0.907)
         ],
         startPoint: .leading,
         endPoint: .trailing

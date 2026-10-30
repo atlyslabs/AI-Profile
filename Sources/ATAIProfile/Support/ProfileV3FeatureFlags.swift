@@ -11,6 +11,8 @@ enum ProfileV3FeatureFlags {
     static let isProgrammeScanLoaderEnabled = false
     static let isPersonaEditingEnabled = true
     static let isAppAccessEnabled = true
+    static let isAppAccessOtherAppsEnabled = false
+    static let isAIConnectorsEnabled = false
     static let isVaultRecentSignInCheckEnabled = false
     static let isGlobeEnabled = true
     static let isGlobeRimEnabled = false

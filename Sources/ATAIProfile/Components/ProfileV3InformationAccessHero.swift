@@ -29,7 +29,7 @@ struct ProfileV3InformationAccessHero: View {
             branch
                 .scaleEffect(x: 1, y: -1, anchor: .center)
                 .offset(x: Hero.branchLeading, y: Hero.stemY)
-            ProfileV3AccessStemShape()
+            ProfileV3Rule()
                 .stroke(ProfileV3Theme.accessStemGradient, lineWidth: Hero.lineWidth)
                 .frame(width: Hero.stemWidth, height: Hero.lineWidth)
                 .offset(x: Hero.stemLeading, y: Hero.stemY - Hero.lineWidth / 2)
@@ -96,6 +96,32 @@ struct ProfileV3InformationAccessHero: View {
     }
 }
 
+struct ProfileV3AccessHeading: View {
+    let title: String
+    let subtitle: String
+
+    private typealias Layout = ProfileV3Theme.Sizes.InformationAccess
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ProfileV3InformationAccessHero()
+                .padding(.top, Layout.heroTop)
+            Text(title)
+                .typoGraphy(.H5InterMedium20)
+                .foregroundStyle(Color(at: .pureBlack))
+                .frame(maxWidth: Layout.titleWidth)
+                .padding(.top, Layout.titleTop)
+                .accessibilityAddTraits(.isHeader)
+            Text(subtitle)
+                .typoGraphy(.B2InterMedium12)
+                .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.accessSubtitle))
+                .frame(maxWidth: Layout.titleWidth)
+                .padding(.top, Layout.subtitleTop)
+        }
+        .multilineTextAlignment(.center)
+    }
+}
+
 struct ProfileV3AccessGlow: View {
     var body: some View {
         ProfileV3RainbowGlow(
@@ -103,6 +129,39 @@ struct ProfileV3AccessGlow: View {
             fillOpacity: ProfileV3Theme.Opacity.accessGlowFill
         )
         .opacity(ProfileV3Theme.Opacity.accessGlow)
+    }
+}
+
+extension View {
+    func profileV3AccessPageGlow() -> some View {
+        background(alignment: .top) {
+            ProfileV3AccessGlow()
+                .offset(y: ProfileV3Theme.Sizes.InformationAccess.glowCentreY - ProfileV3Theme.Sizes.InformationAccess.glow / 2)
+        }
+    }
+}
+
+struct ProfileV3ComingSoonCopy: View {
+    let message: String
+
+    private typealias Layout = ProfileV3Theme.Sizes.InformationAccess
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Text(ProfileV3Strings.comingSoon)
+                .typoGraphy(.H5InterMedium20)
+                .foregroundStyle(Color(at: .pureBlack))
+                .accessibilityAddTraits(.isHeader)
+            if !message.isEmpty {
+                Text(message)
+                    .typoGraphy(.B2InterMedium12)
+                    .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.accessSubtitle))
+                    .frame(maxWidth: Layout.comingSoonBodyWidth)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, Layout.subtitleTop)
+            }
+        }
+        .multilineTextAlignment(.center)
     }
 }
 
@@ -142,15 +201,6 @@ struct ProfileV3AccessBranchShape: Shape {
         path.addLine(to: point(65.716, 11.716))
         path.addCurve(to: point(37.432, 0), control1: point(58.214, 4.214), control2: point(48.04, 0))
         path.addLine(to: point(0, 0))
-        return path
-    }
-}
-
-struct ProfileV3AccessStemShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: rect.minX, y: rect.midY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
         return path
     }
 }

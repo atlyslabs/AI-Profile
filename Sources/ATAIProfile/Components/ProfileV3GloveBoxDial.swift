@@ -60,7 +60,7 @@ struct ProfileV3GloveBoxPill: View {
     var body: some View {
         HStack(spacing: Layout.pillSpacing) {
             if showsBolt {
-                ProfileV3GloveBoxArt.bolt.image
+                ProfileV3Vector.bolt.image
                     .profileV3Icon(Layout.pillIcon)
                     .foregroundStyle(Palette.pillIcon)
                     .accessibilityHidden(true)

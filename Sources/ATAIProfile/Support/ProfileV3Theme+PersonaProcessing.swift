@@ -38,7 +38,6 @@ extension ProfileV3Theme.Palette {
     static let personaKnobEdgeBottom = Color(hex: "747373")
     static let personaKnobShadow = Color(hex: "0A0A0A")
     static let personaLoaderShadow = Color(hex: "B4B4B4")
-    static let personaCaptionEdge = Color(hex: "C2C2C2")
     static let personaCaptionMid = Color(hex: "838383")
 }
 

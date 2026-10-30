@@ -156,7 +156,7 @@ enum ProfileV3GloveBoxMapper {
                 delivery: status,
                 action: text(dto.action),
                 previousAddress: dto.toPreviousAddress == true,
-                received: dto.receivedAt.flatMap(date)
+                received: dto.receivedAt.flatMap(ProfileV3ISODate.parse)
             )
         )
     }
@@ -174,7 +174,7 @@ enum ProfileV3GloveBoxMapper {
                 delivery: status,
                 action: text(dto.action),
                 previousAddress: dto.toPreviousAddress == true,
-                received: dto.receivedAt.flatMap(date)
+                received: dto.receivedAt.flatMap(ProfileV3ISODate.parse)
             ),
             note: note(text: dto.text, html: dto.html),
             attachments: (dto.attachments ?? []).enumerated().compactMap { offset, attachment in
@@ -355,25 +355,9 @@ enum ProfileV3GloveBoxMapper {
         raw?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty
     }
 
-    private static func date(_ raw: String) -> Date? {
-        fractionalParser.withLock { $0.date(from: raw) } ?? plainParser.withLock { $0.date(from: raw) }
-    }
-
     private static func label(_ date: Date) -> String {
         labelFormatter.withLock { $0.string(from: date) }
     }
-
-    private static let fractionalParser: OSAllocatedUnfairLock<ISO8601DateFormatter> = {
-        let parser = ISO8601DateFormatter()
-        parser.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return OSAllocatedUnfairLock(uncheckedState: parser)
-    }()
-
-    private static let plainParser: OSAllocatedUnfairLock<ISO8601DateFormatter> = {
-        let parser = ISO8601DateFormatter()
-        parser.formatOptions = [.withInternetDateTime]
-        return OSAllocatedUnfairLock(uncheckedState: parser)
-    }()
 
     private static let labelFormatter: OSAllocatedUnfairLock<DateFormatter> = {
         let formatter = DateFormatter()

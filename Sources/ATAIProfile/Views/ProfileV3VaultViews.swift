@@ -95,7 +95,6 @@ struct ProfileV3CredentialStoreSheet: View {
     private struct Measured: Equatable {
         var content: CGFloat = 0
         var bar: CGFloat = 0
-        var bottomInset: CGFloat = 0
     }
 
     private typealias Layout = ProfileV3Theme.Sizes.CredentialStore
@@ -119,13 +118,7 @@ struct ProfileV3CredentialStoreSheet: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())
-        .background {
-            Color.clear
-                .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { measured.bottomInset = $0 }
-        }
-        .profileV3FittedDetent(fittedHeight, until: .large)
-        .presentationCornerRadius(Credentials.cornerRadius)
-        .presentationDragIndicator(.hidden)
+        .profileV3Sheet(.fitted(fittedHeight, until: .large))
         .sheet(item: route) { route in
             switch route {
             case .picker:
@@ -141,7 +134,7 @@ struct ProfileV3CredentialStoreSheet: View {
 
     private var fittedHeight: CGFloat? {
         guard measured.content > 0, measured.bar > 0 else { return nil }
-        return measured.content + measured.bar + measured.bottomInset
+        return measured.content + measured.bar
     }
 
     private var measuredContent: some View {
@@ -159,14 +152,9 @@ struct ProfileV3CredentialStoreSheet: View {
 
     private var content: some View {
         VStack(spacing: 0) {
-            ProfileV3CredentialStoreShield()
-            Text(ProfileV3Strings.credentialStore)
-                .typoGraphy(.H5InterMedium20)
-                .foregroundStyle(Color(at: .pureBlack))
-                .multilineTextAlignment(.center)
-                .frame(width: Credentials.titleWidth)
-                .padding(.top, Credentials.titleTop)
-                .accessibilityAddTraits(.isHeader)
+            ProfileV3ShieldHeading(title: ProfileV3Strings.credentialStore) {
+                ProfileV3CredentialStoreShield()
+            }
             Text(ProfileV3Strings.credentialStoreSubtitle)
                 .typoGraphy(.B2InterMedium12)
                 .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.appCredentialsNote))
@@ -248,9 +236,7 @@ struct ProfileV3VaultSitePicker: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(at: .pureWhite).ignoresSafeArea())
-        .presentationDetents([.large])
-        .presentationCornerRadius(Credentials.cornerRadius)
-        .presentationDragIndicator(.hidden)
+        .profileV3Sheet(.large)
     }
 
     private var content: some View {

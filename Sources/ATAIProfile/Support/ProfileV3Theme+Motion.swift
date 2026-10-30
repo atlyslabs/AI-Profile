@@ -3,14 +3,7 @@ import SwiftUI
 extension ProfileV3Theme {
     enum Motion {
         static let ambientFrameInterval: TimeInterval = 1.0 / 24
-        static let passportGlowOpacity: Double = 0.5
-        static let passportStripOpacity: Double = 0.2
-        static let passportGuillocheOpacity: Double = 0.05
-        static let passportExpiredOpacity: Double = 0.5
-        static let passportPageLabelOpacity: Double = 0.5
-        static let passportBackLabelOpacity: Double = 0.3
-        static let aiConnectorReveal: Animation = .easeInOut(duration: 0.25)
-        static let instagramExplainerSeconds: Double = 3.5
+        static let instagramExplainerSeconds: Double = 15
         static let instagramRedirectSeconds: Double = 1.8
         static let catalogueSearchDebounceMilliseconds = 300
         static let catalogueLoaderMinimumMilliseconds = 400
@@ -22,9 +15,10 @@ extension ProfileV3Theme {
         static let holdDuration: TimeInterval = 0.6
         static let heroSettleMilliseconds = 550
         static let frameDelayMilliseconds = 16
-        static let contentFadeMilliseconds = 250
+        static let contentFadeSeconds: Double = 0.25
+        static let contentFadeMilliseconds = Int(contentFadeSeconds * 1000)
         static let hintDelayMilliseconds = 600
-        static let contentFade: Animation = .easeOut(duration: 0.25)
+        static let contentFade: Animation = .easeOut(duration: contentFadeSeconds)
         static let hintAppear: Animation = .spring(response: 0.45, dampingFraction: 0.8)
         static let flipSeconds: TimeInterval = 0.6
         static let flip: Animation = .spring(response: flipSeconds, dampingFraction: 0.82)
@@ -40,7 +34,8 @@ extension ProfileV3Theme {
         static let launchFade: Animation = .easeOut(duration: 0.3)
         static let stagedCopy: Animation = .easeOut(duration: 0.4).delay(1.0)
         static let saveState: Animation = .easeInOut(duration: 0.3)
-        static let entry: Animation = .spring(response: 0.45, dampingFraction: 0.85)
+        static let entryResponse: Double = 0.45
+        static let entry: Animation = .spring(response: entryResponse, dampingFraction: 0.85)
         static let entryScale: CGFloat = 0.9
         static let saveEntranceRise: CGFloat = 24
         static let fullScreenEnterScale: CGFloat = 0.96
@@ -48,11 +43,12 @@ extension ProfileV3Theme {
             .asymmetric(insertion: .opacity.combined(with: .scale(scale: fullScreenEnterScale)), removal: .opacity)
         }
         static let entryOffsetY: CGFloat = 8
-        static let entryRevealMilliseconds = 450
+        static let entryRevealMilliseconds = Int(entryResponse * 1000)
         static let entryBreathMilliseconds = 300
         static let entryStepMilliseconds = entryRevealMilliseconds + entryBreathMilliseconds
         static let entryStaggerMilliseconds = 100
         static let pageSlideSeconds: TimeInterval = 0.4
+        static let scrollReveal: Animation = .easeInOut(duration: 0.4)
         static let copiedResetSeconds: TimeInterval = 1.5
         static let reorderHintSeconds: TimeInterval = 0.5
         static let reorderHint: Animation = .smooth(duration: reorderHintSeconds)
@@ -69,7 +65,6 @@ extension ProfileV3Theme {
         static let hoverSettleSeconds = hoverHalfCycleSeconds
         static let hoverAmplitude: CGFloat = 4
         static let hoverShadowRaisedScale: CGFloat = 0.88
-        static let hoverShadowRaisedOpacity: Double = 0.6
         static let kycGlowRiseSeconds: TimeInterval = 1.2
         static let kycGlowCaptionSeconds: TimeInterval = 0.35
         static let kycGlowHoldSeconds: TimeInterval = 2.5
@@ -80,11 +75,15 @@ extension ProfileV3Theme {
         static let kycGlowFade: Animation = .easeOut(duration: kycGlowFadeSeconds).delay(kycGlowHoldSeconds)
         static let kycRedirectMilliseconds = 1800
         static let scanMinimumMilliseconds = 3000
-        static let citizenshipLockEnter = UnitCurve.bezier(
+        static let easeOutQuint = UnitCurve.bezier(
+            startControlPoint: UnitPoint(x: 0.22, y: 1),
+            endControlPoint: UnitPoint(x: 0.36, y: 1)
+        )
+        static let easeOutExpo = UnitCurve.bezier(
             startControlPoint: UnitPoint(x: 0.16, y: 1),
             endControlPoint: UnitPoint(x: 0.3, y: 1)
         )
-        static let citizenshipLockExit = UnitCurve.bezier(
+        static let easeInExpo = UnitCurve.bezier(
             startControlPoint: UnitPoint(x: 0.7, y: 0),
             endControlPoint: UnitPoint(x: 0.84, y: 0)
         )
@@ -93,19 +92,14 @@ extension ProfileV3Theme {
         static let citizenshipLockFadeOutSeconds: TimeInterval = 0.15
         static let citizenshipLockRiseSeconds: TimeInterval = 0.5
         static let citizenshipLockHoldSeconds: TimeInterval = 1.0
-        static let foundHoldMilliseconds = 1200
         static let scanStepMilliseconds = 600
         static let orbSpin: Animation = .linear(duration: 4).repeatForever(autoreverses: false)
-        static let orbRingOpacity: Double = 0.2
         static let popInScale: CGFloat = 0.9
         static let expandEnterScale: CGFloat = 0.95
-        static let kycOverlayGlowOpacity: Double = 0.2
-        static let disabledOpacity: Double = 0.5
         static let collapseChromeFadeEnd: CGFloat = 0.25
         static let collapseNameFadeStart: CGFloat = 0.5
         static let collapseTabFadeStart: CGFloat = 0.85
         static let collapseInteractionLimit: CGFloat = 0.5
-        static let hiddenFaceOpacity: Double = 0.01
         static let contentSwitch: Animation = .easeOut(duration: 0.35)
         static let detailEntry: Animation = .easeOut(duration: 0.45)
         static let detailEntryStagger: Double = 0.07
@@ -114,9 +108,6 @@ extension ProfileV3Theme {
         static let disconnectGraceSeconds = 5
         static let logoutAcknowledgeTimeoutSeconds = 3
         static let settingsWriteTimeoutSeconds = 8
-        static let restartCoverFadeSeconds: TimeInterval = 0.2
-        static let restartCoverTimeoutSeconds = 6
-        static let restartCoverPollMilliseconds = 100
         static let stackRotate: Animation = .easeInOut(duration: 0.5)
         static let stackExit: Animation = .easeInOut(duration: 0.3)
         static let stackEnter: Animation = .easeInOut(duration: 0.35)

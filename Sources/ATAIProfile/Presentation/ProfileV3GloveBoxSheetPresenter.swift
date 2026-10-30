@@ -3,33 +3,26 @@ import SwiftUI
 
 @MainActor
 final class ProfileV3GloveBoxSheetPresenter {
-    private var isPresented = false
+    private let slot = ProfileV3SheetSlot()
 
     func update(for viewModel: ProfileV3GloveBoxViewModel) {
         if viewModel.sheets.isEmpty {
             dismiss()
-        } else if !isPresented {
+        } else if !slot.isPresented {
             present(for: viewModel)
         }
     }
 
     func dismiss() {
-        guard isPresented else { return }
-        isPresented = false
-        ProfileV3SheetWindow.dismiss()
+        slot.dismiss()
     }
 
     private func present(for viewModel: ProfileV3GloveBoxViewModel) {
-        isPresented = true
-        ProfileV3SheetWindow.present(
-            cornerRadius: ProfileV3Theme.GloveBox.Layout.sheetRadius,
-            dimOpacity: ProfileV3Theme.GloveBox.Palette.dimOpacity,
+        slot.present(
+            cornerRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius,
+            dimOpacity: ProfileV3Theme.Opacity.sheetBackdropDeep,
             dismissOnBackdropTap: true,
-            onDismiss: { [weak self, weak viewModel] in
-                guard let self, isPresented else { return }
-                isPresented = false
-                viewModel?.sheetsDidClose()
-            }
+            onDismiss: { [weak viewModel] in viewModel?.sheetsDidClose() }
         ) { _, bottomInset in
             ProfileV3GloveBoxSheetStack(viewModel: viewModel, bottomInset: bottomInset)
         }

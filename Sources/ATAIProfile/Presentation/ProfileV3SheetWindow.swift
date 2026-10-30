@@ -46,3 +46,54 @@ enum ProfileV3SheetWindow {
         return (available * ProfileV3Theme.Ratio.sheetMaxHeight, bottomInset)
     }
 }
+
+@MainActor
+final class ProfileV3SheetSlot {
+    private(set) var isPresented = false
+    private var generation = 0
+
+    func present<Content: View>(
+        cornerRadius: CGFloat = ProfileV3Theme.Sizes.sheetCornerRadius,
+        layout: ATBottomSheetLayout = .edgeToEdge,
+        dimOpacity: Double = ProfileV3Theme.Opacity.sheetBackdrop,
+        dismissOnBackdropTap: Bool,
+        onDismiss: @escaping () -> Void = {},
+        @ViewBuilder content: (_ maxHeight: CGFloat, _ bottomInset: CGFloat) -> Content
+    ) {
+        generation += 1
+        let presentation = generation
+        isPresented = true
+        ProfileV3SheetWindow.present(
+            cornerRadius: cornerRadius,
+            layout: layout,
+            dimOpacity: dimOpacity,
+            dismissOnBackdropTap: dismissOnBackdropTap,
+            onDismiss: { [weak self] in
+                guard let self, isPresented, generation == presentation else { return }
+                isPresented = false
+                onDismiss()
+            },
+            content: content
+        )
+    }
+
+    func dismiss() {
+        guard isPresented else { return }
+        isPresented = false
+        ProfileV3SheetWindow.dismiss()
+    }
+}
+
+extension UIViewController {
+    func profileV3UsePageSheet(
+        detents: [UISheetPresentationController.Detent] = [.large()],
+        scrollingExpandsSheet: Bool = false
+    ) {
+        modalPresentationStyle = .pageSheet
+        guard let sheet = sheetPresentationController else { return }
+        sheet.detents = detents
+        sheet.prefersGrabberVisible = false
+        sheet.prefersScrollingExpandsWhenScrolledToEdge = scrollingExpandsSheet
+        sheet.preferredCornerRadius = ProfileV3Theme.Sizes.largeSheetCornerRadius
+    }
+}

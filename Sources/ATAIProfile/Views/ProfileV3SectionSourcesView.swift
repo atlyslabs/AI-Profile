@@ -2,14 +2,15 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3SectionSourcesView: View {
-    @ObservedObject var viewModel: ProfileV3PreferenceSourcesViewModel
+    @ObservedObject var viewModel: ProfileV3SourcesViewModel
+    let section: ProfileV3FormSection
     @ObservedObject var form: ProfileV3AgentFormViewModel
     let onBack: () -> Void
 
     private typealias Sources = ProfileV3Theme.Sizes.Sources
 
-    private var section: ProfileV3FormSection {
-        form.form.sections.first { $0.id == viewModel.section.id } ?? viewModel.section
+    private var liveSection: ProfileV3FormSection {
+        form.form.sections.first { $0.id == section.id } ?? section
     }
 
     var body: some View {
@@ -62,12 +63,12 @@ struct ProfileV3SectionSourcesView: View {
     }
 
     private var header: some View {
-        ProfileV3AgentSheetChrome(control: .back(onBack), title: { ProfileV3TagLabel(text: section.title) })
+        ProfileV3AgentSheetChrome(control: .back(onBack), title: { ProfileV3TagLabel(text: liveSection.title) })
             .frame(maxWidth: .infinity)
     }
 
     private var hasOptions: Bool {
-        switch section.control {
+        switch liveSection.control {
         case .chips, .cards: return true
         case .slider, .text, .date, .passport, .cars, .baggage, .customRules: return false
         }
@@ -75,7 +76,7 @@ struct ProfileV3SectionSourcesView: View {
 
     @ViewBuilder
     private var control: some View {
-        switch section.control {
+        switch liveSection.control {
         case .chips(let field):
             chipsRow(
                 options: field.visibleOptions(limit: ProfileV3Theme.Counts.chipInlineLimit),
@@ -114,11 +115,11 @@ struct ProfileV3SectionSourcesView: View {
     }
 
     private func toggle(_ optionID: String) {
-        form.toggleOption(optionID, in: section.id)
+        form.toggleOption(optionID, in: liveSection.id)
     }
 
     private func openPicker() {
-        form.openPicker(for: section.id)
+        form.openPicker(for: liveSection.id)
     }
 
     private func steps(_ steps: [ProfileV3SourceStep]) -> some View {
@@ -137,14 +138,14 @@ struct ProfileV3SectionSourcesView: View {
 #if DEBUG
 #Preview("Section sources") {
     let section = ProfileV3AgentFixtures.flight.sections[0]
-    let viewModel = ProfileV3PreferenceSourcesViewModel(
-        section: section,
+    let viewModel = ProfileV3SourcesViewModel(
         source: section.source ?? ProfileV3SectionSource(icons: [], agentType: "flight", fieldKey: section.id),
         profileID: nil,
         repository: ProfileV3MockRepository()
     )
     ProfileV3SectionSourcesView(
         viewModel: viewModel,
+        section: section,
         form: .preview(ProfileV3AgentFixtures.flight, avatarURL: nil, saveState: .idle),
         onBack: {}
     )

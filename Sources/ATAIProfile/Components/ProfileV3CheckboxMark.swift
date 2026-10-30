@@ -4,7 +4,7 @@ import SwiftUI
 struct ProfileV3CheckboxMark: View {
     let isSelected: Bool
     var size: CGFloat = ProfileV3Theme.Icon.xl
-    var tint: Color = ProfileV3Theme.Palette.inkGlyph
+    var tint: Color = ProfileV3Theme.Palette.graphite
 
     var body: some View {
         (isSelected ? ATIcon.SwiftUIImage.checkBox : ATIcon.SwiftUIImage.checkBoxOutlineBlank)

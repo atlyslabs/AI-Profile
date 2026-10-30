@@ -61,7 +61,7 @@ struct ProfileV3InviteCodeView: View {
         }
         .buttonStyle(.profileV3Pressable(.impact(weight: .medium)))
         .disabled(invite.remainingUses == 0)
-        .opacity(invite.remainingUses == 0 ? ProfileV3Theme.Motion.disabledOpacity : 1)
+        .opacity(invite.remainingUses == 0 ? ProfileV3Theme.Opacity.disabled : 1)
         .profileV3CTABar(top: Sizes.ctaTop)
     }
 }

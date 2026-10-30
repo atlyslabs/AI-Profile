@@ -5,12 +5,10 @@ extension ProfileV3Theme.Sizes {
     enum CustomRules {
         static let note = CGSize(width: 320, height: 308)
         static let noteMinHeight: CGFloat = 192
-        static let noteRadius: CGFloat = 20
+        static let noteRadius = ProfileV3Theme.Radius.lg
         static let noteBevelInset: CGFloat = 13
-        static let noteLabelLeading: CGFloat = 30
-        static let noteLabelTop: CGFloat = 24
-        static let noteLabelSize: CGFloat = 14
-        static let noteLabelTracking: CGFloat = -0.56
+        static let noteLabelLeading = ProfileV3Theme.Space.s30
+        static let noteLabelTop = ProfileV3Theme.Space.s24
         static let noteTextLeading: CGFloat = 31
         static let noteTextTop: CGFloat = 62
         static let noteTextWidth: CGFloat = 247
@@ -29,18 +27,17 @@ extension ProfileV3Theme.Sizes {
         static let pillMinBottom = ProfileV3Theme.Space.s16
         static let pillShadowRadius: CGFloat = 7.5
         static let trash: CGFloat = 50
-        static let trashInset: CGFloat = 13
         static let trashFromCorner: CGFloat = 10
         static let card = CGSize(width: 202, height: 170)
-        static let cardRadius: CGFloat = 32
+        static let cardRadius = ProfileV3Theme.Radius.card
         static let cardBevelInset: CGFloat = 9
-        static let cardBevelRadius: CGFloat = 24
+        static let cardBevelRadius = ProfileV3Theme.Radius.xl
         static let cardTextLeading = ProfileV3Theme.Space.s24
         static let cardTextTop: CGFloat = 26
         static let cardTextWidth: CGFloat = 154
         static let cardTextLines = 5
         static let cardSpacing: CGFloat = 17
-        static let cardsTop: CGFloat = 30
+        static let cardsTop = ProfileV3Theme.Space.s30
     }
 }
 
@@ -49,9 +46,6 @@ extension ProfileV3Theme.Palette {
     static let ruleNoteBottom = Color(hex: "D8D0BC")
     static let ruleNoteBackTop = Color(hex: "F4EDDE")
     static let ruleNoteLabel = Color(hex: "A09886")
-    static let ruleNoteText = Color(hex: "1C1B1F")
-    static let ruleWatermarkTop = Color(hex: "E3DCCA")
-    static let ruleWatermarkBottom = Color(hex: "D9D1BD")
     static let ruleTrash = Color(hex: "523600")
     static let ruleTrashBorder = Color(hex: "DFDFDF")
 }
@@ -62,8 +56,6 @@ extension ProfileV3Theme.Opacity {
 }
 
 extension ProfileV3Theme.Motion {
-    static let customRuleEditor = Animation.easeInOut(duration: 0.25)
-    static let customRuleReveal = Animation.easeInOut(duration: 0.4)
 }
 
 extension ProfileV3Theme {

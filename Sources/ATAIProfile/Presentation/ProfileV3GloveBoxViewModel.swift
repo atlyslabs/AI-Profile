@@ -231,7 +231,7 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     }
 
     func linkCard(_ card: ProfileV3GloveBoxCardSection.LinkedCard) {
-        withAnimation(ProfileV3Theme.GloveBox.Motion.notice) {
+        withAnimation(ProfileV3Theme.Motion.expand) {
             updateCard { $0.linkedCard = card }
         }
     }
@@ -239,11 +239,11 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
     func showCardNotice() {
         guard home != nil, !showsCardNotice else { return }
         trackItem(.card)
-        withAnimation(ProfileV3Theme.GloveBox.Motion.notice) { showsCardNotice = true }
+        withAnimation(ProfileV3Theme.Motion.expand) { showsCardNotice = true }
     }
 
     func hideCardNotice() {
-        withAnimation(ProfileV3Theme.GloveBox.Motion.notice) { showsCardNotice = false }
+        withAnimation(ProfileV3Theme.Motion.expand) { showsCardNotice = false }
     }
 
     func toggleForwarding() {

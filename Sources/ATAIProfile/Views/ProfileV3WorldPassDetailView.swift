@@ -144,15 +144,7 @@ struct ProfileV3WorldPassDetailView: View {
 
     private func pillChrome<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
         content()
-            .padding(.leading, ProfileV3Theme.Space.s12)
-            .padding(.trailing, ProfileV3Theme.Space.s12)
-            .frame(height: ProfileV3Theme.Control.tapTarget)
-            .background(Capsule().fill(ProfileV3Theme.detailPillGradient))
-            .shadow(
-                color: ProfileV3Theme.Palette.shadow,
-                radius: ProfileV3Theme.Shadow.cardRadius,
-                y: ProfileV3Theme.Shadow.chipY
-            )
+            .profileV3PassPill()
     }
 
     private var addIcon: some View {
@@ -231,10 +223,7 @@ private struct ProfileV3StatItem: View {
 
     var body: some View {
         VStack(alignment: alignment, spacing: ProfileV3Theme.Space.s8) {
-            Text(label)
-                .typoGraphy(.T1InterBold11)
-                .textCase(.uppercase)
-                .foregroundStyle(ProfileV3Theme.Palette.statLabel)
+            ProfileV3TagLabel(text: label, style: .solid(ProfileV3Theme.Palette.statLabel))
             Text(value)
                 .typoGraphy(.H3InterMedium28)
                 .foregroundStyle(Color(at: .pureWhite))

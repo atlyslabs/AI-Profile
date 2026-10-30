@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import UIKit
 
 @MainActor
 final class ProfileV3AppAccessModel: ObservableObject {
@@ -19,17 +20,20 @@ final class ProfileV3AppAccessModel: ObservableObject {
     let connectors: ProfileV3ConnectorsSettingsModel
     private let repository: any ProfileV3AppAccessRepository
     private let hints: ProfileV3HubHints
+    private let openURL: @MainActor (URL) -> Void
     private var loadTask: Task<Void, Never>?
     private var disconnectTask: Task<Void, Never>?
 
     init(
         repository: any ProfileV3AppAccessRepository,
         connectors: ProfileV3ConnectorsSettingsModel,
-        hints: ProfileV3HubHints = ProfileV3HubHints()
+        hints: ProfileV3HubHints = ProfileV3HubHints(),
+        openURL: @escaping @MainActor (URL) -> Void = { UIApplication.shared.open($0) }
     ) {
         self.repository = repository
         self.connectors = connectors
         self.hints = hints
+        self.openURL = openURL
         hasSeenHint = hints.hasSeenConnectedAppsHint
     }
 
@@ -52,9 +56,10 @@ final class ProfileV3AppAccessModel: ObservableObject {
                 headline: app.name,
                 account: "",
                 blurb: app.blurb,
-                hint: ProfileV3Strings.connectorDeckHint,
+                hint: app.canDisconnect ? ProfileV3Strings.connectorDeckHint : "",
                 icon: .remote(app.iconURL),
-                isApp: true
+                isApp: true,
+                canDisconnect: app.canDisconnect
             )
         }
     }
@@ -86,10 +91,19 @@ final class ProfileV3AppAccessModel: ObservableObject {
             present(.add(app), from: .page)
             return
         }
+        guard !app.isAwaitingMessage else {
+            openURL(ProfileV3InstagramUsername.messageURL)
+            return
+        }
         instagram?.cancel()
-        instagram = ProfileV3InstagramConnectModel(app: app, repository: repository) { [weak self] in
+        instagram = ProfileV3InstagramConnectModel(app: app, repository: repository, openURL: openURL) { [weak self] in
             self?.finishInstagram()
         }
+    }
+
+    func refreshIfAwaitingMessage() {
+        guard content?.apps.contains(where: \.isAwaitingMessage) == true else { return }
+        load()
     }
 
     func tapAddNew() {
