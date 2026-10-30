@@ -1,0 +1,189 @@
+Sources/ATAIProfile/Presentation/ProfileV3AgentFormViewModel.swift
+  s_aca99db70bc6e3::t_4913d25c18936c 192
+Sources/ATAIProfile/Components/ProfileV3PassportCard.swift
+  s_aca99db70bc6e3::t_4d38c77e4ff6d7 9,31-33,40-47,51-55,72-73,89-94,129,217-245,325,327,335,348
+  s_aca99db70bc6e3::t_ab7b8012e2e158 211-212,248,253-256
+  s_aca99db70bc6e3::t_554d8425d1871f 246,284-292,295-321
+  s_aca99db70bc6e3::t_c556462bae1507 247
+Sources/ATAIProfile/Data/Mappers/ProfileV3PassportMapper.swift
+  s_aca99db70bc6e3::t_61b273ec8fbd39 50,77,96-117,119
+Sources/ATAIProfile/Data/ProfileV3PassportFixtures.swift
+  s_aca99db70bc6e3::t_d8cb41d9a4f419 13-28,41-47,63,94
+Tests/ATAIProfileTests/ProfileV3AIConnectorTests.swift
+  s_aca99db70bc6e3::t_9b9579ce81da20 1-35,37-216
+  s_aca99db70bc6e3::t_850aa81c9aa7d6 36
+Sources/ATAIProfile/Support/ProfileV3SettingsStrings.swift
+  s_aca99db70bc6e3::t_23e42c8307a04e 27-42
+Sources/ATAIProfile/Presentation/ProfileV3AppAccessModel.swift
+  s_aca99db70bc6e3::t_9706b585f5bbbe 9,85-92,157-160
+  s_aca99db70bc6e3::t_8c3e6e8bf661fa 161-162
+Sources/ATAIProfile/Networking/ProfileV3API.swift
+  s_aca99db70bc6e3::t_f9d858c78ca9d4 20,242-243
+  s_aca99db70bc6e3::t_9cda1303837419 33-34,139-142
+Sources/ATAIProfile/Data/ProfileV3AIConnectorFixtures.swift
+  s_aca99db70bc6e3::t_7122f18d114a6b 1-128
+Sources/ATAIProfile/Components/ProfileV3ContinueButton.swift
+  s_aca99db70bc6e3::t_74c5ed39af894a 10,43
+Sources/ATAIProfile/Presentation/ProfileV3AppCredentialsViewModel.swift
+  s_aca99db70bc6e3::t_90bf0c6814b935 94-101,139,165-167
+  s_aca99db70bc6e3::t_8eca1e3ce8f5a5 168
+Sources/ATAIProfile/Data/DTOs/ProfileV3LoyaltyDTO.swift
+  s_aca99db70bc6e3::t_f9d858c78ca9d4 49,53,60,64-89
+  s_aca99db70bc6e3::t_45cb3c8f4279b4 90
+Sources/ATAIProfile/Generated/ProfileV3L10n+Generated.swift
+  s_aca99db70bc6e3::t_23e42c8307a04e 268-269
+  s_aca99db70bc6e3::t_21cf6ddbb69af4 162-163,194-199,234-239,288-289,300-301,308-317,330-331
+Tests/ATAIProfileTests/ProfileV3LoyaltyMarketTests.swift
+  s_aca99db70bc6e3::t_50066b80306a62 75-76,103
+  s_aca99db70bc6e3::t_9cab3d18dc1335 1-74,77-102,104-145
+Sources/ATAIProfile/Support/ProfileV3Theme+InstagramConnect.swift
+  s_aca99db70bc6e3::t_db95ae94f7d4c8 19-21,47,97-98
+  s_aca99db70bc6e3::t_ef9f88cbfa715c 1-15,22-46,48-96,99-100
+  s_aca99db70bc6e3::t_2c0f86f21df8da 16-18
+Sources/ATAIProfile/Domain/ProfileV3Models.swift
+  s_aca99db70bc6e3::t_84547397ee0192 90-98
+  s_aca99db70bc6e3::t_f9d858c78ca9d4 313-340
+Sources/ATAIProfile/Support/ProfileV3Theme+Motion.swift
+  s_aca99db70bc6e3::t_2d60e46f37a3f1 11
+  s_aca99db70bc6e3::t_fd27361d1fc24c 12
+  s_aca99db70bc6e3::t_9520895ec488ef 13
+  s_aca99db70bc6e3::t_f9c28eb6b7bf24 14-15
+Sources/ATAIProfile/Data/ProfileV3AppAccessFixtureLogos.swift
+  s_aca99db70bc6e3::t_2e35d885269aa2 12
+Sources/ATAIProfile/Data/ProfileV3Repository.swift
+  s_aca99db70bc6e3::t_f9d858c78ca9d4 41
+  s_aca99db70bc6e3::t_9cda1303837419 91-98
+Tests/ATAIProfileTests/ProfileV3ProgrammeDeleteTests.swift
+  s_aca99db70bc6e3::t_f9d858c78ca9d4 178-179
+Sources/ATAIProfile/Views/ProfileV3AppAccessView.swift
+  s_aca99db70bc6e3::t_9706b585f5bbbe 23-25,153,158-162
+Sources/ATAIProfile/Data/DTOs/ProfileV3PassportDTO.swift
+  s_aca99db70bc6e3::t_35a8c9db12f287 11-15,20,33-37,52-60,100-103,109-112
+Sources/ATAIProfile/Data/ProfileV3MockRepository.swift
+  s_aca99db70bc6e3::t_350d26f5974063 80,246-270
+  s_aca99db70bc6e3::t_f9d858c78ca9d4 445,451-452
+Sources/ATAIProfile/Support/ProfileV3FeatureFlags.swift
+  s_aca99db70bc6e3::t_554d8425d1871f 24
+Tests/ATAIProfileTests/ProfileV3PassportBackPageTests.swift
+  s_aca99db70bc6e3::t_cad15d317e74df 10,13-19,21-71,78-80,100-113,118,127,132-150,153-156,158-159,185-231
+  s_aca99db70bc6e3::t_77feb46fe19a5e 232
+Sources/ATAIProfile/Data/ProfileV3ProgrammeCatalogue.swift
+  s_aca99db70bc6e3::t_3464a1b04dc4c8 6-16
+Sources/ATAIProfile/Domain/ProfileV3AppAccess.swift
+  s_aca99db70bc6e3::t_2e35d885269aa2 28
+Sources/ATAIProfile/Data/ProfileV3AppAccessFixtures.swift
+  s_aca99db70bc6e3::t_2e35d885269aa2 68-77
+Sources/ATAIProfile/Data/Mappers/ProfileV3ConnectorsMapper.swift
+  s_aca99db70bc6e3::t_84547397ee0192 59-61,63,65-67,69-73
+Sources/ATAIProfile/Data/Mappers/ProfileV3LoyaltyMapper.swift
+  s_aca99db70bc6e3::t_f9d858c78ca9d4 11-28
+Sources/ATAIProfile/Data/DTOs/ProfileV3ConnectorsDTO.swift
+  s_aca99db70bc6e3::t_84547397ee0192 9-14,22-25
+Sources/ATAIProfile/Views/ProfileV3PreviousPassportsView.swift
+  s_aca99db70bc6e3::t_554d8425d1871f 10,40,46-47
+Sources/ATAIProfile/Data/Mappers/ProfileV3AIConnectorMapper.swift
+  s_aca99db70bc6e3::t_c15eed8fe02a5f 1-104
+CHANGELOG.md
+  s_aca99db70bc6e3::t_8eec05093c8d35 36-63
+Sources/ATAIProfile/Presentation/ProfileV3ConnectorsSettingsModel.swift
+  s_aca99db70bc6e3::t_f75fe819884db6 16,124-127,132-141,178
+Sources/ATAIProfile/Data/ProfileV3AgentFixtures.swift
+  s_aca99db70bc6e3::t_a8f87ec114d680 604
+Sources/ATAIProfile/Presentation/ProfileV3AddProgrammeViewModel.swift
+  s_aca99db70bc6e3::t_e60e0a489ee698 41-42,119-128,172,241-248,385,398-399,432-435
+Sources/ATAIProfile/Components/ProfileV3FormSectionView.swift
+  s_aca99db70bc6e3::t_554d8425d1871f 116-125
+Sources/ATAIProfile/Views/ProfileV3AppCredentialsView.swift
+  s_aca99db70bc6e3::t_90bf0c6814b935 237-243,246-248,253-254,277-290
+  s_aca99db70bc6e3::t_7be8bec68e0898 362
+  s_aca99db70bc6e3::t_d856b247ae9222 255-276
+  s_aca99db70bc6e3::t_fd86c5b1f7dc7a 291
+Sources/ATAIProfile/Support/ProfileV3Theme+ProgrammeSizes.swift
+  s_aca99db70bc6e3::t_3f679bc96628fa 6-9
+  s_aca99db70bc6e3::t_744f3ca073a54e 10
+Sources/ATAIProfile/Views/ProfileV3InstagramConnectSheet.swift
+  s_aca99db70bc6e3::t_db95ae94f7d4c8 106,114,124,249,272
+  s_aca99db70bc6e3::t_ef9f88cbfa715c 348
+  s_aca99db70bc6e3::t_2c0f86f21df8da 107-108,115-116,125-126,250,276
+  s_aca99db70bc6e3::t_ffd2a75416b88c 1-105,109-113,117-123,127-248,251-271,273-275,277-347,349-380
+Sources/ATAIProfile/Support/ProfileV3Theme.swift
+  s_aca99db70bc6e3::t_2d60e46f37a3f1 190,224-226
+Sources/ATAIProfile/Views/ProfileV3AddProgrammeView.swift
+  s_aca99db70bc6e3::t_744f3ca073a54e 320,323
+  s_aca99db70bc6e3::t_3f679bc96628fa 275,302-315,321
+Sources/ATAIProfile/Views/ProfileV3InformationAccessView.swift
+  s_aca99db70bc6e3::t_9076a476b1a282 20,25,44-46,166-168,174,185-199
+  s_aca99db70bc6e3::t_ee16e199cec76f 200-201
+Sources/ATAIProfile/Support/ProfileV3Theme+AIConnector.swift
+  s_aca99db70bc6e3::t_1783c68f35ae3d 1-20,22-69,71-125
+  s_aca99db70bc6e3::t_74c5ed39af894a 21
+  s_aca99db70bc6e3::t_9520895ec488ef 70
+Sources/ATAIProfile/Presentation/ProfileV3InstagramConnectModel.swift
+  s_aca99db70bc6e3::t_37bf622239f4f4 1-115
+Sources/ATAIProfile/Presentation/ProfileV3AIConnectorModel.swift
+  s_aca99db70bc6e3::t_6cfaa07929a894 1-160
+Sources/ATAIProfile/Components/ProfileV3MarketMenu.swift
+  s_aca99db70bc6e3::t_86847602aae214 1-71
+Tests/ATAIProfileTests/ProfileV3AppAccessTests.swift
+  s_aca99db70bc6e3::t_7be8bec68e0898 14-15,25-26,46,81,131
+Tests/ATAIProfileTests/ProfileV3InstagramConnectTests.swift
+  s_aca99db70bc6e3::t_4013d78ce5351d 46-79
+  s_aca99db70bc6e3::t_2d320ff24183c1 1-45,80-128
+Sources/ATAIProfile/Domain/ProfileV3Passport.swift
+  s_aca99db70bc6e3::t_8ae56e15f16fc4 68
+  s_aca99db70bc6e3::t_ee4e28f4fdadac 93-110
+  s_aca99db70bc6e3::t_a223767d73da3f 17-42
+Sources/ATAIProfile/Domain/ProfileV3AIConnector.swift
+  s_aca99db70bc6e3::t_2002ff1e6826ae 1-74
+Sources/ATAIProfile/Support/ProfileV3Theme+Settings.swift
+  s_aca99db70bc6e3::t_2d60e46f37a3f1 128-136
+Sources/ATAIProfile/Data/ProfileV3LiveRepository.swift
+  s_aca99db70bc6e3::t_f9d858c78ca9d4 437-438
+  s_aca99db70bc6e3::t_9cda1303837419 121-141
+Sources/ATAIProfile/Data/DTOs/ProfileV3AIConnectorDTO.swift
+  s_aca99db70bc6e3::t_f0845463507313 1-128
+CLAUDE.md
+  s_aca99db70bc6e3::t_47fc445093a454 1265
+  s_aca99db70bc6e3::t_d70590e946aa6f 157,1193,1208-1237,1240-1249
+  s_aca99db70bc6e3::t_99ead4341392fd 1261-1264
+  s_aca99db70bc6e3::t_1628ffdf304384 1307-1317
+  s_aca99db70bc6e3::t_64818e4c8e669e 34,1256-1260
+  s_aca99db70bc6e3::t_8e7e6739fcc13d 1252-1255
+  s_aca99db70bc6e3::t_d900f64be9d1c9 65,1251
+  s_aca99db70bc6e3::t_58957b814df5f5 21,1191,1330
+  s_aca99db70bc6e3::t_bc030216fac33e 1238-1239,1250
+Sources/ATAIProfile/Support/ProfileV3Theme+Gradients.swift
+  s_aca99db70bc6e3::t_2d60e46f37a3f1 17-25
+Sources/ATAIProfile/Views/ProfileV3AIConnectorSheet.swift
+  s_aca99db70bc6e3::t_3e11ffe7c6e903 265-267
+  s_aca99db70bc6e3::t_8181269ad4272b 1-48,50-200,202-246,250-253,274-305,308-317,325-340,343-345,347-456,458-490,494-566
+  s_aca99db70bc6e3::t_74c5ed39af894a 201
+  s_aca99db70bc6e3::t_a969d042bef169 247-249,254-264,268-273,306-307,318-324,341-342,346,457
+  s_aca99db70bc6e3::t_9520895ec488ef 491-493
+  s_aca99db70bc6e3::t_9076a476b1a282 49
+Sources/ATAIProfile/Resources/ProfileV3Localizable.xcstrings
+  s_aca99db70bc6e3::t_21cf6ddbb69af4 820-831,1012-1047,1252-1287,1576-1587,1648-1659,1696-1755,1828-1839
+  s_aca99db70bc6e3::t_23e42c8307a04e 1456-1467
+Sources/ATAIProfile/Domain/ProfileV3Directive.swift
+  s_aca99db70bc6e3::t_84547397ee0192 73-74,93-96
+  s_aca99db70bc6e3::t_09a5eb930dd81d 181-184
+Sources/ATAIProfile/Data/ProfileV3FailingRepository.swift
+  s_aca99db70bc6e3::t_9cda1303837419 21-32
+  s_aca99db70bc6e3::t_f9d858c78ca9d4 288
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5d7a1c444aeb241849b93dd85fef65a2cc9a1a91",
+  "prompts": {},
+  "sessions": {
+    "s_aca99db70bc6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "af994f3e-966b-4461-9c19-ecffb292ed42",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
