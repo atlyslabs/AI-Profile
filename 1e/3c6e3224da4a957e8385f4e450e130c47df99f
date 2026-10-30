@@ -1,0 +1,31 @@
+CLAUDE.md
+  s_aca99db70bc6e3::t_bde9d2d0d1d0f5 66
+  s_aca99db70bc6e3::t_d2a770d065827d 50
+  s_aca99db70bc6e3::t_0f865e53088660 1452
+  s_aca99db70bc6e3::t_c3613cbc2865ca 21
+  s_aca99db70bc6e3::t_e2a498b77a90e5 1429
+  s_aca99db70bc6e3::t_7db8df0e3f29b9 43
+  s_aca99db70bc6e3::t_6b8cf27aa18296 1353-1362
+  s_aca99db70bc6e3::t_baf9644602aaa6 115
+  s_aca99db70bc6e3::t_fa0bb83f00c64c 34
+Sources/ATAIProfile/Views/ProfileV3InviteCodeView.swift
+  s_aca99db70bc6e3::t_c5edd9eb1fc8ab 64
+CHANGELOG.md
+  s_aca99db70bc6e3::t_b412e150f4a1e8 8-48,67-70,91-94,103-117
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1e3c6e3224da4a957e8385f4e450e130c47df99f",
+  "prompts": {},
+  "sessions": {
+    "s_aca99db70bc6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "af994f3e-966b-4461-9c19-ecffb292ed42",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
