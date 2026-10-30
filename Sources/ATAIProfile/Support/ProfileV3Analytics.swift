@@ -115,8 +115,8 @@ enum ProfileV3Analytics {
         static let settingsConnectorClicked = "settings_connector_clicked"
         static let settingsBackClicked = "settings_back_clicked"
         static let permissionClicked = "settings_permission_clicked"
-        static let connectorPermissionChanged = "settings_connector_permission_changed"
-        static let actionPermissionChanged = "settings_action_permission_changed"
+        static let permissionChanged = "settings_permission_changed"
+        static let permissionClosed = "settings_permission_closed"
         static let couponsClicked = "settings_coupons_clicked"
         static let termsClicked = "settings_terms_clicked"
         static let logoutClicked = "settings_logout_clicked"
@@ -211,6 +211,7 @@ enum ProfileV3Analytics {
         static let oldContactInfo = "oldContactInfo"
         static let newPermission = "newPermission"
         static let oldPermission = "oldPermission"
+        static let source = "source"
         static let changedFields = "changedFields"
         static let connectorName = "connectorName"
         static let passportChanged = "passportChanged"
@@ -544,14 +545,29 @@ enum ProfileV3Analytics {
     }
 
     static func permissionChanged(key: String, to optionID: String, from previous: String?) {
-        let name = key.contains("connector") ? EventName.connectorPermissionChanged : EventName.actionPermissionChanged
-        log(name, [
+        log(EventName.permissionChanged, [
             ParamKey.newPermission: permissionValue(optionID),
-            ParamKey.oldPermission: previous.map(permissionValue)
+            ParamKey.oldPermission: previous.map(permissionValue),
+            ParamKey.source: permissionSource(key)
         ])
     }
 
-    private static func permissionValue(_ optionID: String) -> String {
+    /// Both sides are keyed by source (`connector` / `action` / `call`).
+    static func permissionClosed(new: [String: String], old: [String: String]) {
+        log(EventName.permissionClosed, [
+            ParamKey.newPermission: new,
+            ParamKey.oldPermission: old
+        ])
+    }
+
+    /// Which control the row belongs to, as the spec's `source` values.
+    static func permissionSource(_ key: String) -> String {
+        if key.contains("connector") { return "connector" }
+        if key.contains("call") { return "call" }
+        return "action"
+    }
+
+    static func permissionValue(_ optionID: String) -> String {
         optionID == "ask_some" ? "ask_sometimes" : optionID
     }
 

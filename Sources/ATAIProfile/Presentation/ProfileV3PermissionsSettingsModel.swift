@@ -12,6 +12,7 @@ final class ProfileV3PermissionsSettingsModel: ObservableObject {
     private let repository: any ProfileV3PermissionsRepository
     private var loadTask: Task<Void, Never>?
     private var saveGenerations: [String: Int] = [:]
+    private var openedSnapshot: [String: String]?
 
     init(repository: any ProfileV3PermissionsRepository) {
         self.repository = repository
@@ -19,8 +20,29 @@ final class ProfileV3PermissionsSettingsModel: ObservableObject {
 
     func open() {
         ProfileV3Analytics.screen(.permissions)
+        openedSnapshot = permissions.map(Self.bySource)
         navigator?.push(.permissions)
         load()
+    }
+
+    /// The permission screen was dismissed — report what changed while it was up.
+    func close() {
+        defer { openedSnapshot = nil }
+        guard let permissions else { return }
+        let old = openedSnapshot ?? Self.bySource(permissions)
+        let new = Self.bySource(permissions)
+        guard new != old else { return }
+        ProfileV3Analytics.permissionClosed(new: new, old: old)
+    }
+
+    /// One entry per source (`connector` / `action` / `call`), as the spec's object shape.
+    private static func bySource(_ permissions: ProfileV3Permissions) -> [String: String] {
+        var values: [String: String] = [:]
+        for row in permissions.sections.flatMap(\.rows) {
+            guard let selected = row.selectedOptionID else { continue }
+            values[ProfileV3Analytics.permissionSource(row.id)] = ProfileV3Analytics.permissionValue(selected)
+        }
+        return values
     }
 
     func preload() {

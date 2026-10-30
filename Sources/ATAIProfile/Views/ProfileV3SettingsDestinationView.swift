@@ -34,7 +34,10 @@ struct ProfileV3SettingsDestinationView: View {
         case .logout, .deleteAccount, .deleteAccountConfirm:
             ProfileV3SettingsAccountScreen(destination: destination, settings: viewModel, model: viewModel.account)
         case .permissions:
-            ProfileV3PermissionsView(model: viewModel.permissions, onClose: viewModel.tapClose)
+            ProfileV3PermissionsView(model: viewModel.permissions) {
+                viewModel.permissions.close()
+                viewModel.tapClose()
+            }
         }
     }
 }

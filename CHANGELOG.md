@@ -5,6 +5,19 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ## Unreleased
 
+## 1.0.16 — 2026-10-30
+
+### Changed
+
+- **One permission-changed event instead of two.** `settings_connector_permission_changed` and
+  `settings_action_permission_changed` are replaced by `settings_permission_changed`, which names
+  the kind in a `source` property (`connector` / `action` / `call`). The two old events are gone.
+
+### Added
+
+- **`settings_permission_closed`** — reports what changed while the permission screen was up, with
+  `newPermission` and `oldPermission` each keyed by source. Silent when nothing changed.
+
 ### Added
 
 - `ProfileV3EntryPoint.open(_:)` with `ProfileV3Destination.addTraveller` and
