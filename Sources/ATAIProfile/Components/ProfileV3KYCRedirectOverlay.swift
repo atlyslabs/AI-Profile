@@ -33,12 +33,11 @@ struct ProfileV3KYCRedirectOverlay<Centre: View>: View {
     }
 
     private var glow: some View {
-        Circle()
-            .fill(ProfileV3Theme.kycOverlayGlowGradient)
-            .frame(width: ProfileV3Theme.Sizes.AddProgramme.glow, height: ProfileV3Theme.Sizes.AddProgramme.glow)
-            .blur(radius: ProfileV3Theme.Sizes.AddProgramme.glowBlur)
-            .opacity(ProfileV3Theme.Motion.kycOverlayGlowOpacity)
-            .allowsHitTesting(false)
+        ProfileV3RainbowGlow(
+            diameter: ProfileV3Theme.Sizes.AddProgramme.glow,
+            gradient: ProfileV3Theme.kycOverlayGlowGradient
+        )
+        .opacity(ProfileV3Theme.Motion.kycOverlayGlowOpacity)
     }
 }
 

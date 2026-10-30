@@ -90,7 +90,6 @@ struct ProfileV3GloveBoxDebugFlow: View {
             }
         }
         viewModel.onFollowUp = { [weak viewModel] _ in viewModel?.dismissSheets() }
-        viewModel.onAddCard = { [weak viewModel] in viewModel?.linkCard(ProfileV3GloveBoxFixtures.hdfc) }
     }
 }
 

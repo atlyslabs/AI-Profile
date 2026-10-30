@@ -124,20 +124,7 @@ struct ProfileV3AppCredentialsSheet: View {
     }
 
     private var header: some View {
-        ZStack(alignment: .top) {
-            ProfileV3SheetGrabber(
-                width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
-                color: Color(at: .neutralGrey200),
-                top: ProfileV3Theme.Space.s10
-            )
-            HStack {
-                Spacer()
-                ProfileV3CircleIconButton.close(action: onClose)
-                    .disabled(viewModel.phase == .submitting)
-            }
-            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
-        }
+        ProfileV3AgentSheetChrome(control: .close(onClose), isEnabled: viewModel.phase != .submitting)
     }
 
     @ViewBuilder
@@ -232,45 +219,61 @@ struct ProfileV3AppCredentialsSheet: View {
                     }
                 }
             }
-            ProfileV3CredentialField(
-                label: ProfileV3Strings.appCredentialsUsername,
-                text: $viewModel.credentials.username,
-                keyboard: .emailAddress,
-                contentType: .username
-            )
             VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s8) {
                 ProfileV3CredentialField(
-                    label: ProfileV3Strings.appCredentialsPassword,
-                    text: $viewModel.credentials.password,
-                    isSecure: !viewModel.isPasswordRevealed,
-                    contentType: .password,
-                    prompt: viewModel.passwordPrompt
-                ) {
-                    if viewModel.isRevealingPassword {
-                        ProfileV3Spinner(size: Layout.accessory, lineWidth: ProfileV3Theme.Stroke.regular)
-                            .frame(minWidth: ProfileV3Theme.Control.tapTarget, minHeight: Layout.accessory)
-                    } else {
-                        ProfileV3CredentialAccessory(
-                            icon: viewModel.isPasswordRevealed
-                                ? ATIcon.SwiftUIImage.visibility
-                                : ATIcon.SwiftUIImage.visibilityOff,
-                            accessibilityLabel: viewModel.isPasswordRevealed
-                                ? ProfileV3Strings.hidePassword
-                                : ProfileV3Strings.showPassword,
-                            action: viewModel.togglePasswordVisibility
-                        )
-                    }
+                    label: viewModel.usernameLabel,
+                    text: $viewModel.credentials.username,
+                    keyboard: viewModel.asksForPassword ? .emailAddress : .asciiCapable,
+                    contentType: .username
+                )
+                if !viewModel.asksForPassword {
+                    inlineError
                 }
-                if let error = viewModel.inlineError {
-                    Text(error)
-                        .typoGraphy(.B2InterMedium12)
-                        .foregroundStyle(ProfileV3Theme.Palette.destructive)
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+            }
+            if viewModel.asksForPassword {
+                passwordField
             }
         }
         .disabled(viewModel.phase != .editing)
+    }
+
+    private var passwordField: some View {
+        VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s8) {
+            ProfileV3CredentialField(
+                label: ProfileV3Strings.appCredentialsPassword,
+                text: $viewModel.credentials.password,
+                isSecure: !viewModel.isPasswordRevealed,
+                contentType: .password,
+                prompt: viewModel.passwordPrompt
+            ) {
+                if viewModel.isRevealingPassword {
+                    ProfileV3Spinner(size: Layout.accessory, lineWidth: ProfileV3Theme.Stroke.regular)
+                        .frame(minWidth: ProfileV3Theme.Control.tapTarget, minHeight: Layout.accessory)
+                } else {
+                    ProfileV3CredentialAccessory(
+                        icon: viewModel.isPasswordRevealed
+                            ? ATIcon.SwiftUIImage.visibility
+                            : ATIcon.SwiftUIImage.visibilityOff,
+                        accessibilityLabel: viewModel.isPasswordRevealed
+                            ? ProfileV3Strings.hidePassword
+                            : ProfileV3Strings.showPassword,
+                        action: viewModel.togglePasswordVisibility
+                    )
+                }
+            }
+            inlineError
+        }
+    }
+
+    @ViewBuilder
+    private var inlineError: some View {
+        if let error = viewModel.inlineError {
+            Text(error)
+                .typoGraphy(.B2InterMedium12)
+                .foregroundStyle(ProfileV3Theme.Palette.destructive)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     private var bar: some View {
@@ -284,40 +287,25 @@ struct ProfileV3AppCredentialsSheet: View {
                 )
                 .disabled(!viewModel.canSubmit && viewModel.phase == .editing)
                 .opacity(saveOpacity)
-                .allowsHitTesting(viewModel.showsSaveButton)
-                .accessibilityHidden(!viewModel.showsSaveButton)
+                .profileV3SaveEntrance(isShown: viewModel.showsSaveButton)
             } else {
-                switch viewModel.phase {
-                case .editing:
-                    ProfileV3ContinueButton(
-                        title: viewModel.submitTitle,
-                        disabledTint: Color(at: .neutralGrey400),
-                        isEnabled: viewModel.canSubmit,
-                        action: viewModel.submit
-                    )
-                    .transition(.opacity)
-                case .submitting:
-                    ProfileV3Spinner(size: ProfileV3Theme.Icon.xl, lineWidth: ProfileV3Theme.Stroke.regular)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: ProfileV3Theme.Sizes.Save.buttonHeight)
-                        .profileV3CapsuleChrome()
-                        .transition(.opacity)
-                case .succeeded:
-                    ProfileV3Toast(message: viewModel.successMessage)
-                        .transition(.opacity)
-                }
+                ProfileV3SubmitControl(
+                    phase: viewModel.savePhase,
+                    title: viewModel.submitTitle,
+                    successMessage: viewModel.successMessage,
+                    isEnabled: viewModel.canSubmit,
+                    action: viewModel.submit
+                )
             }
         }
         .animation(ProfileV3Theme.Motion.saveState, value: viewModel.phase)
-        .animation(ProfileV3Theme.Motion.saveState, value: viewModel.showsSaveButton)
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
         .padding(.top, Layout.barTop)
         .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
     }
 
     private var saveOpacity: Double {
-        guard viewModel.showsSaveButton else { return 0 }
-        return viewModel.canSubmit || viewModel.phase != .editing ? 1 : ProfileV3Theme.Motion.disabledOpacity
+        viewModel.canSubmit || viewModel.phase != .editing ? 1 : ProfileV3Theme.Motion.disabledOpacity
     }
 }
 
@@ -343,7 +331,7 @@ private struct ProfileV3AppCredentialsPreview: View {
 }
 
 #Preview("Add credentials") {
-    ProfileV3AppCredentialsPreview(mode: .add(ProfileV3AppAccessFixtures.content.apps[0]))
+    ProfileV3AppCredentialsPreview(mode: .add(ProfileV3AppAccessFixtures.content.apps[1]))
 }
 
 #Preview("Add new password") {

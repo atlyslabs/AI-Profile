@@ -13,6 +13,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     @Published private(set) var isDisconnecting = false
     @Published private(set) var disconnectCompletions = 0
     @Published private(set) var pendingDisconnect: ProfileV3ConnectorKey?
+    @Published var aiConnector: ProfileV3AIConnectorModel?
 
     weak var navigator: ProfileV3SettingsNavigating?
     weak var router: (any ProfileV3ConnectorsRouting & ProfileV3SettingsFeedbackRouting)?
@@ -127,6 +128,10 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     func tapConnectEmails() { router?.presentConnectorOnboarding() }
 
     func tapConnect(_ connector: ProfileV3Connector) {
+        if let key = connector.aiConnector {
+            openAIConnector(key)
+            return
+        }
         if connector.id == ProfileV3ConnectorKey.photos.rawValue {
             connectPhotos()
             return
@@ -148,6 +153,16 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
                 router?.showFlash(ProfileV3Strings.photosAccessDenied, isSuccess: false)
             }
         }
+    }
+
+    func openAIConnector(_ key: String) {
+        guard aiConnector == nil else { return }
+        aiConnector = ProfileV3AIConnectorModel(
+            connector: key,
+            repository: repository,
+            onConnected: { [weak self] in self?.load() },
+            onClose: { [weak self] in self?.aiConnector = nil }
+        )
     }
 
     func confirmDisconnect() {
@@ -186,6 +201,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     }
 
     func cancelReads() {
+        aiConnector?.cancel()
         loadTask?.cancel()
         controlPanelTask?.cancel()
         confirmTask?.cancel()

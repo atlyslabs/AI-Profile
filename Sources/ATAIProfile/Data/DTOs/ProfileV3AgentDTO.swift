@@ -13,6 +13,7 @@ enum ProfileV3AgentInput: String, Equatable {
     case date
     case toggle
     case baggageGrid = "baggage_grid"
+    case customRules = "custom_rules"
 
     var allowsMultiple: Bool? {
         switch self {
@@ -239,11 +240,15 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
     let note: String?
     let group: String?
     let tab: String?
+    let addLabel: String?
+    let maxRules: ProfileV3ScalarDTO?
     private let rawOptions: [ProfileV3LossyDTO<ProfileV3AgentOptionDTO>]?
     private let rawSource: ProfileV3LossyDTO<ProfileV3FieldSourceDTO>?
     private let rawFound: ProfileV3LossyDTO<Bool>?
     private let rawNext: ProfileV3LossyDTO<ProfileV3DirectiveDTO>?
     private let rawAssistLink: ProfileV3LossyDTO<ProfileV3AssistLinkDTO>?
+    private let rawEditor: ProfileV3LossyDTO<ProfileV3CustomRulesEditorDTO>?
+    private let rawDeleteConfirm: ProfileV3LossyDTO<ProfileV3CustomRulesDeleteDTO>?
 
     enum CodingKeys: String, CodingKey {
         case key
@@ -270,9 +275,17 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
         case note
         case group
         case tab
+        case addLabel = "add_label"
+        case maxRules = "max_rules"
+        case rawEditor = "editor"
+        case rawDeleteConfirm = "delete_confirm"
     }
 
     var options: [ProfileV3AgentOptionDTO] { rawOptions?.compactMap(\.value) ?? [] }
+
+    var editor: ProfileV3CustomRulesEditorDTO? { rawEditor?.value }
+
+    var deleteConfirm: ProfileV3CustomRulesDeleteDTO? { rawDeleteConfirm?.value }
 
     var source: ProfileV3FieldSourceDTO? { rawSource?.value }
 
@@ -296,6 +309,36 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
             guard let id = option.id else { return false }
             return listed.contains(id) || id == single
         }
+    }
+}
+
+struct ProfileV3CustomRulesEditorDTO: Decodable, Equatable {
+    let addTitle: String?
+    let editTitle: String?
+    let noteLabel: String?
+    let saveLabel: String?
+    let savedToast: String?
+    let maxChars: ProfileV3ScalarDTO?
+
+    enum CodingKeys: String, CodingKey {
+        case addTitle = "add_title"
+        case editTitle = "edit_title"
+        case noteLabel = "note_label"
+        case saveLabel = "save_label"
+        case savedToast = "saved_toast"
+        case maxChars = "max_chars"
+    }
+}
+
+struct ProfileV3CustomRulesDeleteDTO: Decodable, Equatable {
+    let title: String?
+    let confirmLabel: String?
+    let cancelLabel: String?
+
+    enum CodingKeys: String, CodingKey {
+        case title
+        case confirmLabel = "confirm_label"
+        case cancelLabel = "cancel_label"
     }
 }
 

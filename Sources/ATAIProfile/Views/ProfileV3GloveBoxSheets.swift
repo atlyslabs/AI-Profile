@@ -49,7 +49,59 @@ struct ProfileV3GloveBoxSheet: View {
                     }
                 }
             )
+        case .comingSoon:
+            ProfileV3GloveBoxComingSoonSheet(
+                message: ProfileV3GloveBoxCopy.cardLinkComingSoon,
+                bottomInset: bottomInset,
+                onBack: viewModel.back
+            )
         }
+    }
+}
+
+struct ProfileV3GloveBoxComingSoonSheet: View {
+    let message: String
+    var bottomInset: CGFloat = 0
+    let onBack: () -> Void
+
+    private typealias Layout = ProfileV3Theme.GloveBox.Layout
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ProfileV3SheetGrabber()
+            ProfileV3CircleIconButton.back(action: onBack)
+                .padding(.top, Layout.detailBackTop)
+                .padding(.leading, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Canvas { context, size in
+                ProfileV3GloveBoxDial.draw(
+                    ProfileV3GloveBoxArt.dialCreditCard.image,
+                    centre: CGPoint(x: size.width / 2, y: Layout.comingSoonDial / 2),
+                    diameter: Layout.comingSoonDial,
+                    in: context
+                )
+            }
+            .frame(width: Layout.comingSoonDial, height: Layout.comingSoonDial + Layout.dialShadowDrop * 2)
+            .padding(.top, Layout.comingSoonArtTop)
+            .accessibilityHidden(true)
+            Text(ProfileV3Strings.comingSoon)
+                .typoGraphy(.H5InterMedium20)
+                .foregroundStyle(Color(at: .pureBlack))
+                .accessibilityAddTraits(.isHeader)
+                .padding(.top, Layout.comingSoonTitleTop)
+            if !message.isEmpty {
+                Text(message)
+                    .typoGraphy(.B2InterMedium12)
+                    .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.accessSubtitle))
+                    .frame(maxWidth: Layout.comingSoonBodyWidth)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, Layout.comingSoonBodyTop)
+            }
+            Color.clear
+                .frame(height: Layout.comingSoonBottom + bottomInset)
+        }
+        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity)
     }
 }
 

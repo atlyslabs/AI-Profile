@@ -20,6 +20,9 @@ struct ProfileV3AppAccessView: View {
         .sheet(item: editor) { editor in
             ProfileV3AppCredentialsView(viewModel: editor, onClose: model.closeEditor)
         }
+        .sheet(item: $model.instagram) { instagram in
+            ProfileV3InstagramConnectSheet(model: instagram)
+        }
         .sensoryFeedback(.success, trigger: model.disconnectCompletions)
     }
 
@@ -28,11 +31,9 @@ struct ProfileV3AppAccessView: View {
     }
 
     private var addNewBar: some View {
-        ZStack(alignment: .bottom) {
-            ProfileV3SaveBarFade()
+        ProfileV3SaveBar {
             ProfileV3ContinueButton(title: ProfileV3Strings.appAccessAddNew, action: model.tapAddNew)
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
         }
     }
 }
@@ -147,12 +148,16 @@ private struct ProfileV3AppAccessRow: View {
             isIconRound: true,
             title: app.name
         ) {
-            ProfileV3ConnectorAction(title: ProfileV3Strings.appAccessAddCredentials, action: onAdd)
+            ProfileV3ConnectorAction(title: actionTitle, action: onAdd)
         }
         .frame(height: Access.cardHeight, alignment: .top)
         .profileV3SettingsCard(cornerRadius: Access.cardRadius)
         .accessibilityElement(children: .combine)
-        .accessibilityAction(named: ProfileV3Strings.appAccessAddCredentials, onAdd)
+        .accessibilityAction(named: actionTitle, onAdd)
+    }
+
+    private var actionTitle: String {
+        app.asksForUsernameOnly ? ProfileV3Strings.appAccessAddUsername : ProfileV3Strings.appAccessAddCredentials
     }
 }
 

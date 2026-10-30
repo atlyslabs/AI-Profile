@@ -96,6 +96,7 @@ enum ProfileV3Theme {
         static let statusDotCore: CGFloat = 5
         static let sheetGrabberWidth: CGFloat = 36
         static let sheetGrabberHeight: CGFloat = 5
+        static let rainbowGlowBlur: CGFloat = 50
         static let skeletonCardHeight: CGFloat = 154
         static let couponCardHeight: CGFloat = 102
         static let progressRing: CGFloat = 62
@@ -187,6 +188,7 @@ enum ProfileV3Theme {
 
     enum Counts {
         static let passportUpdateSteps = 2
+        static let passportAddressLines = 3
         static let detailStatsFirstRow = 2
         static let stackLayers = 3
         static let detailPillMaxFlags = 5
@@ -197,6 +199,8 @@ enum ProfileV3Theme {
         static let sliderRulerMajorInterval = 5
         static let sliderRulerMajorPhase = 3
         static let chipInlineLimit = 10
+        static let customRuleMaxCharacters = 500
+        static let customRuleMaxRules = 20
         static let addProgrammeSteps = 2
     }
 
@@ -218,6 +222,9 @@ enum ProfileV3Theme {
         static let passportCountrySize: CGFloat = 14
         static let passportCountryTracking: CGFloat = -0.56
         static let passportCountryMinScale: CGFloat = 0.6
+        static let passportBackLabelSize: CGFloat = 9
+        static let passportBackLabelTracking: CGFloat = 0.72
+        static let passportBackValueMinScale: CGFloat = 0.8
         static let worldPassNumberFont = "Dotline"
         static let worldPassNumberSize: CGFloat = 20
         static let worldPassNumberTracking: CGFloat = 1

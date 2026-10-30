@@ -65,6 +65,16 @@ enum ProfileV3AppAccessFixtures {
             ProfileV3AutoConnectedApp(id: "splits", name: "Splits by Atlys", iconURL: ProfileV3AppAccessFixtureLogos.splits)
         ],
         apps: [
+            ProfileV3LinkedApp(
+                id: "instagram",
+                name: "Instagram",
+                iconURL: ProfileV3AppAccessFixtureLogos.instagram,
+                blurb: "Meet Ayl on Instagram\nFollow Ayl and say hi, so your agent can plan and recommend the best "
+                    + "of everything for you.",
+                username: nil,
+                isConnected: false,
+                asksForUsernameOnly: true
+            ),
             app(
                 "grab",
                 "Grab",

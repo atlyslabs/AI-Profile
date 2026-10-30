@@ -214,7 +214,7 @@ enum ProfileV3GloveBoxFixtures {
             ProfileV3GloveBoxCardSection.Fact(id: "no-show", label: "No-show fee", value: "Asks you first")
         ],
         payTitle: "How you pay",
-        payBody: "When the assistant books or buys for you. Change it anytime.",
+        payBody: "When the agent books for you.",
         payOptions: [
             ProfileV3GloveBoxCardSection.PayOption(
                 id: "atlys",

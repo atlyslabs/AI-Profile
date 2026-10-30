@@ -39,32 +39,11 @@ struct ProfileV3HouseholdApplySheet: View {
     }
 
     private func header(_ session: ProfileV3HouseholdApplySession) -> some View {
-        ZStack(alignment: .top) {
-            ProfileV3SheetGrabber(
-                width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
-                color: Color(at: .neutralGrey200),
-                top: ProfileV3Theme.Space.s10
-            )
-            ProfileV3TagLabel(text: session.prompt.eyebrow)
-                .padding(.top, ProfileV3Theme.Sizes.Agent.tagTop)
-            HStack {
-                Spacer()
-                ProfileV3CircleIconButton.close(action: viewModel.closeHousehold)
-                    .disabled(session.phase == .saving || session.phase == .saved)
-            }
-            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
-            ProfileV3AvatarOrb(
-                imageURL: session.prompt.iconURL ?? viewModel.avatarURL,
-                size: ProfileV3Theme.Sizes.Agent.orbLarge
-            )
-            .padding(.top, ProfileV3Theme.Sizes.Agent.orbTop)
-            .accessibilityHidden(true)
-        }
-        .frame(maxWidth: .infinity)
-        .frame(
-            height: ProfileV3Theme.Sizes.Agent.orbTop + ProfileV3Theme.Sizes.Agent.orbLarge,
-            alignment: .top
+        ProfileV3AgentSheetHeader(
+            tag: session.prompt.eyebrow,
+            avatarURL: session.prompt.iconURL ?? viewModel.avatarURL,
+            isEnabled: session.phase != .saving && session.phase != .saved,
+            control: .close(viewModel.closeHousehold)
         )
     }
 
@@ -120,27 +99,17 @@ struct ProfileV3HouseholdApplySheet: View {
     }
 
     private func bar(_ session: ProfileV3HouseholdApplySession) -> some View {
-        ZStack(alignment: .bottom) {
-            ProfileV3SaveBarFade()
-            VStack(spacing: ProfileV3Theme.Space.s12) {
-                if let message = session.errorMessage {
-                    Text(message)
-                        .typoGraphy(.T1InterBold11)
-                        .foregroundStyle(ProfileV3Theme.Palette.error)
-                        .multilineTextAlignment(.center)
-                }
-                ProfileV3SaveButton(
-                    phase: savePhase(session),
-                    title: session.prompt.confirmLabel,
-                    savedTitle: session.doneLabel,
-                    action: viewModel.confirmHousehold
-                )
-                .disabled(!session.canConfirm && session.phase != .saving && session.phase != .saved)
-                .opacity(session.canConfirm || session.phase == .saving || session.phase == .saved ? 1 : ProfileV3Theme.Motion.disabledOpacity)
-            }
-            .animation(ProfileV3Theme.Motion.saveState, value: session.phase)
-            .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
+        ProfileV3SaveBar(error: session.errorMessage) {
+            ProfileV3SaveButton(
+                phase: savePhase(session),
+                title: session.prompt.confirmLabel,
+                savedTitle: session.doneLabel,
+                action: viewModel.confirmHousehold
+            )
+            .disabled(!session.canConfirm && session.phase != .saving && session.phase != .saved)
+            .opacity(session.canConfirm || session.phase == .saving || session.phase == .saved ? 1 : ProfileV3Theme.Motion.disabledOpacity)
         }
+        .animation(ProfileV3Theme.Motion.saveState, value: session.phase)
     }
 
     private func savePhase(_ session: ProfileV3HouseholdApplySession) -> ProfileV3SavePhase {

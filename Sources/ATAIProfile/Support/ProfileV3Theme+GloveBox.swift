@@ -296,6 +296,13 @@ extension ProfileV3Theme {
             static let detailCTATop: CGFloat = 48
             static let detailEmptyBottom: CGFloat = 120
 
+            static let comingSoonDial: CGFloat = 84
+            static let comingSoonArtTop: CGFloat = 8
+            static let comingSoonTitleTop: CGFloat = 32
+            static let comingSoonBodyTop: CGFloat = 12
+            static let comingSoonBodyWidth: CGFloat = 240
+            static let comingSoonBottom: CGFloat = 64
+
             static let blobBlur: CGFloat = 25
             static let actionBlob = CGSize(width: 32.6, height: 29.3)
             static let blobCentres: [UnitPoint] = [

@@ -383,12 +383,8 @@ struct ProfileV3GloveBoxCopyValue: View {
     var body: some View {
         HStack(spacing: spacing) {
             HStack(spacing: Layout.valueSpacing) {
-                if let countryCode, let country = ATCountry(isoCode: countryCode) {
-                    ATCountryFlagView(country: country)
-                        .frame(width: Layout.flag, height: Layout.flag)
-                        .clipShape(Circle())
-                        .accessibilityHidden(true)
-                }
+                ProfileV3CountryFlag(isoCode: countryCode, size: Layout.flag)
+                    .accessibilityHidden(true)
                 Text(value)
                     .typoGraphy(.H7InterMedium16)
                     .foregroundStyle(Color(at: .pureBlack))
@@ -396,16 +392,16 @@ struct ProfileV3GloveBoxCopyValue: View {
                     .minimumScaleFactor(0.7)
             }
             if isCopyable {
-                Button(action: onCopy) {
-                    (isCopied ? ATIcon.SwiftUIImage.check : ATIcon.SwiftUIImage.contentCopy)
-                        .profileV3Icon(Layout.copyIcon)
-                        .foregroundStyle(ProfileV3Theme.GloveBox.Palette.icon)
-                        .padding(Layout.copyHitInset)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.profileV3Pressable(.selection))
-                .padding(-Layout.copyHitInset)
-                .accessibilityLabel(isCopied ? ProfileV3Strings.gloveBoxCopied : ProfileV3Strings.gloveBoxCopy)
+                ProfileV3CopyButton(
+                    isCopied: isCopied,
+                    size: Layout.copyIcon,
+                    tint: ProfileV3Theme.GloveBox.Palette.icon,
+                    hitInset: Layout.copyHitInset,
+                    copyLabel: ProfileV3Strings.gloveBoxCopy,
+                    copiedLabel: ProfileV3Strings.gloveBoxCopied,
+                    feedback: .selection,
+                    action: onCopy
+                )
             }
         }
     }

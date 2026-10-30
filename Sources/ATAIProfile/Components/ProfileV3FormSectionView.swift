@@ -20,6 +20,7 @@ struct ProfileV3FormSectionView: View {
     var onToggleBaggage: ((String) -> Void)?
     var onStepBaggage: ((String, Int) -> Void)?
     var onOpenNoteLink: ((ProfileV3Directive) -> Void)?
+    var showsPassportBackPage = ProfileV3FeatureFlags.isPassportBackPageEnabled
 
     @State private var sliderPreview: Double?
 
@@ -112,12 +113,14 @@ struct ProfileV3FormSectionView: View {
             }
         case .passport(let field):
             VStack(spacing: ProfileV3Theme.Sizes.Passport.controlSpacing) {
-                ProfileV3PassportCard(
+                ProfileV3PassportPages(
                     holderName: field.holderName,
                     countryName: field.countryName,
                     countryNativeName: field.countryNativeName,
+                    labels: field.labels,
                     content: field.passport.map(ProfileV3PassportCard.Content.details)
                         ?? .upload(field.emptyState ?? .blank),
+                    showsBackPage: showsPassportBackPage,
                     onUpload: onUploadPassport
                 )
                 if field.passport != nil {
@@ -159,6 +162,8 @@ struct ProfileV3FormSectionView: View {
                 onToggle: { onToggleBaggage?($0) },
                 onStep: { onStepBaggage?($0, $1) }
             )
+        case .customRules:
+            EmptyView()
         }
     }
 
@@ -207,6 +212,7 @@ extension ProfileV3FormSectionView: Equatable {
             && (lhs.onToggleBaggage == nil) == (rhs.onToggleBaggage == nil)
             && (lhs.onStepBaggage == nil) == (rhs.onStepBaggage == nil)
             && (lhs.onOpenNoteLink == nil) == (rhs.onOpenNoteLink == nil)
+            && lhs.showsPassportBackPage == rhs.showsPassportBackPage
     }
 }
 

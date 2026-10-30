@@ -1,32 +1,101 @@
 import ATUIKit
 import SwiftUI
 
+enum ProfileV3SheetControl {
+    case back(() -> Void)
+    case close(() -> Void)
+}
+
+struct ProfileV3AgentSheetChrome<Title: View, Accessory: View>: View {
+    let control: ProfileV3SheetControl
+    var isEnabled = true
+    var showsGrabber = true
+    @ViewBuilder let title: Title
+    @ViewBuilder let accessory: Accessory
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            if showsGrabber {
+                ProfileV3SheetGrabber.agent
+            }
+            accessory
+            ZStack {
+                title
+                HStack {
+                    if case .back(let action) = control {
+                        ProfileV3CircleIconButton.back(action: action)
+                    }
+                    Spacer()
+                    if case .close(let action) = control {
+                        ProfileV3CircleIconButton.close(action: action)
+                    }
+                }
+                .disabled(!isEnabled)
+            }
+            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+            .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
+        }
+    }
+}
+
+extension ProfileV3AgentSheetChrome where Accessory == EmptyView {
+    init(
+        control: ProfileV3SheetControl,
+        isEnabled: Bool = true,
+        showsGrabber: Bool = true,
+        @ViewBuilder title: () -> Title
+    ) {
+        self.init(control: control, isEnabled: isEnabled, showsGrabber: showsGrabber, title: title, accessory: { EmptyView() })
+    }
+}
+
+extension ProfileV3AgentSheetChrome where Title == EmptyView {
+    init(control: ProfileV3SheetControl, isEnabled: Bool = true, @ViewBuilder accessory: () -> Accessory) {
+        self.init(control: control, isEnabled: isEnabled, title: { EmptyView() }, accessory: accessory)
+    }
+}
+
+extension ProfileV3AgentSheetChrome where Title == EmptyView, Accessory == EmptyView {
+    init(control: ProfileV3SheetControl, isEnabled: Bool = true) {
+        self.init(control: control, isEnabled: isEnabled, title: { EmptyView() }, accessory: { EmptyView() })
+    }
+}
+
 struct ProfileV3AgentSheetHeader: View {
     let tag: String
     var avatarURL: URL?
     var showsOrb = true
-    let onBack: () -> Void
+    var isEnabled = true
+    let control: ProfileV3SheetControl
+
+    init(tag: String, avatarURL: URL? = nil, showsOrb: Bool = true, onBack: @escaping () -> Void) {
+        self.init(tag: tag, avatarURL: avatarURL, showsOrb: showsOrb, control: .back(onBack))
+    }
+
+    init(
+        tag: String,
+        avatarURL: URL? = nil,
+        showsOrb: Bool = true,
+        isEnabled: Bool = true,
+        control: ProfileV3SheetControl
+    ) {
+        self.tag = tag
+        self.avatarURL = avatarURL
+        self.showsOrb = showsOrb
+        self.isEnabled = isEnabled
+        self.control = control
+    }
 
     var body: some View {
-        ZStack(alignment: .top) {
-            ProfileV3SheetGrabber(
-                width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
-                color: Color(at: .neutralGrey200),
-                top: ProfileV3Theme.Space.s10
-            )
+        ProfileV3AgentSheetChrome(control: control, isEnabled: isEnabled, accessory: {
             ProfileV3TagLabel(text: tag)
                 .padding(.top, ProfileV3Theme.Sizes.Agent.tagTop)
-            HStack {
-                ProfileV3CircleIconButton.back(action: onBack)
-                Spacer()
-            }
-            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
             if showsOrb {
                 ProfileV3AvatarOrb(imageURL: avatarURL, size: ProfileV3Theme.Sizes.Agent.orbLarge)
                     .padding(.top, ProfileV3Theme.Sizes.Agent.orbTop)
+                    .accessibilityHidden(true)
             }
-        }
+        })
         .frame(maxWidth: .infinity)
         .frame(height: height, alignment: .top)
     }
@@ -50,11 +119,7 @@ struct ProfileV3AgentStickyHeader: View {
         ZStack(alignment: .top) {
             backdrop(progress)
             Group {
-                ProfileV3SheetGrabber(
-                    width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
-                    color: Color(at: .neutralGrey200),
-                    top: ProfileV3Theme.Space.s10
-                )
+                ProfileV3SheetGrabber.agent
                 ProfileV3TagLabel(text: tag)
                     .padding(.top, ProfileV3Theme.Sizes.Agent.tagTop)
                     .offset(y: ProfileV3Theme.Sizes.Agent.stickyTagDrop * progress)

@@ -333,7 +333,7 @@ struct ProfileV3AnalyticsEventsTests {
             permissions.select("when_needed", in: "email_cc")
 
             while recorder.named("settings_residence_updated").isEmpty
-                || recorder.named("settings_action_permission_changed").count < 2 {
+                || recorder.named("settings_permission_changed").count < 2 {
                 try await Task.sleep(for: .milliseconds(10))
             }
 
@@ -346,11 +346,11 @@ struct ProfileV3AnalyticsEventsTests {
             #expect((updated.parameters["oldContactInfo"] as? [String: String])?["email"] == "ada@example.com")
             #expect((updated.parameters["newContactInfo"] as? [String: String])?["phone"] == "+919000000002")
 
-            let changes = recorder.named("settings_action_permission_changed").map { event in
+            let changes = recorder.named("settings_permission_changed").map { event in
                 "\(event.string("oldPermission") ?? "")>\(event.string("newPermission") ?? "")"
             }
             #expect(Set(changes) == ["ask>on", "always>when_needed"])
-            #expect(recorder.named("settings_connector_permission_changed").isEmpty)
+            #expect(Set(recorder.named("settings_permission_changed").compactMap { $0.string("source") }) == ["action"])
         }
     }
 

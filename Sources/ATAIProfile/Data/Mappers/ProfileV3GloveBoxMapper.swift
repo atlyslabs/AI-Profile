@@ -59,6 +59,17 @@ enum ProfileV3GloveBoxCopy {
     static var cardListTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleTransactionsList }
     static var cardAdd: String { ProfileV3L10n.moAiprofileGloveboxButtonAddCard }
     static var cardSecure: String { ProfileV3L10n.moAiprofileGloveboxNoticeCardSecure }
+    static var cardWorksAt: String { ProfileV3L10n.moAiprofileGloveboxLabelCardWorksAt }
+    static var cardRestaurantOnly: String { ProfileV3L10n.moAiprofileGloveboxLabelCardRestaurantOnly }
+    static var cardOwnCard: String { ProfileV3L10n.moAiprofileGloveboxLabelCardOwnCard }
+    static var cardNeverShared: String { ProfileV3L10n.moAiprofileGloveboxLabelCardNeverShared }
+    static var cardNoShowFee: String { ProfileV3L10n.moAiprofileGloveboxLabelCardNoShowFee }
+    static var cardAsksFirst: String { ProfileV3L10n.moAiprofileGloveboxLabelCardAsksFirst }
+    static var payAtlysTitle: String { ProfileV3L10n.moAiprofileGloveboxTitlePayAtlys }
+    static var payAtlysBody: String { ProfileV3L10n.moAiprofileGloveboxDescriptionPayAtlys }
+    static var payLinkTitle: String { ProfileV3L10n.moAiprofileGloveboxTitlePayLink }
+    static var payLinkBody: String { ProfileV3L10n.moAiprofileGloveboxDescriptionPayLink }
+    static var cardLinkComingSoon: String { ProfileV3L10n.moAiprofileGloveboxStatusCardLinkPending }
     static var sample: String { ProfileV3L10n.moAiprofileGloveboxLabelSample }
     static var changed: String { ProfileV3L10n.moAiprofileGloveboxBadgeChanged }
 }
@@ -77,15 +88,6 @@ enum ProfileV3GloveBoxSamples {
                 meta: ProfileV3GloveBoxMeta(glyphs: [.mail, .seen], label: ProfileV3L10n.moAiprofileGloveboxSampleEmailFlightStatus),
                 badge: ProfileV3GloveBoxCopy.changed,
                 note: ProfileV3L10n.moAiprofileGloveboxSampleEmailFlightNote
-            ),
-            ProfileV3GloveBoxEmail(
-                id: "sample-email-hotel",
-                sender: ProfileV3L10n.moAiprofileGloveboxSampleEmailHotelSender,
-                summary: ProfileV3L10n.moAiprofileGloveboxSampleEmailHotelSubject,
-                logoURL: marriottLogo,
-                attention: ProfileV3GloveBoxEmail.Attention(title: ProfileV3GloveBoxCopy.needsAttention),
-                meta: ProfileV3GloveBoxMeta(glyphs: [.done], label: ProfileV3L10n.moAiprofileGloveboxSampleEmailHotelStatus),
-                note: ProfileV3L10n.moAiprofileGloveboxSampleEmailHotelNote
             )
         ]
     }
@@ -215,8 +217,27 @@ enum ProfileV3GloveBoxMapper {
         )
     }
 
-    static func home(email: ProfileV3GloveBoxEmailSection) -> ProfileV3GloveBoxHome {
-        ProfileV3GloveBoxHome(email: email, phone: phone, card: card)
+    static func cardHolder(_ name: String?) -> String {
+        let words = (name ?? "").split(whereSeparator: \.isWhitespace)
+        guard let first = words.first else { return "" }
+        guard words.count > 1, let initial = words.last?.first else { return String(first) }
+        return "\(first) \(initial)."
+    }
+
+    static func cardLastFour(for address: String?) -> String {
+        var hash: UInt64 = 0xcbf2_9ce4_8422_2325
+        for byte in (address ?? "").lowercased().utf8 {
+            hash = (hash ^ UInt64(byte)) &* 0x0000_0100_0000_01b3
+        }
+        return String(format: "%04d", Int(hash % 10_000))
+    }
+
+    static func home(
+        email: ProfileV3GloveBoxEmailSection,
+        cardHolder: String = "",
+        cardLastFour: String = ""
+    ) -> ProfileV3GloveBoxHome {
+        ProfileV3GloveBoxHome(email: email, phone: phone, card: card(holder: cardHolder, lastFour: cardLastFour))
     }
 
     static func message(for error: Error) -> String {
@@ -379,22 +400,40 @@ enum ProfileV3GloveBoxMapper {
         )
     }
 
-    private static var card: ProfileV3GloveBoxCardSection {
+    private static func card(holder: String, lastFour: String) -> ProfileV3GloveBoxCardSection {
         ProfileV3GloveBoxCardSection(
             title: ProfileV3GloveBoxCopy.cardTitle,
             card: ProfileV3GloveBoxCardSection.Card(
-                lastFour: "",
-                holder: "",
+                lastFour: lastFour,
+                holder: holder,
                 expiryLabel: ProfileV3GloveBoxCopy.cardExpires,
                 cvcLabel: ProfileV3GloveBoxCopy.cardCVC,
                 nameLabel: ProfileV3GloveBoxCopy.cardName
             ),
             protectedNotice: ProfileV3GloveBoxCopy.cardProtected,
             stats: [],
-            facts: [],
+            facts: [
+                ProfileV3GloveBoxCardSection.Fact(
+                    id: "works-at", label: ProfileV3GloveBoxCopy.cardWorksAt, value: ProfileV3GloveBoxCopy.cardRestaurantOnly
+                ),
+                ProfileV3GloveBoxCardSection.Fact(
+                    id: "own-card", label: ProfileV3GloveBoxCopy.cardOwnCard, value: ProfileV3GloveBoxCopy.cardNeverShared
+                ),
+                ProfileV3GloveBoxCardSection.Fact(
+                    id: "no-show", label: ProfileV3GloveBoxCopy.cardNoShowFee, value: ProfileV3GloveBoxCopy.cardAsksFirst
+                )
+            ],
             payTitle: ProfileV3GloveBoxCopy.cardPayTitle,
             payBody: ProfileV3GloveBoxCopy.cardPayBody,
-            payOptions: [],
+            payOptions: [
+                ProfileV3GloveBoxCardSection.PayOption(
+                    id: "atlys", title: ProfileV3GloveBoxCopy.payAtlysTitle, body: ProfileV3GloveBoxCopy.payAtlysBody, kind: .atlys
+                ),
+                ProfileV3GloveBoxCardSection.PayOption(
+                    id: "link", title: ProfileV3GloveBoxCopy.payLinkTitle, body: ProfileV3GloveBoxCopy.payLinkBody, kind: .link
+                )
+            ],
+            selectedPayOptionID: "atlys",
             addCardTitle: ProfileV3GloveBoxCopy.cardAdd,
             secureNote: ProfileV3GloveBoxCopy.cardSecure,
             transactions: ProfileV3GloveBoxSamples.transactions,

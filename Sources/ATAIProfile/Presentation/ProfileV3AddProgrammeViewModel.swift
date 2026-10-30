@@ -38,6 +38,8 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     @Published private(set) var isLoadingCatalogue = false
     @Published private(set) var catalogueFailed = false
     @Published private(set) var filters: [ProfileV3ProgrammeFilter] = []
+    @Published private(set) var market: ProfileV3ProgrammeMarket?
+    @Published private(set) var selectedMarket: String?
     @Published var query = "" {
         didSet {
             guard query != oldValue else { return }
@@ -114,6 +116,16 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
 
     var canContinuePick: Bool { selectedItem != nil && !isLoadingCatalogue }
 
+    var showsMarketToggle: Bool {
+        guard let market else { return false }
+        let chip = selectedFilter ?? filters.first(where: \.isAll)
+        return market.appliesTo(chip: chip?.label ?? ProfileV3ProgrammeCategory.all.title)
+    }
+
+    var selectedMarketOption: ProfileV3ProgrammeMarket.Option? {
+        market?.option(selectedMarket) ?? market?.option(market?.selected)
+    }
+
     var entryFields: [ProfileV3LoyaltyEntryForm.Field] {
         (entryForm?.fields ?? []).filter { $0.key == Field.membershipNumberKey || $0.key == Field.pointsKey }
     }
@@ -157,7 +169,7 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
             if let scannedCount {
                 ProfileV3Analytics.programmeScanFinished(foundCount: scannedCount)
             }
-            let picker = try await repository.loadProgrammeCatalogue(query: nil, kind: nil)
+            let picker = try await repository.loadProgrammeCatalogue(query: nil, kind: nil, market: selectedMarket)
             catalogueFilter = nil
             applyPicker(picker)
             reconcileSelection()
@@ -223,6 +235,14 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
         slideDepthReached = 0
         ProfileV3Analytics.cardTypeSelected(travellerId: profileID, connectorType: connectorType)
         reconcileSelection()
+        scheduleCatalogueRefresh(debounced: false)
+    }
+
+    func selectMarket(_ value: String) {
+        guard value != selectedMarket, market?.option(value) != nil else { return }
+        showCatalogueLoader()
+        selectedMarket = value
+        slideDepthReached = 0
         scheduleCatalogueRefresh(debounced: false)
     }
 
@@ -362,6 +382,7 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
         guard stage == .pick else { return }
         let search = query.trimmingCharacters(in: .whitespacesAndNewlines)
         let filter = selectedFilter
+        let market = selectedMarket
         catalogueTask?.cancel()
         showCatalogueLoader()
         let loaderMinimum = Duration.milliseconds(ProfileV3Theme.Motion.catalogueLoaderMinimumMilliseconds)
@@ -374,7 +395,8 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
             }
             let picker = try? await repository.loadProgrammeCatalogue(
                 query: search.isEmpty ? nil : search,
-                kind: filter?.label
+                kind: filter?.label,
+                market: market
             )
             guard !Task.isCancelled else { return }
             try? await Task.sleep(until: loaderUntil, clock: .continuous)
@@ -407,6 +429,10 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
 
     private func applyPicker(_ picker: ProfileV3ProgrammePicker) {
         if !picker.filters.isEmpty { filters = picker.filters }
+        if let pickerMarket = picker.market {
+            market = pickerMarket
+            if selectedMarket == nil { selectedMarket = pickerMarket.selected }
+        }
         catalogue = picker.items
     }
 

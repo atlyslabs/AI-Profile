@@ -231,7 +231,6 @@ struct ProfileV3VaultSitePicker: View {
     @ObservedObject var model: ProfileV3CredentialStoreModel
     var scrolls = true
     @State private var query = ""
-    @State private var headerPin = ProfileV3HeaderPin()
 
     private typealias Layout = ProfileV3Theme.Sizes.CredentialStore
     private typealias Credentials = ProfileV3Theme.Sizes.AppCredentials
@@ -240,13 +239,9 @@ struct ProfileV3VaultSitePicker: View {
         VStack(spacing: 0) {
             ProfileV3VaultSheetHeader(title: ProfileV3Strings.appCredentialsTitle, onClose: model.closeSheet)
             if scrolls {
-                ScrollView(showsIndicators: false) {
+                ProfileV3FadingScroll {
                     content
-                        .profileV3HeaderFadeAnchor(headerPin)
                 }
-                .profileV3HeaderFade(headerPin)
-                .scrollBounceBehavior(.basedOnSize)
-                .scrollDismissesKeyboard(.interactively)
             } else {
                 content
             }
@@ -295,29 +290,16 @@ private struct ProfileV3VaultSheetHeader: View {
     let onClose: () -> Void
 
     var body: some View {
-        ZStack(alignment: .top) {
-            ProfileV3SheetGrabber(
-                width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
-                color: Color(at: .neutralGrey200),
-                top: ProfileV3Theme.Space.s10
-            )
-            ZStack {
-                if let title {
-                    Text(title)
-                        .typoGraphy(.H5InterMedium20)
-                        .foregroundStyle(Color(at: .pureBlack))
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: ProfileV3Theme.Sizes.AppCredentials.titleWidth)
-                        .accessibilityAddTraits(.isHeader)
-                }
-                HStack {
-                    Spacer()
-                    ProfileV3CircleIconButton.close(action: onClose)
-                }
+        ProfileV3AgentSheetChrome(control: .close(onClose), title: {
+            if let title {
+                Text(title)
+                    .typoGraphy(.H5InterMedium20)
+                    .foregroundStyle(Color(at: .pureBlack))
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: ProfileV3Theme.Sizes.AppCredentials.titleWidth)
+                    .accessibilityAddTraits(.isHeader)
             }
-            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
-        }
+        })
     }
 }
 

@@ -38,7 +38,7 @@ protocol ProfileV3AgentRepository: Sendable {
 
 protocol ProfileV3LoyaltyRepository: Sendable {
     func scanProgrammes() -> AsyncThrowingStream<ProfileV3ProgrammeScanEvent, Error>
-    func loadProgrammeCatalogue(query: String?, kind: String?) async throws -> ProfileV3ProgrammePicker
+    func loadProgrammeCatalogue(query: String?, kind: String?, market: String?) async throws -> ProfileV3ProgrammePicker
     func loadLoyaltyEntry(
         programID: String,
         programName: String?,
@@ -88,7 +88,14 @@ protocol ProfileV3PermissionsRepository: Sendable {
     func savePermission(_ value: String, for key: String) async throws
 }
 
-protocol ProfileV3SettingsRepository: ProfileV3AppAccessRepository, ProfileV3PermissionsRepository {
+protocol ProfileV3AIConnectorRepository: Sendable {
+    func loadAIConnector(_ connector: String) async throws -> ProfileV3AIConnector
+    func loadAIConnectorConnect(_ connector: String) async throws -> ProfileV3AIConnectorConnect
+    func connectAIConnector(_ submit: ProfileV3AIConnectorConnect.Submit, text: String) async throws
+}
+
+protocol ProfileV3SettingsRepository: ProfileV3AppAccessRepository, ProfileV3PermissionsRepository,
+    ProfileV3AIConnectorRepository {
     func loadSettings() async throws -> ProfileV3SettingsMenu
     func loadEditField(_ field: ProfileV3ProfileField) async throws -> ProfileV3EditField
     func saveProfileField(

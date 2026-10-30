@@ -353,9 +353,39 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             return nil
         case .carPickup:
             return .cars(carField(from: field))
+        case .customRules:
+            return .customRules(customRules(from: field))
         case .baggageGrid, .none:
             return nil
         }
+    }
+
+    private static func customRules(from field: ProfileV3AgentFieldDTO) -> ProfileV3CustomRulesField {
+        let editor = field.editor
+        let confirm = field.deleteConfirm
+        return ProfileV3CustomRulesField(
+            rules: (field.value?.list ?? []).compactMap { text($0) },
+            addLabel: text(field.addLabel) ?? "",
+            editor: ProfileV3CustomRulesField.Editor(
+                addTitle: text(editor?.addTitle) ?? "",
+                editTitle: text(editor?.editTitle) ?? "",
+                noteLabel: text(editor?.noteLabel) ?? "",
+                saveLabel: text(editor?.saveLabel) ?? "",
+                savedToast: text(editor?.savedToast) ?? "",
+                maxCharacters: positive(editor?.maxChars) ?? ProfileV3Theme.Counts.customRuleMaxCharacters
+            ),
+            deleteConfirm: ProfileV3CustomRulesField.DeleteConfirm(
+                title: text(confirm?.title) ?? "",
+                confirmLabel: text(confirm?.confirmLabel) ?? "",
+                cancelLabel: text(confirm?.cancelLabel) ?? ""
+            ),
+            maxRules: positive(field.maxRules) ?? ProfileV3Theme.Counts.customRuleMaxRules
+        )
+    }
+
+    private static func positive(_ scalar: ProfileV3ScalarDTO?) -> Int? {
+        guard let value = scalar?.intValue, value > 0 else { return nil }
+        return value
     }
 
     private static func date(

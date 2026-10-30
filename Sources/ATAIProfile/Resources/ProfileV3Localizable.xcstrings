@@ -817,6 +817,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-button-add-username": {
+      "comment": "App access row action for an app that only needs a username, such as Instagram.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ user name"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-button-connect-emails": {
       "comment": "Button to trigger the flow for adding additional email accounts.",
       "extractionState": "manual",
@@ -993,6 +1005,42 @@
           "stringUnit": {
             "state": "translated",
             "value": "Your travel details, bookings and updates are already there. Connecting email helps the agent understand and act on them without asking you to find or share everything manually."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-instagram-step-follow": {
+      "comment": "Detail under the third Instagram explainer step.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From here on, your agent will organize, plan, and recommend the best of everything for you."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-instagram-step-redirect": {
+      "comment": "Detail under the second Instagram explainer step.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See how the magic begins..."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-instagram-step-username": {
+      "comment": "Detail under the first Instagram explainer step.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Just to get to know you..."
           }
         }
       }
@@ -1213,6 +1261,42 @@
         }
       }
     },
+    "mo-aiprofile-agents-label-instagram-follow": {
+      "comment": "Instagram's Follow button drawn in the third Instagram explainer card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follow"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-instagram-hi": {
+      "comment": "Message bubble drawn in the third Instagram explainer card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hi"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-instagram-sample-handle": {
+      "comment": "Sample username drawn in the first Instagram explainer card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Johndoe"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-label-password": {
       "comment": "Credentials form field label for the password.",
       "extractionState": "manual",
@@ -1393,6 +1477,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-label-username": {
+      "comment": "Label of the field that asks for an Instagram username.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-label-username-email": {
       "comment": "Credentials form field label for the username or email address.",
       "extractionState": "manual",
@@ -1501,6 +1597,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-status-instagram-redirecting": {
+      "comment": "Shown while the app opens Instagram after a username is saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redirecting you to instagram..."
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-status-persona-processing": {
       "comment": "Travel persona loader caption under the processing dial.",
       "extractionState": "manual",
@@ -1561,6 +1669,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-title-add-username": {
+      "comment": "Title of the sheet that asks for an Instagram username.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add user name"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-title-connectors": {
       "comment": "Heading for the connector integration management screen.",
       "extractionState": "manual",
@@ -1593,6 +1713,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "Edit a rule"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-come-say-hi": {
+      "comment": "Lead line after the Instagram username is saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "...Come say hi!"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-follow-us": {
+      "comment": "Main line after the Instagram username is saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follow us, drop in a text"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-step-follow": {
+      "comment": "Third step on the Instagram connect explainer.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hit the “Follow” button and say hi!"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-step-redirect": {
+      "comment": "Second step on the Instagram connect explainer.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redirect to meet Ayl on instagram"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-step-username": {
+      "comment": "First step on the Instagram connect explainer.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We ask for your username"
           }
         }
       }
@@ -1665,6 +1845,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Agent preferences updated"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-toast-username-added": {
+      "comment": "Toast after an Instagram username is saved.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username added successfully"
           }
         }
       }
@@ -1893,6 +2085,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pass number %1$@"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-label-passport-back-page": {
+      "comment": "Label above the scanned back page of the passport on the personal agent.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BACK"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-documents-label-passport-front-page": {
+      "comment": "Label above the passport details card when its back page is shown beside it.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FRONT"
           }
         }
       }
@@ -2984,7 +3200,31 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "When the assistant books or buys for you. Change it anytime."
+            "value": "When the agent books for you."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-description-pay-atlys": {
+      "comment": "Description of the Atlys pays option.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We pay the restaurant, hotel or shop with our card. You see every charge here and pay us in one go."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-description-pay-link": {
+      "comment": "Description of the own card through Link option.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pay with cards saved in your Link wallet. Each purchase gets a one-time card for the exact amount you approve."
           }
         }
       }
@@ -3193,6 +3433,18 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-label-card-asks-first": {
+      "comment": "Virtual card fact value for No-show fee.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks you first"
+          }
+        }
+      }
+    },
     "mo-aiprofile-glovebox-label-card-cvc": {
       "comment": "Virtual card label for the CVC.",
       "extractionState": "manual",
@@ -3225,6 +3477,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "Name"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-never-shared": {
+      "comment": "Virtual card fact value for Your own card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never shared"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-no-show-fee": {
+      "comment": "Virtual card fact label for no-show fees.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No-show fee"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-own-card": {
+      "comment": "Virtual card fact label about the user's own card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your own card"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-restaurant-only": {
+      "comment": "Virtual card fact value for Works at.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurant only"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-label-card-works-at": {
+      "comment": "Virtual card fact label: where the card can be used.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Works at"
           }
         }
       }
@@ -3541,6 +3853,18 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-status-card-link-pending": {
+      "comment": "Coming soon sheet text after tapping Add card.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paying with your own card is on its way."
+          }
+        }
+      }
+    },
     "mo-aiprofile-glovebox-status-handled-for-you": {
       "comment": "Email row status: the agent handled it.",
       "extractionState": "manual",
@@ -3657,6 +3981,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "How you pay"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-pay-atlys": {
+      "comment": "How you pay option where Atlys pays and bills the user.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atlys pays, we bill you"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-title-pay-link": {
+      "comment": "How you pay option using the user's own card through Link.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your own card, through link"
           }
         }
       }

@@ -10,7 +10,7 @@ enum ProfileV3FeatureFlags {
     static let isAgentSourcesPillEnabled = false
     static let isProgrammeScanLoaderEnabled = false
     static let isPersonaEditingEnabled = true
-    static let isAppAccessEnabled = false
+    static let isAppAccessEnabled = true
     static let isVaultRecentSignInCheckEnabled = false
     static let isGlobeEnabled = true
     static let isGlobeRimEnabled = false
@@ -19,6 +19,8 @@ enum ProfileV3FeatureFlags {
     static let isEmptyProgrammeSlotEnabled = false
     static let isGloveBoxPhoneNumberEnabled = true
     static let isGloveBoxVirtualCardEnabled = true
+    static let isGloveBoxCardTransactionsEnabled = false
     static let isAgentCustomRulesEnabled = true
+    static let isPassportBackPageEnabled = true
     static let isPhotoPlacesEnabled = false
 }

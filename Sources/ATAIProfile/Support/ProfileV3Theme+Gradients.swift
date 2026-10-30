@@ -2,6 +2,21 @@ import ATUIKit
 import SwiftUI
 
 extension ProfileV3Theme {
+    static let rainbowStops: [Gradient.Stop] = [
+        .init(color: Color(at: .pureWhite), location: 0),
+        .init(color: Color(at: .pureWhite), location: 0.1635),
+        .init(color: Color(hex: "E5E6F7"), location: 0.456),
+        .init(color: Color(hex: "5D64FF"), location: 0.6048),
+        .init(color: Color(hex: "FF5959"), location: 0.7449),
+        .init(color: Color(hex: "FFE23D"), location: 0.9258)
+    ]
+
+    static let rainbowGlowGradient = LinearGradient(
+        stops: rainbowStops,
+        startPoint: UnitPoint(x: -0.774, y: 1.411),
+        endPoint: UnitPoint(x: 0.056, y: -0.07)
+    )
+
     static let tagGradient = LinearGradient(
         colors: [Color(at: .neutralGrey800), Color(at: .neutralGrey400)],
         startPoint: .leading,
@@ -10,6 +25,15 @@ extension ProfileV3Theme {
 
     static let passportPageEdgeShade = LinearGradient(
         colors: [Palette.passportPageEdgeShade, Palette.passportPageEdgeShadeEnd],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
+    static let passportBackShade = LinearGradient(
+        stops: [
+            .init(color: Palette.passportPageEdgeShade, location: 0),
+            .init(color: Palette.passportPageEdgeShadeEnd, location: Sizes.Passport.backShadeEnd)
+        ],
         startPoint: .top,
         endPoint: .bottom
     )

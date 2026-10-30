@@ -7,6 +7,11 @@ extension ProfileV3Theme {
         static let passportStripOpacity: Double = 0.2
         static let passportGuillocheOpacity: Double = 0.05
         static let passportExpiredOpacity: Double = 0.5
+        static let passportPageLabelOpacity: Double = 0.5
+        static let passportBackLabelOpacity: Double = 0.3
+        static let aiConnectorReveal: Animation = .easeInOut(duration: 0.25)
+        static let instagramExplainerSeconds: Double = 3.5
+        static let instagramRedirectSeconds: Double = 1.8
         static let catalogueSearchDebounceMilliseconds = 300
         static let catalogueLoaderMinimumMilliseconds = 400
         static let remoteImageFadeSeconds: Double = 0.3
@@ -37,6 +42,7 @@ extension ProfileV3Theme {
         static let saveState: Animation = .easeInOut(duration: 0.3)
         static let entry: Animation = .spring(response: 0.45, dampingFraction: 0.85)
         static let entryScale: CGFloat = 0.9
+        static let saveEntranceRise: CGFloat = 24
         static let fullScreenEnterScale: CGFloat = 0.96
         static var fullScreenTransition: AnyTransition {
             .asymmetric(insertion: .opacity.combined(with: .scale(scale: fullScreenEnterScale)), removal: .opacity)

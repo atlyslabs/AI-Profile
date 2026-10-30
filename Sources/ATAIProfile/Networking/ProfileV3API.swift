@@ -17,7 +17,7 @@ enum ProfileV3API {
     case passportHowUsed
     case passportPrevious(profileID: String?)
     case passportScan(body: Data, contentType: String)
-    case loyaltyCatalogue(query: String?, kind: String?)
+    case loyaltyCatalogue(query: String?, kind: String?, market: String?)
     case loyaltyEnter(programID: String, programName: String?, kind: String?)
     case loyaltyPage(profileID: String)
     case loyaltyInsight(programID: String, profileID: String?)
@@ -30,6 +30,8 @@ enum ProfileV3API {
     case editField(String, profileID: String?)
     case connectors
     case connectorControlPanel
+    case aiConnector(connector: String)
+    case aiConnectorConnect(connector: String)
     case disconnectConfirm(connector: ProfileV3ConnectorKey)
     case editTravellers
     case deleteAccount
@@ -134,6 +136,10 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.boardBasePath + "/settings/connectors"
         case .connectorControlPanel:
             return Self.boardBasePath + "/settings/connectors/control-panel"
+        case .aiConnector(let connector):
+            return Self.boardBasePath + "/settings/connectors/ai/\(connector)"
+        case .aiConnectorConnect(let connector):
+            return Self.boardBasePath + "/settings/connectors/ai/\(connector)/connect"
         case .disconnectConfirm(let connector):
             return Self.boardBasePath + "/settings/connectors/disconnect/\(connector.rawValue)"
         case .editTravellers:
@@ -233,8 +239,8 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.query(("profile_id", profileID), ("page", String(page)))
         case .pastTrips(let profileID), .addTrip(let profileID):
             return Self.query(("profile_id", profileID))
-        case .loyaltyCatalogue(let query, let kind):
-            return Self.query(("q", query?.nonEmpty), ("kind", kind?.nonEmpty))
+        case .loyaltyCatalogue(let query, let kind, let market):
+            return Self.query(("q", query?.nonEmpty), ("kind", kind?.nonEmpty), ("market", market?.nonEmpty))
         case .loyaltyEnter(_, let programName, let kind):
             return Self.query(("program_name", programName), ("kind", kind))
         case .terms(let locale):

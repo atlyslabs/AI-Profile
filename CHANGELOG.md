@@ -5,18 +5,38 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ## Unreleased
 
+## 1.0.16 — 2026-10-30
+
+### Changed
+
+- **One permission-changed event instead of two.** `settings_connector_permission_changed` and
+  `settings_action_permission_changed` are replaced by `settings_permission_changed`, which names
+  the kind in a `source` property (`connector` / `action` / `call`). The two old events are gone.
+
+### Added
+
+- **`settings_permission_closed`** — reports what changed while the permission screen was up, with
+  `newPermission` and `oldPermission` each keyed by source. Silent when nothing changed.
+
 ### Added
 
 - `ProfileV3EntryPoint.open(_:)` with `ProfileV3Destination.addTraveller` and
   `.addLoyaltyProgramme`, for deep links. The hub opens the sheet once it is on screen with its board
   loaded; a loyalty programme is added for the main traveller, behind the usual KYC gate.
-- Agent forms have custom rules: "+ Custom" opens a note editor, saved rules show in a CUSTOM
-  RULES section, and tapping one edits or deletes it. Saving a new rule closes the editor and
-  scrolls the form down to the rule, first in the row. With the keyboard up, the editor keeps
-  Save at least 16pt above it, closing the gaps and then shortening the note on smaller phones.
-  Until the backend supports them, rules are kept on the device per signed-in user, traveler and
-  agent (`ProfileV3FeatureFlags.isAgentCustomRulesEnabled`). Eight new `mo-aiprofile-agents-*`
-  string keys need adding in Ditto.
+- Agent forms have custom rules, from the agent screen's `custom_rules` field (flight, stay,
+  airport logistics, food and itinerary). The rules show as note cards, newest first, under the
+  field's label; "+ Custom" (`add_label`) stays at the bottom left, next to "save changes" when
+  there are unsaved edits, and hides once the list has `max_rules`. Tapping a card edits it, and
+  its delete button asks first (`delete_confirm`). The editor's titles, note label, Save label and
+  saved toast come from `editor`, and its text stops at `max_chars`. Adding, editing or deleting a
+  rule saves like any other field: the list goes into the agent's `save_agent_preferences` with
+  the whole form, through the household sheet when `save.household` is served. A refusal (422
+  `invalid_custom_rules`) shows the server's message in the editor. Saving a new rule closes the
+  editor and scrolls the form down to the rule, first in the row. With the keyboard up, the editor
+  keeps Save at least 16pt above it, closing the gaps and then shortening the note on smaller
+  phones. `ProfileV3FeatureFlags.isAgentCustomRulesEnabled` turns the section off. Only
+  `mo-aiprofile-agents-button-delete-rule` (the delete button's accessibility label) is client
+  copy; the other seven custom rule keys added earlier are unused and don't need adding to Ditto.
 - The personal agent shows a passport placeholder when no passport is on file. The agent screen
   sends `passport_empty` (`title`, `body`, `cta_label`) instead of `passport`, and the card shows
   that copy under the traveler's name, with an Upload button that scans a passport for that
@@ -26,9 +46,64 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   now unused and can be deleted from Ditto.
 - The travel persona's loading dial plays a soft tap each time its colour wave lights a trait
   label, and a success tap when the radar replaces it.
+- The personal agent shows the passport's back page beside the front, in a sideways FRONT/BACK
+  row, when the passport card sends any of `father`, `mother`, `spouse` or `address` (up to three
+  lines). Each row's label comes from the card's `labels`; a missing value keeps its label and an
+  empty underline. Previous passports show their own back pages the same way.
+  `ProfileV3FeatureFlags.isPassportBackPageEnabled` turns the back page off. The passport card now
+  uses the server's `labels` for the front too, falling back to the client copy. Two new keys need
+  adding in Ditto: `mo-aiprofile-documents-label-passport-front-page` and
+  `mo-aiprofile-documents-label-passport-back-page`.
+- The loyalty picker shows an IN / World market pill before the chips, on the chips the catalogue
+  lists in `market.chips`. The first catalogue request sends no `market` and preselects the served
+  one; every later request (filters, search) sends the selected `market`.
+- Information access lists the AI assistants the overview sends (Claude, ChatGPT, Gemini, Grok, or
+  any other entry), with `connect_label`, or `status_label` with `{date}` filled from `synced_at`
+  in the phone's time zone. A row opens the assistant's sheet: its benefits and disclaimers
+  (`GET …/settings/connectors/ai/{connector}`), then the two steps
+  (`…/connect`): copy the prompt, paste the answer, Save (`connect_ai_connector` with `text`). A
+  refusal shows the server's message; a save reloads the list. The page's title and blurb come
+  from the overview. `ProfileV3SettingsRepository` gained the `ProfileV3AIConnectorRepository`
+  methods.
+- App access has an Instagram flow, UI only: "+ user name" opens an explainer, then a username
+  sheet, then "Follow us, drop in a text" before opening Instagram. App access itself still shows
+  "Coming soon" (`isAppAccessEnabled` is off). The Instagram destination is a placeholder until
+  Ayl's handle is known. Sixteen new keys need adding in Ditto: `mo-aiprofile-agents-button-add-username`,
+  `-title-add-username`, `-label-username`, `-toast-username-added`,
+  `-title-instagram-step-username`/`-redirect`/`-follow`,
+  `-description-instagram-step-username`/`-redirect`/`-follow`, `-label-instagram-sample-handle`,
+  `-label-instagram-follow`, `-label-instagram-hi`, `-title-instagram-come-say-hi`,
+  `-title-instagram-follow-us` and `-status-instagram-redirecting`.
 
 ### Changed
 
+- Elements that were built several times now share one component each: the agent-style sheet
+  header and grabber, the save bar and the continue-spinner-toast control, the dark and white pill
+  buttons, the round country flag, the traveler phone field, picker row and dial-code sheet, the
+  copy button and its reset timer, the scroll view that fades under a fixed header, and the rainbow
+  glow with its gradient and blur. Screens look the same, pixel for pixel, except "+ Custom" on
+  agent forms, which now uses the save button's spacing: its icon sits 0.4pt further left.
+- Save buttons that appear once there is something to save now rise into place: "save changes" on
+  agent forms, the saved login and app edit sheets, and the custom rule editor's Save and "save
+  changes". With custom rules, "+ Custom" stays still while the save button enters beside it. On
+  agent forms the save button now also fades out when an edit is undone or after "saved"; before,
+  it vanished at once.
+- Settings cards are in the order Accounts center, Connectors, Glove box, Secure credential store
+  (the concierge card, when served, stays after Accounts center), all 25pt apart.
+- Glove box: an empty inbox shows only the Emirates sample email; any real email still replaces
+  it. The Virtual card section shows three facts (Works at, Your own card, No-show fee) and How you
+  pay ("When the agent books for you.") with two options, chosen on the device only (no API yet).
+  Add card opens a "Coming soon" sheet. The stats tiles stay off, and the card's transactions and
+  View all are hidden behind `ProfileV3FeatureFlags.isGloveBoxCardTransactionsEnabled` (false).
+  The card shows the main traveler's name from the board, shortened to first name and last initial
+  ("Mohak N."), and last four digits derived from the user's glove box address, so they stay the
+  same on every open until the backend issues real cards.
+  New keys to add in Ditto: `mo-aiprofile-glovebox-label-card-works-at`, `-restaurant-only`,
+  `-own-card`, `-never-shared`, `-no-show-fee`, `-asks-first`,
+  `mo-aiprofile-glovebox-title-pay-atlys`, `-pay-link`,
+  `mo-aiprofile-glovebox-description-pay-atlys`, `-pay-link` and
+  `mo-aiprofile-glovebox-status-card-link-pending`; `mo-aiprofile-glovebox-description-how-you-pay`
+  needs its new text. The four `mo-aiprofile-glovebox-sample-email-hotel-*` keys are unused.
 - Permissions read from the harness service: `GET /api/harness/v1/permissions`, saved one at a
   time with `PUT /api/harness/v1/permissions/{key}` and `{"value": …}`. The board's
   `/permissions` screen and the `save_permissions` submit are no longer used. Each top-level

@@ -51,9 +51,7 @@ struct LoginCountryPickerSheet: View {
             onSelect(option)
         } label: {
             HStack(spacing: ProfileV3Theme.Space.s16) {
-                ATCountryFlagView(country: option.country)
-                    .frame(width: Self.flagDiameter, height: Self.flagDiameter)
-                    .clipShape(Circle())
+                ProfileV3CountryFlag(country: option.country, size: Self.flagDiameter)
 
                 Text(option.name)
                     .typoGraphy(.B1InterSemibold14)

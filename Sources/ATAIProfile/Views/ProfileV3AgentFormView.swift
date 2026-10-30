@@ -174,7 +174,7 @@ struct ProfileV3AgentFormView: View {
                     )
                 )
             }
-            ForEach(form.sections) { section in
+            ForEach(form.sections.filter { !$0.isCustomRules }) { section in
                 ProfileV3FormSectionView(
                     section: section,
                     agentAvatarURL: viewModel.avatarURL,

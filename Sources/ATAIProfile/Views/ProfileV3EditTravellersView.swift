@@ -12,7 +12,6 @@ struct ProfileV3EditTravellersView: View {
     let onAdd: () -> Void
 
     @State private var listHeight: CGFloat = 0
-    @State private var headerPin = ProfileV3HeaderPin()
 
     private static let listID = "travellers"
 
@@ -27,16 +26,13 @@ struct ProfileV3EditTravellersView: View {
             .padding(.bottom, ProfileV3Theme.Sizes.Traveller.listHeaderGap)
             if phase == .loaded {
                 ScrollViewReader { proxy in
-                    ScrollView(showsIndicators: false) {
+                    ProfileV3FadingScroll(fadeGap: 0) {
                         list
                             .id(Self.listID)
                             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: {
                                 listHeight = $0
                             }
-                            .profileV3HeaderFadeAnchor(headerPin)
                     }
-                    .scrollBounceBehavior(.basedOnSize)
-                    .profileV3HeaderFade(headerPin, gap: 0)
                     .frame(maxHeight: listHeight > 0 ? listHeight : nil)
                     .onChange(of: listHeight) { revealToast(proxy) }
                     .onChange(of: toast) { revealToast(proxy) }

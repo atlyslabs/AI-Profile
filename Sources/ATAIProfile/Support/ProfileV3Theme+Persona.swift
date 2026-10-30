@@ -99,7 +99,6 @@ extension ProfileV3Theme.Palette {
     static let personaYellow = Color(hex: "FFE23D")
     static let personaRed = Color(hex: "FF5959")
     static let personaBlue = Color(hex: "5D64FF")
-    static let personaRadarMist = Color(hex: "E5E6F7")
     static let personaScaleEnd = Color(hex: "101010")
 }
 
@@ -147,14 +146,7 @@ extension ProfileV3Theme {
     )
 
     static let personaRadarFill = ProfileV3BoxGradient(
-        stops: [
-            .init(color: Color(at: .pureWhite), location: 0),
-            .init(color: Color(at: .pureWhite), location: 0.1635),
-            .init(color: Palette.personaRadarMist, location: 0.456),
-            .init(color: Palette.personaBlue, location: 0.6048),
-            .init(color: Palette.personaRed, location: 0.7449),
-            .init(color: Palette.personaYellow, location: 0.9258)
-        ],
+        stops: rainbowStops,
         atOrigin: 1.0012,
         perWidth: 0.3558,
         perHeight: -0.6159

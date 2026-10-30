@@ -76,7 +76,6 @@ extension ProfileV3Theme.Sizes {
         static let wordmark = CGSize(width: 48.0943, height: 21.2238)
         static let wordmarkOrigin = CGPoint(x: 19.16, y: 41.8)
         static let glow: CGFloat = 237
-        static let glowBlur: CGFloat = 50
         static let glowCentreY: CGFloat = 151.5
         static let branch = CGSize(width: 101, height: 26.5)
         static let branchTop: CGFloat = 26
@@ -114,19 +113,6 @@ extension ProfileV3Theme.Sizes {
 }
 
 extension ProfileV3Theme {
-    static let accessGlowGradient = LinearGradient(
-        stops: [
-            .init(color: Color(at: .pureWhite), location: 0),
-            .init(color: Color(at: .pureWhite), location: 0.163),
-            .init(color: Color(hex: "E5E6F7"), location: 0.456),
-            .init(color: Color(hex: "5D64FF"), location: 0.605),
-            .init(color: Color(hex: "FF5959"), location: 0.745),
-            .init(color: Color(hex: "FFE23D"), location: 0.926)
-        ],
-        startPoint: UnitPoint(x: -0.774, y: 1.411),
-        endPoint: UnitPoint(x: 0.056, y: -0.07)
-    )
-
     static let accessBranchGradient = LinearGradient(
         colors: [Color(at: .pureWhite).opacity(0), Color(at: .pureWhite)],
         startPoint: .leading,

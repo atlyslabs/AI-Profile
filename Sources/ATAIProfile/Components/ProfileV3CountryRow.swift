@@ -23,10 +23,12 @@ struct ProfileV3CountryRow: View {
                 case .checkbox:
                     ProfileV3CheckboxMark(isSelected: isSelected, tint: Color(at: .pureBlack))
                 }
-                flag
-                    .frame(width: ProfileV3Theme.Icon.xl, height: ProfileV3Theme.Icon.xl)
-                    .clipShape(Circle())
-                    .frame(width: ProfileV3Theme.Sizes.countryFlagBox, height: ProfileV3Theme.Sizes.countryFlagBox)
+                ProfileV3CountryFlag(
+                    isoCode: isoCode,
+                    size: ProfileV3Theme.Icon.xl,
+                    placeholder: .disc(Color(at: .neutralGrey200))
+                )
+                .frame(width: ProfileV3Theme.Sizes.countryFlagBox, height: ProfileV3Theme.Sizes.countryFlagBox)
                 Text(name)
                     .typoGraphy(.B1InterSemibold14)
                     .foregroundStyle(ProfileV3Theme.Palette.countryText)
@@ -47,14 +49,6 @@ struct ProfileV3CountryRow: View {
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 
-    @ViewBuilder
-    private var flag: some View {
-        if let country = ATCountry(isoCode: isoCode) {
-            ATCountryFlagView(country: country)
-        } else {
-            Circle().fill(Color(at: .neutralGrey200))
-        }
-    }
 }
 
 #if DEBUG

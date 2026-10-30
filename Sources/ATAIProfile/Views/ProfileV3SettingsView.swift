@@ -70,6 +70,7 @@ struct ProfileV3SettingsView: View {
                 ProfileV3GloveBoxLiveFlow(
                     repository: repository,
                     isKYCComplete: viewModel.isMainTravellerKYCComplete,
+                    mainTravellerName: viewModel.mainTravellerName,
                     onCompleteKYC: viewModel.completeKYCFromGloveBox
                 ) { viewModel.isGloveBoxPresented = false }
             }
@@ -83,13 +84,6 @@ struct ProfileV3SettingsView: View {
     private func panel(_ menu: ProfileV3SettingsMenu) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: Layout.cardSpacing) {
-                if viewModel.hasGloveBox {
-                    ProfileV3SettingsGloveBoxCard(
-                        showsActivate: viewModel.showsGloveBoxActivate,
-                        action: viewModel.tapGloveBox
-                    )
-                    .animation(ProfileV3Theme.Motion.contentSwitch, value: viewModel.showsGloveBoxActivate)
-                }
                 ProfileV3SettingsAccountsCard(
                     menu: menu,
                     fields: viewModel.fields,
@@ -103,9 +97,15 @@ struct ProfileV3SettingsView: View {
                     onInformationAccess: viewModel.tapInformationAccess,
                     onAppAccess: viewModel.tapAppAccess
                 )
+                if viewModel.hasGloveBox {
+                    ProfileV3SettingsGloveBoxCard(
+                        showsActivate: viewModel.showsGloveBoxActivate,
+                        action: viewModel.tapGloveBox
+                    )
+                    .animation(ProfileV3Theme.Motion.contentSwitch, value: viewModel.showsGloveBoxActivate)
+                }
                 if ProfileV3FeatureFlags.isCredentialStoreEnabled {
                     ProfileV3CredentialStoreCard(action: viewModel.tapCredentialStore)
-                        .padding(.top, ProfileV3Theme.Sizes.CredentialStore.cardTop)
                 }
             }
             ProfileV3SettingsRowList(rows: menu.rows, account: viewModel.account, onSelect: viewModel.tap)

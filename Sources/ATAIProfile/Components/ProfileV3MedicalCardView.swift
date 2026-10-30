@@ -24,9 +24,7 @@ struct ProfileV3MedicalCardView: View {
                     .foregroundStyle(Color(at: .pureWhite))
                     .fixedSize(horizontal: false, vertical: true)
                 if let country = ATCountry(isoCode: card.countryCode) {
-                    ATCountryFlagView(country: country)
-                        .frame(width: Metrics.flag, height: Metrics.flag)
-                        .clipShape(Circle())
+                    ProfileV3CountryFlag(country: country, size: Metrics.flag)
                         .padding(.top, flagTop)
                 }
             }

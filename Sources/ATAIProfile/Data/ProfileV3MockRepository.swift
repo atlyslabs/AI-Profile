@@ -77,7 +77,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
     private let appAccess: ProfileV3AppAccessStore
     private let vault: ProfileV3VaultStore
     private let gloveBox: ProfileV3GloveBoxStore
-    private let customRules: ProfileV3CustomRulesStore
+    private let aiConnectors = ProfileV3AIConnectorStore()
     private let settingsCitizenship: String?
 
     init(
@@ -90,7 +90,6 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         appAccess: ProfileV3AppAccessStore = ProfileV3AppAccessStore(),
         vault: ProfileV3VaultStore = ProfileV3VaultStore(),
         gloveBox: ProfileV3GloveBoxStore = ProfileV3GloveBoxStore(),
-        customRules: ProfileV3CustomRulesStore = ProfileV3CustomRulesStore(),
         settingsCitizenship: String? = nil
     ) {
         self.delay = delay
@@ -100,7 +99,6 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         self.appAccess = appAccess
         self.vault = vault
         self.gloveBox = gloveBox
-        self.customRules = customRules
         self.settingsCitizenship = settingsCitizenship
     }
 
@@ -245,7 +243,31 @@ struct ProfileV3MockRepository: ProfileV3Repository {
 
     func loadConnectors() async throws -> ProfileV3ConnectorsScreen {
         try await Task.sleep(for: delay)
-        return ProfileV3Fixtures.connectorsScreen
+        let screen = ProfileV3Fixtures.connectorsScreen
+        return ProfileV3ConnectorsScreen(
+            title: screen.title,
+            blurb: screen.blurb,
+            connectors: screen.connectors + ProfileV3AIConnectorFixtures.rows(syncedAt: aiConnectors.syncedAt),
+            controlPanel: screen.controlPanel
+        )
+    }
+
+    func loadAIConnector(_ connector: String) async throws -> ProfileV3AIConnector {
+        try await Task.sleep(for: delay)
+        return ProfileV3AIConnectorFixtures.detail(connector)
+    }
+
+    func loadAIConnectorConnect(_ connector: String) async throws -> ProfileV3AIConnectorConnect {
+        try await Task.sleep(for: delay)
+        return ProfileV3AIConnectorFixtures.connect(connector)
+    }
+
+    func connectAIConnector(_ submit: ProfileV3AIConnectorConnect.Submit, text: String) async throws {
+        try await Task.sleep(for: delay)
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw ProfileV3Error.invalidRequest(message: "Paste the answer before you save.")
+        }
+        aiConnectors.connect(submit.connector)
     }
 
     func disconnectConnector(_: ProfileV3ConnectorKey) async throws {
@@ -424,13 +446,14 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         }
     }
 
-    func loadProgrammeCatalogue(query _: String?, kind _: String?) async throws -> ProfileV3ProgrammePicker {
+    func loadProgrammeCatalogue(query _: String?, kind _: String?, market: String?) async throws -> ProfileV3ProgrammePicker {
         try await Task.sleep(for: delay)
         return ProfileV3ProgrammePicker(
             items: ProfileV3ProgrammeCatalogue.all,
             filters: ProfileV3ProgrammeCategory.allCases.map {
                 ProfileV3ProgrammeFilter(label: $0.title, category: $0)
-            }
+            },
+            market: ProfileV3ProgrammeCatalogue.mockMarket(selected: market)
         )
     }
 
@@ -591,20 +614,6 @@ struct ProfileV3MockRepository: ProfileV3Repository {
 
     func reorderProgrammes(_: [String], profileID _: String, action _: String) async throws {
         try await Task.sleep(for: delay)
-    }
-}
-
-extension ProfileV3MockRepository: ProfileV3CustomRulesRepository {
-    func loadCustomRules(agentID: String, profileID: String?) async throws -> [ProfileV3CustomRule] {
-        customRules.rules(owner: "mock", agentID: agentID, profileID: profileID)
-    }
-
-    func saveCustomRule(_ rule: ProfileV3CustomRule, agentID: String, profileID: String?) async throws {
-        customRules.save(rule, owner: "mock", agentID: agentID, profileID: profileID)
-    }
-
-    func deleteCustomRule(id: String, agentID: String, profileID: String?) async throws {
-        customRules.delete(id: id, owner: "mock", agentID: agentID, profileID: profileID)
     }
 }
 

@@ -82,22 +82,13 @@ private struct ProfileV3TripSheetButton: View {
 
     var body: some View {
         Button(action: action) {
-            ZStack {
-                if isLoading {
-                    ProgressView()
-                        .tint(Color(at: .pureWhite))
-                } else {
-                    Text(title)
-                        .typoGraphy(.B2InterSemibold12)
-                        .foregroundStyle(Color(at: .pureWhite))
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: ProfileV3Theme.Sizes.TripSheet.ctaHeight)
-            .background(
-                Capsule().fill(isEnabled || isLoading ? Color(at: .pureBlack) : ProfileV3Theme.Palette.disabledText)
+            ProfileV3InkPill(
+                title: title,
+                isLoading: isLoading,
+                width: .full,
+                typography: .B2InterSemibold12,
+                fill: isEnabled || isLoading ? Color(at: .pureBlack) : ProfileV3Theme.Palette.disabledText
             )
-            .contentShape(Capsule())
         }
         .buttonStyle(.profileV3Pressable(.impact(weight: .medium), dimsWhenDisabled: false))
         .disabled(!isEnabled || isLoading)

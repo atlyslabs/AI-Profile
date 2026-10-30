@@ -3,6 +3,17 @@ import Foundation
 enum ProfileV3ProgrammeCatalogue {
     #if DEBUG
     static let mockFoundCount = 6
+
+    static func mockMarket(selected: String?) -> ProfileV3ProgrammeMarket {
+        ProfileV3ProgrammeMarket(
+            options: [
+                ProfileV3ProgrammeMarket.Option(value: "in", label: "IN"),
+                ProfileV3ProgrammeMarket.Option(value: "world", label: "World")
+            ],
+            selected: selected ?? "in",
+            chips: ["All", "Credit cards"]
+        )
+    }
     #endif
 
     static let all: [ProfileV3ProgrammeCatalogueItem] = [

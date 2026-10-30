@@ -13,6 +13,36 @@ enum ProfileV3AgentFixtures {
         ProfileV3AgentID.personal.rawValue: .preferences(personal)
     ]
 
+    static func customRulesField(_ rules: [String]) -> ProfileV3CustomRulesField {
+        ProfileV3CustomRulesField(
+            rules: rules,
+            addLabel: "Custom",
+            editor: ProfileV3CustomRulesField.Editor(
+                addTitle: "Add a rule",
+                editTitle: "Edit a rule",
+                noteLabel: "NOTE",
+                saveLabel: "Save",
+                savedToast: "Custom rule saved",
+                maxCharacters: 500
+            ),
+            deleteConfirm: ProfileV3CustomRulesField.DeleteConfirm(
+                title: "Are you sure you want to delete your rule",
+                confirmLabel: "Delete",
+                cancelLabel: "Keep rule"
+            ),
+            maxRules: 20
+        )
+    }
+
+    static func customRulesSection(_ rules: [String]) -> ProfileV3FormSection {
+        ProfileV3FormSection(
+            id: "custom_rules",
+            title: "CUSTOM RULES",
+            status: rules.isEmpty ? .pending : .complete,
+            control: .customRules(customRulesField(rules))
+        )
+    }
+
     static let sources = ProfileV3FormSources(
         icons: [],
         count: 3
@@ -101,7 +131,8 @@ enum ProfileV3AgentFixtures {
                 "stops", "Stops",
                 options: ["Non-stop", "1-stop", "> 1 stop", "Cheapest"], selected: ["1-stop", "Cheapest"],
                 note: "...I will look for cheapest flights with a maximum of 1 stop"
-            )
+            ),
+            customRulesSection(["Always book a window seat on red-eye flights", "Avoid layovers longer than 3 hours"])
         ]
     )
 
@@ -142,7 +173,8 @@ enum ProfileV3AgentFixtures {
                 ],
                 selected: ["Fast Wifi", "Kitchen", "Laundry", "Kids play area"],
                 note: "...I will only surface stays that have all of these"
-            )
+            ),
+            customRulesSection([])
         ]
     )
 
@@ -176,7 +208,8 @@ enum ProfileV3AgentFixtures {
                 "trip-pacing", "Trip pacing", status: .complete,
                 ProfileV3SliderField(value: 1, range: 0...2, style: .labels(["Relaxed", "Balanced", "Packed"])),
                 note: "...I will leave breathing room between plans"
-            )
+            ),
+            customRulesSection([])
         ]
     )
 
@@ -355,7 +388,8 @@ enum ProfileV3AgentFixtures {
                     format: .levels(["Play it safe", "Cautious", "Curious", "Open to trying", "Experimental"])
                 ),
                 note: "...I will slip in one new place per trip"
-            )
+            ),
+            customRulesSection(["Pick a veg restaurant every time Aakanksha is on the trip. Make sure the veg food doesn’t have egg"])
         ]
     )
 
@@ -458,7 +492,8 @@ enum ProfileV3AgentFixtures {
                     ])
                 ),
                 note: ProfileV3FormNote(text: "Baggage details help plan airport pickups, transfers and intercity travel")
-            )
+            ),
+            customRulesSection([])
         ]
     )
 
@@ -566,6 +601,7 @@ enum ProfileV3AgentFixtures {
             countryName: passport?.countryName ?? ProfileV3Strings.passportCountryIndia,
             countryNativeName: passport?.countryNativeName ?? ProfileV3Strings.passportCountryIndiaNative,
             passport: passport,
+            labels: ProfileV3PassportFixtures.labels,
             previous: previous,
             rescan: ProfileV3PassportFixtures.rescan,
             howUsed: ProfileV3PassportFixtures.howUsedDirective

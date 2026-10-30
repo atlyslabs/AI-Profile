@@ -161,17 +161,12 @@ struct ProfileV3WorldPassDetailView: View {
             .foregroundStyle(Color(at: .pureWhite))
     }
 
-    @ViewBuilder
     private func flag(for code: String) -> some View {
-        if let country = ATCountry(isoCode: code) {
-            ATCountryFlagView(country: country)
-                .frame(width: ProfileV3Theme.Sizes.Detail.pillFlag, height: ProfileV3Theme.Sizes.Detail.pillFlag)
-                .clipShape(Circle())
-        } else {
-            Circle()
-                .fill(Color(at: .neutralGrey600))
-                .frame(width: ProfileV3Theme.Sizes.Detail.pillFlag, height: ProfileV3Theme.Sizes.Detail.pillFlag)
-        }
+        ProfileV3CountryFlag(
+            isoCode: code,
+            size: ProfileV3Theme.Sizes.Detail.pillFlag,
+            placeholder: .disc(Color(at: .neutralGrey600))
+        )
     }
 
     private var statCells: [ProfileV3StatCell] {

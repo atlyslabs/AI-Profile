@@ -7,7 +7,6 @@ struct ProfileV3PassportHowUsedView: View {
     var onHeightChange: ((CGFloat) -> Void)?
 
     @State private var measured = Measured()
-    @State private var headerPin = ProfileV3HeaderPin()
 
     private typealias HowUsed = ProfileV3Theme.Sizes.HowUsed
 
@@ -18,19 +17,12 @@ struct ProfileV3PassportHowUsedView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ProfileV3SheetGrabber(
-                width: ProfileV3Theme.Sizes.Agent.sheetGrabberWidth,
-                color: Color(at: .neutralGrey200),
-                top: ProfileV3Theme.Space.s10
-            )
+            ProfileV3SheetGrabber.agent
             if let content = viewModel.content {
-                ScrollView(showsIndicators: false) {
+                ProfileV3FadingScroll {
                     loaded(content)
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.content = $0 }
-                        .profileV3HeaderFadeAnchor(headerPin)
                 }
-                .profileV3HeaderFade(headerPin)
-                .scrollBounceBehavior(.basedOnSize)
                 .safeAreaInset(edge: .bottom) {
                     footer(content)
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.footer = $0 }
@@ -43,8 +35,7 @@ struct ProfileV3PassportHowUsedView: View {
         .background(Color(at: .pureWhite).ignoresSafeArea())
         .onChange(of: measured) { _, measured in
             guard measured.content > 0, measured.footer > 0 else { return }
-            let grabber = ProfileV3Theme.Space.s10 + ProfileV3Theme.Sizes.sheetGrabberHeight
-            onHeightChange?(grabber + measured.content + measured.footer)
+            onHeightChange?(ProfileV3SheetGrabber.agent.occupiedHeight + measured.content + measured.footer)
         }
         .onDisappear(perform: viewModel.cancel)
     }

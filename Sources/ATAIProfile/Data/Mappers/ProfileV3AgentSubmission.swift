@@ -160,6 +160,8 @@ enum ProfileV3AgentSubmission {
             return .string(ProfileV3AgentDateCodec.string(from: date, format: format))
         case .cars(let field):
             return field.selection.map(ProfileV3AgentSubmissionValue.string) ?? .null
+        case .customRules(let field):
+            return .list(field.rules)
         case .passport, .baggage:
             return nil
         }

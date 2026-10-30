@@ -71,6 +71,8 @@ enum ProfileV3Route: Equatable {
     case pastTrips(profileID: String?)
     case addTrip(profileID: String?)
     case aiChat(prompt: String)
+    case aiConnector(String)
+    case aiConnectorConnect(String)
     case unsupported(String)
 }
 
@@ -89,6 +91,10 @@ extension ProfileV3Directive {
             return field.map(ProfileV3Route.editField) ?? .unsupported(go)
         case "connectors":
             return .connectors
+        case "ai_connector":
+            return aiConnectorKey.map(ProfileV3Route.aiConnector) ?? .unsupported(go)
+        case "ai_connector_connect":
+            return aiConnectorKey.map(ProfileV3Route.aiConnectorConnect) ?? .unsupported(go)
         case "connector_control_panel":
             return .connectorControlPanel
         case "disconnect_confirm":
@@ -172,6 +178,10 @@ extension ProfileV3Directive {
 
     private var connectorKey: ProfileV3ConnectorKey? {
         connector.flatMap(ProfileV3ConnectorKey.init(rawValue:))
+    }
+
+    private var aiConnectorKey: String? {
+        connector?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased().nonEmpty
     }
 }
 

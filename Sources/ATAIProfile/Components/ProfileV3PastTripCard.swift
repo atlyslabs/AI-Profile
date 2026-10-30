@@ -131,28 +131,14 @@ struct ProfileV3PastTripCard: View {
         .offset(y: -nameHeights.extra)
     }
 
-    @ViewBuilder
     private var flag: some View {
-        if let country = ATCountry(isoCode: trip.countryCode) {
-            ATCountryFlagView(country: country)
-                .frame(width: Sizes.flag, height: Sizes.flag)
-                .clipShape(Circle())
-        } else {
-            Circle()
-                .fill(Color(at: .neutralGrey600))
-                .frame(width: Sizes.flag, height: Sizes.flag)
-        }
+        ProfileV3CountryFlag(isoCode: trip.countryCode, size: Sizes.flag, placeholder: .disc(Color(at: .neutralGrey600)))
     }
 
     private var glow: some View {
-        Circle()
-            .fill(ProfileV3Theme.accessGlowGradient)
-            .opacity(ProfileV3Theme.Opacity.accessGlowFill)
-            .frame(width: Sizes.glow, height: Sizes.glow)
-            .blur(radius: Sizes.glowBlur)
+        ProfileV3RainbowGlow(diameter: Sizes.glow, fillOpacity: ProfileV3Theme.Opacity.accessGlowFill)
             .offset(y: Sizes.glowOffsetY)
             .opacity(glowOpacity)
-            .allowsHitTesting(false)
     }
 
     private func play() async {

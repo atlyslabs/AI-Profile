@@ -56,13 +56,21 @@ enum ProfileV3ConnectorsMapper: ProfileV3DTOReading {
     }
 
     private static func connector(_ dto: ProfileV3ConnectorRowDTO) -> ProfileV3Connector? {
-        guard let key = connectorKey(dto.key) else { return nil }
+        guard let id = text(dto.key)?.lowercased() else { return nil }
+        let known = ProfileV3ConnectorKey(rawValue: id)
+        let syncedAt = ProfileV3AIConnectorMapper.syncedAt(dto.syncedAt)
         return ProfileV3Connector(
-            id: key.rawValue,
+            id: id,
             name: text(dto.label) ?? "",
-            icon: remoteURL(dto.imageURL).map { ProfileV3ConnectorIcon.remote($0) } ?? icon(for: key),
+            icon: remoteURL(dto.imageURL).map { ProfileV3ConnectorIcon.remote($0) }
+                ?? known.map(icon(for:))
+                ?? .remote(nil),
             status: (dto.connected ?? false) ? .connected : .needsAttention,
-            accountEmail: text(dto.accountEmail)
+            accountEmail: text(dto.accountEmail),
+            next: dto.next?.directive,
+            connectLabel: text(dto.connectLabel),
+            statusLabel: ProfileV3AIConnectorMapper.statusLabel(dto.statusLabel, syncedAt: syncedAt),
+            syncedAt: syncedAt
         )
     }
 

@@ -44,9 +44,7 @@ struct ProfileV3SettingsRow: View {
     @ViewBuilder
     private var leadingIcon: some View {
         if let flag {
-            ATCountryFlagView(country: flag)
-                .frame(width: iconSize, height: iconSize)
-                .clipShape(Circle())
+            ProfileV3CountryFlag(country: flag, size: iconSize)
         } else {
             icon.profileV3Icon(iconSize)
         }

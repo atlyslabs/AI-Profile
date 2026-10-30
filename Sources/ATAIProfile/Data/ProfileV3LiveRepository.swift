@@ -8,7 +8,6 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     private let agentResiduals = ProfileV3AgentResidualStore()
     private let vault: ProfileV3VaultClient
     private let gloveBox: ProfileV3GloveBoxClient
-    private let customRules = ProfileV3CustomRulesStore(defaults: .standard)
 
     init(
         client: ProfileV3NetworkClient,
@@ -121,6 +120,27 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
 
     func syncPhotoPlaces(_ upload: ProfileV3PhotoPlacesUpload) async throws {
         try await submit(try ProfileV3SyncPhotoPlacesRequest.body(for: upload), action: "sync_photo_places")
+    }
+
+    func loadAIConnector(_ connector: String) async throws -> ProfileV3AIConnector {
+        let dto: ProfileV3AIConnectorScreenDTO = try await request(
+            ProfileV3API.aiConnector(connector: connector),
+            action: "ai_connector"
+        )
+        return ProfileV3AIConnectorMapper.detail(dto, fallback: connector)
+    }
+
+    func loadAIConnectorConnect(_ connector: String) async throws -> ProfileV3AIConnectorConnect {
+        let dto: ProfileV3AIConnectorConnectScreenDTO = try await request(
+            ProfileV3API.aiConnectorConnect(connector: connector),
+            action: "ai_connector_connect"
+        )
+        return ProfileV3AIConnectorMapper.connect(dto, fallback: connector)
+    }
+
+    func connectAIConnector(_ submit: ProfileV3AIConnectorConnect.Submit, text: String) async throws {
+        let request = ProfileV3ConnectAIConnectorRequest(action: submit.action, connector: submit.connector, text: text)
+        try await self.submit(try JSONEncoder().encode(request), action: submit.action)
     }
 
     func loadAppAccess() async throws -> ProfileV3AppAccess {
@@ -418,8 +438,8 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return ProfileV3BenefitsMapper.detail(dto)
     }
 
-    func loadProgrammeCatalogue(query: String?, kind: String?) async throws -> ProfileV3ProgrammePicker {
-        let endpoint = ProfileV3API.loyaltyCatalogue(query: query, kind: kind)
+    func loadProgrammeCatalogue(query: String?, kind: String?, market: String?) async throws -> ProfileV3ProgrammePicker {
+        let endpoint = ProfileV3API.loyaltyCatalogue(query: query, kind: kind, market: market)
         let dto: ProfileV3LoyaltyPickScreenDTO = try await request(endpoint, action: "loyalty_catalogue")
         return ProfileV3LoyaltyMapper.picker(dto)
     }
@@ -650,22 +670,6 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
             try await client.perform(.submit(body: body))
         }
         await store.invalidate()
-    }
-}
-
-extension ProfileV3LiveRepository: ProfileV3CustomRulesRepository {
-    private var rulesOwner: String { session.currentUserID ?? "signed-out" }
-
-    func loadCustomRules(agentID: String, profileID: String?) async throws -> [ProfileV3CustomRule] {
-        customRules.rules(owner: rulesOwner, agentID: agentID, profileID: profileID)
-    }
-
-    func saveCustomRule(_ rule: ProfileV3CustomRule, agentID: String, profileID: String?) async throws {
-        customRules.save(rule, owner: rulesOwner, agentID: agentID, profileID: profileID)
-    }
-
-    func deleteCustomRule(id: String, agentID: String, profileID: String?) async throws {
-        customRules.delete(id: id, owner: rulesOwner, agentID: agentID, profileID: profileID)
     }
 }
 

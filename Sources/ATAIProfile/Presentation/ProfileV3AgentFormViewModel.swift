@@ -12,7 +12,9 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         case failed
     }
 
-    @Published private(set) var form: ProfileV3AgentForm
+    @Published private(set) var form: ProfileV3AgentForm {
+        didSet { syncCustomRules() }
+    }
     @Published private(set) var saveState: SaveState = .idle
     @Published var pickerSectionID: String?
     @Published private(set) var sources: ProfileV3PreferenceSourcesViewModel?
@@ -27,9 +29,9 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     @Published var householdApply: ProfileV3HouseholdApplySession?
     @Published private(set) var ridePicker: ProfileV3RidePicker?
     @Published private(set) var selectedTabs: [String: String] = [:]
+    @Published private(set) var customRules: ProfileV3CustomRulesModel?
 
     let avatarURL: URL?
-    let customRules: ProfileV3CustomRulesModel?
 
     private let profileID: String?
     private let repository: any ProfileV3AgentRepository
@@ -70,13 +72,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         self.onPassportUploaded = onPassportUploaded
         self.onSaved = onSaved
         self.onFinish = onFinish
-        if ProfileV3FeatureFlags.isAgentCustomRulesEnabled,
-           let rulesRepository = repository as? any ProfileV3CustomRulesRepository {
-            customRules = ProfileV3CustomRulesModel(agentID: form.agentID, profileID: profileID, repository: rulesRepository)
-        } else {
-            customRules = nil
-        }
-        customRules?.load()
+        syncCustomRules()
         prefetchRidePicker()
     }
 
@@ -193,6 +189,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     private func applyPassportField(_ field: ProfileV3PassportField) {
         guard let section = passportSection, case .passport(let current) = section.control else { return }
         var merged = field
+        merged.labels = field.labels.filling(from: current.labels)
         merged.previous = field.previous ?? current.previous
         merged.rescan = field.rescan ?? current.rescan
         merged.howUsed = field.howUsed ?? current.howUsed
@@ -273,7 +270,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
             case .cards(var field):
                 Self.toggle(&field.selection, optionID, allowsMultiple: field.allowsMultiple)
                 section.control = .cards(field)
-            case .slider, .text, .date, .passport, .cars, .baggage:
+            case .slider, .text, .date, .passport, .cars, .baggage, .customRules:
                 break
             }
         }
@@ -517,58 +514,103 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     }
 
     private func submit(profileIDs: [String]?) {
-        guard saveState == .idle || saveState == .failed else { return }
+        guard beginSave() else { return }
+        saveTask = Task { [weak self] in
+            try? await self?.performSave(profileIDs: profileIDs)
+        }
+    }
+
+    func commitCustomRules(_ rules: [String]) async throws -> ProfileV3CustomRulesModel.Commit {
+        guard let sectionID = form.customRulesSection?.id else { throw ProfileV3RepositoryError.unavailable }
+        commitTexts()
+        update(sectionID) { section in
+            guard case .customRules(var field) = section.control else { return }
+            field.rules = rules
+            section.control = .customRules(field)
+        }
+        if let household = form.household, householdApply == nil {
+            householdApply = ProfileV3HouseholdApplySession(prompt: household)
+            return .handedOff
+        }
+        guard beginSave() else { throw ProfileV3RepositoryError.unavailable }
+        try await performSave(profileIDs: nil)
+        return .saved
+    }
+
+    private func syncCustomRules() {
+        guard ProfileV3FeatureFlags.isAgentCustomRulesEnabled,
+              let section = form.customRulesSection,
+              case .customRules(let field) = section.control else {
+            customRules = nil
+            return
+        }
+        if let customRules {
+            customRules.update(title: section.title, field: field)
+        } else {
+            customRules = ProfileV3CustomRulesModel(title: section.title, field: field) { [weak self] rules in
+                guard let self else { throw CancellationError() }
+                return try await commitCustomRules(rules)
+            }
+        }
+    }
+
+    private func beginSave() -> Bool {
+        guard saveState == .idle || saveState == .failed else { return false }
         saveState = .saving
         if var session = householdApply {
             session.phase = .saving
             session.errorMessage = nil
             householdApply = session
         }
-        saveTask = Task { [weak self] in
-            guard let self else { return }
-            let snapshot = form
-            let values = ProfileV3AgentFormValues(snapshot)
-            let changedKeys = values.changedKeys(from: savedValues)
-            let changes = ProfileV3AgentFormChanges(
-                agentID: snapshot.agentID,
-                changedSections: values.analyticsValues(for: changedKeys),
-                oldSections: savedValues.analyticsValues(for: changedKeys)
+        return true
+    }
+
+    private func performSave(profileIDs: [String]?) async throws {
+        let snapshot = form
+        let values = ProfileV3AgentFormValues(snapshot)
+        let changedKeys = values.changedKeys(from: savedValues)
+        let changes = ProfileV3AgentFormChanges(
+            agentID: snapshot.agentID,
+            changedSections: values.analyticsValues(for: changedKeys),
+            oldSections: savedValues.analyticsValues(for: changedKeys)
+        )
+        let travellerIDs = profileIDs?.map { Optional($0) } ?? [profileID]
+        do {
+            let doneLabel = try await repository.saveAgentForm(
+                snapshot,
+                profileID: profileID,
+                profileIDs: profileIDs
             )
-            let travellerIDs = profileIDs?.map { Optional($0) } ?? [profileID]
-            do {
-                let doneLabel = try await repository.saveAgentForm(
-                    snapshot,
-                    profileID: profileID,
-                    profileIDs: profileIDs
-                )
-                changes.trackSaved(for: travellerIDs)
-                onSaved()
-                guard !Task.isCancelled else { return }
-                savedValues = values
-                reportedTexts = [:]
-                if var session = householdApply {
-                    session.phase = .saved
-                    session.doneLabel = doneLabel?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-                    householdApply = session
-                }
-                self.saveState = .saved
-                refresh()
-                try await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds))
-                guard !Task.isCancelled else { return }
-                householdApply = nil
-                self.saveState = .idle
-            } catch is CancellationError {
-                return
-            } catch {
-                changes.trackFailure(error, for: travellerIDs)
-                guard !Task.isCancelled else { return }
-                if householdApply != nil {
-                    recordHouseholdFailure(error)
-                    self.saveState = .idle
-                } else {
-                    self.saveState = .failed
-                }
+            changes.trackSaved(for: travellerIDs)
+            onSaved()
+            try Task.checkCancellation()
+            savedValues = values
+            reportedTexts = [:]
+            if var session = householdApply {
+                session.phase = .saved
+                session.doneLabel = doneLabel?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                householdApply = session
             }
+            saveState = .saved
+            refresh()
+            saveTask = Task { [weak self] in
+                try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.savedDismissMilliseconds))
+                guard let self, !Task.isCancelled else { return }
+                householdApply = nil
+                saveState = .idle
+            }
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            changes.trackFailure(error, for: travellerIDs)
+            try Task.checkCancellation()
+            if householdApply != nil {
+                recordHouseholdFailure(error)
+                saveState = .idle
+            } else {
+                saveState = .failed
+            }
+            throw error
         }
     }
 
@@ -649,6 +691,8 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
             section.status = field.selection == nil ? .pending : .complete
         case .baggage(let field):
             section.status = field.hasSelection ? .complete : .pending
+        case .customRules(let field):
+            section.status = field.rules.isEmpty ? .pending : .complete
         }
     }
 
