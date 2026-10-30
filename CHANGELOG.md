@@ -5,6 +5,16 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ## Unreleased
 
+## 1.0.18 — 2026-10-30
+
+### Added
+
+- **Invite code sheet** behind the settings row `go: "invite_friends"` / `"invite_code"` — the
+  foil card, the spaced code, invites-left pips and a share CTA. The data comes from the host
+  through the new `ProfileV3InviteHost` seam; with no host conformer the sheet shows its empty
+  state, so hosts on an older build are unaffected.
+- The row takes its envelope from `ATMS.drafts`, which adds **ATMaterialIcons** to the package.
+
 ## 1.0.16 — 2026-10-30
 
 ### Changed
