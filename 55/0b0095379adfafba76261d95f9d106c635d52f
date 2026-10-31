@@ -1,0 +1,58 @@
+Sources/ATAIProfile/Views/ProfileV3AppAccessView.swift
+  s_aca99db70bc6e3::t_4af472206d46a7 105,113,115-119,121-122,132-155
+Sources/ATAIProfile/Generated/ProfileV3L10n+Generated.swift
+  s_aca99db70bc6e3::t_1f5b86da403160 180-181,198-199,320-321
+Sources/ATAIProfile/Resources/ProfileV3Localizable.xcstrings
+  s_aca99db70bc6e3::t_1f5b86da403160 928-929,935,1036-1047,1768-1779
+Sources/ATAIProfile/Views/ProfileV3InformationAccessView.swift
+  s_aca99db70bc6e3::t_5980c69d37f5e8 243,248
+Sources/ATAIProfile/Support/ProfileV3SettingsStrings.swift
+  s_aca99db70bc6e3::t_1f817858031f0f 44,46-47
+Sources/ATAIProfile/Views/ProfileV3AppCredentialsView.swift
+  s_aca99db70bc6e3::t_1e014e6dcd4774 196-197
+  s_aca99db70bc6e3::t_e58613d178840c 177
+Tests/ATAIProfileTests/ProfileV3VaultLoginTests.swift
+  s_aca99db70bc6e3::t_fdd21a93cac70a 388-412
+  s_aca99db70bc6e3::t_a7f74883bd5fd7 4
+Sources/ATAIProfile/Support/ProfileV3AppLogos.swift
+  s_aca99db70bc6e3::t_3fd829f9cf3a48 4
+CLAUDE.md
+  s_aca99db70bc6e3::t_e302b94b71c5d1 21
+  s_aca99db70bc6e3::t_06bb25af6fb1f5 1510
+  s_aca99db70bc6e3::t_99a7d32b1b253d 1385
+  s_aca99db70bc6e3::t_eb7e7e325c8307 1369
+  s_aca99db70bc6e3::t_b165cc5e6b63b1 34
+  s_aca99db70bc6e3::t_d848c47f2c0b44 1388-1394
+  s_aca99db70bc6e3::t_98864d66b1e75f 66
+  s_aca99db70bc6e3::t_fb729e24cbe7d3 1463
+  s_aca99db70bc6e3::t_a32275a6993d8a 1377
+  s_aca99db70bc6e3::t_1b58496276e309 1371
+  s_aca99db70bc6e3::t_9115a26c175445 1395
+  s_aca99db70bc6e3::t_da9873e599d961 1386
+  s_aca99db70bc6e3::t_7d4aae77341ffd 1379-1384,1387
+  s_aca99db70bc6e3::t_b2aea2d0757f6e 1378
+CHANGELOG.md
+  s_aca99db70bc6e3::t_952012095fa52c 22-30
+  s_aca99db70bc6e3::t_774ec434e9b0dc 31-34
+Sources/ATAIProfile/Components/ProfileV3AppAccessComponents.swift
+  s_aca99db70bc6e3::t_d16dfe74995077 115
+  s_aca99db70bc6e3::t_3f728fe77886a6 75
+Sources/ATAIProfile/Support/ProfileV3Theme+AppAccess.swift
+  s_aca99db70bc6e3::t_8ae95707203347 8-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "550b0095379adfafba76261d95f9d106c635d52f",
+  "prompts": {},
+  "sessions": {
+    "s_aca99db70bc6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "af994f3e-966b-4461-9c19-ecffb292ed42",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
