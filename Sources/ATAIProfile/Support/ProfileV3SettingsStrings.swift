@@ -41,11 +41,10 @@ extension ProfileV3Strings {
     static var instagramFollowUs: String { ProfileV3L10n.moAiprofileAgentsTitleInstagramFollowUs }
     static var instagramRedirecting: String { ProfileV3L10n.moAiprofileAgentsStatusInstagramRedirecting }
     static var instagramBlurb: String { ProfileV3L10n.moAiprofileAgentsDescriptionInstagram }
-    static var instagramSendMessage: String { ProfileV3L10n.moAiprofileAgentsButtonSendDm }
+    static var instagramSendMessage: String { ProfileV3L10n.moAiprofileAgentsButtonSendMessage }
     static var instagramUsernameInvalid: String { ProfileV3L10n.moAiprofileAgentsErrorInstagramUsernameInvalid }
-    static func instagramAwaitingMessage(_ username: String) -> String {
-        ProfileV3L10n.moAiprofileAgentsStatusInstagramAwaitingMessage(username)
-    }
+    static var instagramGetToKnow: String { ProfileV3L10n.moAiprofileAgentsTitleInstagramGetToKnow }
+    static var instagramGetToKnowDetail: String { ProfileV3L10n.moAiprofileAgentsDescriptionInstagramGetToKnow }
     static var credentialStore: String { ProfileV3L10n.moAiprofileAgentsLabelCredentialStore }
     static var credentialStoreBlurb: String { ProfileV3L10n.moAiprofileAgentsDescriptionCredentialStore }
     static var credentialStoreSubtitle: String { ProfileV3L10n.moAiprofileAgentsDescriptionCredentialStoreSheet }

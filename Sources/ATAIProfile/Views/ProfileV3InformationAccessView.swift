@@ -240,11 +240,12 @@ struct ProfileV3ConnectorCardTitle<Accessory: View>: View {
 struct ProfileV3ConnectorAction: View {
     let title: String
     let action: (() -> Void)?
+    var style: TypographyStyle = .H7InterSemibold16
 
     var body: some View {
         Button(action: { action?() }) {
             Text(title)
-                .typoGraphy(.H7InterSemibold16)
+                .typoGraphy(style)
                 .foregroundStyle(ProfileV3Theme.Palette.accessAction)
                 .contentShape(Rectangle())
         }

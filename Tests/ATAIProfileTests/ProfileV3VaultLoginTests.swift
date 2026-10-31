@@ -1,6 +1,7 @@
 import Foundation
 import LocalAuthentication
 import os
+import SwiftUI
 import Testing
 import UIKit
 @testable import ATAIProfile
@@ -382,6 +383,31 @@ struct ProfileV3VaultLoginTests {
         ProfileV3VaultClipboard.expire("hunter2", after: 0.2, pasteboard: board)
         #expect(board.string == "hunter2")
         try await waitUntil { !board.hasStrings }
+    }
+
+    @Test func vaultLoginFieldsAreNotOfferedToTheKeychain() async throws {
+        let loginTypes: Set<UITextContentType> = [.username, .password, .newPassword]
+        for mode in [ProfileV3AppCredentialsViewModel.Mode.vaultNew(), .vaultEdit(Self.saved)] {
+            let editor = ProfileV3AppCredentialsViewModel(mode: mode, origin: .page, repository: VaultStub(entries: []))
+            let host = UIHostingController(rootView: ProfileV3AppCredentialsView(viewModel: editor, onClose: {}))
+            let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 440, height: 956))
+            window.rootViewController = host
+            window.makeKeyAndVisible()
+            host.view.layoutIfNeeded()
+            try await Task.sleep(for: .milliseconds(100))
+
+            let fields = Self.textFields(in: window)
+            let tagged = fields.compactMap(\.textContentType).filter(loginTypes.contains)
+            let secure = fields.filter(\.isSecureTextEntry)
+            #expect(fields.count >= 2)
+            #expect(tagged.isEmpty)
+            #expect(secure.count == 1)
+            #expect(secure.first?.textContentType == .oneTimeCode)
+        }
+    }
+
+    private static func textFields(in view: UIView) -> [UITextField] {
+        ((view as? UITextField).map { [$0] } ?? []) + view.subviews.flatMap { textFields(in: $0) }
     }
 
     private func waitUntil(_ condition: () -> Bool) async throws {

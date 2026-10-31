@@ -174,8 +174,7 @@ struct ProfileV3AppCredentialsSheet: View {
                 ProfileV3CredentialField(
                     label: viewModel.usernameLabel,
                     text: $viewModel.credentials.username,
-                    keyboard: viewModel.asksForPassword ? .emailAddress : .asciiCapable,
-                    contentType: .username
+                    keyboard: viewModel.asksForPassword ? .emailAddress : .asciiCapable
                 )
                 if !viewModel.asksForPassword {
                     inlineError
@@ -194,7 +193,8 @@ struct ProfileV3AppCredentialsSheet: View {
                 label: ProfileV3Strings.appCredentialsPassword,
                 text: $viewModel.credentials.password,
                 isSecure: !viewModel.isPasswordRevealed,
-                contentType: .password,
+                contentType: .oneTimeCode,
+                masksInReplay: true,
                 prompt: viewModel.passwordPrompt
             ) {
                 if viewModel.isRevealingPassword {
