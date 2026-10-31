@@ -925,14 +925,14 @@
         }
       }
     },
-    "mo-aiprofile-agents-button-send-dm": {
-      "comment": "Action on the Instagram row in App access while the linked account hasn't messaged @ayl.chat yet. Opens the chat with @ayl.chat.",
+    "mo-aiprofile-agents-button-send-message": {
+      "comment": "Action on the Instagram card in App access while the linked account hasn't messaged @ayl.chat yet. Opens the chat with @ayl.chat.",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Send a DM"
+            "value": "Send a message"
           }
         }
       }
@@ -1029,6 +1029,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Meet Ayl on Instagram\nFollow Ayl and say hi, so your agent can plan and recommend the best of everything for you."
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-description-instagram-get-to-know": {
+      "comment": "Text under the Get to know heading on the Instagram card in App access.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drop in a message or just share something funny..."
           }
         }
       }
@@ -1633,18 +1645,6 @@
         }
       }
     },
-    "mo-aiprofile-agents-status-instagram-awaiting-message": {
-      "comment": "Status under the Instagram row in App access while the linked account hasn't messaged @ayl.chat yet. The variable is the linked username.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Send any message to @ayl.chat from @%1$@ to finish connecting."
-          }
-        }
-      }
-    },
     "mo-aiprofile-agents-status-instagram-redirecting": {
       "comment": "Shown while the app opens Instagram after a username is saved.",
       "extractionState": "manual",
@@ -1785,6 +1785,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Follow us, drop in a text"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-get-to-know": {
+      "comment": "Heading on the Instagram card in App access while the linked account hasn't messaged @ayl.chat yet.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get to know @ayl.chat"
           }
         }
       }

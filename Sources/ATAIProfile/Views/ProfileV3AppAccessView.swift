@@ -102,6 +102,7 @@ private struct ProfileV3AppAccessRow: View {
     let onAdd: () -> Void
 
     private typealias Access = ProfileV3Theme.Sizes.InformationAccess
+    private typealias Layout = ProfileV3Theme.Sizes.AppAccess
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -109,21 +110,16 @@ private struct ProfileV3AppAccessRow: View {
                 icon: ATIcon.SwiftUIImage.globe,
                 iconURL: app.iconURL,
                 isIconRound: true,
-                title: app.name
+                title: title
             ) {
-                ProfileV3ConnectorAction(title: actionTitle, action: onAdd)
+                ProfileV3ConnectorAction(
+                    title: actionTitle,
+                    action: onAdd,
+                    style: app.isAwaitingMessage ? .B1InterSemibold14 : .H7InterSemibold16
+                )
             }
-            if let status {
-                Text(status)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(ProfileV3Theme.Palette.accessChipText)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.leading, Access.cardLeading + Access.cardIcon + ProfileV3Theme.Space.s12)
-                    .padding(.trailing, Access.cardTrailing)
-                    .padding(.top, ProfileV3Theme.Space.s8)
-                    .padding(.bottom, ProfileV3Theme.Space.s24)
+            if app.isAwaitingMessage {
+                messagePrompt
             }
         }
         .frame(minHeight: Access.cardHeight, alignment: .top)
@@ -133,9 +129,30 @@ private struct ProfileV3AppAccessRow: View {
         .accessibilityAction(named: actionTitle, onAdd)
     }
 
-    private var status: String? {
-        guard app.isAwaitingMessage, let username = app.username else { return nil }
-        return ProfileV3Strings.instagramAwaitingMessage(username)
+    private var messagePrompt: some View {
+        VStack(alignment: .leading, spacing: Layout.messagePromptSpacing) {
+            Text(ProfileV3Strings.instagramGetToKnow)
+                .typoGraphy(.B1InterSemibold14)
+                .foregroundStyle(Color(at: .pureBlack))
+                .padding(.vertical, TypographyStyle.B1InterSemibold14.lineSpacingAdjustment / 2)
+            Text(ProfileV3Strings.instagramGetToKnowDetail)
+                .typoGraphy(.B2InterMedium12)
+                .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.accessSubtitle))
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.vertical, TypographyStyle.B2InterMedium12.lineSpacingAdjustment / 2)
+                .frame(maxWidth: Layout.messagePromptBodyWidth, alignment: .leading)
+        }
+        .multilineTextAlignment(.leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.leading, Access.cardLeading)
+        .padding(.trailing, Access.cardTrailing)
+        .padding(.top, Layout.messagePromptTop)
+        .padding(.bottom, Layout.messagePromptBottom)
+    }
+
+    private var title: String {
+        guard app.isAwaitingMessage, let username = app.username else { return app.name }
+        return "@" + username
     }
 
     private var actionTitle: String {

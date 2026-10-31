@@ -72,6 +72,7 @@ struct ProfileV3CredentialField<Accessory: View>: View {
     var isSecure = false
     var keyboard: UIKeyboardType = .default
     var contentType: UITextContentType?
+    var masksInReplay = false
     var prompt: String?
     var isEditable = true
     @ViewBuilder var accessory: () -> Accessory
@@ -111,7 +112,7 @@ struct ProfileV3CredentialField<Accessory: View>: View {
         .foregroundStyle(Color(at: .pureBlack))
         .keyboardType(keyboard)
         .textContentType(contentType)
-        .postHogMask(isSecure || contentType == .password || contentType == .newPassword)
+        .postHogMask(isSecure || masksInReplay || contentType == .password || contentType == .newPassword)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
         .focused($isFocused)

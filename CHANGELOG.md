@@ -7,6 +7,24 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
+- While Instagram waits for its first DM, its App access card follows the design: the saved handle
+  as the title ("@grukhs"), "Send a message" (was "Send a DM"), and "Get to know @ayl.chat" over
+  "Drop in a message or just share something funny..." in place of the one-line status. The
+  bundled Instagram logo is cropped to its circle, so it fills its round frame like the other app
+  logos. Keys: `mo-aiprofile-agents-button-send-dm` is now `mo-aiprofile-agents-button-send-message`,
+  `mo-aiprofile-agents-status-instagram-awaiting-message` is gone, and
+  `mo-aiprofile-agents-title-instagram-get-to-know` and
+  `mo-aiprofile-agents-description-instagram-get-to-know` are new; add them in Ditto with the other
+  Instagram keys.
+- Saving a login in the credential store (or app credentials) only calls the API: iOS no longer
+  offers to save it to the user's Passwords. The sheet's fields aren't tagged as a username and
+  password any more (the password field is a one-time-code field), so the system "Save Password"
+  prompt doesn't fire for these third-party logins. The password stays masked in session replay.
+
+## 1.0.21 — 2026-10-31
+
+### Changed
+
 - The glove box Virtual card no longer shows the "No-show fee · Asks you first" row; Works at and
   Your own card remain. Its keys `mo-aiprofile-glovebox-label-card-no-show-fee` and
   `mo-aiprofile-glovebox-label-card-asks-first` are gone from the catalog; if they were added to

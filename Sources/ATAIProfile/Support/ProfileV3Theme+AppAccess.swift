@@ -5,6 +5,10 @@ extension ProfileV3Theme.Sizes {
     enum AppAccess {
         static let listTop: CGFloat = 44
         static let listBottom: CGFloat = 120
+        static let messagePromptTop = ProfileV3Theme.Space.s28
+        static let messagePromptSpacing = ProfileV3Theme.Space.s10
+        static let messagePromptBodyWidth: CGFloat = 206
+        static let messagePromptBottom: CGFloat = 37
         static let hintTop: CGFloat = 53
         static let hintTrailing = ProfileV3Theme.Space.s28
         static let hint = CGSize(width: 145, height: 62.4884)
