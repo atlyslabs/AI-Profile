@@ -83,6 +83,8 @@ extension ProfileV3Strings {
     static var passportInvalid: String { ProfileV3L10n.moAiprofileTravelErrorInvalidPassport }
     static var indianPassportInvalid: String { ProfileV3L10n.moAiprofileTravelErrorInvalidIndianPassport }
     static var connectorDeckHint: String { ProfileV3L10n.moAiprofileAgentsHintDisconnectConnector }
+    static var photosConnector: String { ProfileV3L10n.moAiprofileAgentsLabelPhotos }
+    static var photosAccessDenied: String { ProfileV3L10n.moAiprofileAgentsErrorPhotosAccess }
     static var connectorsAccessNote: String { ProfileV3L10n.moAiprofileAgentsSecurityNoteAccess }
     static var connectorConnected: String { ProfileV3L10n.moAiprofileAgentsStatusConnected }
     static var connectOtherEmails: String { ProfileV3L10n.moAiprofileAgentsButtonConnectEmails }

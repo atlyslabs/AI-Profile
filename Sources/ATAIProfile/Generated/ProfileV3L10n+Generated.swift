@@ -209,6 +209,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsErrorDisconnectFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-disconnect-failed", fallback: "Couldn't disconnect. Please try again.") }
   /// Error under the username field when the text isn't a valid Instagram username (1-30 letters, numbers, dots or underscores).
   internal static var moAiprofileAgentsErrorInstagramUsernameInvalid: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-instagram-username-invalid", fallback: "Enter a valid Instagram username") }
+  /// Shown when the user declines photo library access while connecting the Photos connector.
+  internal static var moAiprofileAgentsErrorPhotosAccess: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-photos-access", fallback: "Allow photo access in Settings so we can find the countries you've been to.") }
   /// Error under the password when showing it needs a recent sign-in.
   internal static var moAiprofileAgentsErrorVaultConfirmItsYou: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-vault-confirm-its-you", fallback: "For your security, sign in to Atlys again, then show the password within 10 minutes.") }
   /// Saved login status when the site needs a one-time code.
@@ -267,6 +269,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelPersonaPlanning: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-persona-planning", fallback: "Planning") }
   /// Travel persona loader: trait label on the processing dial.
   internal static var moAiprofileAgentsLabelPersonaSocial: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-persona-social", fallback: "Social") }
+  /// Label for the Photos connector, which reads only where photos were taken.
+  internal static var moAiprofileAgentsLabelPhotos: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-photos", fallback: "Photos") }
   /// Label for an agent preference slider setting.
   internal static var moAiprofileAgentsLabelPreferenceSlider: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-preference-slider", fallback: "Preference") }
   /// Call to action text related to agent access.

@@ -31,6 +31,49 @@ struct ProfileV3DisconnectConnectorRequest: Encodable, Equatable {
     let connector: String
 }
 
+struct ProfileV3SyncPhotoPlacesRequest: Encodable, Equatable {
+    struct Country: Encodable, Equatable {
+        let countryCode: String
+        let photoCount: Int
+        let firstSeen: Date?
+        let lastSeen: Date?
+
+        enum CodingKeys: String, CodingKey {
+            case countryCode = "country_code"
+            case photoCount = "photo_count"
+            case firstSeen = "first_seen"
+            case lastSeen = "last_seen"
+        }
+    }
+
+    let action = "sync_photo_places"
+    let access: String
+    let scannedThrough: Date?
+    let countries: [Country]
+
+    enum CodingKeys: String, CodingKey {
+        case action
+        case access
+        case scannedThrough = "scanned_through"
+        case countries
+    }
+
+    init(_ upload: ProfileV3PhotoPlacesUpload) {
+        access = upload.access == .limited ? "limited" : "full"
+        scannedThrough = upload.scannedThrough
+        countries = upload.countries.map {
+            Country(countryCode: $0.countryCode, photoCount: $0.photoCount, firstSeen: $0.firstSeen, lastSeen: $0.lastSeen)
+        }
+    }
+
+    static func body(for upload: ProfileV3PhotoPlacesUpload) throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = .sortedKeys
+        return try encoder.encode(ProfileV3SyncPhotoPlacesRequest(upload))
+    }
+}
+
 struct ProfileV3ConnectorCardDTO: Decodable, Equatable {
     let key: String?
     let headline: String?

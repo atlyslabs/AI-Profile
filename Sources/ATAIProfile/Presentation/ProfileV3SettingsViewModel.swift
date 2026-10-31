@@ -56,7 +56,8 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         board: (any ProfileV3BoardRepository)? = nil,
         profileID: String? = nil,
         profileName: String? = nil,
-        invites: any ProfileV3InviteHost = ProfileV3UnavailableInviteHost()
+        invites: any ProfileV3InviteHost = ProfileV3UnavailableInviteHost(),
+        photoPlaces: ProfileV3PhotoPlacesSync? = nil
     ) {
         self.repository = repository
         gloveBoxRepository = repository as? any ProfileV3GloveBoxRepository
@@ -67,7 +68,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
             ?? Self.monogram(from: board?.cachedBoard()?.mainProfile?.name)
         let fields = ProfileV3ProfileFieldsModel(deps: deps, repository: repository, profileID: profileID)
         self.fields = fields
-        let connectors = ProfileV3ConnectorsSettingsModel(repository: repository, travellerID: profileID)
+        let connectors = ProfileV3ConnectorsSettingsModel(repository: repository, travellerID: profileID, photoPlaces: photoPlaces)
         self.connectors = connectors
         appAccess = ProfileV3AppAccessModel(repository: repository, connectors: connectors)
         credentialStore = ProfileV3CredentialStoreModel(repository: repository)

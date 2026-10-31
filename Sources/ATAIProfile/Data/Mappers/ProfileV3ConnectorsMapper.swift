@@ -78,6 +78,7 @@ enum ProfileV3ConnectorsMapper: ProfileV3DTOReading {
         switch key {
         case .gmail: return .remote(ProfileV3ConnectorArt.gmail.url)
         case .itr: return .contract
+        case .photos: return .remote(nil)
         }
     }
 

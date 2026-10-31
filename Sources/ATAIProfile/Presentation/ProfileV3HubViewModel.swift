@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import SwiftUI
 
@@ -76,6 +77,7 @@ final class ProfileV3HubViewModel {
     private(set) var isFetchingBenefits = false
     private(set) var showsAllCoupons = false
     private(set) var pastTrips: ProfileV3PastTripsViewModel?
+    private(set) var photoCountryCodes: [String] = []
     private(set) var couponsSheet = ProfileV3CouponsSheet.empty
     private(set) var allCouponsPhase: ProfileV3LoadPhase = .loading
     private(set) var isFetchingCoupons = false
@@ -111,11 +113,13 @@ final class ProfileV3HubViewModel {
     @ObservationIgnored private var benefitsTask: Task<Void, Never>?
     @ObservationIgnored private var couponsTask: Task<Void, Never>?
     @ObservationIgnored private var redeemTask: Task<Void, Never>?
+    @ObservationIgnored private var photoCodesSubscription: AnyCancellable?
 
     init(
         repository: any ProfileV3HubRepository,
         hints: ProfileV3HubHints = ProfileV3HubHints(),
-        userFirstName: String? = nil
+        userFirstName: String? = nil,
+        photoPlaces: ProfileV3PhotoPlacesSync? = nil
     ) {
         self.repository = repository
         self.hints = hints
@@ -129,6 +133,9 @@ final class ProfileV3HubViewModel {
             phase = .content(profile.home)
             needsRevalidation = true
             refreshStackBenefits()
+        }
+        photoCodesSubscription = photoPlaces?.$countryCodes.sink { [weak self] codes in
+            self?.photoCountryCodes = codes
         }
     }
 
@@ -589,7 +596,16 @@ final class ProfileV3HubViewModel {
     // MARK: - Past trips
 
     var latestPasses: [String: ProfileV3WorldPass] {
-        Dictionary((home?.worldPasses ?? []).map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let mainID = photoCountryCodes.isEmpty ? nil : mainProfileID
+        return Dictionary(
+            (home?.worldPasses ?? []).map { pass in
+                guard pass.id == mainID else { return (pass.id, pass) }
+                var merged = pass
+                merged.visitedCountryCodes += photoCountryCodes
+                return (pass.id, merged)
+            },
+            uniquingKeysWith: { first, _ in first }
+        )
     }
 
     func openTrips(_ pass: ProfileV3WorldPass, directive: ProfileV3Directive) {

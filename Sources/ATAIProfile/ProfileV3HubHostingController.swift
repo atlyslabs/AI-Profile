@@ -32,7 +32,8 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
         self.environment = environment
         let viewModel = ProfileV3HubViewModel(
             repository: repository,
-            userFirstName: userFirstName
+            userFirstName: userFirstName,
+            photoPlaces: environment.photoPlaces
         )
         self.viewModel = viewModel
         super.init(rootView: ProfileV3HubRoot(
@@ -55,6 +56,7 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         ProfileV3Analytics.screen(.hub, entrySource: entrySource)
+        environment.photoPlaces.syncIfConnected()
     }
 }
 
@@ -87,6 +89,7 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
             client: environment.client,
             profileID: profileID,
             profileName: viewModel.mainProfileName,
+            photoPlaces: environment.photoPlaces,
             onConnectConnector: { [weak self] step in self?.startConnectorCapture(step) },
             onTravellersChanged: { [weak viewModel] in viewModel?.requestRefresh() },
             onConnectorsDisconnected: { [weak viewModel] in viewModel?.refreshAfterDisconnecting($0) },

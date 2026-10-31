@@ -116,6 +116,10 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         try await submit(try JSONEncoder().encode(request), action: "disconnect_connector")
     }
 
+    func syncPhotoPlaces(_ upload: ProfileV3PhotoPlacesUpload) async throws {
+        try await submit(try ProfileV3SyncPhotoPlacesRequest.body(for: upload), action: "sync_photo_places")
+    }
+
     func loadAIConnector(_ connector: String) async throws -> ProfileV3AIConnector {
         let dto: ProfileV3AIConnectorScreenDTO = try await client.request(
             ProfileV3API.aiConnector(connector: connector),

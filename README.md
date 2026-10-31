@@ -136,6 +136,10 @@ dependency; the host only supplies the current token.
 - `NSFaceIDUsageDescription` in the host's Info.plist. The credential store asks for Face ID (or the
   passcode) before it opens and before it shows a saved password. It is on only in DEBUG builds for
   now, but without the key iOS ends the app at the first prompt.
+- `NSPhotoLibraryUsageDescription` in the host's Info.plist, for the Photos connector on Information
+  access. The package reads only each photo's location and date, never image data, turns them into
+  ISO country codes on the device with the bundled Natural Earth shapes (public domain,
+  `ProfileV3CountryShapes.geojson`), and sends per-country totals through `/board/submit`.
 
 ## Also public
 
