@@ -92,7 +92,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This email is already linked to another Atlys account"
+            "value": "This email is already linked to another Ayl account"
           }
         }
       }
@@ -980,7 +980,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Securely store your passwords so Atlys can access the services you authorise when needed."
+            "value": "Securely store your passwords so Ayl can access the services you authorise when needed."
           }
         }
       }
@@ -992,7 +992,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atlys only uses them to access the services you authorise, keeping you in control at every step."
+            "value": "Ayl only uses them to access the services you authorise, keeping you in control at every step."
           }
         }
       }
@@ -1124,7 +1124,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "For your security, sign in to Atlys again, then show the password within 10 minutes."
+            "value": "For your security, sign in to Ayl again, then show the password within 10 minutes."
           }
         }
       }
@@ -3254,7 +3254,7 @@
       }
     },
     "mo-aiprofile-glovebox-description-pay-atlys": {
-      "comment": "Description of the Atlys pays option.",
+      "comment": "Description of the Ayl pays option.",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -3344,7 +3344,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Glove box needs an Atlys account."
+            "value": "Glove box needs an Ayl account."
           }
         }
       }
@@ -3481,18 +3481,6 @@
         }
       }
     },
-    "mo-aiprofile-glovebox-label-card-asks-first": {
-      "comment": "Virtual card fact value for No-show fee.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks you first"
-          }
-        }
-      }
-    },
     "mo-aiprofile-glovebox-label-card-cvc": {
       "comment": "Virtual card label for the CVC.",
       "extractionState": "manual",
@@ -3541,18 +3529,6 @@
         }
       }
     },
-    "mo-aiprofile-glovebox-label-card-no-show-fee": {
-      "comment": "Virtual card fact label for no-show fees.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No-show fee"
-          }
-        }
-      }
-    },
     "mo-aiprofile-glovebox-label-card-own-card": {
       "comment": "Virtual card fact label about the user's own card.",
       "extractionState": "manual",
@@ -3572,7 +3548,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Restaurant only"
+            "value": "Browser payments"
           }
         }
       }
@@ -4034,13 +4010,13 @@
       }
     },
     "mo-aiprofile-glovebox-title-pay-atlys": {
-      "comment": "How you pay option where Atlys pays and bills the user.",
+      "comment": "How you pay option where ayl pays and bills the user.",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atlys pays, we bill you"
+            "value": "Ayl pays, we bill you"
           }
         }
       }

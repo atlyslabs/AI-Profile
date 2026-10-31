@@ -209,16 +209,15 @@ enum ProfileV3GloveBoxFixtures {
             ProfileV3GloveBoxCardSection.Stat(id: "charges", value: "2 bad charges", label: "blocked")
         ],
         facts: [
-            ProfileV3GloveBoxCardSection.Fact(id: "works-at", label: "Works at", value: "Restaurant only"),
-            ProfileV3GloveBoxCardSection.Fact(id: "own-card", label: "Your own card", value: "Never shared"),
-            ProfileV3GloveBoxCardSection.Fact(id: "no-show", label: "No-show fee", value: "Asks you first")
+            ProfileV3GloveBoxCardSection.Fact(id: "works-at", label: "Works at", value: "Browser payments"),
+            ProfileV3GloveBoxCardSection.Fact(id: "own-card", label: "Your own card", value: "Never shared")
         ],
         payTitle: "How you pay",
         payBody: "When the agent books for you.",
         payOptions: [
             ProfileV3GloveBoxCardSection.PayOption(
                 id: "atlys",
-                title: "Atlys pays, we bill you",
+                title: "Ayl pays, we bill you",
                 body: "We pay the restaurant, hotel or shop with our card. You see every charge here and pay us in one go.",
                 kind: .atlys
             ),

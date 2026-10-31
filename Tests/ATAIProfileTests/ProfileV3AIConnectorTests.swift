@@ -42,6 +42,26 @@ struct ProfileV3AIConnectorTests {
         #expect(screen.connectors.first { $0.id == "itr" }?.captureStep != nil)
     }
 
+    @Test func theProductionOverviewMapsEveryAssistant() throws {
+        let dto = try JSONDecoder().decode(ProfileV3ConnectorsScreenDTO.self, from: Data(#"""
+        {"type":"connectors","title":"Information access","blurb":"Access is securely managed and your data is used only to help the agent work for you.","connectors":[{"key":"gmail","label":"gmail","connected":true,"image_url":"https://media.atlys.com/b2c/ai-native/icons/kyc/gmail.png?v=20261031b","account_email":"traveler@example.com","status_label":"CONNECTED"},{"key":"itr","label":"Income Tax","connected":false,"image_url":"https://media.atlys.com/b2c/ai-native/icons/kyc/itr.png?v=20261031b"},{"key":"claude","label":"Claude","connected":true,"image_url":"https://media.atlys.com/b2c/ai-native/icons/connectors/claude.png?v=20261031b","next":{"go":"ai_connector","connector":"claude"},"synced_at":"2026-10-31T05:53:31.930032+00:00","status_label":"Synced on {date}"},{"key":"chatgpt","label":"ChatGPT","connected":false,"image_url":"https://media.atlys.com/b2c/ai-native/icons/connectors/chatgpt.png?v=20261031b","next":{"go":"ai_connector","connector":"chatgpt"},"connect_label":"Connect"},{"key":"gemini","label":"Gemini","connected":false,"image_url":"https://media.atlys.com/b2c/ai-native/icons/connectors/gemini.png?v=20261031b","next":{"go":"ai_connector","connector":"gemini"},"connect_label":"Connect"},{"key":"grok","label":"Grok","connected":false,"image_url":"https://media.atlys.com/b2c/ai-native/icons/connectors/grok.png?v=20261031b","next":{"go":"ai_connector","connector":"grok"},"connect_label":"Connect"}],"control_panel":{"label":"View control panel","next":{"go":"connector_control_panel"}}}
+        """#.utf8))
+        let screen = ProfileV3ConnectorsMapper.screen(dto)
+        #expect(screen.connectors.map(\.id) == ["gmail", "itr", "claude", "chatgpt", "gemini", "grok"])
+        #expect(screen.connectors.compactMap(\.aiConnector) == ["claude", "chatgpt", "gemini", "grok"])
+
+        let claude = try #require(screen.connectors.first { $0.id == "claude" })
+        #expect(claude.status == .connected)
+        let kolkata = try #require(TimeZone(identifier: "Asia/Kolkata"))
+        #expect(ProfileV3AIConnectorMapper.statusLabel("Synced on {date}", syncedAt: claude.syncedAt, timeZone: kolkata)
+            == "Synced on 31 Oct, 11:23 am")
+        for key in ["chatgpt", "gemini", "grok"] {
+            let row = try #require(screen.connectors.first { $0.id == key })
+            #expect(row.status == .needsAttention)
+            #expect(row.connectLabel == "Connect")
+        }
+    }
+
     @Test func theSyncedDateIsWrittenInThePhonesTimeZone() throws {
         let synced = try #require(ProfileV3AIConnectorMapper.syncedAt("2026-10-29T16:11:00Z"))
         let kolkata = try #require(TimeZone(identifier: "Asia/Kolkata"))
@@ -53,6 +73,11 @@ struct ProfileV3AIConnectorTests {
         #expect(ProfileV3AIConnectorMapper.statusLabel("Connected", syncedAt: nil) == "Connected")
         #expect(ProfileV3AIConnectorMapper.statusLabel("Synced on {date}", syncedAt: nil) == nil)
         #expect(ProfileV3AIConnectorMapper.syncedAt("yesterday") == nil)
+
+        let python = try #require(ProfileV3AIConnectorMapper.syncedAt("2026-10-29T16:11:00.123456+00:00"))
+        #expect(abs(python.timeIntervalSince(synced) - 0.123) < 0.001)
+        #expect(ProfileV3AIConnectorMapper.statusLabel("Synced on {date}", syncedAt: python, timeZone: kolkata)
+            == "Synced on 29 Oct, 9:41 pm")
     }
 
     @Test func aiConnectorDirectivesRouteToTheirSheets() {
@@ -124,19 +149,24 @@ struct ProfileV3AIConnectorTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func aiAssistantsStayHiddenUntilTheClientShowsThem() async throws {
-        #expect(!ProfileV3FeatureFlags.isAIConnectorsEnabled)
+    func everyAssistantTheServerSendsShows() async throws {
+        #expect(ProfileV3FeatureFlags.isAIConnectorsEnabled)
         let settings = ProfileV3ConnectorsSettingsModel(repository: ProfileV3MockRepository(delay: .zero))
         settings.load()
         try await Self.waitUntil { settings.phase == .loaded }
-        #expect(!settings.connectors.isEmpty)
-        #expect(settings.connectors.allSatisfy { $0.aiConnector == nil })
+        #expect(settings.connectors.compactMap(\.aiConnector) == ["claude", "chatgpt", "gemini", "grok"])
         #expect(settings.connectors.contains { $0.id == "gmail" })
+
+        let hidden = ProfileV3ConnectorsSettingsModel(repository: ProfileV3MockRepository(delay: .zero), showsAIConnectors: false)
+        hidden.load()
+        try await Self.waitUntil { hidden.phase == .loaded }
+        #expect(hidden.connectors.allSatisfy { $0.aiConnector == nil })
+        #expect(hidden.connectors.contains { $0.id == "gmail" })
     }
 
     @Test(.timeLimit(.minutes(1)))
     func connectingCopiesThePromptSavesTheAnswerAndRefreshesTheRow() async throws {
-        let settings = ProfileV3ConnectorsSettingsModel(repository: ProfileV3MockRepository(delay: .zero), showsAIConnectors: true)
+        let settings = ProfileV3ConnectorsSettingsModel(repository: ProfileV3MockRepository(delay: .zero))
         settings.load()
         try await Self.waitUntil { settings.phase == .loaded }
         let claude = try #require(settings.connectors.first { $0.id == "claude" })
