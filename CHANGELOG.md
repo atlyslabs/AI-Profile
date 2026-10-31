@@ -7,18 +7,6 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
-- The glove box Virtual card no longer shows the "No-show fee · Asks you first" row; Works at and
-  Your own card remain. Its keys `mo-aiprofile-glovebox-label-card-no-show-fee` and
-  `mo-aiprofile-glovebox-label-card-asks-first` are gone from the catalog; if they were added to
-  Ditto, delete them there too.
-- Six strings that named Atlys now say Ayl: the email-taken error, the credential store's two
-  descriptions, the vault's sign-in-again error, the glove box account error and the "Ayl pays, we
-  bill you" option. Every host shows this copy, the Atlys app included. The virtual card's Works at
-  value is now "Browser payments" (was "Restaurant only"). Make the same changes in Ditto.
-- Information access shows the AI assistants again: every one the overview sends (in production,
-  Claude, ChatGPT, Gemini and Grok). 1.0.20 hid them; `ProfileV3FeatureFlags.isAIConnectorsEnabled`
-  is now true. Their backend (PR #23552: the assistant rows, `ai_connector`, `ai_connector_connect`
-  and `connect_ai_connector`) has been deployed since 2026-10-30.
 - While Instagram waits for its first DM, its App access card follows the design: the saved handle
   as the title ("@grukhs"), "Send a message" (was "Send a DM"), and "Get to know @ayl.chat" over
   "Drop in a message or just share something funny..." in place of the one-line status. The
@@ -32,6 +20,23 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   offers to save it to the user's Passwords. The sheet's fields aren't tagged as a username and
   password any more (the password field is a one-time-code field), so the system "Save Password"
   prompt doesn't fire for these third-party logins. The password stays masked in session replay.
+
+## 1.0.21 — 2026-10-31
+
+### Changed
+
+- The glove box Virtual card no longer shows the "No-show fee · Asks you first" row; Works at and
+  Your own card remain. Its keys `mo-aiprofile-glovebox-label-card-no-show-fee` and
+  `mo-aiprofile-glovebox-label-card-asks-first` are gone from the catalog; if they were added to
+  Ditto, delete them there too.
+- Six strings that named Atlys now say Ayl: the email-taken error, the credential store's two
+  descriptions, the vault's sign-in-again error, the glove box account error and the "Ayl pays, we
+  bill you" option. Every host shows this copy, the Atlys app included. The virtual card's Works at
+  value is now "Browser payments" (was "Restaurant only"). Make the same changes in Ditto.
+- Information access shows the AI assistants again: every one the overview sends (in production,
+  Claude, ChatGPT, Gemini and Grok). 1.0.20 hid them; `ProfileV3FeatureFlags.isAIConnectorsEnabled`
+  is now true. Their backend (PR #23552: the assistant rows, `ai_connector`, `ai_connector_connect`
+  and `connect_ai_connector`) has been deployed since 2026-10-30.
 
 ## 1.0.20 — 2026-10-31
 
