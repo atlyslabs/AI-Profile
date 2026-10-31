@@ -7,6 +7,23 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
+- The glove box Virtual card no longer shows the "No-show fee · Asks you first" row; Works at and
+  Your own card remain. Its keys `mo-aiprofile-glovebox-label-card-no-show-fee` and
+  `mo-aiprofile-glovebox-label-card-asks-first` are gone from the catalog; if they were added to
+  Ditto, delete them there too.
+- Six strings that named Atlys now say Ayl: the email-taken error, the credential store's two
+  descriptions, the vault's sign-in-again error, the glove box account error and the "Ayl pays, we
+  bill you" option. Every host shows this copy, the Atlys app included. The virtual card's Works at
+  value is now "Browser payments" (was "Restaurant only"). Make the same changes in Ditto.
+- Information access shows the AI assistants again: every one the overview sends (in production,
+  Claude, ChatGPT, Gemini and Grok). 1.0.20 hid them; `ProfileV3FeatureFlags.isAIConnectorsEnabled`
+  is now true. Their backend (PR #23552: the assistant rows, `ai_connector`, `ai_connector_connect`
+  and `connect_ai_connector`) has been deployed since 2026-10-30.
+
+## 1.0.20 — 2026-10-31
+
+### Changed
+
 - App access now links Instagram to Ayl through the snapmap service, so places from posts the user
   DMs to @ayl.chat save to their Ayl map. "+ user name" opens an explainer (shown for 15 seconds, or
   until tapped; its sample handle reads "ayl"), then a username sheet that saves with
@@ -45,10 +62,6 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   and 13 unused tokens are gone, as is the duplicate `profile_v3_glovebox_bolt` image. Screens look
   the same, except that the pass detail's flag pill casts its shadow from the pill only, and agent
   forms with an empty summary no longer leave a gap under the title.
-- The glove box Virtual card no longer shows the "No-show fee · Asks you first" row; Works at and
-  Your own card remain. Its keys `mo-aiprofile-glovebox-label-card-no-show-fee` and
-  `mo-aiprofile-glovebox-label-card-asks-first` are gone from the catalog; if they were added to
-  Ditto, delete them there too.
 
 ## 1.0.19 — 2026-10-30
 
