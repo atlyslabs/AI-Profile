@@ -356,12 +356,8 @@ struct ProfileV3GloveBoxTests {
     @Test func theLiveCardSectionShowsItsFactsAndHowYouPay() {
         let card = ProfileV3GloveBoxMapper.home(email: Fixtures.home.email).card
         #expect(card.stats.isEmpty)
-        #expect(card.facts.map(\.label) == [
-            ProfileV3GloveBoxCopy.cardWorksAt, ProfileV3GloveBoxCopy.cardOwnCard, ProfileV3GloveBoxCopy.cardNoShowFee
-        ])
-        #expect(card.facts.map(\.value) == [
-            ProfileV3GloveBoxCopy.cardRestaurantOnly, ProfileV3GloveBoxCopy.cardNeverShared, ProfileV3GloveBoxCopy.cardAsksFirst
-        ])
+        #expect(card.facts.map(\.label) == [ProfileV3GloveBoxCopy.cardWorksAt, ProfileV3GloveBoxCopy.cardOwnCard])
+        #expect(card.facts.map(\.value) == [ProfileV3GloveBoxCopy.cardRestaurantOnly, ProfileV3GloveBoxCopy.cardNeverShared])
         #expect(card.payOptions.map(\.kind) == [.atlys, .link])
         #expect(card.selectedPayOptionID == card.payOptions.first?.id)
         #expect(card.payBody == "When the agent books for you.")

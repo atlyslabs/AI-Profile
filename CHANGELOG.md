@@ -45,6 +45,10 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   and 13 unused tokens are gone, as is the duplicate `profile_v3_glovebox_bolt` image. Screens look
   the same, except that the pass detail's flag pill casts its shadow from the pill only, and agent
   forms with an empty summary no longer leave a gap under the title.
+- The glove box Virtual card no longer shows the "No-show fee · Asks you first" row; Works at and
+  Your own card remain. Its keys `mo-aiprofile-glovebox-label-card-no-show-fee` and
+  `mo-aiprofile-glovebox-label-card-asks-first` are gone from the catalog; if they were added to
+  Ditto, delete them there too.
 
 ## 1.0.19 — 2026-10-30
 

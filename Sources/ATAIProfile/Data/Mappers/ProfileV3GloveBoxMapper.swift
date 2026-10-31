@@ -63,8 +63,6 @@ enum ProfileV3GloveBoxCopy {
     static var cardRestaurantOnly: String { ProfileV3L10n.moAiprofileGloveboxLabelCardRestaurantOnly }
     static var cardOwnCard: String { ProfileV3L10n.moAiprofileGloveboxLabelCardOwnCard }
     static var cardNeverShared: String { ProfileV3L10n.moAiprofileGloveboxLabelCardNeverShared }
-    static var cardNoShowFee: String { ProfileV3L10n.moAiprofileGloveboxLabelCardNoShowFee }
-    static var cardAsksFirst: String { ProfileV3L10n.moAiprofileGloveboxLabelCardAsksFirst }
     static var payAtlysTitle: String { ProfileV3L10n.moAiprofileGloveboxTitlePayAtlys }
     static var payAtlysBody: String { ProfileV3L10n.moAiprofileGloveboxDescriptionPayAtlys }
     static var payLinkTitle: String { ProfileV3L10n.moAiprofileGloveboxTitlePayLink }
@@ -402,9 +400,6 @@ enum ProfileV3GloveBoxMapper {
                 ),
                 ProfileV3GloveBoxCardSection.Fact(
                     id: "own-card", label: ProfileV3GloveBoxCopy.cardOwnCard, value: ProfileV3GloveBoxCopy.cardNeverShared
-                ),
-                ProfileV3GloveBoxCardSection.Fact(
-                    id: "no-show", label: ProfileV3GloveBoxCopy.cardNoShowFee, value: ProfileV3GloveBoxCopy.cardAsksFirst
                 )
             ],
             payTitle: ProfileV3GloveBoxCopy.cardPayTitle,
