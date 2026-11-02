@@ -5,6 +5,7 @@ struct ProfileV3ProgrammeTile: View {
     enum Pill: Equatable {
         case none
         case insight(isLoading: Bool)
+        case edit
     }
 
     let programme: ProfileV3LoyaltyProgramme
@@ -39,12 +40,14 @@ struct ProfileV3ProgrammeTile: View {
         switch pill {
         case .none: return false
         case .insight: return insightTitle != nil
+        case .edit: return true
         }
     }
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             face
+                .allowsHitTesting(pill != .edit)
             if !isFlipped {
                 bottomRow
             }
@@ -267,6 +270,8 @@ struct ProfileV3ProgrammeTile: View {
                 )
                 .transition(.opacity.combined(with: .offset(y: ProfileV3Theme.Motion.insightRevealOffset)))
             }
+        case .edit:
+            ProfileV3ProgrammeTilePill(title: ProfileV3Strings.editProgramme, shade: shade, action: { onAction?() })
         case .none:
             EmptyView()
         }

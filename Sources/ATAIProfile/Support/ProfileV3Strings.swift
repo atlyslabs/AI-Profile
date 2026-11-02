@@ -85,6 +85,7 @@ enum ProfileV3Strings {
     static var pointsMiles: String { ProfileV3L10n.moAiprofileLoyaltyLabelPointsMiles }
     static var connectMoreProgrammes: String { ProfileV3L10n.moAiprofileLoyaltyButtonConnectMorePrograms }
     static var editProgrammes: String { ProfileV3L10n.moAiprofileLoyaltyButtonEditPrograms }
+    static var editProgramme: String { ProfileV3L10n.moAiprofileGeneralButtonEdit }
     static var confirmDeleteProgrammes: String { ProfileV3L10n.moAiprofileLoyaltyButtonConfirmDelete }
     static var cancel: String { ProfileV3L10n.moAiprofileGeneralButtonCancel }
     static var copyMembershipNumber: String { ProfileV3L10n.moAiprofileLoyaltyButtonCopyMembershipNumber }
@@ -170,6 +171,7 @@ enum ProfileV3Strings {
     static var typeHere: String { ProfileV3L10n.moAiprofileGeneralInputPlaceholderTypeHere }
     static var continueTitle: String { ProfileV3L10n.moAiprofileGeneralButtonContinue }
     static var addProgrammeFailed: String { ProfileV3L10n.moAiprofileLoyaltyErrorAddProgramFailed }
+    static var tierValidUntilInvalid: String { ProfileV3L10n.moAiprofileLoyaltyErrorTierValidUntilInvalid }
     static var noProgrammesMatch: String { ProfileV3L10n.moAiprofileLoyaltyErrorNoMatches }
     static var noProgrammesTitle: String { ProfileV3L10n.moAiprofileLoyaltyEmptyStateNoProgramsFound }
     static var noProgrammesConnectedTitle: String { ProfileV3L10n.moAiprofileLoyaltyEmptyStateNoProgramsConnected }

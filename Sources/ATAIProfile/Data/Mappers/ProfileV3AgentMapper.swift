@@ -475,13 +475,21 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             step: sliderStep(for: field),
             style: bounds.style,
             format: sliderFormat(for: field),
-            optOut: optOut
+            optOut: optOut,
+            isSet: raw != nil
         )
     }
 
     private static func sliderFormat(for field: ProfileV3AgentFieldDTO) -> ProfileV3SliderField.ValueFormat? {
-        if text(field.display) == "ft_in" { return .feetAndInches }
-        return text(field.unit).map(ProfileV3SliderField.ValueFormat.unit)
+        switch text(field.display) {
+        case "ft_in":
+            return .feetAndInches
+        case "money":
+            let currency = field.currency
+            return .money(symbol: text(currency?.symbol) ?? text(currency?.code) ?? "", unit: text(field.unit) ?? "")
+        default:
+            return text(field.unit).map(ProfileV3SliderField.ValueFormat.unit)
+        }
     }
 
     private static func sliderStep(for field: ProfileV3AgentFieldDTO) -> Double {

@@ -7,6 +7,7 @@ protocol ProfileV3ProgrammesRouter: AnyObject {
     func goBack()
     func openInsight(for programme: ProfileV3LoyaltyProgramme)
     func openAddProgramme()
+    func openEditProgramme(_ programme: ProfileV3LoyaltyProgramme)
     func openInsightAction(_ directive: ProfileV3Directive)
     func programmesChanged()
     func passChanged(to pass: ProfileV3WorldPass)
@@ -136,8 +137,10 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
         do {
             let overview = try await repository.loadProgrammes(passID: passID)
             guard !Task.isCancelled, passID == pass.id else { return false }
+            let kept = selectedIDs.intersection(overview.programmes.map(\.id))
             withAnimation(ProfileV3Theme.Motion.contentSwitch) {
                 phase = .content(overview)
+                if kept != selectedIDs { selectedIDs = kept }
             }
             persistedOrder = nil
             actionError = nil
@@ -205,6 +208,11 @@ final class ProfileV3ProgrammesViewModel: ObservableObject {
                 selectedIDs.insert(programme.id)
             }
         }
+    }
+
+    func tapEditProgramme(_ programme: ProfileV3LoyaltyProgramme) {
+        guard isEditing, !isDeleting else { return }
+        router?.openEditProgramme(programme)
     }
 
     func tapDeleteSelected() {

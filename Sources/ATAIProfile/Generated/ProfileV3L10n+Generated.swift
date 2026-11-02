@@ -24,7 +24,7 @@ internal enum ProfileV3L10n {
   /// Error when the account deletion request fails.
   internal static var moAiprofileAccountErrorDeleteRequestFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-error-delete-request-failed", fallback: "We couldn't submit your request. Please try again.") }
   /// Error message when email address is already in use.
-  internal static var moAiprofileAccountErrorEmailTaken: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-error-email-taken", fallback: "This email is already linked to another Atlys account") }
+  internal static var moAiprofileAccountErrorEmailTaken: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-error-email-taken", fallback: "This email is already linked to another Ayl account") }
   /// ErrorMessage displayed when email sync fails.
   internal static var moAiprofileAccountErrorGmailSyncTimeout: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-account-error-gmail-sync-timeout", fallback: "Syncing your emails is taking longer than expected. Please try again.") }
   /// Validation error for malformed email.
@@ -135,16 +135,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentSettingsAlways: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-always", fallback: "Always") }
   /// Configuration option for AI agent to always ask for permission.
   internal static var moAiprofileAgentSettingsAlwaysAsk: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-always-ask", fallback: "Always ask") }
-  /// Configuration option for AI agent action behavior.
-  internal static var moAiprofileAgentSettingsAskForActions: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-ask-for-actions", fallback: "Ask for some actions") }
-  /// Description for the always-ask configuration setting.
-  internal static var moAiprofileAgentSettingsBeforeActionDescription: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-before-action-description", fallback: "Before any action") }
-  /// Settings category for default connector configurations.
-  internal static var moAiprofileAgentSettingsConnectorDefaults: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-connector-defaults", fallback: "Connector defaults") }
-  /// Explanation of access permission levels for AI agents.
-  internal static var moAiprofileAgentSettingsPermissionDescription: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-permission-description", fallback: "You can give read only or read and write access") }
-  /// Settings category for default web access configurations.
-  internal static var moAiprofileAgentSettingsWebAccessDefaults: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-web-access-defaults", fallback: "Web access defaults") }
   /// Configuration option for AI agent to do an action only when needed.
   internal static var moAiprofileAgentSettingsWhenNeeded: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-settings-when-needed", fallback: "When needed") }
   /// Refers to an AI agent suffix or label.
@@ -163,8 +153,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsButtonAddUsername: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-add-username", fallback: "+ user name") }
   /// Button to trigger the flow for adding additional email accounts.
   internal static var moAiprofileAgentsButtonConnectEmails: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-connect-emails", fallback: "Connect other emails") }
-  /// Floating button on an agent form that opens the custom rule editor.
-  internal static var moAiprofileAgentsButtonCustomRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-custom-rule", fallback: "Custom") }
   /// Saved login row that deletes the stored credentials.
   internal static var moAiprofileAgentsButtonDeleteCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-delete-credentials", fallback: "Delete account") }
   /// Accessibility label of the delete button in the custom rule editor.
@@ -175,8 +163,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsButtonHouseholdConfirm: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-household-confirm", fallback: "Confirm") }
   /// Website picker row for a site that isn't listed.
   internal static var moAiprofileAgentsButtonOtherWebsite: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-other-website", fallback: "Other website") }
-  /// Button that saves a new custom rule.
-  internal static var moAiprofileAgentsButtonSaveRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-save-rule", fallback: "Save") }
   /// Action on the Instagram card in App access while the linked account hasn't messaged @ayl.chat yet. Opens the chat with @ayl.chat.
   internal static var moAiprofileAgentsButtonSendMessage: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-send-message", fallback: "Send a message") }
   /// Confirmation title before deleting a saved login.
@@ -186,9 +172,9 @@ internal enum ProfileV3L10n {
   /// Settings card subtitle for the secure credential store.
   internal static var moAiprofileAgentsDescriptionCredentialStore: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-credential-store", fallback: "A secure vault for your passwords") }
   /// Credential store sheet subtitle.
-  internal static var moAiprofileAgentsDescriptionCredentialStoreSheet: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-credential-store-sheet", fallback: "Securely store your passwords so Atlys can access the services you authorise when needed.") }
+  internal static var moAiprofileAgentsDescriptionCredentialStoreSheet: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-credential-store-sheet", fallback: "Securely store your passwords so Ayl can access the services you authorise when needed.") }
   /// Note on the credentials sheet about how the saved credentials are used.
-  internal static var moAiprofileAgentsDescriptionCredentialsUse: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-credentials-use", fallback: "Atlys only uses them to access the services you authorise, keeping you in control at every step.") }
+  internal static var moAiprofileAgentsDescriptionCredentialsUse: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-credentials-use", fallback: "Ayl only uses them to access the services you authorise, keeping you in control at every step.") }
   /// Description for the source connector vault feature.
   internal static var moAiprofileAgentsDescriptionDataVault: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-description-data-vault", fallback: "A secure vault for your sources") }
   /// Introductory blurb for the Gmail connector functionality.
@@ -210,7 +196,7 @@ internal enum ProfileV3L10n {
   /// Error under the username field when the text isn't a valid Instagram username (1-30 letters, numbers, dots or underscores).
   internal static var moAiprofileAgentsErrorInstagramUsernameInvalid: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-instagram-username-invalid", fallback: "Enter a valid Instagram username") }
   /// Error under the password when showing it needs a recent sign-in.
-  internal static var moAiprofileAgentsErrorVaultConfirmItsYou: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-vault-confirm-its-you", fallback: "For your security, sign in to Atlys again, then show the password within 10 minutes.") }
+  internal static var moAiprofileAgentsErrorVaultConfirmItsYou: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-vault-confirm-its-you", fallback: "For your security, sign in to Ayl again, then show the password within 10 minutes.") }
   /// Saved login status when the site needs a one-time code.
   internal static var moAiprofileAgentsErrorVaultOtpUnsupported: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-vault-otp-unsupported", fallback: "This site asks for a one-time code. Not supported yet.") }
   /// Error when this device can't show a saved password.
@@ -271,8 +257,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelPreferenceSlider: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-preference-slider", fallback: "Preference") }
   /// Call to action text related to agent access.
   internal static var moAiprofileAgentsLabelRegainAccess: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-regain-access", fallback: "Regain access to agents and benefits.") }
-  /// Label at the top of the custom rule note card.
-  internal static var moAiprofileAgentsLabelRuleNote: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-rule-note", fallback: "Note") }
   /// Label of the field that asks for an Instagram username.
   internal static var moAiprofileAgentsLabelUsername: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-username", fallback: "Username") }
   /// Credentials form field label for the username or email address.
@@ -303,16 +287,10 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsTitleAddCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-credentials", fallback: "Add credentials") }
   /// Title of the add new password sheet.
   internal static var moAiprofileAgentsTitleAddNewPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-new-password", fallback: "Add new password") }
-  /// Title of the custom rule editor when adding a rule.
-  internal static var moAiprofileAgentsTitleAddRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-rule", fallback: "Add a rule") }
   /// Title of the sheet that asks for an Instagram username.
   internal static var moAiprofileAgentsTitleAddUsername: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-add-username", fallback: "Add user name") }
   /// Heading for the connector integration management screen.
   internal static var moAiprofileAgentsTitleConnectors: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-connectors", fallback: "Connectors") }
-  /// Agent form section listing the traveler's custom rules.
-  internal static var moAiprofileAgentsTitleCustomRules: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-custom-rules", fallback: "Custom rules") }
-  /// Title of the custom rule editor when editing a rule.
-  internal static var moAiprofileAgentsTitleEditRule: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-edit-rule", fallback: "Edit a rule") }
   /// Lead line after the Instagram username is saved.
   internal static var moAiprofileAgentsTitleInstagramComeSayHi: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-come-say-hi", fallback: "...Come say hi!") }
   /// Main line after the Instagram username is saved.
@@ -325,12 +303,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsTitleInstagramStepRedirect: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-step-redirect", fallback: "Redirect to meet Ayl on instagram") }
   /// First step on the Instagram connect explainer.
   internal static var moAiprofileAgentsTitleInstagramStepUsername: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-step-username", fallback: "We ask for your username") }
-  /// Travel persona loader card title.
-  internal static var moAiprofileAgentsTitleTravelerProfile: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-traveler-profile", fallback: "Traveler profile") }
   /// Toast after saving edited credentials.
   internal static var moAiprofileAgentsToastCredentialsUpdated: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-credentials-updated", fallback: "Credentials updated") }
-  /// Confirmation after a custom rule is saved.
-  internal static var moAiprofileAgentsToastCustomRuleSaved: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-custom-rule-saved", fallback: "Custom rule saved") }
   /// Toast after adding a password.
   internal static var moAiprofileAgentsToastPasswordAdded: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-password-added", fallback: "Password added successfully") }
   /// Toast after saving travel persona changes.
@@ -341,12 +315,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsToastUsernameAdded: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-toast-username-added", fallback: "Username added successfully") }
   /// Action button to add a traveler to a profile or document.
   internal static var moAiprofileDocumentsButtonAddTraveler: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-button-add-traveler", fallback: "Add traveler") }
-  /// Generic upload action button.
-  internal static var moAiprofileDocumentsButtonUpload: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-button-upload", fallback: "Upload") }
   /// Action button to initiate uploading a new passport.
   internal static var moAiprofileDocumentsButtonUploadNewPassport: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-button-upload-new-passport", fallback: "Upload new passport") }
-  /// Action button to initiate passport upload.
-  internal static var moAiprofileDocumentsButtonUploadPassport: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-button-upload-passport", fallback: "Upload passport") }
   /// Display name for the country (India).
   internal static var moAiprofileDocumentsCountryNameIndia: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-country-name-india", fallback: "REPUBLIC OF INDIA") }
   /// Country name in Devanagari on the passport card.
@@ -395,8 +365,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileDocumentsTextHowUsedEmphasis: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-text-how-used-emphasis", fallback: "used") }
   /// Part of a sentence explaining data usage policy.
   internal static var moAiprofileDocumentsTextHowUsedLead: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-text-how-used-lead", fallback: "How this is") }
-  /// Marketing or instructional blurb explaining the benefits of uploading a passport.
-  internal static var moAiprofileDocumentsTextUploadBlurbStart: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-documents-text-upload-blurb-start", fallback: "Your details are ready whenever you need a visa. No forms, no re-entering information, no repeating yourself.") }
   /// Accessibility label for the button that hides the password.
   internal static var moAiprofileGeneralAccessibilityHidePassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-accessibility-hide-password", fallback: "Hide password") }
   /// Instructional accessibility hint for collapsing content.
@@ -620,7 +588,7 @@ internal enum ProfileV3L10n {
   /// Virtual card section empty state body.
   internal static var moAiprofileGloveboxEmptyStateNoTransactionsBody: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-empty-state-no-transactions-body", fallback: "Once your agent starts handling your travel, confirmations and updates will land here.") }
   /// Glove box error for a guest session.
-  internal static var moAiprofileGloveboxErrorAccountRequired: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-error-account-required", fallback: "Glove box needs an Atlys account.") }
+  internal static var moAiprofileGloveboxErrorAccountRequired: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-error-account-required", fallback: "Glove box needs an Ayl account.") }
   /// Glove box error when the forwarding confirmation email fails.
   internal static var moAiprofileGloveboxErrorEmailNotSent: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-error-email-not-sent", fallback: "The confirmation email didn't send. Try again.") }
   /// Glove box error when forwarding is already set up.
@@ -649,10 +617,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxLabelCardExpires: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-expires", fallback: "Expires") }
   /// Virtual card label for the card holder's name.
   internal static var moAiprofileGloveboxLabelCardName: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-name", fallback: "Name") }
-  /// Separator and date after a glove box email's status line.
-  internal static func moAiprofileGloveboxLabelDated(_ p1: Any) -> String {
-    return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-dated", String(describing: p1), fallback: "·  %1$@")
-  }
   /// Virtual card fact value for Your own card.
   internal static var moAiprofileGloveboxLabelCardNeverShared: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-never-shared", fallback: "Never shared") }
   /// Virtual card fact label about the user's own card.
@@ -661,6 +625,10 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxLabelCardRestaurantOnly: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-restaurant-only", fallback: "Browser payments") }
   /// Virtual card fact label: where the card can be used.
   internal static var moAiprofileGloveboxLabelCardWorksAt: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-card-works-at", fallback: "Works at") }
+  /// Separator and date after a glove box email's status line.
+  internal static func moAiprofileGloveboxLabelDated(_ p1: Any) -> String {
+    return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-dated", String(describing: p1), fallback: "·  %1$@")
+  }
   /// Label before the forwarding address. Also the forwarding email field placeholder.
   internal static var moAiprofileGloveboxLabelEmailsForwardedTo: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-label-emails-forwarded-to", fallback: "Emails forwarded to") }
   /// Tag on glove box sample entries shown while there is no real data.
@@ -695,14 +663,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxSampleEmailFlightStatus: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-flight-status", fallback: "change caught") }
   /// Subject of the first sample glove box email.
   internal static var moAiprofileGloveboxSampleEmailFlightSubject: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-flight-subject", fallback: "Your flight on 12 Oct now leaves 40 min later") }
-  /// Agent's note in the second sample glove box email.
-  internal static var moAiprofileGloveboxSampleEmailHotelNote: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-hotel-note", fallback: "Your stay qualifies for a free room upgrade. Want me to accept it?") }
-  /// Sender of the second sample glove box email.
-  internal static var moAiprofileGloveboxSampleEmailHotelSender: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-hotel-sender", fallback: "Marriott Dubai") }
-  /// Status line of the second sample glove box email.
-  internal static var moAiprofileGloveboxSampleEmailHotelStatus: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-hotel-status", fallback: "Added to trip") }
-  /// Subject of the second sample glove box email.
-  internal static var moAiprofileGloveboxSampleEmailHotelSubject: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-email-hotel-subject", fallback: "Free upgrade available") }
   /// Agent's note on the sample virtual card transaction.
   internal static var moAiprofileGloveboxSampleTransactionNote: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-sample-transaction-note", fallback: "I used your virtual card to hold a table for 4. You'll see every charge here.") }
   /// Outcome of the sample virtual card transaction.
@@ -733,7 +693,7 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxTitleGloveBox: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-glove-box", fallback: "Glove box") }
   /// Virtual card section heading for the payment options.
   internal static var moAiprofileGloveboxTitleHowYouPay: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-how-you-pay", fallback: "How you pay") }
-  /// How you pay option where Ayl pays and bills the user.
+  /// How you pay option where ayl pays and bills the user.
   internal static var moAiprofileGloveboxTitlePayAtlys: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-pay-atlys", fallback: "Ayl pays, we bill you") }
   /// How you pay option using the user's own card through Link.
   internal static var moAiprofileGloveboxTitlePayLink: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-title-pay-link", fallback: "Your own card, through link") }
@@ -763,16 +723,12 @@ internal enum ProfileV3L10n {
   internal static func moAiprofileLoyaltyButtonDeleteProgramsOther(_ p1: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-delete-programs-other", String(describing: p1), fallback: "Delete %1$@ programs")
   }
-  /// Button to exit edit mode.
-  internal static var moAiprofileLoyaltyButtonDoneEditing: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-done-editing", fallback: "Done editing") }
   /// Action button to edit connected programs.
   internal static var moAiprofileLoyaltyButtonEditPrograms: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-edit-programs", fallback: "Edit programs") }
   /// Action button for flipping a loyalty card.
   internal static var moAiprofileLoyaltyButtonFlipCard: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-flip-card", fallback: "Flip card") }
   /// Action to redeem rewards or points.
   internal static var moAiprofileLoyaltyButtonRedeem: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-redeem", fallback: "Redeem") }
-  /// Action button to remove a program from the list.
-  internal static var moAiprofileLoyaltyButtonRemoveProgram: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-remove-program", fallback: "Remove") }
   /// Action button to expand view of loyalty benefits.
   internal static var moAiprofileLoyaltyButtonViewBenefits: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-button-view-benefits", fallback: "View all benefits") }
   /// Action button to view all benefits available for a loyalty tier.
@@ -827,6 +783,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileLoyaltyErrorRemoveProgramFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-error-remove-program-failed", fallback: "Couldn't remove this program. Try again.") }
   /// Error when saving the new program order fails.
   internal static var moAiprofileLoyaltyErrorReorderFailed: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-error-reorder-failed", fallback: "Couldn't save the new order. Try again.") }
+  /// Shown under the tier valid-until field when the month is unreadable or already past.
+  internal static var moAiprofileLoyaltyErrorTierValidUntilInvalid: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-error-tier-valid-until-invalid", fallback: "Enter the month as MM/YY, this month or later.") }
   /// Scanning progress line, singular.
   internal static func moAiprofileLoyaltyFoundProgramsLineOne(_ p1: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-found-programs-line-one", String(describing: p1), fallback: "Found %1$@ program...")
@@ -855,8 +813,6 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileLoyaltyLabelConnectProgramsEmphasis: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-label-connect-programs-emphasis", fallback: "airline and hotel programs, credit card rewards and travel passes") }
   /// Leading text for the connect programs feature.
   internal static var moAiprofileLoyaltyLabelConnectProgramsLead: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-label-connect-programs-lead", fallback: "Connect your") }
-  /// Label for estimated monetary value of points.
-  internal static var moAiprofileLoyaltyLabelEstimatedValue: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-label-estimated-value", fallback: "Est. value") }
   /// Header label to select a loyalty program.
   internal static var moAiprofileLoyaltyLabelPickProgram: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-loyalty-label-pick-program", fallback: "Pick a loyalty program") }
   /// Label for points tracking in loyalty programs.

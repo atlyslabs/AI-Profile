@@ -93,7 +93,8 @@ final class ProfileV3HubViewModel {
     private var board: ProfileV3Board?
     private var loadedPassID: String?
     private var isLoadingBoard = false
-    private var needsRevalidation = false
+    private var boardFetchedAt: Date?
+    private static let staleBoardAge: TimeInterval = 60
     private var pendingResumption: KYCResumption = .none
     private var benefitsSheetProfileID: String?
     @ObservationIgnored private var afterOverlaysClose: (() -> Void)?
@@ -127,7 +128,7 @@ final class ProfileV3HubViewModel {
             selectedPassID = profile.pass.id
             loadedPassID = profile.pass.id
             phase = .content(profile.home)
-            needsRevalidation = true
+            boardFetchedAt = repository.cachedBoardFetchedAt()
             refreshStackBenefits()
         }
     }
@@ -190,7 +191,7 @@ final class ProfileV3HubViewModel {
 
     func loadIfNeeded() async {
         guard home == nil else {
-            revalidateIfNeeded()
+            refreshIfStale()
             prefetchOffers(onlyMissing: true)
             return
         }
@@ -278,6 +279,7 @@ final class ProfileV3HubViewModel {
                 return
             }
             self.board = board
+            boardFetchedAt = Date()
             selectedPassID = profile.pass.id
             loadedPassID = selectedPassID
             withAnimation(ProfileV3Theme.Motion.entry) {
@@ -307,9 +309,15 @@ final class ProfileV3HubViewModel {
         }
     }
 
-    private func revalidateIfNeeded() {
-        guard needsRevalidation else { return }
-        needsRevalidation = false
+    func refreshIfStale(now: Date = Date()) {
+        guard home != nil else { return }
+        if let cached = repository.cachedBoard(), cached != board,
+           let cachedAt = repository.cachedBoardFetchedAt(), cachedAt > boardFetchedAt ?? .distantPast {
+            apply(cached, fetchedAt: cachedAt)
+            prefetchOffers()
+        }
+        if let boardFetchedAt, now.timeIntervalSince(boardFetchedAt) < Self.staleBoardAge { return }
+        revalidateTask?.cancel()
         revalidateTask = Task { [weak self] in
             guard let self, let latest = try? await repository.loadLatestBoard(), !Task.isCancelled else { return }
             let changed = latest != board
@@ -335,11 +343,12 @@ final class ProfileV3HubViewModel {
         }
     }
 
-    private func apply(_ board: ProfileV3Board) {
+    private func apply(_ board: ProfileV3Board, fetchedAt: Date = Date()) {
         guard let profile = board.profile(id: loadedPassID) else { return }
         let glowPassIDs = Self.passIDsNeedingKYCGlow(from: self.board, to: board)
         let knownPassIDs = Set(self.board?.profiles.map(\.pass.id) ?? [])
         self.board = board
+        boardFetchedAt = fetchedAt
         if profile.pass.id != loadedPassID {
             loadedPassID = profile.pass.id
             selectedPassID = profile.pass.id

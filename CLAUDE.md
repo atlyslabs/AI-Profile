@@ -20,7 +20,7 @@ This folder is the Swift package `ATAIProfile` (repo `atlyslabs/AI-Profile`), th
 | Atlys app | `/Users/aravindh/Desktop/Atlys/vdcios` |
 | Capture package | `/Users/aravindh/Desktop/Atlys/IdentityCapture` (`ATCaptureKit`) |
 | AI-Chat | `/Users/aravindh/Desktop/Atlys/AI-Chat` |
-| Ditto toolkit | `/Users/aravindh/Downloads/ditto-migrate-toolkit-main` |
+| Ditto toolkit | The package's own dependency, checked out at `/tmp/aiprofile-dd/SourcePackages/checkouts/ditto-migrate-toolkit` (0.0.1, `582e7fc`; re-resolve if `/tmp` was cleaned). An older copy is in `~/Downloads/ditto-migrate-toolkit-main`. |
 | Backend | `atlyslabs/vdc-k8s` (`services/ai-kyc` and others); check PRs and deploys with `gh` |
 
 ## Package
@@ -60,7 +60,7 @@ xcrun simctl delete "$UDID"
 ```
 
 - Use a throwaway simulator, never the user's booted one. A cold build with package resolution takes about two minutes. Without `-IDEBuildingContinueBuildingAfterErrors=YES`, Xcode stops after the first failing batch.
-- Tests are swift-testing. As of 2026-10-31: 276 tests in 42 suites, 273 pass. The same three fail every run:
+- Tests are swift-testing. As of 2026-11-01: 301 tests in 46 suites, 298 pass. The same three fail every run:
   - `ProfileV3DestinationTests.theHubOpensALinkOnlyWhileItIsOnScreen` (lines 68–69): a link posted while the hub's tab is hidden still opens. Either `onDisappear` doesn't clear `isSettled` on a tab switch in a test window, or the hidden-tab guard doesn't work. Not investigated.
   - `ProfileV3OnboardingPresentationTests.theHubsOwnSurfaceRunsOnboardingOverTheTabBar` and `aFlowThatClosesItsOwnContainerIsReportedOnce`: the dismissal never completes in a window with no scene. Probably the harness, not the launcher.
 - Checking a design against Figma:
@@ -111,8 +111,10 @@ xcrun simctl delete "$UDID"
   RESOURCES_DIR=Sources/ATAIProfile/Resources XCSTRINGS_NAME=ProfileV3Localizable.xcstrings \
   GENERATED_DIR=Sources/ATAIProfile/Generated SWIFT_OUT_NAME=ProfileV3L10n+Generated.swift \
   ENUM_NAME=ProfileV3L10n LOOKUP_FUNCTION=ProfileV3DittoRuntimeStrings.lookup DIST_DIR=<scratch>/Dist \
-  bash <toolkit>/Scripts/ditto-pipeline.sh --skip-scan
+  bash /tmp/aiprofile-dd/SourcePackages/checkouts/ditto-migrate-toolkit/Scripts/ditto-pipeline.sh --skip-scan < /dev/null
   ```
+
+  The toolkit's Python helpers (`ditto_copy_folder_to_project.build_item`, `ditto_check_component_issues.py profilev3strings`) sit next to it. Calls that worked on 2026-10-31: `POST /v2/components {components}`, `POST /v2/textItems {projectId, textItems}`, `PATCH /v2/components` and `PATCH /v2/textItems` with `{updates: [{developerId, text}]}`, `DELETE /v2/textItems {projectId, developerIds}`, then `DELETE /v2/components {developerIds}`. Library folders: `profilev3strings` and its six subfolders; a key's folder follows its first segment (`agent-settings-*` goes to `agents`, `documents-*` to `travel-documents`). Count variables use the existing `count` variable (`{{count}}`, exported as `%1$@`).
 
 - To add a string:
   - In Ditto: create the component first, named as its id in title case, with the catalog comment as its notes and a tag only for buttons, input labels and empty, error or success states. Then create the project item from it.
@@ -139,11 +141,11 @@ xcrun simctl delete "$UDID"
 - Analytics events (`Support/ProfileV3Analytics.swift`) follow the spec agreed on 2026-10-27: no default properties, personal data as specified. Tests record through the `@TaskLocal` `ProfileV3Analytics.scopedReporter`.
 - Session replay: views with personal data use `.postHogMask()`.
 
-## State (2026-10-31)
+## State (2026-11-01)
 
 ### Release
 
-- `master` is at `550b009`, one commit ahead of `origin/master` (`df4009c`, tag `1.0.21`). The CHANGELOG split for `1.0.21` and this cleanup are uncommitted.
+- `master` is at `b9e925b`, two commits ahead of `origin/master` (`df4009c`, tag `1.0.21`). `550b009` has the Instagram waiting card and the vault field fix; `b9e925b` has this file's cleanup and the `1.0.21` CHANGELOG split. Neither is pushed or tagged.
 - Tags `1.0.0` and `1.0.2`–`1.0.21` are on GitHub; `1.0.1` is local only. Tags are often cut straight from a commit with no release commit. When that happens, move the tag's "Unreleased" body into a `## <version> — <date>` section and keep only later changes under Unreleased (done for 1.0.17, 1.0.20 and 1.0.21).
 - `README.md` still says "Version 1.0.1".
 
@@ -176,9 +178,23 @@ xcrun simctl delete "$UDID"
 
 - Board: home, settings, agents, loyalty, past trips, travel persona, passports and AI connectors. Writes go to `/board/submit` and echo the served action object.
   - Past trips are country-only; several countries go as one `countries` list.
+  - Loyalty edit (`vdc-k8s#23247`, 2026-10-26; ai-kyc is deployed, ai-memory's `PATCH /profile/loyalty` deploy wasn't confirmed):
+    - `GET /board/loyalty/edit/{program_id}?profile_id=` (slashes in the id kept) returns the enter-details form with each field's saved `value`: "EDIT DETAILS", "Save", and an optional membership number.
+    - `edit_loyalty_program` changes only the fields sent; `null` clears one, and `tier: "unknown"` clears the tier.
+    - The form's `program_id` is the catalogue id, and the save must send it. A Gmail-found programme's row id is its name, and an edit can change that row's id.
+  - Loyalty tier (same PR): for a programme with a tier list (never cards), the add and edit forms serve `tier` (`single_select`, tiers lowest first, then `unknown` = "I don't know") and `tier_valid_until` (`month_year`, placeholder `MM/YY`).
+    - `add_loyalty_program` and `edit_loyalty_program` take both. `unknown` or no tier saves none, and a blank month with a tier means 12 months from today (UTC).
+    - In an edit, a sent `tier` resets the month to the sent one (or that default). A month sent alone keeps the saved tier, and a blank one is ignored.
+    - 422 `kyc_invalid_request` with "Pick a tier from the list." or "Enter the month as MM/YY, this month or later."
   - The personal agent's `passport_empty` shows the placeholder card, and the passport card's `father`/`mother`/`spouse`/`address` keys feed the back page.
   - AI connectors: `settings/connectors/ai/{connector}` and its `/connect`, saved with `connect_ai_connector`. Its `synced_at` comes as Python `isoformat()` (microseconds, `+00:00`).
   - Custom rules are the agent screen's `custom_rules` field and save with the agent.
+  - Agent fields from `vdc-k8s#23629` (deployed 2026-10-31):
+    - Flight `avoid_airlines` is `multi_select_add` with the airline options.
+    - Flight `time_value_per_hour` is a slider with `display: "money"`, `currency {code, symbol}` and `unit: "/hour"`. Its track follows the residence's currency, and its `value` is `null` until set.
+    - Stay `hotel_class` is `single_select` with `{value, label}` options.
+    - Stay `preferred_hotels` has 100 groups with logos.
+    - The field's `assist` is the subline under the control.
 - Vault (fort-knox): a login is sealed with AES-GCM under a key wrapped by the server's RSA key (OAEP-SHA256). A reveal opens an ECDH/HKDF box with the phone's Keychain key after Face ID.
 - Glove box (jaqen): `/me`, `/messages` (status, attention, action, sender logo) and the forwarding endpoints.
 - Permissions (harness): `GET /permissions` and `PUT /permissions/{key}` `{value}`.
@@ -196,19 +212,35 @@ xcrun simctl delete "$UDID"
   - Saving a login only calls the API, and the sheet's fields aren't tagged as a username and password, so iOS doesn't offer to save them.
 - The glove box opens from the Settings card. Without KYC it shows the locked intro. An empty inbox shows one sample email. The virtual card shows the main traveler's short name and digits derived from the address.
 - Travel persona: the delight loader shows for the first five loads, and a drag saves on release.
+- Loyalty edit (user's call, 2026-11-01):
+  - It starts from an "Edit" pill on each card in the programmes edit mode (the delete selection), where "View insight" sits.
+  - It reuses the add flow's details sheet: `ProfileV3AddProgrammeViewModel(editing:)`, which skips the loader, back button and step dots.
+  - Save turns on after a change and sends only the changed fields. The tier and its month always go together, so a new tier keeps the saved month.
+- Loyalty tier fields (2026-11-01, no Figma): the dropdown is `ProfileV3MenuField`, a native `Menu` drawn with the picker field's row (`ProfileV3PickerFieldRow`, "Select" placeholder). The month field formats `MM/YY` as you type (`ProfileV3MonthYear`). A complete but unreadable or past month shows an inline error, and any bad month blocks saving, but only when the month would be sent (with a real tier; in an edit, only when the tier fields change).
+  - The pill sits inside the row's selection button: the tile turns off its face's hit testing for `Pill.edit`, and VoiceOver gets an Edit action on the row.
+- Agent sliders:
+  - A slider whose server value is `null` saves `null` until it is moved, or until "rather not say" is turned off (`ProfileV3SliderField.isSet`). It still shows its midpoint.
+  - Money values read as symbol + compact amount + unit (`₹10K/hour`; a letter symbol gets a space: `AED 50/hour`).
+  - The Figma mock puts the assist under the heading and writes "₹ 10K"; the app keeps the assist under the control and follows the spec's "₹10K".
 
-### Ditto owes
+### Ditto
 
-- The last full sync matched `c8afbc3` (385 keys, 2026-10-27).
-- Since then, by hand: 51 keys added, 6 values changed (the Atlys → Ayl copy and the "How you pay" text), and 23 catalog keys unused (16 exist in Ditto: delete them there; 7 were hand-added: drop them locally).
-- Recompute: compare the catalog with `git show c8afbc3:Sources/ATAIProfile/Resources/ProfileV3Localizable.xcstrings`. A key is unused when nothing in `Sources` or `Tests` references its generated accessor.
-- Five of the "Ayl" values still say "Atlys" in their generated fallbacks; a pipeline rebuild fixes that.
+- In sync as of 2026-10-31. Ditto's project and library hold the catalog's 413 keys with identical values, and the catalog and generated Swift were rebuilt from Ditto by the pipeline. The rebuild is uncommitted; once it is committed, that commit is the comparison base for later drift.
+- Ditto owes one hand-added key (2026-11-01, catalog now 414): `mo-aiprofile-loyalty-error-tier-valid-until-invalid` ("Enter the month as MM/YY, this month or later.", folder `loyalty-programs`, error tag).
+- That sync, at the user's request:
+  - added the 44 hand-added keys that are in use;
+  - pushed the 6 local value edits (the Atlys → Ayl copy and the "How you pay" text);
+  - deleted the 16 unused keys from Ditto;
+  - dropped the 7 unused hand-added custom-rule keys.
+- No accessor name, signature or value changed. The toolkit check flags only the known `(180cm)` false positive. With the rebuilt files the suite (bar the known three) and a Release build pass.
+- To find drift later: compare the catalog with the base commit's catalog. A key is unused when nothing in `Sources` or `Tests` references its generated accessor; match generated `static func` accessors across lines, because strings with variables are functions.
 
 ### Unverified (needs Ayl or a device)
 
 - Saving a vault login shows no iOS "Save Password" sheet.
 - Instagram linking against snapmap in production, and the waiting card in Ayl.
 - KYC onboarding presented full screen over Ayl's tab bar.
+- Loyalty edit and tier on a device against production: that the Edit pill takes the tap rather than the row's selection button, that the tier `Menu` opens from inside the sheet window, and that a saved edit or tier shows after the reload.
 - Motion that tests can't show: the save button's entry and exit, the persona loader's haptics, the glove box entrances, the hero and globe transitions.
 
 ### Open work
@@ -237,6 +269,17 @@ xcrun simctl delete "$UDID"
   - At rest, the card globe is all of Ayl's GPU (about 4.5ms a frame at 24 fps), and the card hover is most of backboardd's.
   - Options, undecided: drop the card's `landTint`, spin at 12 fps, Metal point sprites, or a still card globe. The hover's offscreen pass is still to find.
   - Ayl's PostHog screenshot replay costs about 0.5s of CPU per second.
+- Hub board freshness (found 2026-11-01):
+  - The pass back face shows `pass.programmes`, which is the profile's `loyalty_card.programs` in the hub's own `/board`.
+  - Fixed (uncommitted): `ProfileV3HubViewModel.refreshIfStale(now:)` runs on every appearance (via `loadIfNeeded`) and on `willEnterForeground` while the hub is on screen (`isSettled`).
+    - It first shows a newer board another screen put in `ProfileV3BoardStore` (`cachedBoardFetchedAt`, no network).
+    - If the shown board is older than `staleBoardAge` (60 s), it refetches with `loadLatestBoard()`.
+    - There is no spinner, and a failure stays silent. This replaced the one-shot `needsRevalidation`.
+  - Still open:
+    - Closing the programmes page after only viewing it doesn't refresh the hub; that page loads `/loyalty/page/{id}` itself.
+    - The KYC sync stops polling when the KYC steps clear, so a Gmail import that lands later shows only on the next stale refresh.
+- Loyalty edit leftover: the insight screen's `edit` button (`program_insight.edit` → `loyalty_edit_details`) isn't decoded or shown.
+- Not built: a City profile screen (Figma `6592:8685`, `6593:10316`, `6595:10925`, `6595:11473`) with per-city tabs, a "Never book · N Airlines" row and a "NEVER BOOK AIRLINES" sheet. No backend contract describes it yet.
 - Known trade-offs:
   - `ProfileV3ServerFailureBox` keeps one envelope, so concurrent failures can swap codes.
   - `ATCoreCacheConfig`'s default expiry looks like a units slip; the package passes seven days.
@@ -264,7 +307,6 @@ xcrun simctl delete "$UDID"
 - ATCore:
   - `ATCoreCacheService.shared` sweeps entries after 15 minutes and hashes keys per process; use `.persistent` with deterministic keys.
   - ATCore only reads flat `message`/`error` strings from error bodies.
-- The generated L10n Swift has one out-of-order pair (`glovebox-label-dated` before `glovebox-label-card-*`).
 - `ATBottomSheetWindowPresenter` needs a connected window scene, so sheet windows can't be presented in the test bundle.
 - Four files use `Color(at:)` without `import ATUIKit`. That only compiles because extension members leak across files, and would break under `MemberImportVisibility`.
 - Ayl resolves AI-Profile from GitHub. To try local package changes there, add a local package reference, or patch the checkout under Ayl's DerivedData and build with `-disableAutomaticPackageResolution`.

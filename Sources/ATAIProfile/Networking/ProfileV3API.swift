@@ -19,6 +19,7 @@ enum ProfileV3API {
     case passportScan(body: Data, contentType: String)
     case loyaltyCatalogue(query: String?, kind: String?, market: String?)
     case loyaltyEnter(programID: String, programName: String?, kind: String?)
+    case loyaltyEdit(programID: String, profileID: String?)
     case loyaltyPage(profileID: String)
     case loyaltyInsight(programID: String, profileID: String?)
     case loyaltySources(programID: String, profileID: String?)
@@ -117,6 +118,8 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.boardBasePath + "/loyalty/catalogue"
         case .loyaltyEnter(let programID, _, _):
             return Self.boardBasePath + "/loyalty/enter/\(programID)"
+        case .loyaltyEdit(let programID, _):
+            return Self.boardBasePath + "/loyalty/edit/\(programID)"
         case .loyaltyPage(let profileID):
             return Self.boardBasePath + "/loyalty/page/\(profileID)"
         case .loyaltyInsight(let programID, _):
@@ -233,6 +236,7 @@ extension ProfileV3API: ATCoreTargetType {
              .ridePicker(_, let profileID),
              .passportUpdate(let profileID),
              .passportPrevious(let profileID),
+             .loyaltyEdit(_, let profileID),
              .loyaltyInsight(_, let profileID),
              .loyaltySources(_, let profileID),
              .benefits(let profileID),

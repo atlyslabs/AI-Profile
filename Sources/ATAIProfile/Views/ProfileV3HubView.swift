@@ -59,6 +59,10 @@ struct ProfileV3HubView: View {
             guard !Task.isCancelled else { return }
             isSettled = true
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            guard isSettled else { return }
+            viewModel.refreshIfStale()
+        }
         .onChange(of: opensDestination) { _, opens in
             guard opens, let destination = destinations.take() else { return }
             viewModel.open(destination)

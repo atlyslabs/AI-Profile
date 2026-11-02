@@ -174,6 +174,21 @@ extension ProfileV3ProgrammesHostingController: ProfileV3ProgrammesRouter {
         presenter.present(from: self)
     }
 
+    func openEditProgramme(_ programme: ProfileV3LoyaltyProgramme) {
+        let presenter = ProfileV3AddProgrammeSheetPresenter(
+            editing: programme,
+            profileID: viewModel.pass.id,
+            repository: repository,
+            onSaved: { [weak viewModel] in viewModel?.programmesDidChange() },
+            onFinish: { [weak self] finished in
+                guard self?.addProgrammePresenter === finished else { return }
+                self?.addProgrammePresenter = nil
+            }
+        )
+        addProgrammePresenter = presenter
+        presenter.present(from: self)
+    }
+
     func programmesChanged() {
         events.onProgrammesChanged()
     }

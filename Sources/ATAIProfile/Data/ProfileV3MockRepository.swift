@@ -473,11 +473,25 @@ struct ProfileV3MockRepository: ProfileV3Repository {
             points: submission.points ?? 0,
             logoURL: submission.item.logoURL,
             artURL: submission.item.cardImageURL,
-            membershipNumber: submission.membershipNumber?.nonEmpty
+            membershipNumber: submission.membershipNumber?.nonEmpty,
+            tier: submission.tier.flatMap { $0 == ProfileV3LoyaltyEntryForm.Field.unknownTier ? nil : $0.uppercased() }
         )
         if let passID = profileID ?? session.home.worldPass?.id {
             session.updateHomes { _, home in home.addingProgramme(programme, toPassID: passID) }
         }
+    }
+
+    func loadProgrammeEdit(programID: String, profileID: String?) async throws -> ProfileV3LoyaltyEntryForm {
+        try await Task.sleep(for: delay)
+        let passID = profileID ?? session.home.worldPass?.id ?? ""
+        let pass = session.home(for: passID).worldPasses.first { $0.id == passID }
+        return .mockEdit(programID: programID, programme: pass?.programmes.first { $0.id == programID })
+    }
+
+    func editProgramme(_ edit: ProfileV3ProgrammeEdit, profileID: String?) async throws {
+        try await Task.sleep(for: delay)
+        guard let passID = profileID ?? session.home.worldPass?.id else { return }
+        session.updateHomes { _, home in home.editingProgramme(edit, inPassID: passID) }
     }
 
     func startKYCCapture(steps: [String], profileID _: String?) async throws -> ProfileV3CaptureStep? {
@@ -661,9 +675,14 @@ extension ProfileV3MockRepository: ProfileV3GloveBoxRepository {
 }
 
 extension ProfileV3LoyaltyEntryForm {
+    private static let mockTiers = ["Silver", "Gold", "Platinum"].map { Field.Option(value: $0, label: $0) }
+        + [Field.Option(value: Field.unknownTier, label: "I don't know")]
+
     static func mock(programID: String, programName: String?, kind: String?) -> ProfileV3LoyaltyEntryForm {
         let points = Field(key: Field.pointsKey, label: ProfileV3Strings.pointsMiles, isRequired: false)
         let membership = Field(key: Field.membershipNumberKey, label: ProfileV3Strings.membershipNumber, isRequired: true)
+        let tier = Field(key: Field.tierKey, label: "Tier", isRequired: false, options: mockTiers)
+        let validUntil = Field(key: Field.tierValidUntilKey, label: "Tier valid until", isRequired: false, placeholder: "MM/YY")
         let isCard = kind == ProfileV3LoyaltyMapper.kind(for: .creditCards)
         return ProfileV3LoyaltyEntryForm(
             programID: programID,
@@ -671,8 +690,43 @@ extension ProfileV3LoyaltyEntryForm {
             kind: kind,
             title: "Enter details",
             submitLabel: nil,
-            fields: isCard ? [points] : [membership, points]
+            fields: isCard ? [points] : [membership, points, tier, validUntil]
         )
+    }
+
+    static func mockEdit(programID: String, programme: ProfileV3LoyaltyProgramme?) -> ProfileV3LoyaltyEntryForm {
+        var form = mock(
+            programID: programID,
+            programName: programme?.name,
+            kind: programme?.category.flatMap(ProfileV3LoyaltyMapper.kind(for:))
+        )
+        form.title = "EDIT DETAILS"
+        form.submitLabel = "Save"
+        form.fields = form.fields.map { field in
+            Field(
+                key: field.key,
+                label: field.label,
+                isRequired: false,
+                value: mockValue(of: field, in: programme),
+                placeholder: field.placeholder,
+                options: field.options
+            )
+        }
+        return form
+    }
+
+    private static func mockValue(of field: Field, in programme: ProfileV3LoyaltyProgramme?) -> String? {
+        switch field.key {
+        case Field.pointsKey:
+            return programme.flatMap { $0.points > 0 ? String($0.points) : nil }
+        case Field.tierKey:
+            let held = programme?.tier ?? ""
+            return field.options.first { $0.value.caseInsensitiveCompare(held) == .orderedSame }?.value ?? Field.unknownTier
+        case Field.tierValidUntilKey:
+            return nil
+        default:
+            return programme?.membershipNumber
+        }
     }
 }
 #endif

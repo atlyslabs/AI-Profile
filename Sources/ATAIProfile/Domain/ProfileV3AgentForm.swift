@@ -260,6 +260,7 @@ struct ProfileV3SliderField: Equatable {
 
     enum ValueFormat: Equatable {
         case unit(String)
+        case money(symbol: String, unit: String)
         case centimetres
         case feetAndInches
         case levels([String])
@@ -271,6 +272,7 @@ struct ProfileV3SliderField: Equatable {
     var style: Style = .ruler
     var format: ValueFormat?
     var optOut: ProfileV3OptOut?
+    var isSet = true
 
     var fraction: Double {
         guard range.upperBound > range.lowerBound else { return 0 }

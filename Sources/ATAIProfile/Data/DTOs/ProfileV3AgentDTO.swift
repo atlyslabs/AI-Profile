@@ -249,6 +249,7 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
     private let rawAssistLink: ProfileV3LossyDTO<ProfileV3AssistLinkDTO>?
     private let rawEditor: ProfileV3LossyDTO<ProfileV3CustomRulesEditorDTO>?
     private let rawDeleteConfirm: ProfileV3LossyDTO<ProfileV3CustomRulesDeleteDTO>?
+    private let rawCurrency: ProfileV3LossyDTO<ProfileV3AgentCurrencyDTO>?
 
     enum CodingKeys: String, CodingKey {
         case key
@@ -279,9 +280,12 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
         case maxRules = "max_rules"
         case rawEditor = "editor"
         case rawDeleteConfirm = "delete_confirm"
+        case rawCurrency = "currency"
     }
 
     var options: [ProfileV3AgentOptionDTO] { rawOptions?.compactMap(\.value) ?? [] }
+
+    var currency: ProfileV3AgentCurrencyDTO? { rawCurrency?.value }
 
     var editor: ProfileV3CustomRulesEditorDTO? { rawEditor?.value }
 
@@ -328,6 +332,11 @@ struct ProfileV3CustomRulesEditorDTO: Decodable, Equatable {
         case savedToast = "saved_toast"
         case maxChars = "max_chars"
     }
+}
+
+struct ProfileV3AgentCurrencyDTO: Decodable, Equatable {
+    let code: String?
+    let symbol: String?
 }
 
 struct ProfileV3CustomRulesDeleteDTO: Decodable, Equatable {

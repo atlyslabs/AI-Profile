@@ -40,6 +40,11 @@ final class ProfileV3BoardStore {
         return snapshot.board
     }
 
+    func cachedBoardFetchedAt() -> Date? {
+        guard let ownerID, let snapshot, snapshot.ownerID == ownerID else { return nil }
+        return snapshot.fetchedAt
+    }
+
     func prefetch() {
         guard let ownerID, !session.isGuestSession else { return }
         Task {

@@ -135,6 +135,12 @@ private actor MarketStub: ProfileV3LoyaltyRepository {
 
     func addProgramme(_ submission: ProfileV3ProgrammeSubmission, profileID: String?) async throws {}
 
+    func loadProgrammeEdit(programID: String, profileID: String?) async throws -> ProfileV3LoyaltyEntryForm {
+        try await mock.loadProgrammeEdit(programID: programID, profileID: profileID)
+    }
+
+    func editProgramme(_ edit: ProfileV3ProgrammeEdit, profileID: String?) async throws {}
+
     func loadProgrammes(passID: String) async throws -> ProfileV3ProgrammeOverview {
         try await mock.loadProgrammes(passID: passID)
     }
