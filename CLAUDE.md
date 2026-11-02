@@ -60,7 +60,7 @@ xcrun simctl delete "$UDID"
 ```
 
 - Use a throwaway simulator, never the user's booted one. A cold build with package resolution takes about two minutes. Without `-IDEBuildingContinueBuildingAfterErrors=YES`, Xcode stops after the first failing batch.
-- Tests are swift-testing. As of 2026-11-01: 301 tests in 46 suites, 298 pass. The same three fail every run:
+- Tests are swift-testing. As of 2026-11-02: 302 tests in 46 suites, 299 pass. The same three fail every run:
   - `ProfileV3DestinationTests.theHubOpensALinkOnlyWhileItIsOnScreen` (lines 68–69): a link posted while the hub's tab is hidden still opens. Either `onDisappear` doesn't clear `isSettled` on a tab switch in a test window, or the hidden-tab guard doesn't work. Not investigated.
   - `ProfileV3OnboardingPresentationTests.theHubsOwnSurfaceRunsOnboardingOverTheTabBar` and `aFlowThatClosesItsOwnContainerIsReportedOnce`: the dismissal never completes in a window with no scene. Probably the harness, not the launcher.
 - Checking a design against Figma:
@@ -80,7 +80,7 @@ xcrun simctl delete "$UDID"
   - plus the Slack alert and the pensieve profile edit.
 - Its `baseURL` is a placeholder: ATCore builds URLs from the host's `ATCoreBaseProvider.baseURL`.
 - `ProfileV3NetworkClient` (public) wraps `ATCoreRequestExecutor` with the auth plugin, the `x-platform`/`x-app-version` headers and the error-envelope plugin, and decodes responses itself. Its `request`, `requestData` and `perform(_:action:)` refresh the Firebase token and retry once on a 401.
-- `ProfileV3APIErrorMapper` maps 401, 409, 422, 501 and 502–504 onto `ProfileV3Error`. The envelope's `code` reaches it through `ProfileV3ServerFailureBox` (see Known trade-offs).
+- `ProfileV3APIErrorMapper` maps 401, 409, 422, 501 and 502–504 onto `ProfileV3Error`; a 500 with no envelope `code` gets client copy, never the server's text. The envelope's `code` reaches it through `ProfileV3ServerFailureBox` (see Known trade-offs), and the envelope plugin swaps ATCore's message for the envelope's `message` or FastAPI `detail`.
 - Data:
   - `ProfileV3BoardStore` caches in `ATCoreCacheService.persistent` with deterministic keys per user, and its `fetch`/`restore` are `@concurrent`.
   - `ProfileV3LiveRepository` is the real implementation.
@@ -141,11 +141,11 @@ xcrun simctl delete "$UDID"
 - Analytics events (`Support/ProfileV3Analytics.swift`) follow the spec agreed on 2026-10-27: no default properties, personal data as specified. Tests record through the `@TaskLocal` `ProfileV3Analytics.scopedReporter`.
 - Session replay: views with personal data use `.postHogMask()`.
 
-## State (2026-11-01)
+## State (2026-11-02)
 
 ### Release
 
-- `master` is at `b9e925b`, two commits ahead of `origin/master` (`df4009c`, tag `1.0.21`). `550b009` has the Instagram waiting card and the vault field fix; `b9e925b` has this file's cleanup and the `1.0.21` CHANGELOG split. Neither is pushed or tagged.
+- `master` is two commits ahead of `origin/master` (`b9e925b`, pushed outside this session): `2ad3c52` (loyalty edit and tier, hub refresh, agent fields, Ditto rebuild), then the QA-2008 fixes. `1.0.21` is on `df4009c`; nothing after it is tagged.
 - Tags `1.0.0` and `1.0.2`–`1.0.21` are on GitHub; `1.0.1` is local only. Tags are often cut straight from a commit with no release commit. When that happens, move the tag's "Unreleased" body into a `## <version> — <date>` section and keep only later changes under Unreleased (done for 1.0.17, 1.0.20 and 1.0.21).
 - `README.md` still says "Version 1.0.1".
 
@@ -202,6 +202,7 @@ xcrun simctl delete "$UDID"
   - Read with `GET /instagram/accounts?user_id=`; link with a `POST` of `{username, user_id}`. `user_id` must be the signed-in Firebase uid.
   - A 409 means the username is linked to another account.
   - The link counts only once that account has DMed @ayl.chat, and there is no unlink endpoint.
+  - The link's upsert needs snapmap migration `043_social_account_username.sql` (`vdc-k8s#23612`), applied by hand outside staging. Without it, `POST` returns 500 `{"detail": "Internal server error"}` (QA-2042, 2026-11-02; the environment wasn't confirmed).
 
 ### Product decisions that constrain changes
 
@@ -225,7 +226,7 @@ xcrun simctl delete "$UDID"
 
 ### Ditto
 
-- In sync as of 2026-10-31. Ditto's project and library hold the catalog's 413 keys with identical values, and the catalog and generated Swift were rebuilt from Ditto by the pipeline. The rebuild is uncommitted; once it is committed, that commit is the comparison base for later drift.
+- In sync as of 2026-10-31. Ditto's project and library hold the catalog's 413 keys with identical values, and the catalog and generated Swift were rebuilt from Ditto by the pipeline. The rebuild is in `2ad3c52`, which is the comparison base for later drift.
 - Ditto owes one hand-added key (2026-11-01, catalog now 414): `mo-aiprofile-loyalty-error-tier-valid-until-invalid` ("Enter the month as MM/YY, this month or later.", folder `loyalty-programs`, error tag).
 - That sync, at the user's request:
   - added the 44 hand-added keys that are in use;
@@ -241,10 +242,12 @@ xcrun simctl delete "$UDID"
 - Instagram linking against snapmap in production, and the waiting card in Ayl.
 - KYC onboarding presented full screen over Ayl's tab bar.
 - Loyalty edit and tier on a device against production: that the Edit pill takes the tap rather than the row's selection button, that the tier `Menu` opens from inside the sheet window, and that a saved edit or tier shows after the reload.
+- QA-2008 fixes on a device: the AI connector prompt scrolling inside the sheet's own scroll view, and the Instagram explainer's green wash without Figma's noise.
 - Motion that tests can't show: the save button's entry and exit, the persona loader's haptics, the glove box entrances, the hero and globe transitions.
 
 ### Open work
 
+- QA-2008 (2026-11-02): QA-2009, -2011, -2043 and -2050 are fixed in the commit after `2ad3c52`, not yet pushed or tagged. QA-2042 needs snapmap migration 043 on the environment QA tested; the app now shows client copy for that 500.
 - vdcios integration:
   - Pin a version instead of `branch: master`.
   - Check that CI's Xcode supports tools 6.4; if it's Xcode 26, lower to 6.2.
@@ -271,7 +274,7 @@ xcrun simctl delete "$UDID"
   - Ayl's PostHog screenshot replay costs about 0.5s of CPU per second.
 - Hub board freshness (found 2026-11-01):
   - The pass back face shows `pass.programmes`, which is the profile's `loyalty_card.programs` in the hub's own `/board`.
-  - Fixed (uncommitted): `ProfileV3HubViewModel.refreshIfStale(now:)` runs on every appearance (via `loadIfNeeded`) and on `willEnterForeground` while the hub is on screen (`isSettled`).
+  - Fixed in `2ad3c52`: `ProfileV3HubViewModel.refreshIfStale(now:)` runs on every appearance (via `loadIfNeeded`) and on `willEnterForeground` while the hub is on screen (`isSettled`).
     - It first shows a newer board another screen put in `ProfileV3BoardStore` (`cachedBoardFetchedAt`, no network).
     - If the shown board is older than `staleBoardAge` (60 s), it refetches with `loadLatestBoard()`.
     - There is no spinner, and a failure stays silent. This replaced the one-shot `needsRevalidation`.

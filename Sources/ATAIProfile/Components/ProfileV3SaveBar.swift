@@ -3,20 +3,30 @@ import SwiftUI
 
 struct ProfileV3SaveBar<Content: View>: View {
     var error: String?
+    var reservesFade = true
     @ViewBuilder let content: Content
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            ProfileV3SaveBarFade()
-            VStack(spacing: ProfileV3Theme.Space.s12) {
-                if let error {
-                    ProfileV3ErrorText(text: error, style: .bar)
-                        .multilineTextAlignment(.center)
-                }
-                content
+        if reservesFade {
+            ZStack(alignment: .bottom) {
+                ProfileV3SaveBarFade()
+                controls
             }
-            .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
+        } else {
+            controls
+                .background(alignment: .bottom) { ProfileV3SaveBarFade() }
         }
+    }
+
+    private var controls: some View {
+        VStack(spacing: ProfileV3Theme.Space.s12) {
+            if let error {
+                ProfileV3ErrorText(text: error, style: .bar)
+                    .multilineTextAlignment(.center)
+            }
+            content
+        }
+        .padding(.bottom, ProfileV3Theme.Sizes.Save.barBottom)
     }
 }
 

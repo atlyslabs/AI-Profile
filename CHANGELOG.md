@@ -64,6 +64,28 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   server another way (the Gmail import, chat, another device) now appear on the pass's back face
   without relaunching. This refresh shows no spinner and no error.
 
+### Fixed
+
+QA-2008 (iOS profile new changes):
+
+- QA-2009: The custom rule editor's trash button draws Figma's Material Symbols bin, the one with
+  two slots (`profile_v3_delete`). ATUIKit's `delete` is a plain bin. The "delete your rule" sheet
+  now has its icon, `text_snippet` in a grey 40pt circle, with the buttons 23pt under the title, as
+  in Figma `6006:50380`.
+- QA-2011: Scrolled to the end, the AI connector's detail step leaves 54pt between the last
+  disclaimer and "Get started", as in Figma `6473:6991`. Before, the save bar's 158pt fade counted
+  towards the bottom inset and left about 134pt. `ProfileV3SaveBar(reservesFade: false)` draws the
+  fade without taking space; other save bars are unchanged.
+- QA-2043: The prompt to copy into the AI assistant scrolls inside its card, so the whole prompt
+  can be read before copying. At rest the card looks as before. Scrolled lines fade out under the
+  card's top edge, and the last line can scroll clear of the bottom fade.
+- QA-2050: The Instagram explainer has the green wash from Figma `5836:33608` (`6595:14300`) in
+  place of the rainbow glow: the redirect step's colours at 56%, at Figma's angle, from 310pt down.
+  Figma's noise texture isn't reproduced.
+- QA-2042: A 500 with no envelope `code` (FastAPI's bare `{"detail": "Internal server error"}`)
+  now shows "Something went wrong. Please try again." instead of the server's text, on every
+  screen. The Instagram link failure itself is in snapmap, not the app.
+
 ## 1.0.21 — 2026-10-31
 
 ### Changed

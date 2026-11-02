@@ -4,8 +4,8 @@ import SwiftUI
 extension ProfileV3Theme.Sizes {
     enum InstagramConnect {
         static let sheetHeight: CGFloat = 684
-        static let wash: CGFloat = 557
-        static let washCentreY: CGFloat = 510.5
+        static let explainerWashTop: CGFloat = 310
+        static let explainerWash = CGSize(width: 686, height: 622)
         static let followWashTop: CGFloat = 453
         static let followWashHeight: CGFloat = 399
         static let cardsTop = ProfileV3Theme.Space.s48
@@ -60,6 +60,7 @@ extension ProfileV3Theme.Palette {
 extension ProfileV3Theme.Opacity {
     static let instagramLead: Double = 0.5
     static let instagramRedirecting: Double = 0.8
+    static let instagramExplainerWash: Double = 0.56
 }
 
 extension ProfileV3Theme {
@@ -88,13 +89,21 @@ extension ProfileV3Theme {
         endPoint: .bottomTrailing
     )
 
+    private static let instagramWashStops: [Gradient.Stop] = [
+        .init(color: Color(hex: "D8FB71").opacity(0), location: 0.05),
+        .init(color: Color(hex: "ACC85A"), location: 0.67),
+        .init(color: Color(hex: "587F1B"), location: 0.97)
+    ]
+
     static let instagramFollowWash = LinearGradient(
-        stops: [
-            .init(color: Color(hex: "D8FB71").opacity(0), location: 0.05),
-            .init(color: Color(hex: "ACC85A"), location: 0.67),
-            .init(color: Color(hex: "587F1B"), location: 0.97)
-        ],
+        stops: instagramWashStops,
         startPoint: .top,
         endPoint: .bottom
+    )
+
+    static let instagramExplainerWash = LinearGradient(
+        stops: instagramWashStops,
+        startPoint: UnitPoint(x: 0.013, y: -0.054),
+        endPoint: UnitPoint(x: -0.146, y: 0.595)
     )
 }

@@ -1,3 +1,4 @@
+import ATCore
 import Foundation
 import Testing
 @testable import ATAIProfile
@@ -219,6 +220,16 @@ struct ProfileV3InstagramConnectTests {
         #expect(!ProfileV3LinkedApp.instagram.canDisconnect)
     }
 
+    @Test func aServerCrashShowsClientCopyInsteadOfTheBareDetail() {
+        ProfileV3ServerFailureBox.shared.store(ProfileV3ErrorEnvelope.parse(Data(#"{"detail":"Internal server error"}"#.utf8)))
+        let error = ProfileV3APIErrorMapper.map(
+            ATCoreError.server(ATCoreServerError(message: "Internal server error", statusCode: 500)),
+            action: "link_instagram"
+        )
+        #expect(error as? ProfileV3Error == .server(code: nil, message: nil))
+        #expect(ProfileV3InstagramUsername.errorMessage(for: error) == ProfileV3Strings.somethingWentWrong)
+    }
+
     private static func account(_ json: String) throws -> ProfileV3InstagramAccount {
         ProfileV3InstagramMapper.account(try JSONDecoder().decode(ProfileV3InstagramAccountDTO.self, from: Data(json.utf8)))
     }
@@ -238,7 +249,7 @@ struct ProfileV3InstagramConnectTests {
 
     private static func waitUntil(_ condition: () -> Bool) async throws {
         for _ in 0 ..< 400 where !condition() {
-            try await Task.sleep(for: .milliseconds(20))
+            try await Swift.Task.sleep(for: .milliseconds(20))
         }
         #expect(condition())
     }
