@@ -20,7 +20,7 @@ This folder is the Swift package `ATAIProfile` (repo `atlyslabs/AI-Profile`), th
 | Atlys app | `/Users/aravindh/Desktop/Atlys/vdcios` |
 | Capture package | `/Users/aravindh/Desktop/Atlys/IdentityCapture` (`ATCaptureKit`) |
 | AI-Chat | `/Users/aravindh/Desktop/Atlys/AI-Chat` |
-| Ditto toolkit | `/Users/aravindh/Downloads/ditto-migrate-toolkit-main` |
+| Ditto toolkit | The package's own dependency, checked out at `/tmp/aiprofile-dd/SourcePackages/checkouts/ditto-migrate-toolkit` (0.0.1, `582e7fc`; re-resolve if `/tmp` was cleaned). An older copy is in `~/Downloads/ditto-migrate-toolkit-main`. |
 | Backend | `atlyslabs/vdc-k8s` (`services/ai-kyc` and others); check PRs and deploys with `gh` |
 
 ## Package
@@ -60,7 +60,7 @@ xcrun simctl delete "$UDID"
 ```
 
 - Use a throwaway simulator, never the user's booted one. A cold build with package resolution takes about two minutes. Without `-IDEBuildingContinueBuildingAfterErrors=YES`, Xcode stops after the first failing batch.
-- Tests are swift-testing. As of 2026-10-31: 276 tests in 42 suites, 273 pass. The `feature/photos-visited-countries` branch adds `ProfileV3PhotoPlacesTests` (18, never run; Done item 176). The same three fail every run:
+- Tests are swift-testing. As of 2026-11-02: 302 tests in 46 suites, 299 pass. The `feature/photos-visited-countries` branch adds `ProfileV3PhotoPlacesTests` (18, never run; Done item 176). The same three fail every run:
   - `ProfileV3DestinationTests.theHubOpensALinkOnlyWhileItIsOnScreen` (lines 68–69): a link posted while the hub's tab is hidden still opens. Either `onDisappear` doesn't clear `isSettled` on a tab switch in a test window, or the hidden-tab guard doesn't work. Not investigated.
   - `ProfileV3OnboardingPresentationTests.theHubsOwnSurfaceRunsOnboardingOverTheTabBar` and `aFlowThatClosesItsOwnContainerIsReportedOnce`: the dismissal never completes in a window with no scene. Probably the harness, not the launcher.
 - Checking a design against Figma:
@@ -80,7 +80,7 @@ xcrun simctl delete "$UDID"
   - plus the Slack alert and the pensieve profile edit.
 - Its `baseURL` is a placeholder: ATCore builds URLs from the host's `ATCoreBaseProvider.baseURL`.
 - `ProfileV3NetworkClient` (public) wraps `ATCoreRequestExecutor` with the auth plugin, the `x-platform`/`x-app-version` headers and the error-envelope plugin, and decodes responses itself. Its `request`, `requestData` and `perform(_:action:)` refresh the Firebase token and retry once on a 401.
-- `ProfileV3APIErrorMapper` maps 401, 409, 422, 501 and 502–504 onto `ProfileV3Error`. The envelope's `code` reaches it through `ProfileV3ServerFailureBox` (see Known trade-offs).
+- `ProfileV3APIErrorMapper` maps 401, 409, 422, 501 and 502–504 onto `ProfileV3Error`; a 500 with no envelope `code` gets client copy, never the server's text. The envelope's `code` reaches it through `ProfileV3ServerFailureBox` (see Known trade-offs), and the envelope plugin swaps ATCore's message for the envelope's `message` or FastAPI `detail`.
 - Data:
   - `ProfileV3BoardStore` caches in `ATCoreCacheService.persistent` with deterministic keys per user, and its `fetch`/`restore` are `@concurrent`.
   - `ProfileV3LiveRepository` is the real implementation.
@@ -111,8 +111,10 @@ xcrun simctl delete "$UDID"
   RESOURCES_DIR=Sources/ATAIProfile/Resources XCSTRINGS_NAME=ProfileV3Localizable.xcstrings \
   GENERATED_DIR=Sources/ATAIProfile/Generated SWIFT_OUT_NAME=ProfileV3L10n+Generated.swift \
   ENUM_NAME=ProfileV3L10n LOOKUP_FUNCTION=ProfileV3DittoRuntimeStrings.lookup DIST_DIR=<scratch>/Dist \
-  bash <toolkit>/Scripts/ditto-pipeline.sh --skip-scan
+  bash /tmp/aiprofile-dd/SourcePackages/checkouts/ditto-migrate-toolkit/Scripts/ditto-pipeline.sh --skip-scan < /dev/null
   ```
+
+  The toolkit's Python helpers (`ditto_copy_folder_to_project.build_item`, `ditto_check_component_issues.py profilev3strings`) sit next to it. Calls that worked on 2026-10-31: `POST /v2/components {components}`, `POST /v2/textItems {projectId, textItems}`, `PATCH /v2/components` and `PATCH /v2/textItems` with `{updates: [{developerId, text}]}`, `DELETE /v2/textItems {projectId, developerIds}`, then `DELETE /v2/components {developerIds}`. Library folders: `profilev3strings` and its six subfolders; a key's folder follows its first segment (`agent-settings-*` goes to `agents`, `documents-*` to `travel-documents`). Count variables use the existing `count` variable (`{{count}}`, exported as `%1$@`).
 
 - To add a string:
   - In Ditto: create the component first, named as its id in title case, with the catalog comment as its notes and a tag only for buttons, input labels and empty, error or success states. Then create the project item from it.
@@ -139,11 +141,11 @@ xcrun simctl delete "$UDID"
 - Analytics events (`Support/ProfileV3Analytics.swift`) follow the spec agreed on 2026-10-27: no default properties, personal data as specified. Tests record through the `@TaskLocal` `ProfileV3Analytics.scopedReporter`.
 - Session replay: views with personal data use `.postHogMask()`.
 
-## State (2026-10-31)
+## State (2026-11-02)
 
 ### Release
 
-- `master` is at `550b009`, one commit ahead of `origin/master` (`df4009c`, tag `1.0.21`). The CHANGELOG split for `1.0.21` and this cleanup are uncommitted.
+- `master` is two commits ahead of `origin/master` (`b9e925b`, pushed outside this session): `2ad3c52` (loyalty edit and tier, hub refresh, agent fields, Ditto rebuild), then the QA-2008 fixes. `1.0.21` is on `df4009c`; nothing after it is tagged.
 - Tags `1.0.0` and `1.0.2`–`1.0.21` are on GitHub; `1.0.1` is local only. Tags are often cut straight from a commit with no release commit. When that happens, move the tag's "Unreleased" body into a `## <version> — <date>` section and keep only later changes under Unreleased (done for 1.0.17, 1.0.20 and 1.0.21).
 - `README.md` still says "Version 1.0.1".
 
@@ -176,9 +178,23 @@ xcrun simctl delete "$UDID"
 
 - Board: home, settings, agents, loyalty, past trips, travel persona, passports and AI connectors. Writes go to `/board/submit` and echo the served action object.
   - Past trips are country-only; several countries go as one `countries` list.
+  - Loyalty edit (`vdc-k8s#23247`, 2026-10-26; ai-kyc is deployed, ai-memory's `PATCH /profile/loyalty` deploy wasn't confirmed):
+    - `GET /board/loyalty/edit/{program_id}?profile_id=` (slashes in the id kept) returns the enter-details form with each field's saved `value`: "EDIT DETAILS", "Save", and an optional membership number.
+    - `edit_loyalty_program` changes only the fields sent; `null` clears one, and `tier: "unknown"` clears the tier.
+    - The form's `program_id` is the catalogue id, and the save must send it. A Gmail-found programme's row id is its name, and an edit can change that row's id.
+  - Loyalty tier (same PR): for a programme with a tier list (never cards), the add and edit forms serve `tier` (`single_select`, tiers lowest first, then `unknown` = "I don't know") and `tier_valid_until` (`month_year`, placeholder `MM/YY`).
+    - `add_loyalty_program` and `edit_loyalty_program` take both. `unknown` or no tier saves none, and a blank month with a tier means 12 months from today (UTC).
+    - In an edit, a sent `tier` resets the month to the sent one (or that default). A month sent alone keeps the saved tier, and a blank one is ignored.
+    - 422 `kyc_invalid_request` with "Pick a tier from the list." or "Enter the month as MM/YY, this month or later."
   - The personal agent's `passport_empty` shows the placeholder card, and the passport card's `father`/`mother`/`spouse`/`address` keys feed the back page.
   - AI connectors: `settings/connectors/ai/{connector}` and its `/connect`, saved with `connect_ai_connector`. Its `synced_at` comes as Python `isoformat()` (microseconds, `+00:00`).
   - Custom rules are the agent screen's `custom_rules` field and save with the agent.
+  - Agent fields from `vdc-k8s#23629` (deployed 2026-10-31):
+    - Flight `avoid_airlines` is `multi_select_add` with the airline options.
+    - Flight `time_value_per_hour` is a slider with `display: "money"`, `currency {code, symbol}` and `unit: "/hour"`. Its track follows the residence's currency, and its `value` is `null` until set.
+    - Stay `hotel_class` is `single_select` with `{value, label}` options.
+    - Stay `preferred_hotels` has 100 groups with logos.
+    - The field's `assist` is the subline under the control.
 - Vault (fort-knox): a login is sealed with AES-GCM under a key wrapped by the server's RSA key (OAEP-SHA256). A reveal opens an ECDH/HKDF box with the phone's Keychain key after Face ID.
 - Glove box (jaqen): `/me`, `/messages` (status, attention, action, sender logo) and the forwarding endpoints.
 - Permissions (harness): `GET /permissions` and `PUT /permissions/{key}` `{value}`.
@@ -186,6 +202,7 @@ xcrun simctl delete "$UDID"
   - Read with `GET /instagram/accounts?user_id=`; link with a `POST` of `{username, user_id}`. `user_id` must be the signed-in Firebase uid.
   - A 409 means the username is linked to another account.
   - The link counts only once that account has DMed @ayl.chat, and there is no unlink endpoint.
+  - The link's upsert needs snapmap migration `043_social_account_username.sql` (`vdc-k8s#23612`), applied by hand outside staging. Without it, `POST` returns 500 `{"detail": "Internal server error"}` (QA-2042, 2026-11-02; the environment wasn't confirmed).
 
 ### Product decisions that constrain changes
 
@@ -196,23 +213,41 @@ xcrun simctl delete "$UDID"
   - Saving a login only calls the API, and the sheet's fields aren't tagged as a username and password, so iOS doesn't offer to save them.
 - The glove box opens from the Settings card. Without KYC it shows the locked intro. An empty inbox shows one sample email. The virtual card shows the main traveler's short name and digits derived from the address.
 - Travel persona: the delight loader shows for the first five loads, and a drag saves on release.
+- Loyalty edit (user's call, 2026-11-01):
+  - It starts from an "Edit" pill on each card in the programmes edit mode (the delete selection), where "View insight" sits.
+  - It reuses the add flow's details sheet: `ProfileV3AddProgrammeViewModel(editing:)`, which skips the loader, back button and step dots.
+  - Save turns on after a change and sends only the changed fields. The tier and its month always go together, so a new tier keeps the saved month.
+- Loyalty tier fields (2026-11-01, no Figma): the dropdown is `ProfileV3MenuField`, a native `Menu` drawn with the picker field's row (`ProfileV3PickerFieldRow`, "Select" placeholder). The month field formats `MM/YY` as you type (`ProfileV3MonthYear`). A complete but unreadable or past month shows an inline error, and any bad month blocks saving, but only when the month would be sent (with a real tier; in an edit, only when the tier fields change).
+  - The pill sits inside the row's selection button: the tile turns off its face's hit testing for `Pill.edit`, and VoiceOver gets an Edit action on the row.
+- Agent sliders:
+  - A slider whose server value is `null` saves `null` until it is moved, or until "rather not say" is turned off (`ProfileV3SliderField.isSet`). It still shows its midpoint.
+  - Money values read as symbol + compact amount + unit (`₹10K/hour`; a letter symbol gets a space: `AED 50/hour`).
+  - The Figma mock puts the assist under the heading and writes "₹ 10K"; the app keeps the assist under the control and follows the spec's "₹10K".
 
-### Ditto owes
+### Ditto
 
-- The last full sync matched `c8afbc3` (385 keys, 2026-10-27).
-- Since then, by hand: 51 keys added, 6 values changed (the Atlys → Ayl copy and the "How you pay" text), and 23 catalog keys unused (16 exist in Ditto: delete them there; 7 were hand-added: drop them locally).
-- Recompute: compare the catalog with `git show c8afbc3:Sources/ATAIProfile/Resources/ProfileV3Localizable.xcstrings`. A key is unused when nothing in `Sources` or `Tests` references its generated accessor.
-- Five of the "Ayl" values still say "Atlys" in their generated fallbacks; a pipeline rebuild fixes that.
+- In sync as of 2026-10-31. Ditto's project and library hold the catalog's 413 keys with identical values, and the catalog and generated Swift were rebuilt from Ditto by the pipeline. The rebuild is in `2ad3c52`, which is the comparison base for later drift.
+- Ditto owes one hand-added key (2026-11-01, catalog now 414): `mo-aiprofile-loyalty-error-tier-valid-until-invalid` ("Enter the month as MM/YY, this month or later.", folder `loyalty-programs`, error tag).
+- That sync, at the user's request:
+  - added the 44 hand-added keys that are in use;
+  - pushed the 6 local value edits (the Atlys → Ayl copy and the "How you pay" text);
+  - deleted the 16 unused keys from Ditto;
+  - dropped the 7 unused hand-added custom-rule keys.
+- No accessor name, signature or value changed. The toolkit check flags only the known `(180cm)` false positive. With the rebuilt files the suite (bar the known three) and a Release build pass.
+- To find drift later: compare the catalog with the base commit's catalog. A key is unused when nothing in `Sources` or `Tests` references its generated accessor; match generated `static func` accessors across lines, because strings with variables are functions.
 
 ### Unverified (needs Ayl or a device)
 
 - Saving a vault login shows no iOS "Save Password" sheet.
 - Instagram linking against snapmap in production, and the waiting card in Ayl.
 - KYC onboarding presented full screen over Ayl's tab bar.
+- Loyalty edit and tier on a device against production: that the Edit pill takes the tap rather than the row's selection button, that the tier `Menu` opens from inside the sheet window, and that a saved edit or tier shows after the reload.
+- QA-2008 fixes on a device: the AI connector prompt scrolling inside the sheet's own scroll view, and the Instagram explainer's green wash without Figma's noise.
 - Motion that tests can't show: the save button's entry and exit, the persona loader's haptics, the glove box entrances, the hero and globe transitions.
 
 ### Open work
 
+- QA-2008 (2026-11-02): QA-2009, -2011, -2043 and -2050 are fixed in the commit after `2ad3c52`, not yet pushed or tagged. QA-2042 needs snapmap migration 043 on the environment QA tested; the app now shows client copy for that 500.
 - vdcios integration:
   - Pin a version instead of `branch: master`.
   - Check that CI's Xcode supports tools 6.4; if it's Xcode 26, lower to 6.2.
@@ -237,6 +272,17 @@ xcrun simctl delete "$UDID"
   - At rest, the card globe is all of Ayl's GPU (about 4.5ms a frame at 24 fps), and the card hover is most of backboardd's.
   - Options, undecided: drop the card's `landTint`, spin at 12 fps, Metal point sprites, or a still card globe. The hover's offscreen pass is still to find.
   - Ayl's PostHog screenshot replay costs about 0.5s of CPU per second.
+- Hub board freshness (found 2026-11-01):
+  - The pass back face shows `pass.programmes`, which is the profile's `loyalty_card.programs` in the hub's own `/board`.
+  - Fixed in `2ad3c52`: `ProfileV3HubViewModel.refreshIfStale(now:)` runs on every appearance (via `loadIfNeeded`) and on `willEnterForeground` while the hub is on screen (`isSettled`).
+    - It first shows a newer board another screen put in `ProfileV3BoardStore` (`cachedBoardFetchedAt`, no network).
+    - If the shown board is older than `staleBoardAge` (60 s), it refetches with `loadLatestBoard()`.
+    - There is no spinner, and a failure stays silent. This replaced the one-shot `needsRevalidation`.
+  - Still open:
+    - Closing the programmes page after only viewing it doesn't refresh the hub; that page loads `/loyalty/page/{id}` itself.
+    - The KYC sync stops polling when the KYC steps clear, so a Gmail import that lands later shows only on the next stale refresh.
+- Loyalty edit leftover: the insight screen's `edit` button (`program_insight.edit` → `loyalty_edit_details`) isn't decoded or shown.
+- Not built: a City profile screen (Figma `6592:8685`, `6593:10316`, `6595:10925`, `6595:11473`) with per-city tabs, a "Never book · N Airlines" row and a "NEVER BOOK AIRLINES" sheet. No backend contract describes it yet.
 - Known trade-offs:
   - `ProfileV3ServerFailureBox` keeps one envelope, so concurrent failures can swap codes.
   - `ATCoreCacheConfig`'s default expiry looks like a units slip; the package passes seven days.
@@ -244,9 +290,9 @@ xcrun simctl delete "$UDID"
 
 ### Photos connector branch (`feature/photos-visited-countries`, PR #1)
 
-Not on `master`. This section exists only on the branch and carries the photos item forward; Done items 1–175 are in `git show 550b009:CLAUDE.md`.
+Not on `master`. This section exists only on the branch; Done items 1–175 are in `git show 550b009:CLAUDE.md`.
 
-176. **Photos connector reads only where photos were taken (Mohak, 2026-10-17; branch `feature/photos-visited-countries`, draft PR atlyslabs/AI-Profile#1; package-only). Numbered 53 on the branch until `master` was merged in on 2026-10-26, then 118 until the merge of `85dba88` on 2026-10-27, then 122 until the merge of `e94a37e` the same day, then 125 until the merge of `7ec88f0` the same day, then 134 until the merge of `3de2dd3` on 2026-10-28, then 137 until the merge of `55e2cff` the same day, then 144 until the merge of `b7dff0f` the same day, then 145 until the merge of `528b9a5` on 2026-10-29, then 150 until the merge of `7caacee` on 2026-10-30, then 166 until the merge of `1e3c6e3` on 2026-10-31, then 172 until the merge of `df4009c` the same day, then 174 until the merge of `b9e925b` the same day.**
+176. **Photos connector reads only where photos were taken (Mohak, 2026-10-17; branch `feature/photos-visited-countries`, draft PR atlyslabs/AI-Profile#1; package-only).**
     - `ProfileV3ConnectorKey.photos`. A server `connectors[]` row with `key: "photos"` now renders (unknown keys were dropped); with `ProfileV3FeatureFlags.isPhotoPlacesEnabled` (default false) the client appends the row itself. Its status comes from the device (`ProfileV3PhotoPlacesSync.isConnected`), not the server's `connected`. `ProfileV3Connector.canConnect` lets Connect work without a KYC capture step.
     - Connect: `ProfileV3PhotoPlacesSync.connect()` asks for `.readWrite` photo access (full or limited). Declined shows the `photosAccessDenied` flash. `ProfileV3PhotoLibrary` fetches `PHAsset` images and reads only `location` and `creationDate`, never image data.
     - On device: `ProfileV3PhotoPlaceTally` dedupes coordinates into 0.01° cells. `ProfileV3CountryLocator` does point-in-polygon with a bounding-box prefilter on `Resources/ProfileV3CountryShapes.geojson` (Natural Earth 50m admin-0, public domain, 237 ISO codes, simplified to 0.02° and rounded to 2 decimals, 794 KB; Somaliland→SO, N. Cyprus→CY, Siachen→IN). Points within 0.25° of a coast snap to the nearest country. The scan runs in a `@concurrent` function, off the main actor.
@@ -258,19 +304,7 @@ Not on `master`. This section exists only on the branch and carries the photos i
     - Names: server rows show the served `label` as is (item 75: no client fallbacks or normalising). Only the row the client appends behind `isPhotoPlacesEnabled` uses the local `photosConnector` string, because no server label exists for it. The two keys were added to the catalogue and the generated file by hand, against the Ditto rule above; regenerate after adding them in Ditto.
     - Disconnect: a `photos` disconnect clears local state first, then reports through `connectorDidDisconnect` (item 84), so the hub's `refreshAfterDisconnecting` also runs for it. `reflects` settles on the first board for any key but Gmail.
     - Tests: `ProfileV3PhotoPlacesTests` (18). Not built or run: written on Linux without a Swift toolchain. The locator algorithm and bundled data were checked with a Python mirror (32 city points).
-    - Merged with `master` at `43de805` on 2026-10-26 (merge commit, no rebase), also on Linux without a toolchain, so the merge is unbuilt too. Conflicts were in the connectors mapper, settings strings, the generated L10n file and catalogue, feature flags, the live repository, the connectors, hub and settings models, the settings presenter, the hub hosting controller, hub chrome, hub view and README. Run `xcodebuild … test` before merging the PR.
-    - Merged with `master` at `85dba88` on 2026-10-27 (merge commit), again without a toolchain. Only this file conflicted (the test count line); the string catalogue and generated L10n file merged cleanly with the two photos keys kept. Unbuilt.
-    - Merged with `master` at `e94a37e` on 2026-10-27 (merge commit), again without a toolchain. Conflicts: this file, and the `ProfileV3HubViewModel` initializer and its call in `ProfileV3HubHostingController`, where master added `addsTripsWithoutDate` and the branch `photoPlaces`; both parameters are kept, `addsTripsWithoutDate` first. Unbuilt.
-    - Merged with `master` at `7ec88f0` on 2026-10-27 (merge commit), again without a toolchain, so unbuilt. Master moved `ProfileV3HubViewModel` to Observation (no `@Published`), so the hub now copies `ProfileV3PhotoPlacesSync.countryCodes` into a plain `photoCountryCodes` through a Combine `sink` kept in an `@ObservationIgnored` `AnyCancellable`, in place of `assign(to: &$photoCountryCodes)`. `ProfileV3ConnectorsSettingsModel.init` takes master's `travellerID` and the branch's `photoPlaces`, and `ProfileV3SettingsViewModel` passes both. The photos disconnect hook sits after master's renamed `connectorDisconnected(connectorName:)` call.
-    - Merged with `master` at `3de2dd3` on 2026-10-28 (merge commit), again without a toolchain, so unbuilt. Conflicts: this file, and `ProfileV3FeatureFlags`, where master added `isPastTripAddDatesEnabled` and `isAgentCustomRulesEnabled`; all three flags are kept, master's first. `ProfileV3Environment` merged cleanly with master's `PhoneCodeResolver.install` and the branch's `photoPlaces`.
-    - Merged with `master` at `55e2cff` on 2026-10-28 (merge commit), again without a toolchain, so unbuilt. Conflicts: this file, and the `ProfileV3HubViewModel` initializer and its call in `ProfileV3HubHostingController`, where master removed `addsTripsWithoutDate` (past trips are country-only, item 142); only the branch's `photoPlaces` is kept there, and the hosting controller keeps master's new `onboarding` parameter.
-    - Merged with `master` at `b7dff0f` on 2026-10-28 (merge commit), again without a toolchain, so unbuilt. Only this file conflicted (the test count line); master's loyalty multi-select delete merged cleanly, and the photos item moved to 145 after master's item 144.
-    - Merged with `master` at `528b9a5` on 2026-10-29 (merge commit), again without a toolchain, so unbuilt. Only this file conflicted (the test count line). Master split `loadPermissions`/`savePermission(_:for:)` into a new `ProfileV3PermissionsRepository` that `ProfileV3SettingsRepository` refines; `syncPhotoPlaces` stays on the settings repository in all four implementations, and the photos item moved to 150 after master's item 149.
-    - Merged with `master` at `7caacee` on 2026-10-30 (merge commit), again without a toolchain, so unbuilt. Conflicts: this file (the test count line); `ProfileV3LiveRepository`, where master added the AI connector loads and connect next to the branch's `syncPhotoPlaces` (all kept); `ProfileV3Models`, where master gave `ProfileV3Connector` `next`, `connectLabel`, `statusLabel`, `syncedAt` and `aiConnector`, so the branch's `withStatus` now copies those too (master's `reconciled` rebuilt the connector without them, and the branch's version still goes through `withStatus`); `ProfileV3ConnectorsSettingsModel.tapConnect`, which tries master's AI connector route first, then photos, then the capture step, with `connectPhotos` and master's `openAIConnector` both kept, and a connector marked disconnected is rebuilt exactly as master does (keeping only id, name, icon and account email, so `next`, `connectLabel`, `statusLabel`, `syncedAt` and with them `aiConnector` are dropped), so disconnect now follows master; `ProfileV3FeatureFlags`, with master's `isPassportBackPageEnabled` and the branch's `isPhotoPlacesEnabled` both kept; and `ProfileV3InformationAccessView`, which takes master's served `connectLabel` title with the branch's `canConnect` action. The photos item moved to 166 after master's item 165.
-    - Merged with `master` at `cd6a5ce` (1.0.18) on 2026-10-30 (merge commit), again without a toolchain, so unbuilt. Master added the Invite Friends row and invite code sheet (`ProfileV3InviteHost`, `invites` on the environment and host actions) and left this file alone, so the photos item stays 166. Conflicts: the `ProfileV3SettingsViewModel` initializer and its call in `ProfileV3SettingsSheetPresenter`, where master added `invites` and the branch `photoPlaces`; both are kept, master's `invites` first and `photoPlaces` last (both defaulted).
-    - Merged with `master` at `1e3c6e3` on 2026-10-31 (merge commit), again without a toolchain, so unbuilt. Master added Done items 166–171 (the reuse audit's shared pieces and theme tokens, Instagram to snapmap, App access trimmed, the AI assistant rows behind `isAIConnectorsEnabled = false`, and the 1.0.19 merge repair), so the photos item moved to 172. Conflicts: this file; the string catalogue and generated L10n file, where master's new `mo-aiprofile-agents-error-instagram-username-invalid` sat next to the branch's `mo-aiprofile-agents-error-photos-access` (master's files taken with both photos keys added back in key order); and `ProfileV3ConnectorsSettingsModel`, where master added `showsAIConnectors` beside the branch's `photoPlaces` (both kept, master's first, `photoPlaces` last) and filters AI assistant rows in `apply(_:)` before the branch's `withPhotoPlaces` step, which is kept: `reconciled(withPhotoPlaces(screen.connectors.filter { showsAIConnectors || $0.aiConnector == nil }))`.
-    - Merged with `master` at `df4009c` on 2026-10-31 (merge commit), again without a toolchain, so unbuilt. Master added Done items 172 (the glove box card drops its No-show fee row, and Atlys copy becomes Ayl) and 173 (every AI assistant the server sends shows on Information access), so the photos item moved to 174. Only this file conflicted (the test count line and the Done list); the Swift sources, the string catalogue and the generated L10n file merged cleanly, with both photos keys kept.
-    - Merged with `master` at `b9e925b` on 2026-10-31 (merge commit), again without a toolchain, so unbuilt. Master added Done items 174 (the waiting Instagram card follows Figma) and 175 (saving a vault login no longer offers the keychain save), then cut this file down to current context and moved Done items 1–175 to `git show 550b009:CLAUDE.md`, so the photos item moved to 176 and now lives in its own section under State. Only this file conflicted: master's trimmed file was taken, with the photos tests sentence added to Build and test and this section added. The Swift sources, the string catalogue and the generated L10n file merged cleanly, with both photos keys kept; master's changes near the photos code (`ProfileV3ConnectorAction` gained a `style` parameter, and `ProfileV3SettingsStrings` swapped two Instagram strings) don't touch the photos lines.
+    - Unbuilt: the branch has been merged with `master` many times without a Swift toolchain, so it needs an `xcodebuild … test` run before the PR is merged.
 
 ## Gotchas
 
@@ -294,7 +328,6 @@ Not on `master`. This section exists only on the branch and carries the photos i
 - ATCore:
   - `ATCoreCacheService.shared` sweeps entries after 15 minutes and hashes keys per process; use `.persistent` with deterministic keys.
   - ATCore only reads flat `message`/`error` strings from error bodies.
-- The generated L10n Swift has one out-of-order pair (`glovebox-label-dated` before `glovebox-label-card-*`).
 - `ATBottomSheetWindowPresenter` needs a connected window scene, so sheet windows can't be presented in the test bundle.
 - Four files use `Color(at:)` without `import ATUIKit`. That only compiles because extension members leak across files, and would break under `MemberImportVisibility`.
 - Ayl resolves AI-Profile from GitHub. To try local package changes there, add a local package reference, or patch the checkout under Ayl's DerivedData and build with `-disableAutomaticPackageResolution`.

@@ -41,6 +41,7 @@ extension ProfileV3Theme.Sizes {
         static let buttonSpacing = ProfileV3Theme.Space.s16
         static let plainTop = 150 - ProfileV3Theme.Sizes.sheetGrabberTop - ProfileV3Theme.Sizes.sheetGrabberHeight
         static let plainButtonsTop: CGFloat = 39
+        static let ruleButtonsTop: CGFloat = 23
     }
 
     enum ConnectorDeck {

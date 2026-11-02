@@ -5,6 +5,29 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ## Unreleased
 
+### Added
+
+- Loyalty programmes can be edited. In the programmes page's edit mode (where cards are picked for
+  deletion), every card has an "Edit" pill where "View insight" sits. It opens the add flow's
+  details sheet, filled from `GET /board/loyalty/edit/{program_id}?profile_id=` (slashes in the id
+  are kept), with the server's title ("EDIT DETAILS") and button ("Save"), no back button or step
+  dots, and an optional membership number. Save turns on once a value changes and sends
+  `edit_loyalty_program` with only the changed fields (a cleared field goes as `null`) and the
+  form's `program_id`. The sheet then closes, the programmes page reloads and the hub refreshes. A
+  failed save keeps the sheet open with "Couldn't save your changes. Try again." A reload now also
+  drops selected cards that are no longer on the page, so Delete counts only cards that are there.
+- The add and edit forms take a loyalty tier. For a programme with a tier list, the backend's
+  `tier` field (`single_select`) shows as a dropdown of its tiers plus "I don't know", and
+  `tier_valid_until` (`month_year`) as a field that formats "MM/YY" as you type.
+  - A month that is unreadable or already past shows "Enter the month as MM/YY, this month or
+    later." and blocks saving, but only when the month would be sent.
+  - Adding sends the picked tier's value, with the month only for a real tier; left blank, the
+    server sets 12 months from today.
+  - Editing sends the tier and its month together whenever either changes, so a new tier keeps the
+    saved month. "I don't know" clears both.
+  - The new key `mo-aiprofile-loyalty-error-tier-valid-until-invalid` was added by hand; add it in
+    Ditto.
+
 ### Changed
 
 - While Instagram waits for its first DM, its App access card follows the design: the saved handle
@@ -20,6 +43,48 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   offers to save it to the user's Passwords. The sheet's fields aren't tagged as a username and
   password any more (the password field is a one-time-code field), so the system "Save Password"
   prompt doesn't fire for these third-party logins. The password stays masked in session replay.
+- Strings are back in sync with Ditto. The 44 strings that had been added by hand are now in
+  Ditto, the six copy edits (the Atlys → Ayl strings and the "How you pay" text) are applied there,
+  and 23 unused strings are gone (16 of them deleted from Ditto). `ProfileV3Localizable.xcstrings`
+  and `ProfileV3L10n` are rebuilt from Ditto. No accessor or value changed, and the generated
+  fallbacks now say "Ayl" too.
+- The flight and stay agents take the backend's new fields (deployed 2026-10-31):
+  - The flight agent's "Fast or affordable?" slider (`time_value_per_hour`, `display: "money"`)
+    shows its value as the currency symbol, a compact amount and the unit (`₹10K/hour`,
+    `$120/hour`). Its track (`min`, `max`, `step`) comes from the field, so it follows the
+    account's currency, and it saves the plain number.
+  - Avoid airlines (`avoid_airlines`) uses the same add-picker as Preferred airlines. Hotel class
+    (`hotel_class`) shows each option's label and saves its value. The 100 hotel groups stay in
+    the "+ Add" picker, with only the chosen ones shown inline.
+  - A slider whose value is `null` now saves `null` until it is moved, instead of the midpoint it
+    shows.
+- The hub refreshes its board quietly when it comes back on screen (the Profile tab again, or the
+  app returning from the background) if the board it shows is more than a minute old. It also
+  shows straight away a newer board another screen has already fetched. Programmes that reach the
+  server another way (the Gmail import, chat, another device) now appear on the pass's back face
+  without relaunching. This refresh shows no spinner and no error.
+
+### Fixed
+
+QA-2008 (iOS profile new changes):
+
+- QA-2009: The custom rule editor's trash button draws Figma's Material Symbols bin, the one with
+  two slots (`profile_v3_delete`). ATUIKit's `delete` is a plain bin. The "delete your rule" sheet
+  now has its icon, `text_snippet` in a grey 40pt circle, with the buttons 23pt under the title, as
+  in Figma `6006:50380`.
+- QA-2011: Scrolled to the end, the AI connector's detail step leaves 54pt between the last
+  disclaimer and "Get started", as in Figma `6473:6991`. Before, the save bar's 158pt fade counted
+  towards the bottom inset and left about 134pt. `ProfileV3SaveBar(reservesFade: false)` draws the
+  fade without taking space; other save bars are unchanged.
+- QA-2043: The prompt to copy into the AI assistant scrolls inside its card, so the whole prompt
+  can be read before copying. At rest the card looks as before. Scrolled lines fade out under the
+  card's top edge, and the last line can scroll clear of the bottom fade.
+- QA-2050: The Instagram explainer has the green wash from Figma `5836:33608` (`6595:14300`) in
+  place of the rainbow glow: the redirect step's colours at 56%, at Figma's angle, from 310pt down.
+  Figma's noise texture isn't reproduced.
+- QA-2042: A 500 with no envelope `code` (FastAPI's bare `{"detail": "Internal server error"}`)
+  now shows "Something went wrong. Please try again." instead of the server's text, on every
+  screen. The Instagram link failure itself is in snapmap, not the app.
 
 ## 1.0.21 — 2026-10-31
 

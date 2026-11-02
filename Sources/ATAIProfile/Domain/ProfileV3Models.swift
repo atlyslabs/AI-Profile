@@ -25,8 +25,8 @@ enum ProfileV3TextOverlay: Equatable {
 struct ProfileV3LoyaltyProgramme: Identifiable, Equatable {
     let id: String
     let name: String
-    let maskedNumber: String
-    let points: Int
+    var maskedNumber: String
+    var points: Int
     let logoURL: URL?
     var artURL: URL?
     var isArtPlaceholder = false
@@ -373,10 +373,60 @@ struct ProfileV3ProgrammeSubmission: Equatable {
     let item: ProfileV3ProgrammeCatalogueItem
     let membershipNumber: String?
     let points: Int?
+    var tier: String?
+    var tierValidUntil: String?
+}
+
+struct ProfileV3ProgrammeEdit: Equatable {
+    enum Change: Equatable {
+        case set(String)
+        case clear
+    }
+
+    let programID: String
+    var programName: String?
+    var kind: String?
+    var membershipNumber: Change?
+    var points: Change?
+    var tier: String?
+    var tierValidUntil: String?
+
+    var hasChanges: Bool { membershipNumber != nil || points != nil || tier != nil || tierValidUntil != nil }
 }
 
 #if DEBUG
+extension ProfileV3LoyaltyProgramme {
+    func applying(_ edit: ProfileV3ProgrammeEdit) -> ProfileV3LoyaltyProgramme {
+        var programme = self
+        switch edit.membershipNumber {
+        case .set(let number):
+            programme.membershipNumber = number
+            programme.maskedNumber = ProfileV3ProgrammeCatalogue.masked(number)
+        case .clear:
+            programme.membershipNumber = nil
+            programme.maskedNumber = ProfileV3ProgrammeCatalogue.masked("")
+        case nil:
+            break
+        }
+        switch edit.points {
+        case .set(let points): programme.points = Int(points) ?? programme.points
+        case .clear: programme.points = 0
+        case nil: break
+        }
+        if let tier = edit.tier {
+            programme.tier = tier == ProfileV3LoyaltyEntryForm.Field.unknownTier ? nil : tier.uppercased()
+        }
+        return programme
+    }
+}
+
 extension ProfileV3WorldPass {
+    func applying(_ edit: ProfileV3ProgrammeEdit) -> ProfileV3WorldPass {
+        var pass = self
+        pass.programmes = pass.programmes.map { $0.id == edit.programID ? $0.applying(edit) : $0 }
+        return pass
+    }
+
     func adding(_ programme: ProfileV3LoyaltyProgramme) -> ProfileV3WorldPass {
         var pass = self
         pass.programmes.append(programme)
@@ -412,6 +462,10 @@ extension ProfileV3Home {
 
     func removingProgramme(id programmeID: String, fromPassID passID: String) -> ProfileV3Home {
         replacing(worldPasses: worldPasses.map { $0.id == passID ? $0.removing(programmeID: programmeID) : $0 })
+    }
+
+    func editingProgramme(_ edit: ProfileV3ProgrammeEdit, inPassID passID: String) -> ProfileV3Home {
+        replacing(worldPasses: worldPasses.map { $0.id == passID ? $0.applying(edit) : $0 })
     }
 
     func withKYCStatus(_ status: ProfileV3KYCStatus, forPassID passID: String, appliesToHome: Bool) -> ProfileV3Home {

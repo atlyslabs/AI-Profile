@@ -24,6 +24,7 @@ enum ProfileV3Vector: String {
     case swipeVertical = "profile_v3_swipe_vertical"
     case mobileCheck = "profile_v3_mobile_check"
     case iosShare = "profile_v3_ios_share"
+    case delete = "profile_v3_delete"
 
     var image: Image {
         Image(rawValue, bundle: self == .whatsApp ? .main : .module)

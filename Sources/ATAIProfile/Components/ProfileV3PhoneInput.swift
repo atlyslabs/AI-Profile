@@ -87,24 +87,33 @@ struct ProfileV3PickerField: View {
         VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s12) {
             ProfileV3FieldLabel(text: label)
             Button(action: action) {
-                HStack(spacing: ProfileV3Theme.Space.s12) {
-                    ProfileV3CountryFlag(isoCode: flagCode, size: ProfileV3Theme.Sizes.Contact.dialFlag)
-                    Text(value ?? ProfileV3Strings.selectPlaceholder)
-                        .typoGraphy(.B1InterMedium14)
-                        .foregroundStyle(value == nil ? Color(at: .neutralGrey200) : Color(at: .pureBlack))
-                    Spacer(minLength: 0)
-                    ATIcon.SwiftUIImage.expandMore
-                        .profileV3Icon(ProfileV3Theme.Icon.md)
-                        .foregroundStyle(Color(at: .neutralGrey400))
-                }
-                .padding(.bottom, ProfileV3Theme.Space.s8)
-                .atFormFieldBottomLine(isError: false, isFocused: false, style: .dashed, tintsOnFocus: false)
-                .contentShape(Rectangle())
+                ProfileV3PickerFieldRow(value: value, flagCode: flagCode)
             }
             .buttonStyle(.profileV3Pressable)
             .accessibilityLabel(label)
             .accessibilityValue(value ?? "")
         }
+    }
+}
+
+struct ProfileV3PickerFieldRow: View {
+    let value: String?
+    var flagCode: String?
+
+    var body: some View {
+        HStack(spacing: ProfileV3Theme.Space.s12) {
+            ProfileV3CountryFlag(isoCode: flagCode, size: ProfileV3Theme.Sizes.Contact.dialFlag)
+            Text(value ?? ProfileV3Strings.selectPlaceholder)
+                .typoGraphy(.B1InterMedium14)
+                .foregroundStyle(value == nil ? Color(at: .neutralGrey200) : Color(at: .pureBlack))
+            Spacer(minLength: 0)
+            ATIcon.SwiftUIImage.expandMore
+                .profileV3Icon(ProfileV3Theme.Icon.md)
+                .foregroundStyle(Color(at: .neutralGrey400))
+        }
+        .padding(.bottom, ProfileV3Theme.Space.s8)
+        .atFormFieldBottomLine(isError: false, isFocused: false, style: .dashed, tintsOnFocus: false)
+        .contentShape(Rectangle())
     }
 }
 

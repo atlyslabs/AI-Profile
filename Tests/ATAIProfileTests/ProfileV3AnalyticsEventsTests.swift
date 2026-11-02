@@ -128,7 +128,7 @@ struct ProfileV3AnalyticsEventsTests {
             #expect(details["points"] as? Int == 1200)
             #expect(details["membership_number"] == nil)
             while viewModel.isSaving { try await Task.sleep(for: .milliseconds(10)) }
-            #expect(viewModel.didAdd)
+            #expect(viewModel.didSave)
             #expect(recorder.named("profile_programme_selected").isEmpty)
             #expect(recorder.named("profile_programme_added").isEmpty)
             viewModel.close()

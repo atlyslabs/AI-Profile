@@ -54,8 +54,15 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     }
     @Published var membershipNumber = ""
     @Published var points = ""
+    @Published var tier = ""
+    @Published var tierValidUntil = "" {
+        didSet {
+            let formatted = ProfileV3MonthYear.formatted(tierValidUntil)
+            if formatted != tierValidUntil { tierValidUntil = formatted }
+        }
+    }
     @Published private(set) var isSaving = false
-    @Published private(set) var didAdd = false
+    @Published private(set) var didSave = false
     @Published private(set) var entryForm: ProfileV3LoyaltyEntryForm?
     @Published private(set) var entryFormFailed = false
     @Published private(set) var saveError: String?
@@ -66,7 +73,8 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     private let profileID: String?
     private let repository: any ProfileV3LoyaltyRepository
     private let selections: ProfileV3ProgrammeSelectionMemory?
-    private let onAdded: () -> Void
+    private let editing: ProfileV3LoyaltyProgramme?
+    private let onSaved: () -> Void
     private var scanTask: Task<Void, Never>?
     private var entryTask: Task<Void, Never>?
     private var submitTask: Task<Void, Never>?
@@ -89,7 +97,8 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
         self.profileID = profileID
         self.repository = repository
         self.selections = selections
-        self.onAdded = onAdded
+        editing = nil
+        onSaved = onAdded
         if requiresKYC {
             stage = .kycRequired
         } else if ProfileV3FeatureFlags.isProgrammeScanLoaderEnabled {
@@ -100,6 +109,23 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
         }
         selectedItemID = profileID.flatMap { selections?.itemID(for: $0) }
     }
+
+    init(
+        editing programme: ProfileV3LoyaltyProgramme,
+        profileID: String,
+        repository: any ProfileV3LoyaltyRepository,
+        onSaved: @escaping () -> Void = {}
+    ) {
+        requiresKYC = false
+        self.profileID = profileID
+        self.repository = repository
+        selections = nil
+        editing = programme
+        self.onSaved = onSaved
+        stage = .details
+    }
+
+    var isEditingProgramme: Bool { editing != nil }
 
     var showsCloseButton: Bool {
         switch stage {
@@ -127,24 +153,100 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     }
 
     var entryFields: [ProfileV3LoyaltyEntryForm.Field] {
-        (entryForm?.fields ?? []).filter { $0.key == Field.membershipNumberKey || $0.key == Field.pointsKey }
+        let fields = entryForm?.fields ?? []
+        let offersTier = fields.contains { $0.key == Field.tierKey && !$0.options.isEmpty }
+        return fields.filter { field in
+            switch field.key {
+            case Field.membershipNumberKey, Field.pointsKey: return true
+            case Field.tierKey, Field.tierValidUntilKey: return offersTier
+            default: return false
+            }
+        }
+    }
+
+    var tierValidUntilError: String? {
+        guard let validUntil = tierSubmission.validUntil, ProfileV3MonthYear.isComplete(validUntil),
+              !ProfileV3MonthYear.isCurrentOrLater(validUntil) else { return nil }
+        return ProfileV3Strings.tierValidUntilInvalid
+    }
+
+    var detailsName: String {
+        editing?.name ?? selectedItem?.name ?? ""
+    }
+
+    var submitTitle: String {
+        guard editing != nil else { return ProfileV3Strings.continueTitle }
+        return entryForm?.submitLabel ?? ProfileV3Strings.saveChanges
     }
 
     var canSubmit: Bool {
         guard entryForm != nil, !isSaving else { return false }
-        return entryFields.allSatisfy { !$0.isRequired || !value(for: $0.key).isEmpty }
+        guard entryFields.allSatisfy({ !$0.isRequired || !value(for: $0.key).isEmpty }) else { return false }
+        guard tierSubmission.validUntil.map({ ProfileV3MonthYear.isCurrentOrLater($0) }) ?? true else { return false }
+        return editing == nil || pendingEdit?.hasChanges == true
     }
 
     private typealias Field = ProfileV3LoyaltyEntryForm.Field
 
     private func value(for key: String) -> String {
-        let raw = key == Field.pointsKey ? points : membershipNumber
+        let raw: String
+        switch key {
+        case Field.pointsKey: raw = points
+        case Field.tierKey: raw = tier
+        case Field.tierValidUntilKey: raw = tierValidUntil
+        default: raw = membershipNumber
+        }
         return raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var tierSubmission: (tier: String?, validUntil: String?) {
+        guard entryFields.contains(where: { $0.key == Field.tierKey }) else { return (nil, nil) }
+        let picked = value(for: Field.tierKey)
+        let validUntil = value(for: Field.tierValidUntilKey)
+        let picksTier = !picked.isEmpty && picked != Field.unknownTier
+        if editing != nil, let form = entryForm {
+            let savedTier = form.field(Field.tierKey)?.value ?? ""
+            let savedValidUntil = form.field(Field.tierValidUntilKey)?.value ?? ""
+            guard picked != savedTier || validUntil != savedValidUntil else { return (nil, nil) }
+            guard picksTier else { return (picked != savedTier ? picked.nonEmpty : nil, nil) }
+        } else if !picksTier {
+            return (picked.nonEmpty, nil)
+        }
+        return (picked, validUntil.nonEmpty)
+    }
+
+    private var pendingEdit: ProfileV3ProgrammeEdit? {
+        guard let editing, let form = entryForm else { return nil }
+        let tierFields = tierSubmission
+        return ProfileV3ProgrammeEdit(
+            programID: form.programID,
+            programName: form.programName ?? editing.name,
+            kind: form.kind ?? editing.category.flatMap(ProfileV3LoyaltyMapper.kind(for:)),
+            membershipNumber: change(for: Field.membershipNumberKey, in: form),
+            points: change(for: Field.pointsKey, in: form),
+            tier: tierFields.tier,
+            tierValidUntil: tierFields.validUntil
+        )
+    }
+
+    private func change(for key: String, in form: ProfileV3LoyaltyEntryForm) -> ProfileV3ProgrammeEdit.Change? {
+        guard entryFields.contains(where: { $0.key == key }) else { return nil }
+        let current = value(for: key)
+        let saved = (form.field(key)?.value ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard current != saved else { return nil }
+        guard key == Field.pointsKey else { return current.isEmpty ? .clear : .set(current) }
+        let digits = current.filter(\.isNumber)
+        guard !digits.isEmpty else { return .clear }
+        return Int(digits).map { .set(String($0)) }
     }
 
     func start() async {
         guard !hasStarted else { return }
         hasStarted = true
+        if let editing {
+            loadEditForm(for: editing)
+            return
+        }
         ProfileV3Analytics.screen(.addProgramme)
         if requiresKYC {
             setStage(.kycRequired)
@@ -301,20 +403,35 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     }
 
     private func loadEntryForm(for item: ProfileV3ProgrammeCatalogueItem) {
+        let (programID, programName) = (item.id, item.name)
+        let kind = ProfileV3LoyaltyMapper.kind(for: item.category)
+        loadForm { try await $0.loadLoyaltyEntry(programID: programID, programName: programName, kind: kind) }
+    }
+
+    private func loadEditForm(for programme: ProfileV3LoyaltyProgramme) {
+        let (programID, profileID) = (programme.id, profileID)
+        loadForm { try await $0.loadProgrammeEdit(programID: programID, profileID: profileID) }
+    }
+
+    private func loadForm(
+        _ fetch: @escaping @Sendable (any ProfileV3LoyaltyRepository) async throws -> ProfileV3LoyaltyEntryForm
+    ) {
         entryTask?.cancel()
         entryForm = nil
         entryFormFailed = false
         membershipNumber = ""
         points = ""
+        tier = ""
+        tierValidUntil = ""
         entryTask = Task { [weak self] in
             guard let self else { return }
             do {
-                let form = try await repository.loadLoyaltyEntry(
-                    programID: item.id,
-                    programName: item.name,
-                    kind: ProfileV3LoyaltyMapper.kind(for: item.category)
-                )
+                let form = try await fetch(repository)
                 guard !Task.isCancelled else { return }
+                membershipNumber = form.field(Field.membershipNumberKey)?.value ?? ""
+                points = form.field(Field.pointsKey)?.value ?? ""
+                tier = form.field(Field.tierKey)?.value ?? ""
+                tierValidUntil = form.field(Field.tierValidUntilKey)?.value ?? ""
                 entryForm = form
             } catch {
                 guard !Task.isCancelled else { return }
@@ -324,6 +441,10 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     }
 
     func retryEntryForm() {
+        if let editing {
+            loadEditForm(for: editing)
+            return
+        }
         guard let item = selectedItem else { return }
         loadEntryForm(for: item)
     }
@@ -334,14 +455,21 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     }
 
     func submit() {
+        guard editing == nil else {
+            saveEdit()
+            return
+        }
         guard let item = selectedItem, canSubmit, submitTask == nil else { return }
         isSaving = true
         saveError = nil
         let keys = Set(entryFields.map(\.key))
+        let tierFields = tierSubmission
         let submission = ProfileV3ProgrammeSubmission(
             item: item,
             membershipNumber: keys.contains(Field.membershipNumberKey) ? value(for: Field.membershipNumberKey) : nil,
-            points: keys.contains(Field.pointsKey) ? Int(points.filter(\.isNumber)) : nil
+            points: keys.contains(Field.pointsKey) ? Int(points.filter(\.isNumber)) : nil,
+            tier: tierFields.tier,
+            tierValidUntil: tierFields.validUntil
         )
         ProfileV3Analytics.cardDetailsEntered(travellerId: profileID, submission: submission)
         submitTask = Task { [weak self] in
@@ -353,14 +481,37 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
             do {
                 try await repository.addProgramme(submission, profileID: profileID)
                 if let profileID { selections?.remember(nil, for: profileID) }
-                didAdd = true
-                onAdded()
+                didSave = true
+                onSaved()
                 router?.dismissAddProgramme()
             } catch is CancellationError {
                 return
             } catch {
                 ProfileV3Analytics.programmeAddFailed(itemId: item.id, error: error)
                 saveError = ProfileV3Strings.addProgrammeFailed
+            }
+        }
+    }
+
+    private func saveEdit() {
+        guard let edit = pendingEdit, canSubmit, submitTask == nil else { return }
+        isSaving = true
+        saveError = nil
+        submitTask = Task { [weak self] in
+            guard let self else { return }
+            defer {
+                isSaving = false
+                submitTask = nil
+            }
+            do {
+                try await repository.editProgramme(edit, profileID: profileID)
+                didSave = true
+                onSaved()
+                router?.dismissAddProgramme()
+            } catch is CancellationError {
+                return
+            } catch {
+                saveError = ProfileV3Strings.saveFailed
             }
         }
     }

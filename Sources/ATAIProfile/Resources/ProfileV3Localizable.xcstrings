@@ -685,66 +685,6 @@
         }
       }
     },
-    "mo-aiprofile-agent-settings-ask-for-actions": {
-      "comment": "Configuration option for AI agent action behavior.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ask for some actions"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-agent-settings-before-action-description": {
-      "comment": "Description for the always-ask configuration setting.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Before any action"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-agent-settings-connector-defaults": {
-      "comment": "Settings category for default connector configurations.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connector defaults"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-agent-settings-permission-description": {
-      "comment": "Explanation of access permission levels for AI agents.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You can give read only or read and write access"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-agent-settings-web-access-defaults": {
-      "comment": "Settings category for default web access configurations.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Web access defaults"
-          }
-        }
-      }
-    },
     "mo-aiprofile-agent-settings-when-needed": {
       "comment": "Configuration option for AI agent to do an action only when needed.",
       "extractionState": "manual",
@@ -841,18 +781,6 @@
         }
       }
     },
-    "mo-aiprofile-agents-button-custom-rule": {
-      "comment": "Floating button on an agent form that opens the custom rule editor.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Custom"
-          }
-        }
-      }
-    },
     "mo-aiprofile-agents-button-delete-credentials": {
       "comment": "Saved login row that deletes the stored credentials.",
       "extractionState": "manual",
@@ -909,18 +837,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Other website"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-agents-button-save-rule": {
-      "comment": "Button that saves a new custom rule.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save"
           }
         }
       }
@@ -1513,18 +1429,6 @@
         }
       }
     },
-    "mo-aiprofile-agents-label-rule-note": {
-      "comment": "Label at the top of the custom rule note card.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Note"
-          }
-        }
-      }
-    },
     "mo-aiprofile-agents-label-username": {
       "comment": "Label of the field that asks for an Instagram username.",
       "extractionState": "manual",
@@ -1705,18 +1609,6 @@
         }
       }
     },
-    "mo-aiprofile-agents-title-add-rule": {
-      "comment": "Title of the custom rule editor when adding a rule.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add a rule"
-          }
-        }
-      }
-    },
     "mo-aiprofile-agents-title-add-username": {
       "comment": "Title of the sheet that asks for an Instagram username.",
       "extractionState": "manual",
@@ -1737,30 +1629,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Connectors"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-agents-title-custom-rules": {
-      "comment": "Agent form section listing the traveler's custom rules.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Custom rules"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-agents-title-edit-rule": {
-      "comment": "Title of the custom rule editor when editing a rule.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Edit a rule"
           }
         }
       }
@@ -1837,18 +1705,6 @@
         }
       }
     },
-    "mo-aiprofile-agents-title-traveler-profile": {
-      "comment": "Travel persona loader card title.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Traveler profile"
-          }
-        }
-      }
-    },
     "mo-aiprofile-agents-toast-credentials-updated": {
       "comment": "Toast after saving edited credentials.",
       "extractionState": "manual",
@@ -1857,18 +1713,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Credentials updated"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-agents-toast-custom-rule-saved": {
-      "comment": "Confirmation after a custom rule is saved.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Custom rule saved"
           }
         }
       }
@@ -1933,18 +1777,6 @@
         }
       }
     },
-    "mo-aiprofile-documents-button-upload": {
-      "comment": "Generic upload action button.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Upload"
-          }
-        }
-      }
-    },
     "mo-aiprofile-documents-button-upload-new-passport": {
       "comment": "Action button to initiate uploading a new passport.",
       "extractionState": "manual",
@@ -1953,18 +1785,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Upload new passport"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-documents-button-upload-passport": {
-      "comment": "Action button to initiate passport upload.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Upload passport"
           }
         }
       }
@@ -2241,18 +2061,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "How this is"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-documents-text-upload-blurb-start": {
-      "comment": "Marketing or instructional blurb explaining the benefits of uploading a passport.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your details are ready whenever you need a visa. No forms, no re-entering information, no repeating yourself."
           }
         }
       }
@@ -3793,54 +3601,6 @@
         }
       }
     },
-    "mo-aiprofile-glovebox-sample-email-hotel-note": {
-      "comment": "Agent's note in the second sample glove box email.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your stay qualifies for a free room upgrade. Want me to accept it?"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-glovebox-sample-email-hotel-sender": {
-      "comment": "Sender of the second sample glove box email.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marriott Dubai"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-glovebox-sample-email-hotel-status": {
-      "comment": "Status line of the second sample glove box email.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Added to trip"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-glovebox-sample-email-hotel-subject": {
-      "comment": "Subject of the second sample glove box email.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Free upgrade available"
-          }
-        }
-      }
-    },
     "mo-aiprofile-glovebox-sample-transaction-note": {
       "comment": "Agent's note on the sample virtual card transaction.",
       "extractionState": "manual",
@@ -4177,18 +3937,6 @@
         }
       }
     },
-    "mo-aiprofile-loyalty-button-done-editing": {
-      "comment": "Button to exit edit mode.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Done editing"
-          }
-        }
-      }
-    },
     "mo-aiprofile-loyalty-button-edit-programs": {
       "comment": "Action button to edit connected programs.",
       "extractionState": "manual",
@@ -4221,18 +3969,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Redeem"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-loyalty-button-remove-program": {
-      "comment": "Action button to remove a program from the list.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remove"
           }
         }
       }
@@ -4513,6 +4249,18 @@
         }
       }
     },
+    "mo-aiprofile-loyalty-error-tier-valid-until-invalid": {
+      "comment": "Shown under the tier valid-until field when the month is unreadable or already past.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the month as MM/YY, this month or later."
+          }
+        }
+      }
+    },
     "mo-aiprofile-loyalty-found-programs-line-one": {
       "comment": "Scanning progress line, singular.",
       "extractionState": "manual",
@@ -4629,18 +4377,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Connect your"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-loyalty-label-estimated-value": {
-      "comment": "Label for estimated monetary value of points.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Est. value"
           }
         }
       }

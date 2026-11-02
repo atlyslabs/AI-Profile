@@ -138,13 +138,13 @@ private struct ProfileV3AIConnectorDetailContent: View {
         }
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
-        .padding(.bottom, Layout.bottom)
+        .padding(.bottom, Layout.detailBottom)
     }
 
     @ViewBuilder
     private func cta(_ detail: ProfileV3AIConnector) -> some View {
         if !detail.ctaLabel.isEmpty {
-            ProfileV3SaveBar {
+            ProfileV3SaveBar(reservesFade: false) {
                 ProfileV3ContinueButton(
                     title: detail.ctaLabel,
                     tint: Color(at: .pureWhite),
@@ -356,10 +356,25 @@ private struct ProfileV3AIConnectorStepView: View {
 
     private func promptCard(_ prompt: ProfileV3AIConnectorConnect.Prompt) -> some View {
         ZStack(alignment: .topLeading) {
-            copyText(prompt.text)
-                .padding(.horizontal, Layout.cardPadding)
-                .padding(.top, Layout.cardPadding)
-                .accessibilityLabel(prompt.text)
+            ScrollView(.vertical) {
+                copyText(prompt.text)
+                    .padding(.horizontal, Layout.cardPadding)
+                    .padding(.top, Layout.cardPadding)
+                    .padding(.bottom, Layout.promptFadeHeight)
+                    .accessibilityLabel(prompt.text)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            .frame(height: Layout.promptScrollHeight)
+            .mask {
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: Layout.cardPadding / Layout.promptScrollHeight)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
             VStack(spacing: 0) {
                 ProfileV3Theme.aiConnectorPromptFade
                     .frame(height: Layout.promptFadeHeight)

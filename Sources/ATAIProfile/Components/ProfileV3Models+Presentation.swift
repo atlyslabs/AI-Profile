@@ -64,6 +64,8 @@ extension ProfileV3SliderField {
         switch format {
         case .unit(let unit):
             return (ProfileV3Strings.unitValue(Int(value.rounded()), unit: unit), nil)
+        case .money(let symbol, let unit):
+            return (Self.money(value, symbol: symbol) + unit, nil)
         case .feetAndInches:
             let total = Int(value.rounded())
             let inchesPerFoot = Int(ProfileV3Theme.Measure.inchesPerFoot)
@@ -86,6 +88,25 @@ extension ProfileV3SliderField {
         case nil:
             return nil
         }
+    }
+
+    static func money(_ value: Double, symbol: String) -> String {
+        let amount = compactAmount(value)
+        guard let last = symbol.last else { return amount }
+        return last.isLetter ? "\(symbol) \(amount)" : symbol + amount
+    }
+
+    static func compactAmount(_ value: Double) -> String {
+        let scales: [(size: Double, suffix: String)] = [(1_000_000_000, "B"), (1_000_000, "M"), (1_000, "K")]
+        for scale in scales where abs(value) >= scale.size {
+            return oneDecimal(value / scale.size) + scale.suffix
+        }
+        return oneDecimal(value)
+    }
+
+    private static func oneDecimal(_ value: Double) -> String {
+        let tenths = (value * 10).rounded() / 10
+        return tenths == tenths.rounded() ? String(Int(tenths)) : String(format: "%.1f", tenths)
     }
 
     func previewing(_ value: Double?) -> ProfileV3SliderField {

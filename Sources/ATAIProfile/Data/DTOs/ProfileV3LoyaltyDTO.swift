@@ -63,10 +63,10 @@ struct ProfileV3LoyaltyPickScreenDTO: Decodable, Equatable {
 
 struct ProfileV3LoyaltyMarketDTO: Decodable, Equatable {
     let selected: String?
-    private let rawOptions: [ProfileV3LossyDTO<ProfileV3LoyaltyMarketOptionDTO>]?
+    private let rawOptions: [ProfileV3LossyDTO<ProfileV3LoyaltyOptionDTO>]?
     private let rawChips: [ProfileV3LossyDTO<String>]?
 
-    var options: [ProfileV3LoyaltyMarketOptionDTO] { rawOptions?.compactMap(\.value) ?? [] }
+    var options: [ProfileV3LoyaltyOptionDTO] { rawOptions?.compactMap(\.value) ?? [] }
     var chips: [String] { rawChips?.compactMap(\.value) ?? [] }
 
     enum CodingKeys: String, CodingKey {
@@ -78,12 +78,12 @@ struct ProfileV3LoyaltyMarketDTO: Decodable, Equatable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         selected = container.lenientString(forKey: .selected)
-        rawOptions = try? container.decodeIfPresent([ProfileV3LossyDTO<ProfileV3LoyaltyMarketOptionDTO>].self, forKey: .rawOptions)
+        rawOptions = try? container.decodeIfPresent([ProfileV3LossyDTO<ProfileV3LoyaltyOptionDTO>].self, forKey: .rawOptions)
         rawChips = try? container.decodeIfPresent([ProfileV3LossyDTO<String>].self, forKey: .rawChips)
     }
 }
 
-struct ProfileV3LoyaltyMarketOptionDTO: Decodable, Equatable {
+struct ProfileV3LoyaltyOptionDTO: Decodable, Equatable {
     let value: String?
     let label: String?
 }
@@ -93,6 +93,32 @@ struct ProfileV3LoyaltyFieldDTO: Decodable, Equatable {
     let label: String?
     let required: Bool?
     let input: String?
+    let value: String?
+    let placeholder: String?
+    private let rawOptions: [ProfileV3LossyDTO<ProfileV3LoyaltyOptionDTO>]?
+
+    var options: [ProfileV3LoyaltyOptionDTO] { rawOptions?.compactMap(\.value) ?? [] }
+
+    enum CodingKeys: String, CodingKey {
+        case key
+        case label
+        case required
+        case input
+        case value
+        case placeholder
+        case rawOptions = "options"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        key = try container.decode(String.self, forKey: .key)
+        label = try container.decodeIfPresent(String.self, forKey: .label)
+        required = try container.decodeIfPresent(Bool.self, forKey: .required)
+        input = try container.decodeIfPresent(String.self, forKey: .input)
+        value = container.lenientString(forKey: .value)
+        placeholder = container.lenientString(forKey: .placeholder)
+        rawOptions = try? container.decodeIfPresent([ProfileV3LossyDTO<ProfileV3LoyaltyOptionDTO>].self, forKey: .rawOptions)
+    }
 }
 
 struct ProfileV3LoyaltySubmitDTO: Decodable, Equatable {
@@ -201,6 +227,8 @@ struct ProfileV3AddLoyaltyProgrammeRequest: Encodable, Equatable {
     let kind: String?
     let membershipNumber: String?
     let points: String?
+    let tier: String?
+    let tierValidUntil: String?
 
     enum CodingKeys: String, CodingKey {
         case action
@@ -210,5 +238,41 @@ struct ProfileV3AddLoyaltyProgrammeRequest: Encodable, Equatable {
         case kind
         case membershipNumber = "membership_number"
         case points
+        case tier
+        case tierValidUntil = "tier_valid_until"
+    }
+}
+
+struct ProfileV3EditLoyaltyProgrammeRequest: Encodable, Equatable {
+    let action = "edit_loyalty_program"
+    let programID: String
+    let profileID: String
+    let programName: String?
+    let kind: String?
+    let membershipNumber: ProfileV3ProgrammeEdit.Change?
+    let points: ProfileV3ProgrammeEdit.Change?
+    let tier: String?
+    let tierValidUntil: String?
+
+    enum CodingKeys: String, CodingKey {
+        case action
+        case programID = "program_id"
+        case profileID = "profile_id"
+        case programName = "program_name"
+        case kind
+        case membershipNumber = "membership_number"
+        case points
+        case tier
+        case tierValidUntil = "tier_valid_until"
+    }
+}
+
+extension ProfileV3ProgrammeEdit.Change: Encodable {
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .set(let value): try container.encode(value)
+        case .clear: try container.encodeNil()
+        }
     }
 }

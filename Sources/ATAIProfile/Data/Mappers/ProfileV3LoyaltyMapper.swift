@@ -71,10 +71,22 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
                 ProfileV3LoyaltyEntryForm.Field(
                     key: field.key,
                     label: text(field.label) ?? "",
-                    isRequired: field.required ?? false
+                    isRequired: field.required ?? false,
+                    value: text(field.value),
+                    placeholder: text(field.placeholder),
+                    options: options(field.options)
                 )
             }
         )
+    }
+
+    private static func options(_ dtos: [ProfileV3LoyaltyOptionDTO]) -> [ProfileV3LoyaltyEntryForm.Field.Option] {
+        var seen = Set<String>()
+        return dtos.compactMap { option in
+            guard let value = text(option.value), let label = text(option.label),
+                  seen.insert(value).inserted else { return nil }
+            return ProfileV3LoyaltyEntryForm.Field.Option(value: value, label: label)
+        }
     }
 
     static func insight(_ dto: ProfileV3ProgrammeInsightScreenDTO) -> ProfileV3ProgrammeInsight {
@@ -144,7 +156,25 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
             programName: submission.item.name,
             kind: kind ?? self.kind(for: submission.item.category),
             membershipNumber: text(submission.membershipNumber),
-            points: submission.points.map(String.init)
+            points: submission.points.map(String.init),
+            tier: text(submission.tier),
+            tierValidUntil: text(submission.tierValidUntil)
+        )
+    }
+
+    static func editProgrammeRequest(
+        _ edit: ProfileV3ProgrammeEdit,
+        profileID: String
+    ) -> ProfileV3EditLoyaltyProgrammeRequest {
+        ProfileV3EditLoyaltyProgrammeRequest(
+            programID: edit.programID,
+            profileID: profileID,
+            programName: text(edit.programName),
+            kind: text(edit.kind),
+            membershipNumber: edit.membershipNumber,
+            points: edit.points,
+            tier: text(edit.tier),
+            tierValidUntil: text(edit.tierValidUntil)
         )
     }
 

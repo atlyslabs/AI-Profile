@@ -38,6 +38,8 @@ enum ProfileV3APIErrorMapper {
             )
         case 502, 503, 504:
             return ProfileV3Error.transient(message: message)
+        case 500 where parsed?.code == nil:
+            return ProfileV3Error.server(code: nil, message: nil)
         default:
             if let message {
                 return ProfileV3Error.server(code: parsed?.code, message: message)

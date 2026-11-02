@@ -44,9 +44,11 @@ struct ProfileV3InstagramConnectSheet: View {
             Color(at: .pureWhite)
             switch model.step {
             case .explainer:
-                ProfileV3RainbowGlow(diameter: Layout.wash)
-                    .opacity(ProfileV3Theme.Opacity.aiConnectorWash)
-                    .offset(y: Layout.washCentreY - Layout.wash / 2)
+                ProfileV3Theme.instagramExplainerWash
+                    .frame(width: Layout.explainerWash.width, height: Layout.explainerWash.height)
+                    .opacity(ProfileV3Theme.Opacity.instagramExplainerWash)
+                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    .offset(y: Layout.explainerWashTop)
             case .redirect:
                 ProfileV3Theme.instagramFollowWash
                     .frame(height: Layout.followWashHeight)

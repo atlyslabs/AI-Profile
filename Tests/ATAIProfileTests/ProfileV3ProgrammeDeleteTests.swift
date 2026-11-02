@@ -155,6 +155,7 @@ private final class ProgrammesRouterSpy: ProfileV3ProgrammesRouter {
     func goBack() { wentBack += 1 }
     func openInsight(for _: ProfileV3LoyaltyProgramme) {}
     func openAddProgramme() {}
+    func openEditProgramme(_: ProfileV3LoyaltyProgramme) {}
     func openInsightAction(_: ProfileV3Directive) {}
     func programmesChanged() { changes += 1 }
     func passChanged(to _: ProfileV3WorldPass) {}
@@ -193,6 +194,14 @@ private actor RemovalStub: ProfileV3LoyaltyRepository {
 
     func addProgramme(_ submission: ProfileV3ProgrammeSubmission, profileID: String?) async throws {
         try await mock.addProgramme(submission, profileID: profileID)
+    }
+
+    func loadProgrammeEdit(programID: String, profileID: String?) async throws -> ProfileV3LoyaltyEntryForm {
+        try await mock.loadProgrammeEdit(programID: programID, profileID: profileID)
+    }
+
+    func editProgramme(_ edit: ProfileV3ProgrammeEdit, profileID: String?) async throws {
+        try await mock.editProgramme(edit, profileID: profileID)
     }
 
     func loadProgrammes(passID: String) async throws -> ProfileV3ProgrammeOverview {

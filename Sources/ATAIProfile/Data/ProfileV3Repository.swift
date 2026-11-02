@@ -9,6 +9,7 @@ protocol ProfileV3BoardRepository: Sendable {
     func loadBoard() async throws -> ProfileV3Board
     func loadLatestBoard() async throws -> ProfileV3Board
     @MainActor func cachedBoard() -> ProfileV3Board?
+    @MainActor func cachedBoardFetchedAt() -> Date?
     func loadBenefits(profileID: String?) async throws -> ProfileV3BenefitsSheet
     func loadBenefit(id: String) async throws -> ProfileV3Benefit?
     func redeemBenefit(id: String) async throws
@@ -47,6 +48,8 @@ protocol ProfileV3LoyaltyRepository: Sendable {
     func loadProgrammeInsight(programID: String, profileID: String?) async throws -> ProfileV3ProgrammeInsight
     func loadProgrammeSources(programID: String, profileID: String?) async throws -> ProfileV3PreferenceSources
     func addProgramme(_ submission: ProfileV3ProgrammeSubmission, profileID: String?) async throws
+    func loadProgrammeEdit(programID: String, profileID: String?) async throws -> ProfileV3LoyaltyEntryForm
+    func editProgramme(_ edit: ProfileV3ProgrammeEdit, profileID: String?) async throws
     func loadProgrammes(passID: String) async throws -> ProfileV3ProgrammeOverview
     func removeProgramme(id: String, name: String, profileID: String) async throws
     func reorderProgrammes(_ order: [String], profileID: String, action: String) async throws
@@ -169,4 +172,6 @@ extension ProfileV3BoardRepository {
     }
 
     @MainActor func cachedBoard() -> ProfileV3Board? { nil }
+
+    @MainActor func cachedBoardFetchedAt() -> Date? { nil }
 }

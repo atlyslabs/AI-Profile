@@ -35,6 +35,10 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         store.cachedBoard()
     }
 
+    @MainActor func cachedBoardFetchedAt() -> Date? {
+        store.cachedBoardFetchedAt()
+    }
+
     @MainActor private func accountCountry(for profileID: String?) -> ProfileV3Country? {
         guard profileID == nil || profileID == store.cachedBoard()?.mainProfile?.profileID else { return nil }
         return account.snapshot().passportNationality
@@ -574,6 +578,20 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         }
         let request = ProfileV3LoyaltyMapper.addProgrammeRequest(submission, profileID: profileID, kind: nil)
         try await submit(try JSONEncoder().encode(request), action: "add_loyalty_program")
+    }
+
+    func loadProgrammeEdit(programID: String, profileID: String?) async throws -> ProfileV3LoyaltyEntryForm {
+        let endpoint = ProfileV3API.loyaltyEdit(programID: programID, profileID: profileID)
+        let dto: ProfileV3LoyaltyEnterScreenDTO = try await client.request(endpoint, action: "loyalty_edit_details")
+        return ProfileV3LoyaltyMapper.entryForm(dto, programID: programID, programName: nil, kind: nil)
+    }
+
+    func editProgramme(_ edit: ProfileV3ProgrammeEdit, profileID: String?) async throws {
+        guard let profileID else {
+            throw ProfileV3Error.invalidRequest(message: nil)
+        }
+        let request = ProfileV3LoyaltyMapper.editProgrammeRequest(edit, profileID: profileID)
+        try await submit(try JSONEncoder().encode(request), action: "edit_loyalty_program")
     }
 
     func loadProgrammes(passID: String) async throws -> ProfileV3ProgrammeOverview {

@@ -305,6 +305,14 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
+    func loadProgrammeEdit(programID _: String, profileID _: String?) async throws -> ProfileV3LoyaltyEntryForm {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func editProgramme(_: ProfileV3ProgrammeEdit, profileID _: String?) async throws {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
     func startKYCCapture(steps _: [String], profileID _: String?) async throws -> ProfileV3CaptureStep? {
         throw ProfileV3RepositoryError.unavailable
     }

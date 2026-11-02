@@ -179,8 +179,12 @@ struct ProfileV3ProgrammesView: View {
         } label: {
             HStack(spacing: ProfileV3Theme.Sizes.Programmes.checkboxGap) {
                 ProfileV3CheckboxMark(isSelected: isSelected)
-                ProfileV3ProgrammeTile(programme: programme, width: tileWidth)
-                    .allowsHitTesting(false)
+                ProfileV3ProgrammeTile(
+                    programme: programme,
+                    width: tileWidth,
+                    pill: .edit,
+                    onAction: { viewModel.tapEditProgramme(programme) }
+                )
             }
             .padding(.leading, ProfileV3Theme.Sizes.Programmes.checkboxLeading)
             .frame(width: width, alignment: .leading)
@@ -190,6 +194,7 @@ struct ProfileV3ProgrammesView: View {
         .disabled(viewModel.isDeleting)
         .accessibilityLabel(programme.name)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .accessibilityAction(named: ProfileV3Strings.editProgramme) { viewModel.tapEditProgramme(programme) }
     }
 
     private func programmeList(firstOrder: Int) -> some View {

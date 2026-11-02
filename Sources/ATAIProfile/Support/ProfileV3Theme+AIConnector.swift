@@ -46,6 +46,7 @@ extension ProfileV3Theme.Sizes {
         static let promptCardHeight: CGFloat = 175
         static let promptFadeTop = ProfileV3Theme.Space.s50
         static let promptFadeHeight: CGFloat = 70
+        static let promptScrollHeight = promptFadeTop + promptFadeHeight
         static let copyTop: CGFloat = 124
         static let copyRadius = ProfileV3Theme.Radius.lg
         static let copyHorizontal: CGFloat = 18
@@ -60,6 +61,7 @@ extension ProfileV3Theme.Sizes {
         static let wash: CGFloat = 585
         static let washCentreY: CGFloat = 573.5
         static let bottom = ProfileV3Theme.Space.s40
+        static let detailBottom: CGFloat = 54
         static let revealMargin = ProfileV3Theme.Space.s16
     }
 }

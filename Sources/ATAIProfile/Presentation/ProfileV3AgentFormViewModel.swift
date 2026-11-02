@@ -345,6 +345,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         update(sectionID) { section in
             guard case .slider(var field) = section.control else { return }
             field.value = value
+            field.isSet = true
             section.control = .slider(field)
         }
         trackChange(in: sectionID)
@@ -355,6 +356,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
             guard case .slider(var field) = section.control, var optOut = field.optOut else { return }
             optOut.isOn = isOn
             field.optOut = optOut
+            if !isOn { field.isSet = true }
             section.control = .slider(field)
         }
         trackChange(in: sectionID)

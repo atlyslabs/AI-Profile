@@ -26,7 +26,7 @@ struct ProfileV3AddProgrammeView: View {
         .animation(ProfileV3Theme.Motion.contentFade, value: viewModel.stage)
         .sensoryFeedback(.impact(weight: .light), trigger: cardTaps)
         .sensoryFeedback(.impact(weight: .medium), trigger: cardContinues)
-        .sensoryFeedback(.impact(weight: .medium), trigger: viewModel.didAdd) { _, didAdd in didAdd }
+        .sensoryFeedback(.impact(weight: .medium), trigger: viewModel.didSave) { _, didSave in didSave }
         .sensoryFeedback(.impact(weight: .light), trigger: scanFoundCount) { old, new in new > old }
         .sensoryFeedback(.success, trigger: viewModel.stage) { _, stage in
             if case .found = stage { return true }
@@ -121,7 +121,7 @@ struct ProfileV3AddProgrammeView: View {
         case .pick:
             sheet(title: ProfileV3Strings.pickLoyaltyProgramme, onBack: nil) { pickContent }
         case .details:
-            sheet(title: detailsTitle, onBack: viewModel.backToPick) { detailsContent }
+            sheet(title: detailsTitle, onBack: detailsBack) { detailsContent }
         case .kycRequired:
             EmptyView()
         }
@@ -222,8 +222,10 @@ struct ProfileV3AddProgrammeView: View {
                 onBack: onBack,
                 onClose: viewModel.close
             )
-            ProfileV3StepIndicator(count: ProfileV3Theme.Counts.addProgrammeSteps, current: viewModel.stepIndex)
-                .padding(.top, ProfileV3Theme.Space.s12)
+            if !viewModel.isEditingProgramme {
+                ProfileV3StepIndicator(count: ProfileV3Theme.Counts.addProgrammeSteps, current: viewModel.stepIndex)
+                    .padding(.top, ProfileV3Theme.Space.s12)
+            }
             content()
         }
         .padding(.bottom, ProfileV3Theme.Space.s16)
@@ -379,9 +381,14 @@ struct ProfileV3AddProgrammeView: View {
         viewModel.entryForm?.title ?? ""
     }
 
+    private var detailsBack: (() -> Void)? {
+        guard !viewModel.isEditingProgramme else { return nil }
+        return viewModel.backToPick
+    }
+
     private var detailsContent: some View {
         VStack(spacing: 0) {
-            Text(viewModel.selectedItem?.name ?? "")
+            Text(viewModel.detailsName)
                 .typoGraphy(.H5InterMedium20)
                 .foregroundStyle(Color(at: .pureBlack))
                 .multilineTextAlignment(.center)
@@ -399,6 +406,7 @@ struct ProfileV3AddProgrammeView: View {
             .animation(ProfileV3Theme.Motion.contentFade, value: viewModel.entryForm)
             ctaBar(error: viewModel.saveError) {
                 ProfileV3ContinueButton(
+                    title: viewModel.submitTitle,
                     isLoading: viewModel.isSaving,
                     isEnabled: viewModel.canSubmit,
                     action: viewModel.submit
@@ -410,15 +418,37 @@ struct ProfileV3AddProgrammeView: View {
     private var entryFields: some View {
         VStack(alignment: .leading, spacing: ProfileV3Theme.Sizes.AddProgramme.fieldSpacing) {
             ForEach(viewModel.entryFields) { entry in
-                if entry.key == ProfileV3LoyaltyEntryForm.Field.pointsKey {
-                    field(label: entry.label, text: $viewModel.points, keyboard: .numberPad)
-                } else {
-                    field(label: entry.label, text: $viewModel.membershipNumber, keyboard: .asciiCapable)
-                }
+                entryField(entry)
             }
         }
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
         .padding(.top, ProfileV3Theme.Sizes.AddProgramme.fieldsTop)
+    }
+
+    @ViewBuilder
+    private func entryField(_ entry: ProfileV3LoyaltyEntryForm.Field) -> some View {
+        switch entry.key {
+        case ProfileV3LoyaltyEntryForm.Field.pointsKey:
+            field(label: entry.label, text: $viewModel.points, keyboard: .numberPad)
+        case ProfileV3LoyaltyEntryForm.Field.tierKey:
+            labelled(entry.label) {
+                ProfileV3MenuField(
+                    options: entry.options.map { ProfileV3MenuField.Option(value: $0.value, label: $0.label) },
+                    selection: $viewModel.tier,
+                    accessibilityLabel: entry.label
+                )
+            }
+        case ProfileV3LoyaltyEntryForm.Field.tierValidUntilKey:
+            field(
+                label: entry.label,
+                text: $viewModel.tierValidUntil,
+                keyboard: .numberPad,
+                placeholder: entry.placeholder,
+                error: viewModel.tierValidUntilError
+            )
+        default:
+            field(label: entry.label, text: $viewModel.membershipNumber, keyboard: .asciiCapable)
+        }
     }
 
     private var entryFormLoader: some View {
@@ -441,19 +471,35 @@ struct ProfileV3AddProgrammeView: View {
         .transition(.opacity)
     }
 
-    private func field(label: String, text: Binding<String>, keyboard: UIKeyboardType) -> some View {
+    private func field(
+        label: String,
+        text: Binding<String>,
+        keyboard: UIKeyboardType,
+        placeholder: String? = nil,
+        error: String? = nil
+    ) -> some View {
+        labelled(label) {
+            ProfileV3UnderlinedField(
+                placeholder: placeholder ?? ProfileV3Strings.typeHere,
+                accessibilityLabel: label,
+                text: text,
+                keyboard: keyboard,
+                width: nil,
+                isError: error != nil
+            )
+            if let error {
+                ProfileV3ErrorText(text: error)
+            }
+        }
+    }
+
+    private func labelled<Content: View>(_ label: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s14) {
             if !label.isEmpty {
                 ProfileV3TagLabel(text: label)
                     .accessibilityHidden(true)
             }
-            ProfileV3UnderlinedField(
-                placeholder: ProfileV3Strings.typeHere,
-                accessibilityLabel: label,
-                text: text,
-                keyboard: keyboard,
-                width: nil
-            )
+            content()
         }
     }
 
@@ -508,6 +554,17 @@ struct ProfileV3AddProgrammeView: View {
 #Preview("Add programme · save failed") {
     ProfileV3AddProgrammeView(
         viewModel: .preview(.details, membershipNumber: "739154", saveError: ProfileV3Strings.addProgrammeFailed),
+        presentation: .sheet
+    )
+}
+
+#Preview("Edit programme") {
+    ProfileV3AddProgrammeView(
+        viewModel: ProfileV3AddProgrammeViewModel(
+            editing: ProfileV3Fixtures.programmes[0],
+            profileID: ProfileV3Fixtures.worldPass.id,
+            repository: ProfileV3MockRepository()
+        ),
         presentation: .sheet
     )
 }

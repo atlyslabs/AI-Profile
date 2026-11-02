@@ -32,8 +32,26 @@ final class ProfileV3AddProgrammeSheetPresenter {
         viewModel.router = self
     }
 
+    init(
+        editing programme: ProfileV3LoyaltyProgramme,
+        profileID: String,
+        repository: any ProfileV3LoyaltyRepository,
+        onSaved: @escaping () -> Void,
+        onFinish: @escaping (ProfileV3AddProgrammeSheetPresenter) -> Void
+    ) {
+        onRedirectToKYC = {}
+        self.onFinish = onFinish
+        viewModel = ProfileV3AddProgrammeViewModel(
+            editing: programme,
+            profileID: profileID,
+            repository: repository,
+            onSaved: onSaved
+        )
+        viewModel.router = self
+    }
+
     func present(from host: UIViewController) {
-        guard ProfileV3FeatureFlags.isProgrammeScanLoaderEnabled else {
+        guard !viewModel.isEditingProgramme, ProfileV3FeatureFlags.isProgrammeScanLoaderEnabled else {
             showProgrammePicker()
             return
         }

@@ -50,12 +50,25 @@ struct ProfileV3EditField: Equatable {
 
 struct ProfileV3LoyaltyEntryForm: Equatable {
     struct Field: Identifiable, Equatable {
+        struct Option: Identifiable, Equatable {
+            let value: String
+            let label: String
+
+            var id: String { value }
+        }
+
         static let membershipNumberKey = "membership_number"
         static let pointsKey = "points"
+        static let tierKey = "tier"
+        static let tierValidUntilKey = "tier_valid_until"
+        static let unknownTier = "unknown"
 
         let key: String
         let label: String
         let isRequired: Bool
+        var value: String?
+        var placeholder: String?
+        var options: [Option] = []
 
         var id: String { key }
     }

@@ -39,6 +39,7 @@ struct ProfileV3ConfirmationView: View {
         var bodyWidth = ProfileV3Theme.Sizes.Confirmation.bodyWidth
         var buttonsTop = ProfileV3Theme.Sizes.Confirmation.buttonsTop
         var showsSubject = false
+        var iconSize = ProfileV3Theme.Icon.md
 
         static let standard = Metrics()
         static let subject = Metrics(
@@ -51,6 +52,10 @@ struct ProfileV3ConfirmationView: View {
         static let plain = Metrics(
             top: ProfileV3Theme.Sizes.Confirmation.plainTop,
             buttonsTop: ProfileV3Theme.Sizes.Confirmation.plainButtonsTop
+        )
+        static let rule = Metrics(
+            buttonsTop: ProfileV3Theme.Sizes.Confirmation.ruleButtonsTop,
+            iconSize: ProfileV3Theme.Icon.xl
         )
     }
 
@@ -98,7 +103,7 @@ struct ProfileV3ConfirmationView: View {
                     height: ProfileV3Theme.Sizes.Confirmation.iconCircle
                 )
             icon
-                .profileV3Icon(ProfileV3Theme.Icon.md)
+                .profileV3Icon(metrics.iconSize)
                 .foregroundStyle(style.glyph)
         }
         .accessibilityHidden(true)
@@ -283,13 +288,13 @@ extension ProfileV3ConfirmationView {
         onConfirm: @escaping () -> Void
     ) -> ProfileV3ConfirmationView {
         ProfileV3ConfirmationView(
-            icon: nil,
-            style: .destructive,
+            icon: ATIcon.SwiftUIImage.textSnippet,
+            style: .neutral,
             title: confirm.title,
             primaryTitle: confirm.confirmLabel,
             secondaryTitle: confirm.cancelLabel,
             isPrimaryLoading: isDeleting,
-            metrics: .plain,
+            metrics: .rule,
             onBack: onBack,
             onPrimary: onConfirm,
             onSecondary: onBack

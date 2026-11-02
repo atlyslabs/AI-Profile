@@ -199,7 +199,7 @@ private struct ProfileV3CustomRuleEditor: View {
 
     private var trash: some View {
         Button(action: model.requestDelete) {
-            ATIcon.SwiftUIImage.delete
+            ProfileV3Vector.delete.image
                 .profileV3Icon(ProfileV3Theme.Icon.xl)
                 .foregroundStyle(ProfileV3Theme.Palette.ruleTrash)
                 .frame(width: Sizes.trash, height: Sizes.trash)

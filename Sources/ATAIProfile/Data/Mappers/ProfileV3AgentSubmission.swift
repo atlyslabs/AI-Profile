@@ -150,7 +150,7 @@ enum ProfileV3AgentSubmission {
         case .cards(let field):
             return selection(field.selection, ordered: field.options.map(\.id), allowsMultiple: field.allowsMultiple)
         case .slider(let field):
-            return field.optOut?.isOn == true ? .null : .number(field.value)
+            return field.optOut?.isOn == true || !field.isSet ? .null : .number(field.value)
         case .text(let field):
             guard let contact = residuals.contacts[sectionID] else { return .string(field.value) }
             return contactValue(contact, text: field.value)
