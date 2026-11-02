@@ -1,0 +1,60 @@
+Sources/ATAIProfile/Support/ProfileV3Theme+AIConnector.swift
+  s_aca99db70bc6e3::t_7c31308484bc4a 64
+  s_aca99db70bc6e3::t_b8926dafdbbae2 49
+Sources/ATAIProfile/Support/ProfileV3Assets.swift
+  s_aca99db70bc6e3::t_2a4f9078fc46de 27
+Sources/ATAIProfile/Data/ProfileV3APIErrorMapper.swift
+  s_aca99db70bc6e3::t_987b73285c7975 41-42
+Sources/ATAIProfile/Views/ProfileV3CustomRulesViews.swift
+  s_aca99db70bc6e3::t_ab8046a90f4777 202
+Tests/ATAIProfileTests/ProfileV3InstagramConnectTests.swift
+  s_aca99db70bc6e3::t_7ced71ac95d084 1,223-230
+  s_aca99db70bc6e3::t_cec5bc17b39dff 252
+  s_aca99db70bc6e3::t_69359d95e7332d 231-232
+Sources/ATAIProfile/Support/ProfileV3Theme+Settings.swift
+  s_aca99db70bc6e3::t_dd91edd2677cc3 44
+Sources/ATAIProfile/Support/ProfileV3Theme+InstagramConnect.swift
+  s_aca99db70bc6e3::t_274d83c95f674e 7-8,63,92-97,99,103-107
+  s_aca99db70bc6e3::t_58387d42a203db 108
+Sources/ATAIProfile/Views/ProfileV3AIConnectorSheet.swift
+  s_aca99db70bc6e3::t_b8926dafdbbae2 367-377
+  s_aca99db70bc6e3::t_7c31308484bc4a 141,147,359-366
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_delete.imageset/Contents.json
+  s_aca99db70bc6e3::t_7e975ef0946fad 1-16
+CHANGELOG.md
+  s_aca99db70bc6e3::t_45060074f7f03f 86-87
+  s_aca99db70bc6e3::t_94e1caed09fdb8 67-70,75-85,88
+  s_aca99db70bc6e3::t_d42bfca733866e 71-74
+CLAUDE.md
+  s_aca99db70bc6e3::t_3c045a44ee187b 144
+  s_aca99db70bc6e3::t_8c2e69b6ca7952 229,277
+  s_aca99db70bc6e3::t_861fa6c793b94f 63
+  s_aca99db70bc6e3::t_c1f0447aa66d46 148,250
+  s_aca99db70bc6e3::t_dfc75361ebc1bb 83,205,245
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_delete.imageset/profile_v3_delete.svg
+  s_aca99db70bc6e3::t_7e975ef0946fad 1-3
+Sources/ATAIProfile/Views/ProfileV3ConfirmationView.swift
+  s_aca99db70bc6e3::t_dd91edd2677cc3 42,56-59,106,291-292,297
+Sources/ATAIProfile/Views/ProfileV3InstagramConnectSheet.swift
+  s_aca99db70bc6e3::t_274d83c95f674e 47-49,51
+  s_aca99db70bc6e3::t_4e09996506eabc 50
+Sources/ATAIProfile/Components/ProfileV3SaveBar.swift
+  s_aca99db70bc6e3::t_7c31308484bc4a 6,10-13,15-17,20-29
+  s_aca99db70bc6e3::t_19aa57fff32389 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a53e77411a8752b0ca3ab3eb29fa67f47d30961a",
+  "prompts": {},
+  "sessions": {
+    "s_aca99db70bc6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "af994f3e-966b-4461-9c19-ecffb292ed42",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
