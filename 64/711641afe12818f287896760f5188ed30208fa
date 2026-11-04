@@ -1,0 +1,49 @@
+CLAUDE.md
+  s_f0331f6a8c399e::t_b5381723ea8265 226,274
+  s_f0331f6a8c399e::t_6686c7d5c76323 196
+  s_f0331f6a8c399e::t_ef9d8e2bd89b0d 148-149,272-273,275
+Sources/ATAIProfile/ProfileV3TravelPersonaHostingController.swift
+  s_f0331f6a8c399e::t_865c35fc9dd4bc 9-10
+Tests/ATAIProfileTests/ProfileV3TravelPersonaTests.swift
+  s_f0331f6a8c399e::t_acbee10f8c875b 426-469
+CHANGELOG.md
+  s_f0331f6a8c399e::t_bede3f680a4f9b 107-111
+Sources/ATAIProfile/Data/ProfileV3HubHints.swift
+  s_f0331f6a8c399e::t_9fc5fee2b29def 66-70
+  s_f0331f6a8c399e::t_6fd04874ad84fa 79
+Sources/ATAIProfile/ProfileV3HubHostingController.swift
+  s_f0331f6a8c399e::t_8cbc7c32f0cc35 114
+  s_f0331f6a8c399e::t_692718af0c168e 110-113,115-117
+Sources/ATAIProfile/Presentation/ProfileV3HubViewModel.swift
+  s_f0331f6a8c399e::t_d15707d67dbdca 241-248
+  s_f0331f6a8c399e::t_7ef38920422d94 89
+  s_f0331f6a8c399e::t_80e178dc3bd938 130
+  s_f0331f6a8c399e::t_024b661e81d3fe 146-165
+Sources/ATAIProfile/Views/ProfileV3HubView.swift
+  s_f0331f6a8c399e::t_bcefe032dbd063 273
+Sources/ATAIProfile/ProfileV3EntryPoint.swift
+  s_f0331f6a8c399e::t_8f45c3280742db 136-137,139
+Tests/ATAIProfileTests/ProfileV3AgentBoxTests.swift
+  s_f0331f6a8c399e::t_580cc0131ff71b 172-196
+Sources/ATAIProfile/Presentation/ProfileV3TravelPersonaViewModel.swift
+  s_f0331f6a8c399e::t_8e19d965748a14 196
+  s_f0331f6a8c399e::t_41143de5a347ae 39
+  s_f0331f6a8c399e::t_525f7085a36af9 51-52,59
+  s_f0331f6a8c399e::t_b697fe04bcbaef 228-231
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "64711641afe12818f287896760f5188ed30208fa",
+  "prompts": {},
+  "sessions": {
+    "s_f0331f6a8c399e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c385155-c53a-441a-b66b-ba09894bedcb",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
