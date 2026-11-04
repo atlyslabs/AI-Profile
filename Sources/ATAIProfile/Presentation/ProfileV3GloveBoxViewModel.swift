@@ -112,17 +112,18 @@ final class ProfileV3GloveBoxViewModel: ObservableObject {
             guard let self else { return }
             defer { if !Task.isCancelled { isResolvingScreen = false } }
             do {
-                let account = try await repository.loadGloveBoxCard()
+                async let card = repository.loadGloveBoxCard()
+                let kycDone = await isKYCComplete()
+                guard !Task.isCancelled else { return }
+                guard kycDone else {
+                    show(.intro(Self.lockedIntro))
+                    return
+                }
+                let account = try await card
                 guard !Task.isCancelled else { return }
                 self.account = account
                 guard account.hasAddress else {
-                    let kycDone = await isKYCComplete()
-                    guard !Task.isCancelled else { return }
-                    if kycDone {
-                        showIntro()
-                    } else {
-                        show(.intro(Self.lockedIntro))
-                    }
+                    showIntro()
                     return
                 }
                 let page = try await repository.loadGloveBoxMessages(cursor: nil)

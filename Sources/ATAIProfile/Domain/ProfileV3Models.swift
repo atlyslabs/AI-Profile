@@ -208,6 +208,7 @@ struct ProfileV3Benefit: Identifiable, Equatable {
     var terms: String?
     var termsTitle: String?
     var iconState: String?
+    var learnMore: ProfileV3BenefitLearnMore?
 
     var isDepleted: Bool {
         guard case .partiallyRedeemed(_, _, let progress) = status else { return false }
@@ -223,6 +224,19 @@ struct ProfileV3Benefit: Identifiable, Equatable {
         var copy = self
         copy.status = status
         return copy
+    }
+}
+
+struct ProfileV3BenefitLearnMore: Equatable {
+    let label: String
+    let prompt: String
+    let directive: ProfileV3Directive
+
+    init?(label: String?, directive: ProfileV3Directive?) {
+        guard let label, let directive, case .aiChat(let prompt) = directive.route() else { return nil }
+        self.label = label
+        self.prompt = prompt
+        self.directive = directive
     }
 }
 

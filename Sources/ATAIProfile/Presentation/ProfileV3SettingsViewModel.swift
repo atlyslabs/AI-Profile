@@ -27,6 +27,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     private(set) var monogram: String?
     var isGloveBoxPresented = false
     private(set) var gloveBoxHasAddress: Bool?
+    private(set) var gloveBoxNeedsKYC = false
     @ObservationIgnored var sheetHeights: [ProfileV3SettingsDestination: CGFloat] = [:]
 
     @ObservationIgnored weak var router: (any ProfileV3SettingsRouter)? {
@@ -131,7 +132,10 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     var hasGloveBox: Bool { gloveBoxRepository != nil }
-    var showsGloveBoxActivate: Bool { gloveBoxHasAddress == false }
+    var showsGloveBoxActivate: Bool {
+        guard let gloveBoxHasAddress else { return false }
+        return !gloveBoxHasAddress || gloveBoxNeedsKYC
+    }
 
     func loadGloveBoxStatusIfNeeded() {
         guard gloveBoxHasAddress == nil, gloveBoxTask == nil else { return }
@@ -159,10 +163,13 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
 
     func isMainTravellerKYCComplete() async -> Bool {
         guard let board else { return true }
-        if let main = board.cachedBoard()?.mainProfile {
-            return main.home.kycStatus.isComplete
+        let cached = board.cachedBoard()?.mainProfile
+        if let cached, let fetchedAt = board.cachedBoardFetchedAt(),
+           Date().timeIntervalSince(fetchedAt) < ProfileV3HubViewModel.staleBoardAge {
+            return cached.home.kycStatus.isComplete
         }
-        return (try? await board.loadLatestBoard().mainProfile?.home.kycStatus.isComplete) ?? true
+        let latest = try? await board.loadLatestBoard().mainProfile
+        return (latest ?? cached)?.home.kycStatus.isComplete ?? true
     }
 
     func mainTravellerName() async -> String? {
@@ -176,10 +183,13 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         guard let gloveBoxRepository else { return }
         gloveBoxTask?.cancel()
         gloveBoxTask = Task { [weak self] in
-            let account = try? await gloveBoxRepository.loadGloveBoxCard()
+            async let card = try? gloveBoxRepository.loadGloveBoxCard()
+            let kycDone = await self?.isMainTravellerKYCComplete() ?? true
+            let account = await card
             guard let self, !Task.isCancelled else { return }
             gloveBoxTask = nil
             if let account {
+                gloveBoxNeedsKYC = !kycDone
                 gloveBoxHasAddress = account.hasAddress
             }
         }

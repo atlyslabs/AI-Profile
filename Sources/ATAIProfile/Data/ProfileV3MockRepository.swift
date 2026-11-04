@@ -422,7 +422,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
 
     func loadBenefit(id: String) async throws -> ProfileV3Benefit? {
         try await Task.sleep(for: delay)
-        return ProfileV3BenefitCatalogue.all.first { $0.id == id }
+        return ProfileV3BenefitCatalogue.all.first { $0.id == id }?.withLearnMore()
     }
 
     func redeemBenefit(id: String) async throws {

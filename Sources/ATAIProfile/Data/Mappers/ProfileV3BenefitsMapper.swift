@@ -28,7 +28,11 @@ enum ProfileV3BenefitsMapper: ProfileV3DTOReading {
             ),
             terms: text(dto.terms),
             termsTitle: text(dto.termsTitle),
-            iconState: dto.iconState
+            iconState: dto.iconState,
+            learnMore: ProfileV3BenefitLearnMore(
+                label: text(dto.learnMore?.label),
+                directive: dto.learnMore?.next.directive
+            )
         )
     }
 

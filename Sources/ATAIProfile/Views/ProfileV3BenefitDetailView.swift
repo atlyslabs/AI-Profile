@@ -5,6 +5,7 @@ struct ProfileV3BenefitDetailView: View {
     let benefit: ProfileV3Benefit
     let onClose: () -> Void
     var onRedeem: (() -> Void)?
+    var onLearnMore: (() -> Void)?
 
     private var canRedeem: Bool {
         guard !benefit.isDepleted, ProfileV3FeatureFlags.isBenefitRedeemEnabled, onRedeem != nil else {
@@ -20,6 +21,11 @@ struct ProfileV3BenefitDetailView: View {
         return (ProfileV3Strings.redeem, { onRedeem?() })
     }
 
+    private var learnMore: (title: String, action: () -> Void)? {
+        guard let learnMore = benefit.learnMore, let onLearnMore else { return nil }
+        return (learnMore.label, onLearnMore)
+    }
+
     var body: some View {
         ProfileV3OfferDetailScaffold(
             imageURL: benefit.imageURL,
@@ -28,6 +34,7 @@ struct ProfileV3BenefitDetailView: View {
             terms: benefit.terms ?? "",
             isDepleted: benefit.isDepleted,
             footer: footer,
+            learnMore: learnMore,
             onClose: onClose
         ) {
             ProfileV3BenefitMeter(status: benefit.status)
@@ -42,6 +49,10 @@ struct ProfileV3BenefitDetailView: View {
 
 #Preview("Benefit detail · partially redeemed") {
     ProfileV3BenefitDetailView(benefit: ProfileV3Fixtures.partiallyRedeemedBenefit, onClose: {}, onRedeem: {})
+}
+
+#Preview("Benefit detail · learn more") {
+    ProfileV3BenefitDetailView(benefit: ProfileV3Fixtures.learnMoreBenefit, onClose: {}, onLearnMore: {})
 }
 
 #Preview("Benefit detail · depleted") {

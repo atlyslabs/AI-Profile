@@ -31,6 +31,9 @@ struct ProfileV3BenefitDetailDTO: Decodable, Equatable {
     let progress: ProfileV3ScalarDTO?
     let percentRedeemed: ProfileV3ScalarDTO?
     let iconState: String?
+    private let rawLearnMore: ProfileV3LossyDTO<ProfileV3NavCTADTO>?
+
+    var learnMore: ProfileV3NavCTADTO? { rawLearnMore?.value }
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -44,5 +47,6 @@ struct ProfileV3BenefitDetailDTO: Decodable, Equatable {
         case progress
         case percentRedeemed = "percent_redeemed"
         case iconState = "icon_state"
+        case rawLearnMore = "learn_more"
     }
 }

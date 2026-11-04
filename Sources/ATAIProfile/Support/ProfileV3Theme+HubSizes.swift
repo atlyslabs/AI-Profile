@@ -91,6 +91,8 @@ extension ProfileV3Theme.Sizes {
         static let titleWidth: CGFloat = 211
         static let bodyWidth: CGFloat = 299
         static let meterBottom: CGFloat = 46
+        static let footerFade = ProfileV3Theme.Sizes.Save.barFadeHeight
+        static let footerBottom = ProfileV3Theme.Sizes.Save.barBottom
     }
 
     enum Collapse {

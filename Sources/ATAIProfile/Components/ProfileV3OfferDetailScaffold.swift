@@ -8,6 +8,7 @@ struct ProfileV3OfferDetailScaffold<Meter: View>: View {
     let terms: String
     let isDepleted: Bool
     let footer: (title: String, action: () -> Void)?
+    var learnMore: (title: String, action: () -> Void)?
     let onClose: () -> Void
     @ViewBuilder let meter: () -> Meter
 
@@ -57,13 +58,37 @@ struct ProfileV3OfferDetailScaffold<Meter: View>: View {
         .frame(maxWidth: .infinity)
         .onAppear { isRevealed = true }
         .safeAreaInset(edge: .bottom) {
-            if let footer {
-                ProfileV3GradientButton(title: footer.title, style: .redeem, action: footer.action)
-                    .modifier(entry(4))
-                    .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-                    .padding(.bottom, ProfileV3Theme.Space.s24)
-                    .background(Color(at: .pureWhite).ignoresSafeArea())
+            if footer != nil || learnMore != nil {
+                VStack(spacing: ProfileV3Theme.Space.s12) {
+                    if let learnMore {
+                        ProfileV3ContinueButton(title: learnMore.title, action: learnMore.action)
+                    }
+                    if let footer {
+                        ProfileV3GradientButton(title: footer.title, style: .redeem, action: footer.action)
+                    }
+                }
+                .modifier(entry(4))
+                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                .padding(.bottom, footerBottom)
+                .background(alignment: .bottom) { footerBackdrop }
             }
+        }
+    }
+
+    private var footerBottom: CGFloat {
+        learnMore == nil ? ProfileV3Theme.Space.s24 : ProfileV3Theme.Sizes.BenefitDetail.footerBottom
+    }
+
+    @ViewBuilder
+    private var footerBackdrop: some View {
+        if learnMore == nil {
+            Color(at: .pureWhite)
+                .ignoresSafeArea()
+        } else {
+            ProfileV3Theme.benefitFooterFade
+                .padding(.top, -ProfileV3Theme.Sizes.BenefitDetail.footerFade)
+                .ignoresSafeArea(edges: .bottom)
+                .allowsHitTesting(false)
         }
     }
 

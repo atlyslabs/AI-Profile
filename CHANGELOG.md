@@ -27,6 +27,14 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
     saved month. "I don't know" clears both.
   - The new key `mo-aiprofile-loyalty-error-tier-valid-until-invalid` was added by hand; add it in
     Ditto.
+- A benefit's detail shows a "Learn more" button when `GET /board/benefits/{id}` sends
+  `learn_more: {label, next: {go: "ai_chat", prompt}}` and the host opens chat
+  (`ProfileV3AppHost.opensChat`). The button shows the server's label in the footer (design
+  `5648:13079`), over a fade to light grey. A tap closes the detail (and the benefits list, if it is
+  open) and then calls `openChat(prompt:)` with the server's prompt. A missing label, a blank prompt
+  or any other `go` hides the button. The tap logs `profile_cta_clicked` with origin
+  `benefit_detail` and the benefit's id. When "Got it" or "Redeem" also shows, the two buttons
+  stack, with Learn more on top.
 
 ### Changed
 
@@ -65,6 +73,18 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   without relaunching. This refresh shows no spinner and no error.
 
 ### Fixed
+
+- A long Instagram handle no longer pushes "Send a message" onto two lines on the waiting App
+  access card. Card actions ("Send a message", "Connect", "Add email", the credentials buttons)
+  keep to one line, and the title before them is cut short with an ellipsis ("@aravindh_…").
+- QA-2007: The glove box stays locked while the main traveler's KYC isn't done, even when the
+  account already has a Glove box address. Before, only an account without an address was
+  checked, so after disconnecting the KYC email the inbox still opened. Now every open checks the
+  board's KYC alongside Jaqen's `/me` (which doesn't check KYC): without KYC it shows "Your Glove box
+  is ready to unlock" with Complete KYC and loads no emails. The check uses the cached board only
+  when it is less than a minute old and otherwise fetches the latest one. If that fetch fails, it
+  falls back to the cached board, and then to unlocked. The Settings card shows its ACTIVATE pill
+  while the glove box is locked this way too.
 
 QA-2008 (iOS profile new changes):
 

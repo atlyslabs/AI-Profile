@@ -515,6 +515,8 @@ private final class AgentRouterSpy: ProfileV3HubRouter {
     }
     func openKYC() {}
     func openBenefitKYC(_ benefit: ProfileV3Benefit) {}
+    var opensChat: Bool { false }
+    func openChat(prompt: String) {}
     func openAddTraveller() {}
 }
 

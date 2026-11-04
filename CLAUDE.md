@@ -60,7 +60,7 @@ xcrun simctl delete "$UDID"
 ```
 
 - Use a throwaway simulator, never the user's booted one. A cold build with package resolution takes about two minutes. Without `-IDEBuildingContinueBuildingAfterErrors=YES`, Xcode stops after the first failing batch.
-- Tests are swift-testing. As of 2026-11-02: 302 tests in 46 suites, 299 pass. The same three fail every run:
+- Tests are swift-testing. As of 2026-11-04: 310 tests in 47 suites, 307 pass. The same three fail every run:
   - `ProfileV3DestinationTests.theHubOpensALinkOnlyWhileItIsOnScreen` (lines 68–69): a link posted while the hub's tab is hidden still opens. Either `onDisappear` doesn't clear `isSettled` on a tab switch in a test window, or the hidden-tab guard doesn't work. Not investigated.
   - `ProfileV3OnboardingPresentationTests.theHubsOwnSurfaceRunsOnboardingOverTheTabBar` and `aFlowThatClosesItsOwnContainerIsReportedOnce`: the dismissal never completes in a window with no scene. Probably the harness, not the launcher.
 - Checking a design against Figma:
@@ -141,11 +141,11 @@ xcrun simctl delete "$UDID"
 - Analytics events (`Support/ProfileV3Analytics.swift`) follow the spec agreed on 2026-10-27: no default properties, personal data as specified. Tests record through the `@TaskLocal` `ProfileV3Analytics.scopedReporter`.
 - Session replay: views with personal data use `.postHogMask()`.
 
-## State (2026-11-02)
+## State (2026-11-04)
 
 ### Release
 
-- `master` is two commits ahead of `origin/master` (`b9e925b`, pushed outside this session): `2ad3c52` (loyalty edit and tier, hub refresh, agent fields, Ditto rebuild), then the QA-2008 fixes. `1.0.21` is on `df4009c`; nothing after it is tagged.
+- `master` is one commit ahead of `origin/master` (`a53e774`, the QA-2008 fixes): benefit Learn more, the long Instagram handle fix and QA-2007, not pushed. `a53e774` and `2ad3c52` (loyalty edit and tier, hub refresh, agent fields, Ditto rebuild) were pushed outside this session. `1.0.21` is on `df4009c`; nothing after it is tagged.
 - Tags `1.0.0` and `1.0.2`–`1.0.21` are on GitHub; `1.0.1` is local only. Tags are often cut straight from a commit with no release commit. When that happens, move the tag's "Unreleased" body into a `## <version> — <date>` section and keep only later changes under Unreleased (done for 1.0.17, 1.0.20 and 1.0.21).
 - `README.md` still says "Version 1.0.1".
 
@@ -189,6 +189,7 @@ xcrun simctl delete "$UDID"
   - The personal agent's `passport_empty` shows the placeholder card, and the passport card's `father`/`mother`/`spouse`/`address` keys feed the back page.
   - AI connectors: `settings/connectors/ai/{connector}` and its `/connect`, saved with `connect_ai_connector`. Its `synced_at` comes as Python `isoformat()` (microseconds, `+00:00`).
   - Custom rules are the agent screen's `custom_rules` field and save with the agent.
+  - Benefit detail (`GET /board/benefits/{id}`) can send `learn_more: {label, next: {go: "ai_chat", prompt}}`. Only a label with an `ai_chat` prompt is kept (`ProfileV3BenefitLearnMore`).
   - Agent fields from `vdc-k8s#23629` (deployed 2026-10-31):
     - Flight `avoid_airlines` is `multi_select_add` with the airline options.
     - Flight `time_value_per_hour` is a slider with `display: "money"`, `currency {code, symbol}` and `unit: "/hour"`. Its track follows the residence's currency, and its `value` is `null` until set.
@@ -207,11 +208,14 @@ xcrun simctl delete "$UDID"
 ### Product decisions that constrain changes
 
 - One package serves two hosts, Ayl and the Atlys app, so catalog copy shows in both. Six strings now say "Ayl".
-- App access in release lists only Instagram. Its waiting-for-a-DM card follows Figma `6595:16405`, and "Send a message" opens `https://ig.me/m/ayl.chat`.
+- App access in release lists only Instagram. Its waiting-for-a-DM card follows Figma `6595:16405`, and "Send a message" opens `https://ig.me/m/ayl.chat`. A long handle is cut short with an ellipsis so the action stays on one line (grukhs, 2026-11-04); `ProfileV3ConnectorAction` never wraps.
 - Vault:
   - Opening it with Face ID covers reveals until it is closed or the app goes to the background.
   - Saving a login only calls the API, and the sheet's fields aren't tagged as a username and password, so iOS doesn't offer to save them.
-- The glove box opens from the Settings card. Without KYC it shows the locked intro. An empty inbox shows one sample email. The virtual card shows the main traveler's short name and digits derived from the address.
+- The glove box opens from the Settings card. Without KYC it shows the locked intro, even when Jaqen already has an address (QA-2007, 2026-11-04): Jaqen's `/me` doesn't check KYC (`eligible` is always true), so the client check is the board's main-traveler `kycStatus`.
+  - `ProfileV3SettingsViewModel.isMainTravellerKYCComplete()` uses the cached board only while it is younger than `ProfileV3HubViewModel.staleBoardAge`, else `loadLatestBoard()`. A failed fetch falls back to the cached board, then to unlocked.
+  - The glove box runs that check alongside `/me` on every load. The Settings card's ACTIVATE pill shows for no address or no KYC.
+  - An empty inbox shows one sample email. The virtual card shows the main traveler's short name and digits derived from the address.
 - Travel persona: the delight loader shows for the first five loads, and a drag saves on release.
 - Loyalty edit (user's call, 2026-11-01):
   - It starts from an "Edit" pill on each card in the programmes edit mode (the delete selection), where "View insight" sits.
@@ -219,6 +223,7 @@ xcrun simctl delete "$UDID"
   - Save turns on after a change and sends only the changed fields. The tier and its month always go together, so a new tier keeps the saved month.
 - Loyalty tier fields (2026-11-01, no Figma): the dropdown is `ProfileV3MenuField`, a native `Menu` drawn with the picker field's row (`ProfileV3PickerFieldRow`, "Select" placeholder). The month field formats `MM/YY` as you type (`ProfileV3MonthYear`). A complete but unreadable or past month shows an inline error, and any bad month blocks saving, but only when the month would be sent (with a real tier; in an edit, only when the tier fields change).
   - The pill sits inside the row's selection button: the tile turns off its face's hit testing for `Pill.edit`, and VoiceOver gets an Edit action on the row.
+- Benefit Learn more (2026-11-04, Figma `5648:13079`): the detail's footer shows it only when the host opens chat. A tap closes the detail and the benefits list, then opens chat through `afterOverlaysClose`, once the hub's cover is down. With "Got it" or "Redeem" it stacks on top (no design for both).
 - Agent sliders:
   - A slider whose server value is `null` saves `null` until it is moved, or until "rather not say" is turned off (`ProfileV3SliderField.isSet`). It still shows its midpoint.
   - Money values read as symbol + compact amount + unit (`₹10K/hour`; a letter symbol gets a space: `AED 50/hour`).
@@ -243,11 +248,14 @@ xcrun simctl delete "$UDID"
 - KYC onboarding presented full screen over Ayl's tab bar.
 - Loyalty edit and tier on a device against production: that the Edit pill takes the tap rather than the row's selection button, that the tier `Menu` opens from inside the sheet window, and that a saved edit or tier shows after the reload.
 - QA-2008 fixes on a device: the AI connector prompt scrolling inside the sheet's own scroll view, and the Instagram explainer's green wash without Figma's noise.
+- Benefit Learn more in Ayl: that chat opens after the benefit cover closes, from the hub stack and from the benefits list.
+- QA-2007 against the backend: that the board reports KYC not done right after a Gmail disconnect, so the glove box locks.
 - Motion that tests can't show: the save button's entry and exit, the persona loader's haptics, the glove box entrances, the hero and globe transitions.
 
 ### Open work
 
-- QA-2008 (2026-11-02): QA-2009, -2011, -2043 and -2050 are fixed in the commit after `2ad3c52`, not yet pushed or tagged. QA-2042 needs snapmap migration 043 on the environment QA tested; the app now shows client copy for that 500.
+- QA-2007 (glove box KYC lock) is fixed in the commit after `a53e774`, not pushed or tagged.
+- QA-2008 (2026-11-02): QA-2009, -2011, -2043 and -2050 are fixed in `a53e774` (pushed, not tagged). QA-2042 needs snapmap migration 043 on the environment QA tested; the app now shows client copy for that 500.
 - vdcios integration:
   - Pin a version instead of `branch: master`.
   - Check that CI's Xcode supports tools 6.4; if it's Xcode 26, lower to 6.2.

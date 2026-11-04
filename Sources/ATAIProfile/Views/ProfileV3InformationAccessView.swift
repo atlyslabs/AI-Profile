@@ -247,6 +247,8 @@ struct ProfileV3ConnectorAction: View {
             Text(title)
                 .typoGraphy(style)
                 .foregroundStyle(ProfileV3Theme.Palette.accessAction)
+                .lineLimit(1)
+                .fixedSize()
                 .contentShape(Rectangle())
         }
         .buttonStyle(.profileV3Pressable)

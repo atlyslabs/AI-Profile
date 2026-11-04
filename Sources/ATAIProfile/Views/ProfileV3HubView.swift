@@ -109,7 +109,8 @@ struct ProfileV3HubView: View {
                 loadDetail: viewModel.benefitDetail,
                 onRedeem: viewModel.redeem,
                 redeemError: viewModel.redeemError,
-                onClearRedeemError: viewModel.clearRedeemError
+                onClearRedeemError: viewModel.clearRedeemError,
+                onLearnMore: viewModel.learnMoreAction
             )
             ProfileV3CouponHeroOverlay(presenter: couponPresenter, loadDetail: viewModel.couponDetail)
             ProfileV3HubSheets(viewModel: viewModel, isRevealed: cover.isMounted)
@@ -409,6 +410,7 @@ private struct ProfileV3HubSheets: View {
                 onClose: viewModel.dismissAllBenefits,
                 onKnowMore: viewModel.tapKnowMore,
                 onActivateLocked: viewModel.activateLockedBenefit,
+                onBenefitLearnMore: viewModel.learnMoreAction,
                 travellerID: viewModel.selectedPassID
             )
             .transition(ProfileV3Theme.Motion.fullScreenTransition)

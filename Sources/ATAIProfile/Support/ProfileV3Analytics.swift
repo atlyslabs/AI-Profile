@@ -61,6 +61,7 @@ enum ProfileV3Analytics {
         case knowMore = "know_more"
         case programmeInsight = "programme_insight"
         case passport
+        case benefitDetail = "benefit_detail"
     }
 
     enum ProfileField: String {
