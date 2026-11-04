@@ -236,6 +236,8 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         case .termsOfService:
             ProfileV3Analytics.termsClicked()
             router?.presentTermsOfService()
+        case .support:
+            router?.presentSupport()
         case .logout:
             account.tapLogout()
         case .deleteAccount:

@@ -52,6 +52,7 @@ enum ProfileV3Route: Equatable {
     case coupons
     case inviteCode
     case termsOfService
+    case support
     case permissions
     case editTraveler
     case addTraveller
@@ -137,6 +138,8 @@ extension ProfileV3Directive {
             return .inviteCode
         case "terms":
             return .termsOfService
+        case "support", "get_help", "help":
+            return .support
         case ProfileV3PermissionDefaults.rowKey:
             return .permissions
         case "edit_traveler":

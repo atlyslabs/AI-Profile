@@ -322,6 +322,10 @@ extension ProfileV3SettingsSheetPresenter {
         Self.topPresented()?.present(ProfileV3EntryPoint.makeTerms(repository: repository), animated: true)
     }
 
+    func presentSupport() {
+        app.openSupport()
+    }
+
 }
 
 extension ProfileV3SettingsSheetPresenter: ProfileV3SessionRouting, ProfileV3SettingsFeedbackRouting {
