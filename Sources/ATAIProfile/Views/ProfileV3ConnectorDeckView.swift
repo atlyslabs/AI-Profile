@@ -99,7 +99,7 @@ struct ProfileV3ConnectorDeckView: View {
     private var header: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
-                ATIcon.SwiftUIImage.database
+                ATIcon.SwiftUIImage.plugConnect
                     .profileV3Icon(ProfileV3Theme.Icon.xl)
                     .foregroundStyle(Color(at: .pureBlack))
                 ProfileV3TagLabel(text: ProfileV3Strings.connectors)

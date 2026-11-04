@@ -91,7 +91,7 @@ struct ProfileV3SheetChrome: View {
         ProfileV3SheetChrome(icon: ATIcon.SwiftUIImage.settings, title: ProfileV3Strings.settings, onClose: {})
         ProfileV3SheetChrome(icon: ATIcon.SwiftUIImage.flag, title: ProfileV3Strings.countryOfResidence, onBack: {})
         ProfileV3SheetChrome(title: ProfileV3Strings.logout, onBack: {})
-        ProfileV3SheetChrome(icon: ATIcon.SwiftUIImage.database, title: ProfileV3Strings.connectors, onBack: {})
+        ProfileV3SheetChrome(icon: ATIcon.SwiftUIImage.plugConnect, title: ProfileV3Strings.connectors, onBack: {})
     }
     .padding(.vertical, ProfileV3Theme.Space.s32)
     .background(Color(at: .pureWhite))

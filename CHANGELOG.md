@@ -94,6 +94,9 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   shows straight away a newer board another screen has already fetched. Programmes that reach the
   server another way (the Gmail import, chat, another device) now appear on the pass's back face
   without relaunching. This refresh shows no spinner and no error.
+- The Control panel's connector deck, where Gmail and apps are disconnected, now heads its
+  "CONNECTORS" label with the plug icon (`plugConnect`), the same icon as the Settings card,
+  instead of the database icon.
 
 ### Fixed
 
