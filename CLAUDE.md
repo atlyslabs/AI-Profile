@@ -60,7 +60,7 @@ xcrun simctl delete "$UDID"
 ```
 
 - Use a throwaway simulator, never the user's booted one. A cold build with package resolution takes about two minutes. Without `-IDEBuildingContinueBuildingAfterErrors=YES`, Xcode stops after the first failing batch.
-- Tests are swift-testing. As of 2026-11-04: 310 tests in 47 suites, 307 pass. The same three fail every run:
+- Tests are swift-testing. As of 2026-11-04: 326 tests in 49 suites, 323 pass. The same three fail every run:
   - `ProfileV3DestinationTests.theHubOpensALinkOnlyWhileItIsOnScreen` (lines 68–69): a link posted while the hub's tab is hidden still opens. Either `onDisappear` doesn't clear `isSettled` on a tab switch in a test window, or the hidden-tab guard doesn't work. Not investigated.
   - `ProfileV3OnboardingPresentationTests.theHubsOwnSurfaceRunsOnboardingOverTheTabBar` and `aFlowThatClosesItsOwnContainerIsReportedOnce`: the dismissal never completes in a window with no scene. Probably the harness, not the launcher.
 - Checking a design against Figma:
@@ -93,7 +93,7 @@ xcrun simctl delete "$UDID"
   - `ProfileV3KYCHost`: onboarding, minimal capture, the four step screens, Gmail auth, `track`. From the hub surface, onboarding is presented full screen by `ProfileV3OnboardingLauncher`.
   - `ProfileV3IdentityCaptureHost`: the passport rescan.
   - `ProfileV3GlobeRendering`: land drawing only; the package owns the pose, projection and globes.
-  - `ProfileV3AccountHost`: name, residence, citizenship and contact.
+  - `ProfileV3AccountHost`: name, residence, citizenship and contact. The contact save and the residence push send its `selectedTravellerID`, else the board's main `profile_id` (`ProfileV3SettingsDependencies.travellerID`); Ayl's host sends none.
   - `ProfileV3CouponsHost`.
   - `ProfileV3AppHost`: logout, flash, restart, floating-bar clearance, `opensChat`/`openChat(prompt:)`.
   - `ProfileV3InviteHost` (optional): the invite code sheet.
@@ -145,7 +145,7 @@ xcrun simctl delete "$UDID"
 
 ### Release
 
-- `master` is one commit ahead of `origin/master` (`a53e774`, the QA-2008 fixes): benefit Learn more, the long Instagram handle fix and QA-2007, not pushed. `a53e774` and `2ad3c52` (loyalty edit and tier, hub refresh, agent fields, Ditto rebuild) were pushed outside this session. `1.0.21` is on `df4009c`; nothing after it is tagged.
+- `master` is one commit ahead of `origin/master` (`e434d81`, Manav's Support row routing, on `8cc91dc` and the QA-2008 fixes `a53e774`): `64506d3` (benefit Learn more, the long Instagram handle fix and QA-2007), not pushed. The working tree holds the city profile, the contact save fix and the Settings debug change, uncommitted. `a53e774` and `2ad3c52` (loyalty edit and tier, hub refresh, agent fields, Ditto rebuild) were pushed outside this session. `1.0.21` is on `df4009c`; nothing after it is tagged.
 - Tags `1.0.0` and `1.0.2`–`1.0.21` are on GitHub; `1.0.1` is local only. Tags are often cut straight from a commit with no release commit. When that happens, move the tag's "Unreleased" body into a `## <version> — <date>` section and keep only later changes under Unreleased (done for 1.0.17, 1.0.20 and 1.0.21).
 - `README.md` still says "Version 1.0.1".
 
@@ -173,9 +173,15 @@ xcrun simctl delete "$UDID"
 | `isGloveBoxCardTransactionsEnabled` | false | The virtual card's transactions and View all |
 | `isAgentCustomRulesEnabled` | true | Custom rules on agent forms |
 | `isPassportBackPageEnabled` | true | The FRONT/BACK passport row |
+| `isCityProfileEnabled` | false | City profile (no backend yet). Off hides a served `city_profile` tile and makes the route unsupported; on in DEBUG adds a demo tile and serves `ProfileV3CityProfileStore.shared`. In DEBUG, Settings' debug section opens the flow on that store whatever the flag (`ProfileV3SettingsSheetPresenter.presentCityProfile`); it replaced the KYC state menu |
 
 ### Backend contracts
 
+- City profile (2026-11-04): no backend yet; the client is built against `ProfileV3CityProfileRepository`, and `ProfileV3LiveRepository` throws `notImplemented` for it in Release. Proposed shape, to agree with BE:
+  - The tile is an agent tile with `next: {go: "city_profile"}` (`ProfileV3Route.cityProfile`).
+  - The screen (`ProfileV3CityProfile`) sends the cities, the tag options (`{id, label, icon, asks_purpose}`, icons are Material Icons names), the Add slot's label and detail, the intro title and sample cards, the purpose field's label, placeholder and save label, the Continue label and the delete confirmation copy.
+  - Each city sends `{id, code, name, country, image_url, tag: {id, purpose}}`, its sources, and its preferences in the agent form's field schema, plus per section `layout` (`logos`, `grid`, `cards`, `places`, `slider`), `icon`, `tab` and `subtitle` (`ProfileV3CitySectionStyle`). Chips fields take an `opt_out` like sliders. A newly added city is `is_updating` until the agent fills it.
+  - Writes: search (`searchCities`), add, edit tag and delete return the whole screen; `saveCityPreferences` takes the city's form; `loadCitySources` takes a section's source.
 - Board: home, settings, agents, loyalty, past trips, travel persona, passports and AI connectors. Writes go to `/board/submit` and echo the served action object.
   - Past trips are country-only; several countries go as one `countries` list.
   - Loyalty edit (`vdc-k8s#23247`, 2026-10-26; ai-kyc is deployed, ai-memory's `PATCH /profile/loyalty` deploy wasn't confirmed):
@@ -224,6 +230,11 @@ xcrun simctl delete "$UDID"
 - Loyalty tier fields (2026-11-01, no Figma): the dropdown is `ProfileV3MenuField`, a native `Menu` drawn with the picker field's row (`ProfileV3PickerFieldRow`, "Select" placeholder). The month field formats `MM/YY` as you type (`ProfileV3MonthYear`). A complete but unreadable or past month shows an inline error, and any bad month blocks saving, but only when the month would be sent (with a real tier; in an edit, only when the tier fields change).
   - The pill sits inside the row's selection button: the tile turns off its face's hit testing for `Pill.edit`, and VoiceOver gets an Edit action on the row.
 - Benefit Learn more (2026-11-04, Figma `5648:13079`): the detail's footer shows it only when the host opens chat. A tap closes the detail and the benefits list, then opens chat through `afterOverlaysClose`, once the hub's cover is down. With "Got it" or "Redeem" it stacks on top (no design for both).
+- City profile (2026-11-04, Figma `6592:8147`, `6739:7548`, `6739:8232`, `6739:15148`, `6739:16063`, `6805:7626`, `6766:17091`, `6766:17366`, `6766:18995`, `6739:16294`, `6805:7463`):
+  - Each city's preferences are a `ProfileV3AgentForm` edited by `ProfileV3AgentFormViewModel` (one per city, kept while dirty), so pickers, sources, custom rules and the save bar match the agents. `ProfileV3CityAgentRepository` sends its saves and source loads to the city.
+  - A tag shows "Home (2)" when more than one city has it, and a purpose (Other) replaces the label with a pin icon. Logo chips show only selected options and a tap removes one; place rows open the picker. An opt-out dims the section.
+  - The search sheet closes before the tag sheet opens (chained through `onDismiss`). Choosing a city already added jumps to it. Back on the tag sheet cancels the add.
+  - Not matched: Host Grotesk (city codes, intro title) isn't bundled, so Inter Medium stands in; Figma's `eraser_size_1` is Material `edit`; the plane-window and deck blurs can't be checked in probes. The seat art is cropped from the two sprite frames (`6736:5443`, `6736:5447`) into `profile_v3_seat_*`.
 - Agent sliders:
   - A slider whose server value is `null` saves `null` until it is moved, or until "rather not say" is turned off (`ProfileV3SliderField.isSet`). It still shows its midpoint.
   - Money values read as symbol + compact amount + unit (`₹10K/hour`; a letter symbol gets a space: `AED 50/hour`).
@@ -232,7 +243,9 @@ xcrun simctl delete "$UDID"
 ### Ditto
 
 - In sync as of 2026-10-31. Ditto's project and library hold the catalog's 413 keys with identical values, and the catalog and generated Swift were rebuilt from Ditto by the pipeline. The rebuild is in `2ad3c52`, which is the comparison base for later drift.
-- Ditto owes one hand-added key (2026-11-01, catalog now 414): `mo-aiprofile-loyalty-error-tier-valid-until-invalid` ("Enter the month as MM/YY, this month or later.", folder `loyalty-programs`, error tag).
+- Ditto owes hand-added keys (catalog now 421):
+  - 2026-11-01: `mo-aiprofile-loyalty-error-tier-valid-until-invalid` ("Enter the month as MM/YY, this month or later.", folder `loyalty-programs`, error tag).
+  - 2026-11-04, City profile, folder `agents`: `mo-aiprofile-agents-header-city-profile`, `-header-add-city-profile`, `-label-city-tag-count`, `-loading-city-updating`, `-accessibility-add-city`, `-accessibility-edit-city-tag`, `-accessibility-delete-city`.
 - That sync, at the user's request:
   - added the 44 hand-added keys that are in use;
   - pushed the 6 local value edits (the Atlys → Ayl copy and the "How you pay" text);
@@ -250,11 +263,13 @@ xcrun simctl delete "$UDID"
 - QA-2008 fixes on a device: the AI connector prompt scrolling inside the sheet's own scroll view, and the Instagram explainer's green wash without Figma's noise.
 - Benefit Learn more in Ayl: that chat opens after the benefit cover closes, from the hub stack and from the benefits list.
 - QA-2007 against the backend: that the board reports KYC not done right after a Gmail disconnect, so the glove box locks.
+- City profile in Ayl (Settings' debug row, or the flag on): the carousel's selection and side-window scaling, the chained search → tag sheets, the fitted tag sheet with the keyboard, the deck and ring animations, and the window and deck blurs.
 - Motion that tests can't show: the save button's entry and exit, the persona loader's haptics, the glove box entrances, the hero and globe transitions.
 
 ### Open work
 
-- QA-2007 (glove box KYC lock) is fixed in the commit after `a53e774`, not pushed or tagged.
+- QA-2007 (glove box KYC lock) is fixed in `64506d3`, not pushed or tagged.
+- Contact save in Ayl (2026-11-04): every tag up to `1.0.21` takes the traveller only from the host, and Ayl's host sends none, so Confirm fails before `PATCH /api/pensieve/v1/profile/edit` and plays only the error haptic. Ayl pins `1.0.20`. The board fallback (`ProfileV3SettingsDependencies.travellerID`) is uncommitted; a probe confirmed it sends the PATCH from a cached or refetched board. Ayl needs a tag with it.
 - QA-2008 (2026-11-02): QA-2009, -2011, -2043 and -2050 are fixed in `a53e774` (pushed, not tagged). QA-2042 needs snapmap migration 043 on the environment QA tested; the app now shows client copy for that 500.
 - vdcios integration:
   - Pin a version instead of `branch: master`.
@@ -265,6 +280,7 @@ xcrun simctl delete "$UDID"
   - `VDCProfileV3KYCHost.startOnboarding` asserts on `AVNavigationViewController`, so onboarding from `makeHubSurface` fails there.
 - Ayl follow-ups, open as of 2026-10-28 (verify first):
   - Drop `addsPastTripsWithoutDate` from `AYLProfileV3AppHost`; nothing reads it.
+  - `AYLProfileV3AppHost.showStatusMessage` only logs, so a failed settings save (contact, residence) shows nothing in Ayl beyond the error haptic.
   - Pass `actionSource: "profile_card"` in `openChat` once AI-Chat releases its `feat/deeplink-action-source` branch.
   - Release AI-KYC's `KYCITRConnectScreen`.
 - Decisions pending:
@@ -290,7 +306,7 @@ xcrun simctl delete "$UDID"
     - Closing the programmes page after only viewing it doesn't refresh the hub; that page loads `/loyalty/page/{id}` itself.
     - The KYC sync stops polling when the KYC steps clear, so a Gmail import that lands later shows only on the next stale refresh.
 - Loyalty edit leftover: the insight screen's `edit` button (`program_insight.edit` → `loyalty_edit_details`) isn't decoded or shown.
-- Not built: a City profile screen (Figma `6592:8685`, `6593:10316`, `6595:10925`, `6595:11473`) with per-city tabs, a "Never book · N Airlines" row and a "NEVER BOOK AIRLINES" sheet. No backend contract describes it yet.
+- City profile, behind `isCityProfileEnabled` (2026-11-04): agree the contract above with BE, then add the DTOs, mappers and `ProfileV3API` cases and replace the live repository's `notImplemented`. Analytics events aren't specified, so none are sent. The older frames (`6592:8685`, `6593:10316`, `6595:10925`, `6595:11473`: a "Never book · N Airlines" row and sheet) weren't in this round.
 - Known trade-offs:
   - `ProfileV3ServerFailureBox` keeps one envelope, so concurrent failures can swap codes.
   - `ATCoreCacheConfig`'s default expiry looks like a units slip; the package passes seven days.

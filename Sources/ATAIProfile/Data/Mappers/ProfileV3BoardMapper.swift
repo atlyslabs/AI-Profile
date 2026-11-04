@@ -66,7 +66,7 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
             benefits: featured.map { [$0] } ?? [],
             giftCards: [],
             viewAllBenefitsLabel: text(benefits?.viewAll?.label) ?? "",
-            agents: grid?.tiles.compactMap(agent) ?? [],
+            agents: agents(grid?.tiles ?? []),
             isGmailConnected: isGmailConnected,
             agentsUpdatedAt: agentsUpdatedAt(grid?.updatedAt),
             agentsHeading: text(grid?.heading),
@@ -185,6 +185,18 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
                 reason: establishesMain ? ProfileV3CaptureStepKey.establishMainReason : nil
             )
         }
+    }
+
+    private static func agents(_ tiles: [ProfileV3AgentTileDTO]) -> [ProfileV3Agent] {
+        let agents = tiles.compactMap(agent).filter { agent in
+            ProfileV3FeatureFlags.isCityProfileEnabled || agent.next?.opensCityProfile != true
+        }
+        #if DEBUG
+        if ProfileV3FeatureFlags.isCityProfileEnabled, !agents.contains(where: { $0.next?.opensCityProfile == true }) {
+            return agents + [ProfileV3CityProfileFixtures.agent]
+        }
+        #endif
+        return agents
     }
 
     private static func agent(_ tile: ProfileV3AgentTileDTO) -> ProfileV3Agent? {

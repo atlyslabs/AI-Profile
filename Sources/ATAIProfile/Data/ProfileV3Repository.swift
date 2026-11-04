@@ -155,7 +155,20 @@ protocol ProfileV3PersonaRepository: Sendable {
     func submitPersonaAction(_ action: ProfileV3BoardAction, score: Int?) async throws
 }
 
+protocol ProfileV3CityProfileRepository: Sendable {
+    func loadCityProfile(profileID: String?) async throws -> ProfileV3CityProfile
+    func searchCities(_ query: String, profileID: String?) async throws -> [ProfileV3CitySearchResult]
+    func addCity(_ cityID: String, tag: ProfileV3CityTag, profileID: String?) async throws -> ProfileV3CityProfile
+    func updateCityTag(_ cityID: String, tag: ProfileV3CityTag, profileID: String?) async throws -> ProfileV3CityProfile
+    func deleteCity(_ cityID: String, profileID: String?) async throws -> ProfileV3CityProfile
+    func saveCityPreferences(_ form: ProfileV3AgentForm, cityID: String, profileID: String?) async throws
+    func loadCitySources(_ source: ProfileV3SectionSource, cityID: String, profileID: String?) async throws
+        -> ProfileV3PreferenceSources
+}
+
 typealias ProfileV3HubRepository = ProfileV3BoardRepository & ProfileV3PastTripsRepository
+
+typealias ProfileV3CityPreferencesRepository = ProfileV3CityProfileRepository & ProfileV3AgentRepository
 
 typealias ProfileV3Repository = ProfileV3BoardRepository
     & ProfileV3AgentRepository
@@ -164,6 +177,7 @@ typealias ProfileV3Repository = ProfileV3BoardRepository
     & ProfileV3SettingsRepository
     & ProfileV3PastTripsRepository
     & ProfileV3PersonaRepository
+    & ProfileV3CityProfileRepository
 
 extension ProfileV3BoardRepository {
     func loadLatestBoard() async throws -> ProfileV3Board {

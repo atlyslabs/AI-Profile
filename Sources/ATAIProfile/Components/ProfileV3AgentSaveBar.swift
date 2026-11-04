@@ -64,6 +64,7 @@ struct ProfileV3AgentOptionPicker: View {
                 title: picker.title,
                 options: viewModel.pickerOptions,
                 selection: field.selection,
+                listLabel: picker.listLabel,
                 onBack: viewModel.closePicker,
                 onToggle: { viewModel.toggleOption($0, in: section.id) }
             )

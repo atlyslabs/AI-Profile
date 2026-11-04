@@ -503,6 +503,8 @@ private final class AgentRouterSpy: ProfileV3HubRouter {
         openedTravelPersonaIDs.append(profileID)
     }
 
+    func openCityProfile(profileID: String?) {}
+
     func goBack() {}
     func openSettings(profileID: String?) {}
     func openKnowMore(_ directive: ProfileV3Directive?) {}

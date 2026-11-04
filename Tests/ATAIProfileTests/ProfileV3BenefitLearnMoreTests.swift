@@ -123,6 +123,7 @@ private final class ChatRouterSpy: ProfileV3HubRouter {
     func openBenefitKYC(_ benefit: ProfileV3Benefit) {}
     func openAddTraveller() {}
     func openTravelPersona(profileID: String?) {}
+    func openCityProfile(profileID: String?) {}
 }
 
 private final class LearnMoreRecorder: ProfileV3AnalyticsReporting, @unchecked Sendable {

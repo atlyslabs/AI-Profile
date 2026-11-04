@@ -280,6 +280,12 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         router?.openExternalURL(concierge.openURL)
     }
 
+    #if DEBUG
+    func tapCityProfile() {
+        router?.presentCityProfile()
+    }
+    #endif
+
     func tapBack() {
         ProfileV3Analytics.settingsBackClicked()
         router?.dismissSettings()

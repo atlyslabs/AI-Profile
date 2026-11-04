@@ -13,6 +13,7 @@ protocol ProfileV3HubRouter: AnyObject {
     func openBenefitKYC(_ benefit: ProfileV3Benefit)
     func openAddTraveller()
     func openTravelPersona(profileID: String?)
+    func openCityProfile(profileID: String?)
     var opensChat: Bool { get }
     func openChat(prompt: String)
 }
@@ -495,6 +496,8 @@ final class ProfileV3HubViewModel {
             router?.openAgent(agent, requiresKYC: false, profileID: profileID ?? selectedPassID)
         case .travelPersona(let profileID):
             router?.openTravelPersona(profileID: profileID)
+        case .cityProfile(let profileID):
+            router?.openCityProfile(profileID: profileID ?? selectedPassID)
         default:
             guard agent.agentID != nil else { return }
             router?.openAgent(agent, requiresKYC: false, profileID: selectedPassID)

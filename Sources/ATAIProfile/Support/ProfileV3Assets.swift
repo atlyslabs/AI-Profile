@@ -121,6 +121,23 @@ enum ProfileV3InviteArt: String {
     var image: Image { Image(rawValue, bundle: .module) }
 }
 
+enum ProfileV3CityArt: String {
+    case locationMap = "profile_v3_city_location_map"
+
+    var image: Image { Image(rawValue, bundle: .module) }
+}
+
+enum ProfileV3SeatArt: String {
+    case economy
+    case premiumEconomy = "premium_economy"
+    case business
+    case first
+
+    func image(isSelected: Bool) -> Image {
+        Image("profile_v3_seat_\(rawValue)\(isSelected ? "_selected" : "")", bundle: .module)
+    }
+}
+
 enum ProfileV3PersonaArt: String {
     case gmail = "profile_v3_persona_gmail"
     case edited = "profile_v3_persona_edited"

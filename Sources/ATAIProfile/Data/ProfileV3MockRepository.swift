@@ -78,6 +78,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
     private let vault: ProfileV3VaultStore
     private let gloveBox: ProfileV3GloveBoxStore
     private let aiConnectors = ProfileV3AIConnectorStore()
+    private let cities: ProfileV3CityProfileStore
     private let settingsCitizenship: String?
 
     init(
@@ -90,6 +91,7 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         appAccess: ProfileV3AppAccessStore = ProfileV3AppAccessStore(),
         vault: ProfileV3VaultStore = ProfileV3VaultStore(),
         gloveBox: ProfileV3GloveBoxStore = ProfileV3GloveBoxStore(),
+        cities: ProfileV3CityProfileStore = ProfileV3CityProfileStore(),
         settingsCitizenship: String? = nil
     ) {
         self.delay = delay
@@ -99,7 +101,44 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         self.appAccess = appAccess
         self.vault = vault
         self.gloveBox = gloveBox
+        self.cities = cities
         self.settingsCitizenship = settingsCitizenship
+    }
+
+    func loadCityProfile(profileID _: String?) async throws -> ProfileV3CityProfile {
+        try await Task.sleep(for: delay)
+        return cities.snapshot()
+    }
+
+    func searchCities(_ query: String, profileID _: String?) async throws -> [ProfileV3CitySearchResult] {
+        try await Task.sleep(for: delay)
+        return cities.search(query)
+    }
+
+    func addCity(_ cityID: String, tag: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
+        try await Task.sleep(for: delay)
+        return try cities.add(cityID, tag: tag)
+    }
+
+    func updateCityTag(_ cityID: String, tag: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
+        try await Task.sleep(for: delay)
+        return try cities.updateTag(cityID, tag: tag)
+    }
+
+    func deleteCity(_ cityID: String, profileID _: String?) async throws -> ProfileV3CityProfile {
+        try await Task.sleep(for: delay)
+        return cities.delete(cityID)
+    }
+
+    func saveCityPreferences(_ form: ProfileV3AgentForm, cityID: String, profileID _: String?) async throws {
+        try await Task.sleep(for: delay)
+        try cities.save(form, cityID: cityID)
+    }
+
+    func loadCitySources(_: ProfileV3SectionSource, cityID _: String, profileID _: String?) async throws
+        -> ProfileV3PreferenceSources {
+        try await Task.sleep(for: delay)
+        return ProfileV3AgentFixtures.airlineSources
     }
 
     func loadAppAccess() async throws -> ProfileV3AppAccess {

@@ -143,6 +143,12 @@ internal enum ProfileV3L10n {
   internal static func moAiprofileAgentTagLabel(_ p1: Any, _ p2: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agent-tag-label", String(describing: p1), String(describing: p2), fallback: "%1$@ %2$@")
   }
+  /// City profile: button to add a frequent destination.
+  internal static var moAiprofileAgentsAccessibilityAddCity: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-accessibility-add-city", fallback: "Add a city") }
+  /// City profile: button to delete a city from the profile.
+  internal static var moAiprofileAgentsAccessibilityDeleteCity: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-accessibility-delete-city", fallback: "Delete city profile") }
+  /// City profile: button to change why the traveler visits a city.
+  internal static var moAiprofileAgentsAccessibilityEditCityTag: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-accessibility-edit-city-tag", fallback: "Edit city tag") }
   /// App access row button that adds credentials for a pending app.
   internal static var moAiprofileAgentsButtonAddCredentials: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-button-add-credentials", fallback: "+ credentials") }
   /// Floating App access button that adds a new password.
@@ -205,6 +211,10 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsErrorVaultSiteUnreachable: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-vault-site-unreachable", fallback: "Couldn't reach the site. Try again later.") }
   /// Saved login status when the site rejected the password.
   internal static var moAiprofileAgentsErrorVaultWrongPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-error-vault-wrong-password", fallback: "Wrong username or password. Update it.") }
+  /// City profile: header of the add-a-city sheets.
+  internal static var moAiprofileAgentsHeaderAddCityProfile: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-header-add-city-profile", fallback: "+ City profile") }
+  /// City profile: screen header.
+  internal static var moAiprofileAgentsHeaderCityProfile: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-header-city-profile", fallback: "City profile") }
   /// Hint bubble pointing at the Connected button on App access.
   internal static var moAiprofileAgentsHintConnectedApps: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-hint-connected-apps", fallback: "Find your connected apps here") }
   /// Instructional text on how to remove a connector.
@@ -219,6 +229,10 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelAppAccess: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-app-access", fallback: "App access") }
   /// Leading text for the agent capabilities description.
   internal static var moAiprofileAgentsLabelBuildUnderstanding: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-build-understanding", fallback: "Our agents build an understanding of") }
+  /// City profile: a city tag with how many cities share it, e.g. Home (2).
+  internal static func moAiprofileAgentsLabelCityTagCount(_ p1: Any, _ p2: Any) -> String {
+    return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-city-tag-count", String(describing: p1), String(describing: p2), fallback: "%1$@ (%2$@)")
+  }
   /// Settings card title for the secure credential store.
   internal static var moAiprofileAgentsLabelCredentialStore: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-credential-store", fallback: "Secure credential store") }
   /// Label for the email connector option.
@@ -263,6 +277,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelUsernameEmail: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-username-email", fallback: "Username/Email address") }
   /// Credentials form field label for the website.
   internal static var moAiprofileAgentsLabelWebsite: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-website", fallback: "Website") }
+  /// City profile: shown on a section while the agent gathers a new city’s preferences.
+  internal static var moAiprofileAgentsLoadingCityUpdating: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-loading-city-updating", fallback: "Update information") }
   /// Privacy reassurance text for agent data integration.
   internal static var moAiprofileAgentsPrivacyTextSecurity: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-privacy-text-security", fallback: "Data stays secure while your agent learns") }
   /// Face ID prompt reason when showing a saved password.

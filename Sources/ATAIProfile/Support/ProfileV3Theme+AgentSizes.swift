@@ -86,6 +86,7 @@ extension ProfileV3Theme.Sizes {
         static let rowHeight: CGFloat = 60
         static let checkbox: CGFloat = 24
         static let logo: CGFloat = 24
+        static let listLabelBottom = ProfileV3Theme.Space.s10
         static let cardWidth: CGFloat = 190
         static let cardHeight: CGFloat = 302
         static let cardSideScale: CGFloat = 170 / 190

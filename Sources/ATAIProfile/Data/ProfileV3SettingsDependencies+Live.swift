@@ -10,6 +10,7 @@ extension ProfileV3SettingsDependencies {
     static func live(
         account: any ProfileV3AccountHost,
         session: any ProfileV3SessionProviding,
+        board: (any ProfileV3BoardRepository)?,
         client: ProfileV3NetworkClient
     ) -> Self {
         Self(
@@ -43,7 +44,7 @@ extension ProfileV3SettingsDependencies {
                 MainActor.assumeIsolated { account.saveResidence(code: country.code) }
             },
             pushResidenceToServer: { countryCode in
-                let travellerID = await MainActor.run { account.snapshot().selectedTravellerID }
+                let travellerID = await Self.travellerID(account: account, board: board)
                 guard let userID = session.currentUserID, let travellerID else { return }
                 let request = ProfileV3ResidenceUpdateRequest(
                     userID: userID,
@@ -67,7 +68,8 @@ extension ProfileV3SettingsDependencies {
                 if let email, let phone, await account.isContactTaken(email: email, phone: phone) {
                     return .duplicateEmail
                 }
-                guard let userID = session.currentUserID, let travellerID = snapshot.selectedTravellerID else {
+                guard let userID = session.currentUserID,
+                      let travellerID = await Self.travellerID(account: account, board: board) else {
                     return .failure
                 }
                 guard await Self.pushContact(
@@ -93,6 +95,18 @@ extension ProfileV3SettingsDependencies {
                 MainActor.assumeIsolated { account.storedTraveller(id: travellerID) }
             }
         )
+    }
+
+    static func travellerID(
+        account: any ProfileV3AccountHost,
+        board: (any ProfileV3BoardRepository)?
+    ) async -> String? {
+        let known = await MainActor.run {
+            account.snapshot().selectedTravellerID?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty
+                ?? board?.cachedBoard()?.mainProfile?.profileID.nonEmpty
+        }
+        if let known { return known }
+        return try? await board?.loadLatestBoard().mainProfile?.profileID.nonEmpty
     }
 
     private static func e164(_ details: ProfileV3ContactDetails) -> String? {

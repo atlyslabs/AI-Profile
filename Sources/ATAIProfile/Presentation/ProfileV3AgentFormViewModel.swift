@@ -353,11 +353,21 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
 
     func setOptOut(_ isOn: Bool, in sectionID: String) {
         update(sectionID) { section in
-            guard case .slider(var field) = section.control, var optOut = field.optOut else { return }
-            optOut.isOn = isOn
-            field.optOut = optOut
-            if !isOn { field.isSet = true }
-            section.control = .slider(field)
+            switch section.control {
+            case .slider(var field):
+                guard var optOut = field.optOut else { return }
+                optOut.isOn = isOn
+                field.optOut = optOut
+                if !isOn { field.isSet = true }
+                section.control = .slider(field)
+            case .chips(var field):
+                guard var optOut = field.optOut else { return }
+                optOut.isOn = isOn
+                field.optOut = optOut
+                section.control = .chips(field)
+            case .cards, .text, .date, .passport, .cars, .baggage, .customRules:
+                break
+            }
         }
         trackChange(in: sectionID)
     }

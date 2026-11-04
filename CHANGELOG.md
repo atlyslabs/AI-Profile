@@ -7,6 +7,29 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Added
 
+- City profile (Figma `6739:7548` and the frames around it), client only and behind
+  `ProfileV3FeatureFlags.isCityProfileEnabled`, which is off: there is no backend yet. A board tile
+  whose `next` is `{go: "city_profile"}` opens it as a page sheet; with the flag off the tile is
+  hidden and the route is unsupported.
+  - A carousel of plane-window cities, ending in an "Add" window, shows each city's tag ("Home",
+    "Home (2)" when cities share it, or the traveler's own purpose), "Found 6/8 flight
+    preferences", its sources, a tab strip that scrolls to a section, and notched section cards.
+  - The cards reuse the agent form fields. Each city is a `ProfileV3AgentForm` edited by
+    `ProfileV3AgentFormViewModel`, so the pickers, sources, custom rules and "save changes" bar
+    work as they do for agents. Saves go to the city through `ProfileV3CityAgentRepository`.
+  - Layouts: logo chips (airlines), seat-art class cards, a two-column option grid (with
+    time-of-day orbs), the money slider, and hotel or location rows. Chips fields can carry an
+    opt-out checkbox ("Do not book stay in this city"), which also renders in agent forms.
+  - Adding a city: search ("+ City profile"), a tag sheet (Home, Work, Leisure, Other), a purpose
+    field for Other, then the new city shows its sections shimmering "Update information" until
+    the agent fills them. Editing a tag offers delete, with a confirmation.
+  - The "Add" slot shows the intro and the three-card deck animation from `6739:8232`.
+  - Seven client strings were hand-added (`mo-aiprofile-agents-*city*`); add them in Ditto.
+  - In DEBUG builds, Settings' debug section has a "City profile" row that opens the flow on the
+    demo store, with the flag off. It replaces the KYC state menu, whose board override
+    (`ProfileV3DebugKYCScenario`) is gone, so a scenario picked earlier no longer rewrites boards.
+- The option picker shows a subtitle next to a row's title ("Bangkok (BKK) · Thailand"), a hotel
+  or map thumbnail, and an optional list label ("Popular locations").
 - Loyalty programmes can be edited. In the programmes page's edit mode (where cards are picked for
   deletion), every card has an "Edit" pill where "View insight" sits. It opens the add flow's
   details sheet, filled from `GET /board/loyalty/edit/{program_id}?profile_id=` (slashes in the id
@@ -74,6 +97,11 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Fixed
 
+- Saving contact info (email or phone) in Settings made no request when the host has no selected
+  traveller, which is always the case in Ayl: the save failed before
+  `PATCH /api/pensieve/v1/profile/edit` and only the error haptic played. The save, and the
+  residence push, now fall back to the board's main profile ID, the same `traveller_id` the package
+  already sends when it edits a traveller.
 - A long Instagram handle no longer pushes "Send a message" onto two lines on the waiting App
   access card. Card actions ("Send a message", "Connect", "Add email", the credentials buttons)
   keep to one line, and the title before them is cut short with an ellipsis ("@aravindh_…").

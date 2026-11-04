@@ -89,12 +89,17 @@ struct ProfileV3FormSectionView: View {
     private var control: some View {
         switch section.control {
         case .chips(let field):
-            ProfileV3OptionChipGroup(
-                options: field.visibleOptions(limit: ProfileV3Theme.Counts.chipInlineLimit),
-                selection: field.selection,
-                onAdd: field.remainingOptions(limit: ProfileV3Theme.Counts.chipInlineLimit).isEmpty ? nil : onAdd,
-                onToggle: onToggleOption
-            )
+            VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s16) {
+                ProfileV3OptionChipGroup(
+                    options: field.visibleOptions(limit: ProfileV3Theme.Counts.chipInlineLimit),
+                    selection: field.selection,
+                    onAdd: field.remainingOptions(limit: ProfileV3Theme.Counts.chipInlineLimit).isEmpty ? nil : onAdd,
+                    onToggle: onToggleOption
+                )
+                if let optOut = field.optOut {
+                    ProfileV3CheckboxRow(title: optOut.title, isOn: optOut.isOn) { onOptOut(!optOut.isOn) }
+                }
+            }
         case .cards(let field):
             ProfileV3OptionCardGrid(options: field.options, selection: field.selection, onToggle: onToggleOption)
         case .slider(let field):

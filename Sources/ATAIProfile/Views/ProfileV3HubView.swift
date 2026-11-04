@@ -75,11 +75,6 @@ struct ProfileV3HubView: View {
         .onChange(of: viewModel.benefitRedemption) { _, redemption in
             benefitPresenter.dismiss(after: redemption)
         }
-        #if DEBUG
-        .onReceive(NotificationCenter.default.publisher(for: ProfileV3DebugKYCScenario.didChange)) { _ in
-            viewModel.requestRefresh()
-        }
-        #endif
         .sensoryFeedback(.success, trigger: viewModel.kycStepCompletions)
         .sensoryFeedback(trigger: viewModel.kycGlowCue) { _, cue in
             switch cue?.tone {

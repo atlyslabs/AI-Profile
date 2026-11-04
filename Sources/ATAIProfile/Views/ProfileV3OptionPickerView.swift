@@ -5,6 +5,9 @@ struct ProfileV3OptionPickerView: View {
     let title: String
     let options: [ProfileV3ChipOption]
     let selection: Set<String>
+    var listLabel: String?
+    var isSearching = false
+    var onQueryChange: ((String) -> Void)?
     let onBack: () -> Void
     let onToggle: (String) -> Void
 
@@ -13,8 +16,11 @@ struct ProfileV3OptionPickerView: View {
     private var trimmedQuery: String { query.trimmingCharacters(in: .whitespacesAndNewlines) }
 
     private var filtered: [ProfileV3ChipOption] {
-        guard !trimmedQuery.isEmpty else { return options }
-        return options.filter { $0.title.localizedCaseInsensitiveContains(trimmedQuery) }
+        guard !trimmedQuery.isEmpty, onQueryChange == nil else { return options }
+        return options.filter {
+            $0.title.localizedCaseInsensitiveContains(trimmedQuery)
+                || $0.subtitle?.localizedCaseInsensitiveContains(trimmedQuery) == true
+        }
     }
 
     var body: some View {
@@ -24,18 +30,27 @@ struct ProfileV3OptionPickerView: View {
             SettingsSearchField(placeholder: ProfileV3Strings.search, text: $query)
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.top, ProfileV3Theme.Space.s40)
-            if filtered.isEmpty {
+            if filtered.isEmpty, isSearching {
+                ProfileV3Spinner(accessibilityLabel: ProfileV3Strings.loading)
+                    .padding(.top, ProfileV3Theme.Sizes.emptyStateTop)
+                    .frame(maxHeight: .infinity, alignment: .top)
+            } else if filtered.isEmpty {
                 emptyState
             } else {
                 list(filtered)
             }
         }
         .background(Color(at: .pureWhite))
+        .onChange(of: query) { _, query in onQueryChange?(query) }
     }
 
     private func list(_ filtered: [ProfileV3ChipOption]) -> some View {
         ProfileV3FadingScroll(bounceBehavior: .automatic) {
-            LazyVStack(spacing: 0) {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                if let listLabel = listLabel?.nonEmpty, trimmedQuery.isEmpty {
+                    ProfileV3TagLabel(text: listLabel, style: .solid(ProfileV3Theme.Palette.secondaryText))
+                        .padding(.bottom, ProfileV3Theme.Sizes.Picker.listLabelBottom)
+                }
                 ForEach(filtered) { option in
                     ProfileV3OptionPickerRow(option: option, isSelected: selection.contains(option.id)) {
                         onToggle(option.id)

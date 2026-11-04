@@ -113,4 +113,5 @@ private final class DestinationRouterSpy: ProfileV3HubRouter {
     var opensChat: Bool { false }
     func openChat(prompt: String) {}
     func openTravelPersona(profileID: String?) {}
+    func openCityProfile(profileID: String?) {}
 }

@@ -65,7 +65,7 @@ final class ProfileV3SettingsSheetPresenter {
         self.onOpenProgrammes = onOpenProgrammes
         self.onFinish = onFinish
         viewModel = ProfileV3SettingsViewModel(
-            deps: .live(account: account, session: session, client: client),
+            deps: .live(account: account, session: session, board: board, client: client),
             repository: repository,
             board: board,
             profileID: profileID,
@@ -325,6 +325,13 @@ extension ProfileV3SettingsSheetPresenter {
     func presentSupport() {
         app.openSupport()
     }
+
+    #if DEBUG
+    func presentCityProfile() {
+        let repository = ProfileV3MockRepository(delay: ProfileV3CityProfileStore.latency, cities: .shared)
+        Self.topPresented()?.present(ProfileV3EntryPoint.makeCityProfile(profileID: nil, repository: repository), animated: true)
+    }
+    #endif
 
 }
 
