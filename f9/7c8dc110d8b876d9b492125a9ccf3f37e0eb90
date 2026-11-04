@@ -1,0 +1,23 @@
+Sources/ATAIProfile/Components/ProfileV3SheetChrome.swift
+  s_f0331f6a8c399e::t_5ab5076e1c9139 94
+Sources/ATAIProfile/Views/ProfileV3ConnectorDeckView.swift
+  s_f0331f6a8c399e::t_c3de0aef2347f0 102
+CHANGELOG.md
+  s_f0331f6a8c399e::t_4c2966d11829a2 97-99
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f97c8dc110d8b876d9b492125a9ccf3f37e0eb90",
+  "prompts": {},
+  "sessions": {
+    "s_f0331f6a8c399e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7c385155-c53a-441a-b66b-ba09894bedcb",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
