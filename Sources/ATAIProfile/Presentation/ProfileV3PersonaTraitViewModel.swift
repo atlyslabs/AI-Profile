@@ -88,9 +88,14 @@ final class ProfileV3PersonaTraitViewModel: ObservableObject {
     func perform(_ action: ProfileV3PersonaTrait.Action, id: String) {
         guard isEditable, !busyActionIDs.contains(id) else { return }
         busyActionIDs.insert(id)
-        actionTasks[id] = Task { [weak self, repository] in
+        actionTasks[id] = Task { [weak self, repository, traitID, profileID] in
             do {
                 try await repository.submitPersonaAction(action.submit, score: nil)
+                ProfileV3Analytics.personaPreferenceChanged(
+                    traitID: traitID,
+                    travellerId: profileID,
+                    changedValue: action.submit.name ?? action.label
+                )
                 guard let self, !Task.isCancelled else { return }
                 busyActionIDs.remove(id)
                 load()

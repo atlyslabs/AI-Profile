@@ -747,9 +747,17 @@ enum ProfileV3Analytics {
     // MARK: - Agents
 
     static func agentPreferenceChanged(agentID: String, travellerId: String?, sectionName: String, changedValue: Any?) {
+        preferenceChanged(agentName: agentName(agentID), travellerId: travellerId, sectionName: sectionName, changedValue: changedValue)
+    }
+
+    static func personaPreferenceChanged(traitID: String, travellerId: String?, changedValue: Any?) {
+        preferenceChanged(agentName: travelPersonaAgentName, travellerId: travellerId, sectionName: traitID, changedValue: changedValue)
+    }
+
+    private static func preferenceChanged(agentName: String, travellerId: String?, sectionName: String, changedValue: Any?) {
         log(EventName.agentPreferenceChanged, [
             ParamKey.travellerId: travellerId,
-            ParamKey.agentName: agentName(agentID),
+            ParamKey.agentName: agentName,
             ParamKey.sectionName: sectionName,
             ParamKey.changedValue: changedValue
         ])

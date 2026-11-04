@@ -97,6 +97,10 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Fixed
 
+- Changing the travel persona sent no analytics event (aadi, 2026-10-30). Each knob change the
+  autosave sends, and each action on a trait's screen ("Ignore", "Ignore all", "Undo"), now sends
+  `profile_agent_preference_changed` with `agentName: travel_person_agent`, the trait as
+  `sectionName`, and the new score or the server action name as `changedValue`.
 - Saving contact info (email or phone) in Settings made no request when the host has no selected
   traveller, which is always the case in Ayl: the save failed before
   `PATCH /api/pensieve/v1/profile/edit` and only the error haptic played. The save, and the

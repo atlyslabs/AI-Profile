@@ -60,7 +60,7 @@ xcrun simctl delete "$UDID"
 ```
 
 - Use a throwaway simulator, never the user's booted one. A cold build with package resolution takes about two minutes. Without `-IDEBuildingContinueBuildingAfterErrors=YES`, Xcode stops after the first failing batch.
-- Tests are swift-testing. As of 2026-11-04: 326 tests in 49 suites, 323 pass. The same three fail every run:
+- Tests are swift-testing. As of 2026-11-04: 327 tests in 49 suites, 324 pass. The same three fail every run:
   - `ProfileV3DestinationTests.theHubOpensALinkOnlyWhileItIsOnScreen` (lines 68–69): a link posted while the hub's tab is hidden still opens. Either `onDisappear` doesn't clear `isSettled` on a tab switch in a test window, or the hidden-tab guard doesn't work. Not investigated.
   - `ProfileV3OnboardingPresentationTests.theHubsOwnSurfaceRunsOnboardingOverTheTabBar` and `aFlowThatClosesItsOwnContainerIsReportedOnce`: the dismissal never completes in a window with no scene. Probably the harness, not the launcher.
 - Checking a design against Figma:
@@ -145,7 +145,7 @@ xcrun simctl delete "$UDID"
 
 ### Release
 
-- `master` is one commit ahead of `origin/master` (`e434d81`, Manav's Support row routing, on `8cc91dc` and the QA-2008 fixes `a53e774`): `64506d3` (benefit Learn more, the long Instagram handle fix and QA-2007), not pushed. The working tree holds the city profile, the contact save fix and the Settings debug change, uncommitted. `a53e774` and `2ad3c52` (loyalty edit and tier, hub refresh, agent fields, Ditto rebuild) were pushed outside this session. `1.0.21` is on `df4009c`; nothing after it is tagged.
+- `master` is three commits ahead of `origin/master` (`e434d81`, Manav's Support row routing, on `8cc91dc` and the QA-2008 fixes `a53e774`), not pushed: `64506d3` (benefit Learn more, the long Instagram handle fix and QA-2007), `723ffb1` (city profile behind its flag, the contact save fix, and the Settings debug City profile row that replaced the KYC state menu) and the travel persona analytics fix after it. `a53e774` and `2ad3c52` (loyalty edit and tier, hub refresh, agent fields, Ditto rebuild) were pushed outside this session. `1.0.21` is on `df4009c`; nothing after it is tagged.
 - Tags `1.0.0` and `1.0.2`–`1.0.21` are on GitHub; `1.0.1` is local only. Tags are often cut straight from a commit with no release commit. When that happens, move the tag's "Unreleased" body into a `## <version> — <date>` section and keep only later changes under Unreleased (done for 1.0.17, 1.0.20 and 1.0.21).
 - `README.md` still says "Version 1.0.1".
 
@@ -222,7 +222,7 @@ xcrun simctl delete "$UDID"
   - `ProfileV3SettingsViewModel.isMainTravellerKYCComplete()` uses the cached board only while it is younger than `ProfileV3HubViewModel.staleBoardAge`, else `loadLatestBoard()`. A failed fetch falls back to the cached board, then to unlocked.
   - The glove box runs that check alongside `/me` on every load. The Settings card's ACTIVATE pill shows for no address or no KYC.
   - An empty inbox shows one sample email. The virtual card shows the main traveler's short name and digits derived from the address.
-- Travel persona: the delight loader shows for the first five loads, and a drag saves on release.
+- Travel persona: the delight loader shows for the first five loads, and a drag saves on release. Its edits report as `profile_agent_preference_changed` (`travel_person_agent`, the trait as `sectionName`): a knob change as it is submitted, with the score, and a trait-screen action after it succeeds, with the server action name (2026-11-04, aadi's report of 2026-10-30). It sends no `profile_agent_form_saved`, since it has no Save.
 - Loyalty edit (user's call, 2026-11-01):
   - It starts from an "Edit" pill on each card in the programmes edit mode (the delete selection), where "View insight" sits.
   - It reuses the add flow's details sheet: `ProfileV3AddProgrammeViewModel(editing:)`, which skips the loader, back button and step dots.
@@ -269,7 +269,8 @@ xcrun simctl delete "$UDID"
 ### Open work
 
 - QA-2007 (glove box KYC lock) is fixed in `64506d3`, not pushed or tagged.
-- Contact save in Ayl (2026-11-04): every tag up to `1.0.21` takes the traveller only from the host, and Ayl's host sends none, so Confirm fails before `PATCH /api/pensieve/v1/profile/edit` and plays only the error haptic. Ayl pins `1.0.20`. The board fallback (`ProfileV3SettingsDependencies.travellerID`) is uncommitted; a probe confirmed it sends the PATCH from a cached or refetched board. Ayl needs a tag with it.
+- Travel persona analytics (aadi, 2026-10-30): fixed in the commit after `723ffb1`, not pushed or tagged; Ayl needs a tag with it.
+- Contact save in Ayl (2026-11-04): every tag up to `1.0.21` takes the traveller only from the host, and Ayl's host sends none, so Confirm fails before `PATCH /api/pensieve/v1/profile/edit` and plays only the error haptic. Ayl pins `1.0.20`. The board fallback (`ProfileV3SettingsDependencies.travellerID`) is in `723ffb1`, not pushed or tagged; a probe confirmed it sends the PATCH from a cached or refetched board. Ayl needs a tag with it.
 - QA-2008 (2026-11-02): QA-2009, -2011, -2043 and -2050 are fixed in `a53e774` (pushed, not tagged). QA-2042 needs snapmap migration 043 on the environment QA tested; the app now shows client copy for that 500.
 - vdcios integration:
   - Pin a version instead of `branch: master`.

@@ -167,6 +167,7 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
             var failure: (any Error)?
             do {
                 for change in changes {
+                    ProfileV3Analytics.personaPreferenceChanged(traitID: change.id, travellerId: profileID, changedValue: change.score)
                     try await repository.submitPersonaAction(change.submit, score: change.score)
                 }
             } catch {
