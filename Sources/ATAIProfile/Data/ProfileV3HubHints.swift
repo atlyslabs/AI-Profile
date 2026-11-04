@@ -63,6 +63,11 @@ struct ProfileV3HubHints {
         nonmutating set { defaults.set(newValue, forKey: Keys.personaCoachSeen) }
     }
 
+    var personaSavedProfileIDs: Set<String> {
+        get { Set(defaults.stringArray(forKey: Keys.personaSavedProfileIDs) ?? []) }
+        nonmutating set { defaults.set(newValue.sorted(), forKey: Keys.personaSavedProfileIDs) }
+    }
+
     private enum Keys {
         static let holdHintSeen = "profileV3.holdToExploreSeen"
         static let holdHintShows = "profileV3.holdToExploreShows"
@@ -71,5 +76,6 @@ struct ProfileV3HubHints {
         static let connectedAppsHintSeen = "profileV3.connectedAppsHintSeen"
         static let personaCoachSeen = "profileV3.personaCoachSeen"
         static let personaLoaderShows = "profileV3.personaLoaderShows"
+        static let personaSavedProfileIDs = "profileV3.personaSavedProfileIDs"
     }
 }

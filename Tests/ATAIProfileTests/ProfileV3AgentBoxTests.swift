@@ -169,6 +169,31 @@ struct ProfileV3AgentBoxTests {
         #expect(router.openedAgentsRequiringKYC.isEmpty)
     }
 
+    @Test func aSavedTravelPersonaShowsAsSavedFromItsFirstSave() throws {
+        let board = try Self.board(mainKYC: nil, tiles: #"""
+        [{"agent_type":"food","name":"food","next":{"go":"agent","agent_type":"food","profile_id":"main"}},
+         {"agent_type":"travel_persona","name":"travel persona","updated_label":"",
+          "next":{"go":"travel_persona","profile_id":"main"}}]
+        """#)
+        let hints = ProfileV3HubHints(
+            defaults: try #require(UserDefaults(suiteName: "profileV3.persona.saved.\(UUID().uuidString)"))
+        )
+        let viewModel = ProfileV3HubViewModel(repository: CachedBoardRepository(board: board), hints: hints)
+        #expect(viewModel.agents.map(\.hasData) == [false, false])
+
+        viewModel.travelPersonaSaved(profileID: "co")
+        #expect(viewModel.agents.map(\.hasData) == [false, false])
+
+        viewModel.travelPersonaSaved(profileID: "main")
+        let persona = try #require(viewModel.agents.last)
+        #expect(persona.hasData && persona.isActive)
+        #expect(viewModel.agents.first?.hasData == false)
+        #expect(viewModel.home?.agents.last?.hasData == false)
+
+        let relaunched = ProfileV3HubViewModel(repository: CachedBoardRepository(board: board), hints: hints)
+        #expect(relaunched.agents.map(\.hasData) == [false, true])
+    }
+
     @Test(.timeLimit(.minutes(1)))
     func savingAnAgentFormTellsTheHubBeforeTheSheetCloses() async {
         var events: [String] = []

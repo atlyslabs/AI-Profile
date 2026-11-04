@@ -104,6 +104,11 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   autosave sends, and each action on a trait's screen ("Ignore", "Ignore all", "Undo"), now sends
   `profile_agent_preference_changed` with `agentName: travel_person_agent`, the trait as
   `sectionName`, and the new score or the server action name as `changedValue`.
+- The Travel persona tile kept its "+" ring after the persona was edited. From the first saved knob
+  change or trait action it now shows the green ring, like an agent with saved preferences, and
+  the hub refetches its board as it does after the other agents save. ai-kyc always sends the
+  tile's `updated_label` empty, so the app remembers which travelers' personas were saved on this
+  device (`ProfileV3HubHints.personaSavedProfileIDs`) until the board sends a label for it.
 - Saving contact info (email or phone) in Settings made no request when the host has no selected
   traveller, which is always the case in Ayl: the save failed before
   `PATCH /api/pensieve/v1/profile/edit` and only the error haptic played. The save, and the

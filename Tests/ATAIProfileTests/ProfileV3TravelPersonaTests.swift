@@ -423,6 +423,50 @@ struct ProfileV3TravelPersonaTests {
         #expect(repository.events == ["submit:adventure", "trait:adventure"])
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func aSavedKnobOrTraitActionTellsTheHubToRefresh() async throws {
+        var saves = 0
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(),
+            isEditable: true,
+            onSaved: { saves += 1 }
+        )
+        try await loaded(viewModel)
+
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 70)
+        while viewModel.notice == nil { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(saves == 1)
+
+        viewModel.open("adventure")
+        let trait = try #require(viewModel.trait)
+        trait.perform(
+            ProfileV3PersonaTrait.Action(label: "Ignore", submit: ProfileV3BoardAction(fields: [:])),
+            id: "src-1"
+        )
+        while saves < 2 { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(trait.busyActionIDs.isEmpty)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func aRefusedSaveLeavesTheHubAlone() async throws {
+        var saves = 0
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(submitError: ProfileV3Error.notImplemented(action: "set_persona_score")),
+            isEditable: true,
+            onSaved: { saves += 1 }
+        )
+        try await loaded(viewModel)
+
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 70)
+        while viewModel.notice == nil { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(viewModel.notice?.isError == true)
+        #expect(saves == 0)
+    }
+
     private static let board = [
         ("adventure", 56), ("new_places", 85), ("outdoors", 47), ("social", 56), ("nightlife", 60),
         ("pace", 50), ("local", 32), ("culture", 95), ("comfort", 50), ("planning", 90)

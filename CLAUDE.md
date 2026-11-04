@@ -145,8 +145,8 @@ xcrun simctl delete "$UDID"
 
 ### Release
 
-- `master` is three commits ahead of `origin/master` (`e434d81`, Manav's Support row routing, on `8cc91dc` and the QA-2008 fixes `a53e774`), not pushed: `64506d3` (benefit Learn more, the long Instagram handle fix and QA-2007), `723ffb1` (city profile behind its flag, the contact save fix, and the Settings debug City profile row that replaced the KYC state menu) and the travel persona analytics fix after it. `a53e774` and `2ad3c52` (loyalty edit and tier, hub refresh, agent fields, Ditto rebuild) were pushed outside this session. `1.0.21` is on `df4009c`; nothing after it is tagged.
-- Tags `1.0.0` and `1.0.2`–`1.0.21` are on GitHub; `1.0.1` is local only. Tags are often cut straight from a commit with no release commit. When that happens, move the tag's "Unreleased" body into a `## <version> — <date>` section and keep only later changes under Unreleased (done for 1.0.17, 1.0.20 and 1.0.21).
+- `origin/master` is at `75a363c` (travel persona analytics), on `723ffb1` (city profile behind its flag, the contact save fix, and the Settings debug City profile row that replaced the KYC state menu) and `64506d3` (benefit Learn more, the long Instagram handle fix and QA-2007); all three were pushed outside this session. `master` is two commits ahead, not pushed: `f97c8dc` (the plug icon on the connector deck) and the travel persona ring commit after it. `1.0.23` is on `e434d81` (Manav's Support row routing) and `1.0.22` on `8cc91dc`; nothing after `e434d81` is tagged.
+- Tags `1.0.0` and `1.0.2`–`1.0.23` are on GitHub; `1.0.1` is local only. Tags are often cut straight from a commit with no release commit. When that happens, move the tag's "Unreleased" body into a `## <version> — <date>` section and keep only later changes under Unreleased (done for 1.0.17, 1.0.20 and 1.0.21; not yet for 1.0.22 and 1.0.23).
 - `README.md` still says "Version 1.0.1".
 
 ### Feature flags (`ProfileV3FeatureFlags`)
@@ -193,6 +193,7 @@ xcrun simctl delete "$UDID"
     - In an edit, a sent `tier` resets the month to the sent one (or that default). A month sent alone keeps the saved tier, and a blank one is ignored.
     - 422 `kyc_invalid_request` with "Pick a tier from the list." or "Enter the month as MM/YY, this month or later."
   - The personal agent's `passport_empty` shows the placeholder card, and the passport card's `father`/`mother`/`spouse`/`address` keys feed the back page.
+  - An agent tile's ring follows its `updated_label`: blank shows the gradient arc with "+", any text shows the green ring. ai-kyc sends the label once the traveller has saved that agent (`agents_meta` in `api/board.py`), but `travel_persona.grid_tile` hard-codes `""`, so the persona tile never turns green.
   - AI connectors: `settings/connectors/ai/{connector}` and its `/connect`, saved with `connect_ai_connector`. Its `synced_at` comes as Python `isoformat()` (microseconds, `+00:00`).
   - Custom rules are the agent screen's `custom_rules` field and save with the agent.
   - Benefit detail (`GET /board/benefits/{id}`) can send `learn_more: {label, next: {go: "ai_chat", prompt}}`. Only a label with an `ai_chat` prompt is kept (`ProfileV3BenefitLearnMore`).
@@ -222,7 +223,7 @@ xcrun simctl delete "$UDID"
   - `ProfileV3SettingsViewModel.isMainTravellerKYCComplete()` uses the cached board only while it is younger than `ProfileV3HubViewModel.staleBoardAge`, else `loadLatestBoard()`. A failed fetch falls back to the cached board, then to unlocked.
   - The glove box runs that check alongside `/me` on every load. The Settings card's ACTIVATE pill shows for no address or no KYC.
   - An empty inbox shows one sample email. The virtual card shows the main traveler's short name and digits derived from the address.
-- Travel persona: the delight loader shows for the first five loads, and a drag saves on release. Its edits report as `profile_agent_preference_changed` (`travel_person_agent`, the trait as `sectionName`): a knob change as it is submitted, with the score, and a trait-screen action after it succeeds, with the server action name (2026-11-04, aadi's report of 2026-10-30). It sends no `profile_agent_form_saved`, since it has no Save.
+- Travel persona: the delight loader shows for the first five loads, and a drag saves on release. Its edits report as `profile_agent_preference_changed` (`travel_person_agent`, the trait as `sectionName`): a knob change as it is submitted, with the score, and a trait-screen action after it succeeds, with the server action name (2026-11-04, aadi's report of 2026-10-30). It sends no `profile_agent_form_saved`, since it has no Save. After the first saved knob change or trait action the tile counts as saved, like the other agents (user, 2026-11-04): each success calls the hub's `travelPersonaSaved(profileID:)` through `makeTravelPersona(onSaved:)`, which refetches the board and records the traveller in `ProfileV3HubHints.personaSavedProfileIDs`. `ProfileV3HubViewModel.agents` shows a persona tile with no label as saved for those travellers; the grid reads it instead of `home.agents`.
 - Loyalty edit (user's call, 2026-11-01):
   - It starts from an "Edit" pill on each card in the programmes edit mode (the delete selection), where "View insight" sits.
   - It reuses the add flow's details sheet: `ProfileV3AddProgrammeViewModel(editing:)`, which skips the loader, back button and step dots.
@@ -268,9 +269,10 @@ xcrun simctl delete "$UDID"
 
 ### Open work
 
-- QA-2007 (glove box KYC lock) is fixed in `64506d3`, not pushed or tagged.
-- Travel persona analytics (aadi, 2026-10-30): fixed in the commit after `723ffb1`, not pushed or tagged; Ayl needs a tag with it.
-- Contact save in Ayl (2026-11-04): every tag up to `1.0.21` takes the traveller only from the host, and Ayl's host sends none, so Confirm fails before `PATCH /api/pensieve/v1/profile/edit` and plays only the error haptic. Ayl pins `1.0.20`. The board fallback (`ProfileV3SettingsDependencies.travellerID`) is in `723ffb1`, not pushed or tagged; a probe confirmed it sends the PATCH from a cached or refetched board. Ayl needs a tag with it.
+- QA-2007 (glove box KYC lock) is fixed in `64506d3`, pushed but not tagged.
+- Travel persona analytics (aadi, 2026-10-30): fixed in `75a363c`, pushed but not tagged; Ayl needs a tag with it.
+- Travel persona ring (2026-11-04, not pushed): the client marks the tile saved on this device after the first save. That marker is device-local, so a reinstall or another device shows "+" again. BE owes a sticky "saved" signal: `grid_tile` should send `be-aiprofile-board-updated-label` once the traveller has saved a score or ignore action. Persona `user` rows can disappear (a drag back merges to zero), so it needs its own marker. Android needs the same refetch after a save; its screenshot showed the bug.
+- Contact save in Ayl (2026-11-04): every tag up to `1.0.23` takes the traveller only from the host, and Ayl's host sends none, so Confirm fails before `PATCH /api/pensieve/v1/profile/edit` and plays only the error haptic. Ayl pins `1.0.20`. The board fallback (`ProfileV3SettingsDependencies.travellerID`) is in `723ffb1`, pushed but not tagged; a probe confirmed it sends the PATCH from a cached or refetched board. Ayl needs a tag with it.
 - QA-2008 (2026-11-02): QA-2009, -2011, -2043 and -2050 are fixed in `a53e774` (pushed, not tagged). QA-2042 needs snapmap migration 043 on the environment QA tested; the app now shows client copy for that 500.
 - vdcios integration:
   - Pin a version instead of `branch: master`.

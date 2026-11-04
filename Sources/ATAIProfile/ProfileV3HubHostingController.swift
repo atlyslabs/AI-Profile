@@ -107,7 +107,14 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
     }
 
     func openTravelPersona(profileID: String?) {
-        present(ProfileV3EntryPoint.makeTravelPersona(profileID: profileID, repository: repository), animated: true)
+        present(
+            ProfileV3EntryPoint.makeTravelPersona(
+                profileID: profileID,
+                repository: repository,
+                onSaved: { [weak viewModel] in viewModel?.travelPersonaSaved(profileID: profileID) }
+            ),
+            animated: true
+        )
     }
 
     func openCityProfile(profileID: String?) {
