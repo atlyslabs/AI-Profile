@@ -65,6 +65,7 @@ extension ProfileV3SettingsRowItem {
         case "invite_friends", "invite_code": return ATMS.drafts.image()
         case "loyalty_programs": return ATIcon.SwiftUIImage.cardGiftcard
         case "terms": return ATIcon.SwiftUIImage.infoOutline
+        case "support", "get_help", "help": return ATIcon.SwiftUIImage.supportAgent
         case ProfileV3PermissionDefaults.rowKey: return ProfileV3Vector.mobileCheck.image
         case "logout": return ATIcon.SwiftUIImage.logout
         case "delete_account": return ATIcon.SwiftUIImage.deleteOutline

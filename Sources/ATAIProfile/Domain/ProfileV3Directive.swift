@@ -53,6 +53,7 @@ enum ProfileV3Route: Equatable {
     case coupons
     case inviteCode
     case termsOfService
+    case support
     case permissions
     case editTraveler
     case addTraveller
@@ -71,6 +72,7 @@ enum ProfileV3Route: Equatable {
     case personaTrait(trait: String, profileID: String?, page: Int)
     case pastTrips(profileID: String?)
     case addTrip(profileID: String?)
+    case cityProfile(profileID: String?)
     case aiChat(prompt: String)
     case aiConnector(String)
     case aiConnectorConnect(String)
@@ -138,6 +140,8 @@ extension ProfileV3Directive {
             return .inviteCode
         case "terms":
             return .termsOfService
+        case "support", "get_help", "help":
+            return .support
         case ProfileV3PermissionDefaults.rowKey:
             return .permissions
         case "edit_traveler":
@@ -174,10 +178,16 @@ extension ProfileV3Directive {
             return .pastTrips(profileID: profile)
         case "add_trip":
             return .addTrip(profileID: profile)
+        case ProfileV3Directive.cityProfileRoute:
+            return ProfileV3FeatureFlags.isCityProfileEnabled ? .cityProfile(profileID: profile) : .unsupported(go)
         default:
             return .unsupported(go)
         }
     }
+
+    static let cityProfileRoute = "city_profile"
+
+    var opensCityProfile: Bool { go == Self.cityProfileRoute }
 
     private var connectorKey: ProfileV3ConnectorKey? {
         connector.flatMap(ProfileV3ConnectorKey.init(rawValue:))

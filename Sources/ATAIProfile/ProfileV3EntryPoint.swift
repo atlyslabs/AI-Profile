@@ -21,7 +21,12 @@ public enum ProfileV3EntryPoint {
         ProfileV3PendingDestination.shared.post(destination)
     }
 
-    public static func presentAddTraveller(navCon: UINavigationController) {
+    /// `onTravellersChanged` fires when the sheet saves one. It carries no name — the caller is
+    /// told that the list changed and refetches, which is what the hub does with it.
+    public static func presentAddTraveller(
+        navCon: UINavigationController,
+        onTravellersChanged: (() -> Void)? = nil
+    ) {
         guard addTravellerPresenter == nil else { return }
         let repository = environment.makeRepository()
         let presenter = ProfileV3SettingsSheetPresenter(
@@ -39,7 +44,7 @@ public enum ProfileV3EntryPoint {
             profileID: environment.boardStore.cachedBoard()?.mainProfile?.profileID,
             profileName: nil,
             onConnectConnector: nil,
-            onTravellersChanged: nil,
+            onTravellersChanged: onTravellersChanged,
             onConnectorsDisconnected: nil,
             onOpenProgrammes: nil,
             onFinish: { finished in
@@ -131,6 +136,13 @@ public enum ProfileV3EntryPoint {
         repository: any ProfileV3PersonaRepository
     ) -> UIViewController {
         ProfileV3TravelPersonaHostingController(profileID: profileID, repository: repository)
+    }
+
+    static func makeCityProfile(
+        profileID: String?,
+        repository: any ProfileV3CityPreferencesRepository
+    ) -> UIViewController {
+        ProfileV3CityProfileHostingController(profileID: profileID, repository: repository)
     }
 
     static func makeProgrammes(

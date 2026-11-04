@@ -506,6 +506,51 @@ struct ProfileV3AnalyticsEventsTests {
         #expect(reported == [.front])
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func travelPersonaChangesReportAsPreferenceChanges() async throws {
+        let recorder = AnalyticsRecorder()
+        try await ProfileV3Analytics.$scopedReporter.withValue(recorder) {
+            let repository = ProfileV3MockRepository(delay: .zero, session: ProfileV3SessionStore())
+            let persona = ProfileV3TravelPersonaViewModel(
+                profileID: "main",
+                repository: repository,
+                isEditable: true,
+                hints: Self.freshHints()
+            )
+            persona.load()
+            while persona.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+            let content = try #require(persona.content)
+            let knob = try #require(content.traits.first { $0.submit != nil })
+            let raised = content.clamped(knob.score + 10)
+            let score = raised == knob.score ? knob.score - 10 : raised
+
+            persona.beginDrag(knob.id)
+            persona.endDrag(knob.id, score: score)
+            while persona.notice == nil { try await Task.sleep(for: .milliseconds(10)) }
+
+            let dragged = try #require(recorder.named("profile_agent_preference_changed").first)
+            #expect(dragged.string("agentName") == "travel_person_agent")
+            #expect(dragged.string("sectionName") == knob.id)
+            #expect(dragged.string("travellerId") == "main")
+            #expect(dragged.parameters["changedValue"] as? Int == score)
+
+            persona.open(knob.id)
+            let trait = try #require(persona.trait)
+            while trait.content == nil { try await Task.sleep(for: .milliseconds(10)) }
+            let row = try #require(trait.content?.rows.first { $0.action != nil })
+            let action = try #require(row.action)
+            trait.perform(action, id: row.id)
+            while recorder.named("profile_agent_preference_changed").count < 2 {
+                try await Task.sleep(for: .milliseconds(10))
+            }
+
+            let ignored = try #require(recorder.named("profile_agent_preference_changed").last)
+            #expect(ignored.string("agentName") == "travel_person_agent")
+            #expect(ignored.string("sectionName") == trait.traitID)
+            #expect(ignored.string("changedValue") == action.submit.name)
+        }
+    }
+
     private static func row(_ directive: ProfileV3Directive) -> ProfileV3SettingsRowItem {
         ProfileV3SettingsRowItem(key: directive.field ?? directive.go, label: directive.go, directive: directive)
     }

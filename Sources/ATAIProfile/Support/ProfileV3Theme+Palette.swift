@@ -84,6 +84,7 @@ extension ProfileV3Theme {
         static let benefitMeterTrack = Color(hex: "D9D9D9").opacity(0.4)
         static let kycProgressTrack = Color(hex: "D9D9D9").opacity(0.3)
         static let redeemBorder = Color(at: .neutralGrey200).opacity(0.5)
+        static let benefitFooterFade = Color(hex: "C6C6C6")
         static let backFaceBorder = Color(at: .semanticBorder)
         static let backFaceText = Color(at: .neutralGrey900)
         static let plusRingNavy = Color(hex: "14163A")

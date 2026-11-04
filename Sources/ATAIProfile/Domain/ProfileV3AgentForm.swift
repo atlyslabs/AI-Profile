@@ -199,9 +199,16 @@ extension ProfileV3FormSection {
 }
 
 struct ProfileV3ChipOption: Identifiable, Hashable {
+    enum Place: Hashable {
+        case hotel
+        case location
+    }
+
     let id: String
     let title: String
     var logoURL: URL?
+    var subtitle: String?
+    var place: Place?
 }
 
 struct ProfileV3ChipField: Equatable {
@@ -210,6 +217,7 @@ struct ProfileV3ChipField: Equatable {
     var allowsMultiple = true
     var picker: ProfileV3OptionPicker?
     var preselectedIDs: [String] = []
+    var optOut: ProfileV3OptOut?
 
     func visibleOptions(limit: Int) -> [ProfileV3ChipOption] {
         guard picker != nil else { return options }
@@ -238,12 +246,14 @@ struct ProfileV3ChipField: Equatable {
 struct ProfileV3OptionPicker: Equatable {
     let title: String
     var catalogue: [ProfileV3ChipOption]
+    var listLabel: String?
 }
 
 struct ProfileV3CardOption: Identifiable, Equatable {
     let id: String
     let code: String
     let detail: String
+    var imageURL: URL?
 }
 
 struct ProfileV3CardField: Equatable {

@@ -66,7 +66,11 @@ protocol ProfileV3SettingsSheetRouting: AnyObject {
     func presentInviteShare(_ invite: ProfileV3InviteCode)
     func presentLoyaltyProgrammes()
     func presentTermsOfService()
+    func presentSupport()
     func openExternalURL(_ url: URL)
+    #if DEBUG
+    func presentCityProfile()
+    #endif
 }
 
 @MainActor

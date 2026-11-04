@@ -17,6 +17,7 @@ struct ProfileV3BenefitsListView: View {
     let onClose: () -> Void
     var onKnowMore: (() -> Void)?
     var onActivateLocked: ((ProfileV3Benefit) -> Void)?
+    var onBenefitLearnMore: ((ProfileV3Benefit) -> Void)?
     var travellerID: String?
 
     @StateObject private var presenter = ProfileV3HeroPresenter<ProfileV3Benefit>()
@@ -65,7 +66,8 @@ struct ProfileV3BenefitsListView: View {
                 loadDetail: loadDetail,
                 onRedeem: onRedeem,
                 redeemError: redeemError,
-                onClearRedeemError: onClearRedeemError
+                onClearRedeemError: onClearRedeemError,
+                onLearnMore: onBenefitLearnMore
             )
         }
         .onChange(of: redemption) { _, redemption in

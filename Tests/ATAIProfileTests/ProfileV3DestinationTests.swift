@@ -110,5 +110,8 @@ private final class DestinationRouterSpy: ProfileV3HubRouter {
     func openProgrammes(for pass: ProfileV3WorldPass, passes: [ProfileV3WorldPass]) {}
     func openKYC() {}
     func openBenefitKYC(_ benefit: ProfileV3Benefit) {}
+    var opensChat: Bool { false }
+    func openChat(prompt: String) {}
     func openTravelPersona(profileID: String?) {}
+    func openCityProfile(profileID: String?) {}
 }

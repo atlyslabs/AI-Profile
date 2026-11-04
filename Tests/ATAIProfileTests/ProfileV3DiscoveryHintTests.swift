@@ -49,44 +49,6 @@ struct ProfileV3DiscoveryHintTests {
         #expect(hints.programmeReorderHintShows == ProfileV3HubHints.programmeReorderHintShowLimit)
     }
 
-    @Test func liveLeavesTheBoardAsTheServerSentIt() throws {
-        let board = try Self.board()
-        #expect(board.applying(.live) == board)
-    }
-
-    @Test func noPassportAsksForThePassportOnTheMainTravelerOnly() throws {
-        let board = try Self.board()
-        let debug = board.applying(.noPassport)
-        let main = try #require(debug.mainProfile)
-        #expect(main.pass.kycStatus == .notStarted)
-        #expect(main.pass.kycCapture?.steps == [ProfileV3CaptureStepKey.passport])
-        #expect(main.home.kycProgress == ProfileV3KYCProgress(done: 2, total: 3))
-        #expect(main.home.kycStatusText(showsExpiryDate: true) == "Passport missing")
-        let co = try #require(debug.profiles.first { !$0.isMain })
-        #expect(co.pass == board.profiles.first { !$0.isMain }?.pass)
-        #expect(co.home.worldPasses.first { $0.id == main.profileID } == main.pass)
-    }
-
-    @Test func noKYCAsksForEveryStep() throws {
-        let main = try #require(try Self.board().applying(.noKYC).mainProfile)
-        #expect(main.pass.kycCapture?.steps == [
-            ProfileV3CaptureStepKey.passport,
-            ProfileV3CaptureStepKey.selfie,
-            ProfileV3CaptureStepKey.gmailConnect
-        ])
-        #expect(main.home.kycProgress == nil)
-        #expect(main.home.kycActionLabel == "Complete KYC")
-    }
-
-    @Test func reKYCExpiresTheMainPass() throws {
-        let main = try #require(try Self.board().applying(.reKYC).mainProfile)
-        #expect(main.pass.kycStatus == .expired(on: ""))
-        #expect(main.pass.resolvedKYCGlowTone == .negative)
-        #expect(main.pass.kycTitle == "KYC expired")
-        #expect(main.home.kycStatusText(showsExpiryDate: false) == "KYC expired")
-        #expect(!main.home.needsKYCReconnect)
-    }
-
     @Test func theWorldPassHeaderNamesTheServersBrand() throws {
         let board = try Self.board()
         #expect(board.mainProfile?.pass.brand == "ayl worldpass")

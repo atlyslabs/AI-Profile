@@ -14,6 +14,9 @@ protocol ProfileV3HubRouter: AnyObject {
     func openBenefitKYC(_ benefit: ProfileV3Benefit)
     func openAddTraveller()
     func openTravelPersona(profileID: String?)
+    func openCityProfile(profileID: String?)
+    var opensChat: Bool { get }
+    func openChat(prompt: String)
 }
 
 @MainActor
@@ -96,7 +99,7 @@ final class ProfileV3HubViewModel {
     private var loadedPassID: String?
     private var isLoadingBoard = false
     private var boardFetchedAt: Date?
-    private static let staleBoardAge: TimeInterval = 60
+    static let staleBoardAge: TimeInterval = 60
     private var pendingResumption: KYCResumption = .none
     private var benefitsSheetProfileID: String?
     @ObservationIgnored private var afterOverlaysClose: (() -> Void)?
@@ -500,6 +503,8 @@ final class ProfileV3HubViewModel {
             router?.openAgent(agent, requiresKYC: false, profileID: profileID ?? selectedPassID)
         case .travelPersona(let profileID):
             router?.openTravelPersona(profileID: profileID)
+        case .cityProfile(let profileID):
+            router?.openCityProfile(profileID: profileID ?? selectedPassID)
         default:
             guard agent.agentID != nil else { return }
             router?.openAgent(agent, requiresKYC: false, profileID: selectedPassID)
@@ -668,6 +673,24 @@ final class ProfileV3HubViewModel {
         }
         afterOverlaysClose = { [weak self] in self?.router?.openBenefitKYC(benefit) }
         dismissAllBenefits()
+    }
+
+    var opensChat: Bool { router?.opensChat ?? false }
+
+    var learnMoreAction: ((ProfileV3Benefit) -> Void)? {
+        guard opensChat else { return nil }
+        return { [weak self] benefit in self?.openLearnMore(benefit) }
+    }
+
+    func openLearnMore(_ benefit: ProfileV3Benefit) {
+        guard let learnMore = benefit.learnMore, opensChat else { return }
+        var directive = learnMore.directive
+        directive.benefitID = directive.benefitID ?? benefit.id
+        ProfileV3Analytics.cta(directive, origin: .benefitDetail)
+        afterOverlaysClose = { [weak self] in self?.router?.openChat(prompt: learnMore.prompt) }
+        if showsAllBenefits {
+            dismissAllBenefits()
+        }
     }
 
     func overlaysDidClose() {

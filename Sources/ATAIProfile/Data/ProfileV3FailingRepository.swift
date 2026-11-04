@@ -256,6 +256,35 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
+    func loadCityProfile(profileID _: String?) async throws -> ProfileV3CityProfile {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func searchCities(_: String, profileID _: String?) async throws -> [ProfileV3CitySearchResult] {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func addCity(_: String, tag _: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func updateCityTag(_: String, tag _: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func deleteCity(_: String, profileID _: String?) async throws -> ProfileV3CityProfile {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func saveCityPreferences(_: ProfileV3AgentForm, cityID _: String, profileID _: String?) async throws {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadCitySources(_: ProfileV3SectionSource, cityID _: String, profileID _: String?) async throws
+        -> ProfileV3PreferenceSources {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
     func loadPersonaTrait(_: String, profileID _: String?, page _: Int) async throws -> ProfileV3PersonaTrait {
         throw ProfileV3RepositoryError.unavailable
     }

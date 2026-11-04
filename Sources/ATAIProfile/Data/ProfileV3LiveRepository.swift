@@ -388,6 +388,78 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return ProfileV3AgentMapper.rideRegions(dto)
     }
 
+    func loadCityProfile(profileID _: String?) async throws -> ProfileV3CityProfile {
+        #if DEBUG
+        if ProfileV3FeatureFlags.isCityProfileEnabled {
+            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
+            return ProfileV3CityProfileStore.shared.snapshot()
+        }
+        #endif
+        throw ProfileV3Error.notImplemented(action: "city_profile")
+    }
+
+    func searchCities(_ query: String, profileID _: String?) async throws -> [ProfileV3CitySearchResult] {
+        #if DEBUG
+        if ProfileV3FeatureFlags.isCityProfileEnabled {
+            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
+            return ProfileV3CityProfileStore.shared.search(query)
+        }
+        #endif
+        throw ProfileV3Error.notImplemented(action: "city_profile_search")
+    }
+
+    func addCity(_ cityID: String, tag: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
+        #if DEBUG
+        if ProfileV3FeatureFlags.isCityProfileEnabled {
+            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
+            return try ProfileV3CityProfileStore.shared.add(cityID, tag: tag)
+        }
+        #endif
+        throw ProfileV3Error.notImplemented(action: "add_city_profile")
+    }
+
+    func updateCityTag(_ cityID: String, tag: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
+        #if DEBUG
+        if ProfileV3FeatureFlags.isCityProfileEnabled {
+            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
+            return try ProfileV3CityProfileStore.shared.updateTag(cityID, tag: tag)
+        }
+        #endif
+        throw ProfileV3Error.notImplemented(action: "edit_city_profile")
+    }
+
+    func deleteCity(_ cityID: String, profileID _: String?) async throws -> ProfileV3CityProfile {
+        #if DEBUG
+        if ProfileV3FeatureFlags.isCityProfileEnabled {
+            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
+            return ProfileV3CityProfileStore.shared.delete(cityID)
+        }
+        #endif
+        throw ProfileV3Error.notImplemented(action: "delete_city_profile")
+    }
+
+    func saveCityPreferences(_ form: ProfileV3AgentForm, cityID: String, profileID _: String?) async throws {
+        #if DEBUG
+        if ProfileV3FeatureFlags.isCityProfileEnabled {
+            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
+            try ProfileV3CityProfileStore.shared.save(form, cityID: cityID)
+            return
+        }
+        #endif
+        throw ProfileV3Error.notImplemented(action: "save_city_preferences")
+    }
+
+    func loadCitySources(_: ProfileV3SectionSource, cityID _: String, profileID _: String?) async throws
+        -> ProfileV3PreferenceSources {
+        #if DEBUG
+        if ProfileV3FeatureFlags.isCityProfileEnabled {
+            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
+            return ProfileV3AgentFixtures.airlineSources
+        }
+        #endif
+        throw ProfileV3Error.notImplemented(action: "city_profile_sources")
+    }
+
     func loadTravelPersona(profileID: String?) async throws -> ProfileV3TravelPersona {
         let dto: ProfileV3PersonaScreenDTO = try await client.request(
             ProfileV3API.travelPersona(profileID: profileID),

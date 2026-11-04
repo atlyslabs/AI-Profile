@@ -109,6 +109,18 @@ extension ProfileV3Theme {
         endPoint: .trailing
     )
 
+    static let benefitFooterFade = LinearGradient(
+        stops: [
+            .init(color: Palette.benefitFooterFade.opacity(0), location: 0.15),
+            .init(color: Palette.benefitFooterFade.opacity(0.05), location: 0.4),
+            .init(color: Palette.benefitFooterFade.opacity(0.16), location: 0.6),
+            .init(color: Palette.benefitFooterFade.opacity(0.33), location: 0.8),
+            .init(color: Palette.benefitFooterFade.opacity(0.57), location: 1)
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
     static let clearToWhiteFade = LinearGradient(
         colors: [Color(at: .pureWhite).opacity(0), Color(at: .pureWhite)],
         startPoint: .top,

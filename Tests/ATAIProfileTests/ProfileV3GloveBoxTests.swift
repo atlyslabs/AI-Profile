@@ -456,6 +456,25 @@ struct ProfileV3GloveBoxTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
+    func withoutKYCAnActivatedGloveBoxStaysLockedAndLoadsNoEmails() async throws {
+        let repository = EmptyInboxStub()
+        let viewModel = ProfileV3GloveBoxViewModel(repository: repository, isKYCComplete: { false })
+        while viewModel.isResolvingScreen { try await Task.sleep(for: .milliseconds(10)) }
+
+        guard case .intro(let intro) = viewModel.gloveBox.stage else {
+            Issue.record("expected the intro")
+            return
+        }
+        #expect(intro.status == .locked)
+        #expect(intro.action == .completeKYC)
+        #expect(viewModel.home == nil)
+        #expect(repository.loadedPages == 0)
+
+        viewModel.openList(.emails)
+        #expect(viewModel.sheets.isEmpty)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
     func withKYCTheIntroOffersToActivate() async throws {
         let repository = EmptyInboxStub(account: ProfileV3GloveBoxAccount(eligible: true))
         let viewModel = ProfileV3GloveBoxViewModel(repository: repository, isKYCComplete: { true })
@@ -478,6 +497,7 @@ private final class EmptyInboxStub: ProfileV3GloveBoxRepository, @unchecked Send
     private var account: ProfileV3GloveBoxAccount
     private var _openedMessages = 0
     private var _createdAddresses = 0
+    private var _loadedPages = 0
 
     init(account: ProfileV3GloveBoxAccount = ProfileV3GloveBoxAccount(
         address: "priya@trips.atlys.com",
@@ -489,6 +509,7 @@ private final class EmptyInboxStub: ProfileV3GloveBoxRepository, @unchecked Send
 
     var openedMessages: Int { lock.withLock { _openedMessages } }
     var createdAddresses: Int { lock.withLock { _createdAddresses } }
+    var loadedPages: Int { lock.withLock { _loadedPages } }
 
     func loadGloveBoxCard() async throws -> ProfileV3GloveBoxAccount {
         lock.withLock { account }
@@ -513,7 +534,8 @@ private final class EmptyInboxStub: ProfileV3GloveBoxRepository, @unchecked Send
     }
 
     func loadGloveBoxMessages(cursor _: String?) async throws -> ProfileV3GloveBoxInboxPage {
-        ProfileV3GloveBoxInboxPage(emails: [], nextCursor: nil)
+        lock.withLock { _loadedPages += 1 }
+        return ProfileV3GloveBoxInboxPage(emails: [], nextCursor: nil)
     }
 
     func loadGloveBoxMessage(_ listed: ProfileV3GloveBoxEmail) async throws -> ProfileV3GloveBoxEmail {

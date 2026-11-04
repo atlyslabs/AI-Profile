@@ -93,6 +93,7 @@ struct ProfileV3BenefitHeroOverlay: View {
     var onRedeem: ((ProfileV3Benefit) -> Void)?
     var redeemError: String?
     var onClearRedeemError: (() -> Void)?
+    var onLearnMore: ((ProfileV3Benefit) -> Void)?
 
     var body: some View {
         ProfileV3HeroOverlay(presenter: presenter, loadDetail: loadDetail) { benefit, detail in
@@ -100,7 +101,13 @@ struct ProfileV3BenefitHeroOverlay: View {
             ProfileV3BenefitDetailView(
                 benefit: shown,
                 onClose: { presenter.dismiss() },
-                onRedeem: onRedeem.map { redeem in { redeem(shown) } }
+                onRedeem: onRedeem.map { redeem in { redeem(shown) } },
+                onLearnMore: onLearnMore.map { learnMore in
+                    {
+                        learnMore(shown)
+                        presenter.dismiss()
+                    }
+                }
             )
             .profileV3ErrorAlert(
                 redeemError ?? ProfileV3Strings.redeemFailed,

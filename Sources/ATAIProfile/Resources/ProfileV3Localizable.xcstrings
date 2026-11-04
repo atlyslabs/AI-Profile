@@ -721,6 +721,42 @@
         }
       }
     },
+    "mo-aiprofile-agents-accessibility-add-city": {
+      "comment": "City profile: button to add a frequent destination.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a city"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-accessibility-delete-city": {
+      "comment": "City profile: button to delete a city from the profile.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete city profile"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-accessibility-edit-city-tag": {
+      "comment": "City profile: button to change why the traveler visits a city.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit city tag"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-button-add-credentials": {
       "comment": "App access row button that adds credentials for a pending app.",
       "extractionState": "manual",
@@ -1105,6 +1141,30 @@
         }
       }
     },
+    "mo-aiprofile-agents-header-add-city-profile": {
+      "comment": "City profile: header of the add-a-city sheets.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ City profile"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-header-city-profile": {
+      "comment": "City profile: screen header.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "City profile"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-hint-connected-apps": {
       "comment": "Hint bubble pointing at the Connected button on App access.",
       "extractionState": "manual",
@@ -1185,6 +1245,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Our agents build an understanding of"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-city-tag-count": {
+      "comment": "City profile: a city tag with how many cities share it, e.g. Home (2).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ (%2$@)"
           }
         }
       }
@@ -1461,6 +1533,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Website"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-loading-city-updating": {
+      "comment": "City profile: shown on a section while the agent gathers a new city’s preferences.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update information"
           }
         }
       }

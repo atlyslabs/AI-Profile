@@ -13,8 +13,11 @@ struct ProfileV3OptionPickerRow: View {
                 if let logoURL = option.logoURL {
                     logo(logoURL)
                         .padding(.leading, ProfileV3Theme.Space.s14)
+                } else if let place = option.place {
+                    ProfileV3PlaceThumbnail(place: place, size: ProfileV3Theme.Sizes.Picker.logo)
+                        .padding(.leading, ProfileV3Theme.Space.s14)
                 }
-                Text(option.title)
+                label
                     .typoGraphy(.B1InterSemibold14)
                     .foregroundStyle(ProfileV3Theme.Palette.countryText)
                     .opacity(isSelected ? 1 : ProfileV3Theme.Opacity.optionUnselected)
@@ -32,6 +35,30 @@ struct ProfileV3OptionPickerRow: View {
         .buttonStyle(.profileV3Pressable(.selection))
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
         .accessibilityLabel(option.title)
+        .accessibilityValue(option.subtitle ?? "")
+    }
+
+    @ViewBuilder
+    private var label: some View {
+        if let subtitle = option.subtitle?.nonEmpty {
+            ViewThatFits(in: .horizontal) {
+                (Text(option.title) + Text(ProfileV3Strings.subtitleSeparator + subtitle).foregroundStyle(subtitleTint))
+                    .lineLimit(1)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(option.title)
+                        .lineLimit(1)
+                    Text(subtitle)
+                        .foregroundStyle(subtitleTint)
+                        .lineLimit(1)
+                }
+            }
+        } else {
+            Text(option.title)
+        }
+    }
+
+    private var subtitleTint: Color {
+        ProfileV3Theme.Palette.countryText.opacity(ProfileV3Theme.Opacity.cardSubtitle)
     }
 
     private var checkbox: some View {

@@ -113,6 +113,16 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
         present(ProfileV3EntryPoint.makeTravelPersona(profileID: profileID, repository: repository), animated: true)
     }
 
+    func openCityProfile(profileID: String?) {
+        present(ProfileV3EntryPoint.makeCityProfile(profileID: profileID, repository: repository), animated: true)
+    }
+
+    var opensChat: Bool { environment.app.opensChat }
+
+    func openChat(prompt: String) {
+        environment.app.openChat(prompt: prompt)
+    }
+
     func openAgent(_ agent: ProfileV3Agent, requiresKYC: Bool, profileID: String?) {
         guard requiresKYC else {
             present(

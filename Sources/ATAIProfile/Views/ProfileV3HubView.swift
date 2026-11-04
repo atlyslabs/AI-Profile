@@ -75,11 +75,6 @@ struct ProfileV3HubView: View {
         .onChange(of: viewModel.benefitRedemption) { _, redemption in
             benefitPresenter.dismiss(after: redemption)
         }
-        #if DEBUG
-        .onReceive(NotificationCenter.default.publisher(for: ProfileV3DebugKYCScenario.didChange)) { _ in
-            viewModel.requestRefresh()
-        }
-        #endif
         .sensoryFeedback(.success, trigger: viewModel.kycStepCompletions)
         .sensoryFeedback(trigger: viewModel.kycGlowCue) { _, cue in
             switch cue?.tone {
@@ -109,7 +104,8 @@ struct ProfileV3HubView: View {
                 loadDetail: viewModel.benefitDetail,
                 onRedeem: viewModel.redeem,
                 redeemError: viewModel.redeemError,
-                onClearRedeemError: viewModel.clearRedeemError
+                onClearRedeemError: viewModel.clearRedeemError,
+                onLearnMore: viewModel.learnMoreAction
             )
             ProfileV3CouponHeroOverlay(presenter: couponPresenter, loadDetail: viewModel.couponDetail)
             ProfileV3HubSheets(viewModel: viewModel, isRevealed: cover.isMounted)
@@ -409,6 +405,7 @@ private struct ProfileV3HubSheets: View {
                 onClose: viewModel.dismissAllBenefits,
                 onKnowMore: viewModel.tapKnowMore,
                 onActivateLocked: viewModel.activateLockedBenefit,
+                onBenefitLearnMore: viewModel.learnMoreAction,
                 travellerID: viewModel.selectedPassID
             )
             .transition(ProfileV3Theme.Motion.fullScreenTransition)

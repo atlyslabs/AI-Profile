@@ -198,6 +198,8 @@ enum ProfileV3Fixtures {
             + "exclusions and booking conditions may apply."
     )
 
+    static let learnMoreBenefit = partiallyRedeemedBenefit.withLearnMore()
+
     static let depletedBenefit = partiallyRedeemedBenefit.withStatus(
         .partiallyRedeemed(usage: "$500 used", validTill: "Active till Jan 2027", progress: 1)
     )
@@ -673,5 +675,19 @@ enum ProfileV3Fixtures {
         agents: agents,
         agentsUpdatedAt: "2:00pm, 24 Jun"
     )
+}
+
+extension ProfileV3Benefit {
+    func withLearnMore() -> ProfileV3Benefit {
+        var copy = self
+        copy.learnMore = ProfileV3BenefitLearnMore(
+            label: "Learn more",
+            directive: ProfileV3Directive(
+                go: "ai_chat",
+                prompt: "Tell me more about my WorldPass benefit: \(title). How do I use it?"
+            )
+        )
+        return copy
+    }
 }
 #endif

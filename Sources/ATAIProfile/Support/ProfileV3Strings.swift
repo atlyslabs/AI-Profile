@@ -227,4 +227,12 @@ enum ProfileV3Strings {
             ? ProfileV3L10n.moAiprofileLoyaltyConfirmationDeleteProgramsOne(count)
             : ProfileV3L10n.moAiprofileLoyaltyConfirmationDeleteProgramsOther(count)
     }
+    static var cityProfile: String { ProfileV3L10n.moAiprofileAgentsHeaderCityProfile }
+    static var addCityProfile: String { ProfileV3L10n.moAiprofileAgentsHeaderAddCityProfile }
+    static var addCity: String { ProfileV3L10n.moAiprofileAgentsAccessibilityAddCity }
+    static var editCityTag: String { ProfileV3L10n.moAiprofileAgentsAccessibilityEditCityTag }
+    static var deleteCity: String { ProfileV3L10n.moAiprofileAgentsAccessibilityDeleteCity }
+    static var cityUpdating: String { ProfileV3L10n.moAiprofileAgentsLoadingCityUpdating }
+    static func cityTagCount(_ label: String, _ count: Int) -> String { ProfileV3L10n.moAiprofileAgentsLabelCityTagCount(label, count) }
+    static let subtitleSeparator = " \u{B7} "
 }
