@@ -175,7 +175,37 @@ struct ProfileV3CityProfileTests {
         #expect(tabs.first?.id == "preferred_airlines")
         viewModel.selectTab("airport_pickup")
         #expect(viewModel.selectedTab == "airport_pickup")
-        #expect(viewModel.scrollRequest?.sectionID == "airport_pickup")
+        let request = try #require(viewModel.scrollRequest)
+        #expect(request.sectionID == "airport_pickup")
+        #expect(request.anchorID == ProfileV3CityProfileViewModel.sectionAnchorID("airport_pickup"))
+        let chipIDs = Set(tabs.map(\.id))
+        #expect(!chipIDs.contains(request.anchorID))
+    }
+
+    @Test func theHighlightedTabFollowsTheSectionUnderTheStrip() async throws {
+        let viewModel = Self.viewModel()
+        viewModel.load()
+        try await Self.waitUntil { viewModel.phase == .loaded }
+        let tabs = try #require(viewModel.selectedCity?.tabs.map(\.sectionID))
+        try #require(tabs.count >= 3)
+
+        viewModel.sectionReached(tabs[0], isReached: true)
+        viewModel.sectionReached(tabs[1], isReached: true)
+        #expect(viewModel.selectedTab == tabs[1])
+        viewModel.sectionReached(tabs[1], isReached: false)
+        #expect(viewModel.selectedTab == tabs[0])
+        viewModel.sectionReached(tabs[0], isReached: false)
+        #expect(viewModel.selectedTab == nil)
+
+        viewModel.selectTab(tabs[2])
+        viewModel.sectionReached(tabs[0], isReached: true)
+        #expect(viewModel.selectedTab == tabs[2])
+        try await Task.sleep(for: .seconds(ProfileV3Theme.Motion.cityTabFollowPauseSeconds + 0.1))
+        viewModel.sectionReached(tabs[1], isReached: true)
+        #expect(viewModel.selectedTab == tabs[1])
+
+        viewModel.select(ProfileV3CityProfileViewModel.addSlotID)
+        #expect(viewModel.selectedTab == nil)
     }
 
     // MARK: - Preferences

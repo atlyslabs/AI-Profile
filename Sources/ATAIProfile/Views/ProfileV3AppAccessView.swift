@@ -3,7 +3,6 @@ import SwiftUI
 
 struct ProfileV3AppAccessView: View {
     @ObservedObject var model: ProfileV3AppAccessModel
-    @ObservedObject var connectors: ProfileV3ConnectorsSettingsModel
     let onBack: () -> Void
 
     var body: some View {
@@ -23,6 +22,13 @@ struct ProfileV3AppAccessView: View {
         .sheet(item: $model.instagram) { instagram in
             ProfileV3InstagramConnectSheet(model: instagram)
         }
+        .overlay {
+            if model.isRedirectingToInstagram {
+                ProfileV3InstagramRedirectOverlay()
+                    .transition(.opacity)
+            }
+        }
+        .animation(ProfileV3Theme.Motion.contentSwitch, value: model.isRedirectingToInstagram)
         .sensoryFeedback(.success, trigger: model.disconnectCompletions)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             model.refreshIfAwaitingMessage()
@@ -83,7 +89,18 @@ struct ProfileV3AppAccessContent: View {
         if model.phase == .loaded {
             VStack(spacing: Access.cardSpacing) {
                 ForEach(model.autoConnected) { app in
-                    ProfileV3AutoConnectedRow(app: app)
+                    ProfileV3ConnectedAppRow(
+                        iconURL: app.iconURL,
+                        title: app.name,
+                        status: ProfileV3Strings.appAccessAutoConnected
+                    )
+                }
+                ForEach(model.listedConnectedApps) { app in
+                    ProfileV3ConnectedAppRow(
+                        iconURL: app.iconURL,
+                        title: app.handle ?? app.name,
+                        status: ProfileV3Strings.connectorConnected
+                    )
                 }
                 ForEach(model.pendingApps) { app in
                     ProfileV3AppAccessRow(app: app) { model.tapAddCredentials(app) }
@@ -151,8 +168,7 @@ private struct ProfileV3AppAccessRow: View {
     }
 
     private var title: String {
-        guard app.isAwaitingMessage, let username = app.username else { return app.name }
-        return "@" + username
+        app.isAwaitingMessage ? app.handle ?? app.name : app.name
     }
 
     private var actionTitle: String {
@@ -161,19 +177,21 @@ private struct ProfileV3AppAccessRow: View {
     }
 }
 
-private struct ProfileV3AutoConnectedRow: View {
-    let app: ProfileV3AutoConnectedApp
+private struct ProfileV3ConnectedAppRow: View {
+    let iconURL: URL?
+    let title: String
+    let status: String
 
     private typealias Access = ProfileV3Theme.Sizes.InformationAccess
 
     var body: some View {
         ProfileV3ConnectorCardTitle(
             icon: ATIcon.SwiftUIImage.globe,
-            iconURL: app.iconURL,
+            iconURL: iconURL,
             isIconRound: true,
-            title: app.name
+            title: title
         ) {
-            Text(ProfileV3Strings.appAccessAutoConnected)
+            Text(status)
                 .typoGraphy(.H7InterSemibold16)
                 .textCase(.lowercase)
                 .foregroundStyle(Color(at: .accentEmerald600))
@@ -216,22 +234,11 @@ struct ProfileV3AppAccessComingSoonView: View {
 
 #if DEBUG
 private struct ProfileV3AppAccessPreview: View {
-    @StateObject private var connectors: ProfileV3ConnectorsSettingsModel
-    @StateObject private var model: ProfileV3AppAccessModel
-
-    init() {
-        let repository = ProfileV3MockRepository()
-        let connectors = ProfileV3ConnectorsSettingsModel(repository: repository)
-        _connectors = StateObject(wrappedValue: connectors)
-        _model = StateObject(wrappedValue: ProfileV3AppAccessModel(repository: repository, connectors: connectors))
-    }
+    @StateObject private var model = ProfileV3AppAccessModel(repository: ProfileV3MockRepository())
 
     var body: some View {
-        ProfileV3AppAccessView(model: model, connectors: connectors, onBack: {})
-            .task {
-                model.load()
-                connectors.load()
-            }
+        ProfileV3AppAccessView(model: model, onBack: {})
+            .task { model.load() }
     }
 }
 

@@ -14,6 +14,12 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   - A carousel of plane-window cities, ending in an "Add" window, shows each city's tag ("Home",
     "Home (2)" when cities share it, or the traveler's own purpose), "Found 6/8 flight
     preferences", its sources, a tab strip that scrolls to a section, and notched section cards.
+  - The tab strip pins under the header once it scrolls up there. A tap scrolls the page so the
+    section's card starts just under the pinned strip, and the strip scrolls the selected tab into
+    view. Scrolling by hand moves the highlight to the last section that has reached the strip
+    (the first tab at the top); for the moment a tap's own scroll runs, crossings are ignored, so
+    the highlight stays on the tapped tab. Taps used to do nothing: the section ids matched the tab chips' own ids, so the scroll
+    went to the strip's horizontal scroll view instead of the page.
   - The cards reuse the agent form fields. Each city is a `ProfileV3AgentForm` edited by
     `ProfileV3AgentFormViewModel`, so the pickers, sources, custom rules and "save changes" bar
     work as they do for agents. Saves go to the city through `ProfileV3CityAgentRepository`.
@@ -58,6 +64,19 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   or any other `go` hides the button. The tap logs `profile_cta_clicked` with origin
   `benefit_detail` and the benefit's id. When "Got it" or "Redeem" also shows, the two buttons
   stack, with Learn more on top.
+- Connecting Instagram opens on an intro (Figma `6595:15220`): under "Turn your travel Reels into an
+  actual plan.", five reels shrink into pins on a map, the map fades in and a place card pops up.
+  It runs once (3.4 s), holds for a second, then moves on to the explainer; a tap skips ahead.
+  With Reduce Motion the designed still shows instead. The photos, map and pin glyph are bundled
+  (`profile_v3_instagram_*`, `profile_v3_pin_distance`, about 0.8 MB). Three keys were hand-added
+  (`mo-aiprofile-agents-title-instagram-reels-plan`, `-label-instagram-sample-place` and
+  `-sample-place-detail`); add them in Ditto.
+- "Send a message" on the waiting Instagram card plays the redirect from Figma `6595:14302` over
+  App access before opening the chat with @ayl.chat. The orb assembles from 44 particles over 2 s
+  above a white fade and the green wash, with "...Come say hi!", "Follow us, drop in a text" and
+  "Redirecting you to instagram...". Touches are blocked while it plays, a second tap is ignored,
+  and closing Settings cancels it. The redirect after linking a username, inside the sheet, is
+  unchanged.
 
 ### Changed
 
@@ -97,6 +116,26 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 - The Control panel's connector deck, where Gmail and apps are disconnected, now heads its
   "CONNECTORS" label with the plug icon (`plugConnect`), the same icon as the Settings card,
   instead of the database icon.
+- The Instagram explainer moves on after 7 seconds (was 15).
+- App access's Connected panel shows only connected apps, and Information access's shows only the
+  email connectors; both used to show one deck with every card. App access shows "Connected" only
+  once an app is connected (an email connector no longer counts). The apps deck is the new settings
+  route `connectedApps`, and `ProfileV3AppAccessModel` no longer takes the connectors model.
+- "Complete KYC" on a locked glove box now starts Gmail linking (the `gmail_connect` capture, the
+  same flow as Information access's Gmail card) instead of KYC onboarding.
+- A connected Instagram stays listed on App access, as a row like Splits' "auto connected" one:
+  its logo, the @handle and a green "connected". It is also under Connected, where Edit lives.
+  Instagram is the only app in release, so once the DM to @ayl.chat registered the page used to
+  show nothing below the heading. Other connected apps still move to Connected only.
+- Saving an edit from App access's Connected panel goes back to App access once the edit sheet has
+  closed. A relinked Instagram waits for a new DM, so it leaves the panel, which used to stay open
+  and empty.
+- A field's sources row draws every icon the server lists in `source.icons` (Gmail, you, then each
+  AI assistant), where it used to stop at two, and the sources sheet is fetched for the field's
+  `next.profile_id` when one is sent.
+- Spidey Sense rows draw the row's `icon` when the server sends one: a Gmail row's on the grey tile
+  at the Gmail glyph's size, any other row's (you, an AI assistant) filling the tile. Rows without
+  `icon` draw by `kind` as before.
 
 ### Fixed
 

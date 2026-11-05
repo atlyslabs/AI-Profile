@@ -72,7 +72,7 @@ struct ProfileV3SettingsView: View {
                     repository: repository,
                     isKYCComplete: viewModel.isMainTravellerKYCComplete,
                     mainTravellerName: viewModel.mainTravellerName,
-                    onCompleteKYC: viewModel.completeKYCFromGloveBox
+                    onCompleteKYC: viewModel.connectEmailFromGloveBox
                 ) { viewModel.isGloveBoxPresented = false }
             }
         }
@@ -143,7 +143,7 @@ struct ProfileV3SettingsView: View {
             ProfileV3InformationAccessView(model: viewModel.connectors, onBack: viewModel.pop)
         case .appAccess:
             if ProfileV3FeatureFlags.isAppAccessEnabled {
-                ProfileV3AppAccessView(model: viewModel.appAccess, connectors: viewModel.connectors, onBack: viewModel.pop)
+                ProfileV3AppAccessView(model: viewModel.appAccess, onBack: viewModel.pop)
             } else {
                 ProfileV3AppAccessComingSoonView(onBack: viewModel.pop)
             }

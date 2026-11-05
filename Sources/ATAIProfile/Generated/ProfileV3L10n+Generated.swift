@@ -245,6 +245,10 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelInstagramHi: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-instagram-hi", fallback: "hi") }
   /// Ayl's Instagram handle, drawn without the @ in the first Instagram explainer card.
   internal static var moAiprofileAgentsLabelInstagramSampleHandle: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-instagram-sample-handle", fallback: "ayl") }
+  /// Sample place name on the map card in the first Instagram connect step.
+  internal static var moAiprofileAgentsLabelInstagramSamplePlace: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-instagram-sample-place", fallback: "Nobu Dubai") }
+  /// Sample price and cuisine under the place name on the map card in the first Instagram connect step.
+  internal static var moAiprofileAgentsLabelInstagramSamplePlaceDetail: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-instagram-sample-place-detail", fallback: "AED 500+ ·  Japanese rest.") }
   /// Credentials form field label for the password.
   internal static var moAiprofileAgentsLabelPassword: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-password", fallback: "Password") }
   /// Travel persona loader: trait label on the processing dial.
@@ -313,6 +317,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsTitleInstagramFollowUs: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-follow-us", fallback: "Follow us, drop in a text") }
   /// Heading on the Instagram card in App access while the linked account hasn't messaged @ayl.chat yet.
   internal static var moAiprofileAgentsTitleInstagramGetToKnow: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-get-to-know", fallback: "Get to know @ayl.chat") }
+  /// Title of the first Instagram connect step, above the reels that fly into a map.
+  internal static var moAiprofileAgentsTitleInstagramReelsPlan: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-reels-plan", fallback: "Turn your travel Reels into an actual plan.") }
   /// Third step on the Instagram connect explainer.
   internal static var moAiprofileAgentsTitleInstagramStepFollow: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-title-instagram-step-follow", fallback: "Hit the “Follow” button and say hi!") }
   /// Second step on the Instagram connect explainer.

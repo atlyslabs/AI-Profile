@@ -52,6 +52,12 @@ extension ProfileV3Theme.Sizes {
         static let tabIcon = ProfileV3Theme.Icon.md
         static let tabGap = ProfileV3Theme.Space.s10
         static let tabSpacing = ProfileV3Theme.Space.s16
+        static let tabStripPadding = ProfileV3Theme.Space.s10
+        static let tabStripHeight = tabHeight + tabStripPadding * 2
+        static let pinnedTabsTop = ProfileV3Theme.Sizes.Agent.backTop + ProfileV3Theme.Sizes.circleButton
+        static let pinnedTabsFade = ProfileV3Theme.Space.s16
+        static let sectionScrollInset = pinnedTabsTop + tabStripHeight
+        static let sectionReachedLine = sectionScrollInset + ProfileV3Theme.Space.s8
         static let sectionsTop: CGFloat = 36
         static let sectionSpacing = ProfileV3Theme.Space.s16
         static let notchHeight: CGFloat = 43
@@ -208,7 +214,9 @@ extension ProfileV3Theme.Motion {
     static let cityDeckMoveSeconds: Double = 0.55
     static let cityDeckFadeStartSeconds: Double = 0.98
     static let cityDeckRevealSeconds: Double = 0.18
-    static let citySectionScroll: Animation = .easeInOut(duration: 0.4)
+    static let citySectionScrollSeconds: Double = 0.4
+    static let citySectionScroll: Animation = .easeInOut(duration: citySectionScrollSeconds)
+    static let cityTabFollowPauseSeconds: Double = citySectionScrollSeconds + 0.1
     static let cityShimmerSeconds: Double = 1.4
 }
 

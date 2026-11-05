@@ -49,6 +49,9 @@ private struct ProfileV3CityProfileScreen: View {
     let content: ProfileV3CityProfile
 
     @State private var headerPin = ProfileV3HeaderPin()
+    @State private var areTabsPinned = false
+
+    static let coordinateSpace = "ProfileV3CityProfileScreen"
 
     private typealias Sizes = ProfileV3Theme.Sizes.City
 
@@ -64,10 +67,13 @@ private struct ProfileV3CityProfileScreen: View {
                             tagLabel: viewModel.tagLabel(for: city),
                             tagIcon: viewModel.tagIcon(for: city),
                             selectedTab: viewModel.selectedTab,
+                            areTabsPinned: areTabsPinned,
                             form: form,
                             onEditTag: viewModel.editSelectedCity,
                             onOpenCitySources: viewModel.openCitySources,
-                            onSelectTab: viewModel.selectTab
+                            onSelectTab: viewModel.selectTab,
+                            onTabsPinned: { areTabsPinned = $0 },
+                            onSectionReached: viewModel.sectionReached
                         )
                         .id(city.id)
                         .transition(.opacity)
@@ -85,16 +91,18 @@ private struct ProfileV3CityProfileScreen: View {
             .onChange(of: viewModel.scrollRequest) { _, request in
                 guard let request else { return }
                 withAnimation(ProfileV3Theme.Motion.citySectionScroll) {
-                    proxy.scrollTo(request.sectionID, anchor: .top)
+                    proxy.scrollTo(request.anchorID, anchor: .top)
                 }
             }
         }
+        .coordinateSpace(.named(Self.coordinateSpace))
         .overlay(alignment: .top) {
             ProfileV3CityProfileHeader(
                 pin: headerPin,
                 showsAdd: !viewModel.isOnAddSlot,
                 onBack: viewModel.close,
-                onAdd: viewModel.startAdding
+                onAdd: viewModel.startAdding,
+                tabStrip: pinnedTabStrip
             )
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -113,6 +121,13 @@ private struct ProfileV3CityProfileScreen: View {
             }
         }
         .background(Color(at: .pureWhite))
+    }
+
+    private var pinnedTabStrip: ProfileV3CityTabStrip? {
+        guard areTabsPinned, viewModel.form != nil, let tabs = viewModel.selectedCity?.tabs, !tabs.isEmpty else {
+            return nil
+        }
+        return ProfileV3CityTabStrip(tabs: tabs, selectedID: viewModel.selectedTab, onSelect: viewModel.selectTab)
     }
 
     private var carousel: some View {
@@ -174,15 +189,19 @@ private struct ProfileV3CityProfileHeader: View {
     let showsAdd: Bool
     let onBack: () -> Void
     let onAdd: () -> Void
+    var tabStrip: ProfileV3CityTabStrip?
+
+    private typealias Sizes = ProfileV3Theme.Sizes.City
 
     var body: some View {
+        let progress = tabStrip == nil ? pin?.progress ?? 0 : 1
         ZStack(alignment: .top) {
             ProfileV3FadeBand(
-                solid: ProfileV3Theme.Sizes.Agent.stickyBarHeight,
-                fade: ProfileV3Theme.Sizes.Agent.stickyFadeHeight,
-                blocksTouches: (pin?.progress ?? 0) > 0
+                solid: tabStrip == nil ? ProfileV3Theme.Sizes.Agent.stickyBarHeight : Sizes.pinnedTabsTop + Sizes.tabStripHeight,
+                fade: tabStrip == nil ? ProfileV3Theme.Sizes.Agent.stickyFadeHeight : Sizes.pinnedTabsFade,
+                blocksTouches: progress > 0
             )
-            .opacity(Double(pin?.progress ?? 0))
+            .opacity(Double(progress))
             .accessibilityHidden(true)
             ProfileV3AgentSheetChrome(control: .back(onBack), title: { ProfileV3TagLabel(text: ProfileV3Strings.cityProfile) })
             if showsAdd {
@@ -198,6 +217,10 @@ private struct ProfileV3CityProfileHeader: View {
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.top, ProfileV3Theme.Sizes.Agent.backTop)
                 .transition(.opacity)
+            }
+            if let tabStrip {
+                tabStrip
+                    .padding(.top, Sizes.pinnedTabsTop)
             }
         }
         .frame(maxWidth: .infinity)
@@ -254,10 +277,13 @@ private struct ProfileV3CityPreferences: View {
     let tagLabel: String
     let tagIcon: String?
     let selectedTab: String?
+    let areTabsPinned: Bool
     @ObservedObject var form: ProfileV3AgentFormViewModel
     let onEditTag: () -> Void
     let onOpenCitySources: () -> Void
     let onSelectTab: (String) -> Void
+    let onTabsPinned: (Bool) -> Void
+    let onSectionReached: (String, Bool) -> Void
 
     private typealias Sizes = ProfileV3Theme.Sizes.City
 
@@ -277,21 +303,42 @@ private struct ProfileV3CityPreferences: View {
             let tabs = city.tabs
             if !tabs.isEmpty {
                 ProfileV3CityTabStrip(tabs: tabs, selectedID: selectedTab, onSelect: onSelectTab)
-                    .padding(.top, (city.sources == nil ? Sizes.tabsTopWithoutSources : Sizes.tabsTop) - ProfileV3Theme.Space.s10)
+                    .opacity(areTabsPinned ? 0 : 1)
+                    .allowsHitTesting(!areTabsPinned)
+                    .accessibilityHidden(areTabsPinned)
+                    .onGeometryChange(for: Bool.self) { proxy in
+                        proxy.frame(in: .named(ProfileV3CityProfileScreen.coordinateSpace)).minY <= Sizes.pinnedTabsTop
+                    } action: { isPinned in
+                        onTabsPinned(isPinned)
+                    }
+                    .onDisappear { onTabsPinned(false) }
+                    .padding(.top, (city.sources == nil ? Sizes.tabsTopWithoutSources : Sizes.tabsTop) - Sizes.tabStripPadding)
             }
             VStack(spacing: Sizes.sectionSpacing) {
                 ForEach(agentForm.sections.filter { !$0.isCustomRules }) { section in
-                    ProfileV3CitySectionView(
-                        section: section,
-                        style: city.style(for: section.id),
-                        isUpdating: city.isUpdating,
-                        form: form
-                    )
-                    .id(section.id)
+                    VStack(spacing: 0) {
+                        Color.clear
+                            .frame(height: Sizes.sectionScrollInset)
+                            .allowsHitTesting(false)
+                            .accessibilityHidden(true)
+                            .id(ProfileV3CityProfileViewModel.sectionAnchorID(section.id))
+                        ProfileV3CitySectionView(
+                            section: section,
+                            style: city.style(for: section.id),
+                            isUpdating: city.isUpdating,
+                            form: form
+                        )
+                        .onGeometryChange(for: Bool.self) { proxy in
+                            proxy.frame(in: .named(ProfileV3CityProfileScreen.coordinateSpace)).minY <= Sizes.sectionReachedLine
+                        } action: { isReached in
+                            onSectionReached(section.id, isReached)
+                        }
+                    }
+                    .padding(.top, -Sizes.sectionScrollInset)
                 }
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, Sizes.sectionsTop - ProfileV3Theme.Space.s10)
+            .padding(.top, Sizes.sectionsTop - Sizes.tabStripPadding)
             if let customRules = form.customRules {
                 ProfileV3CustomRulesSection(model: customRules)
                     .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)

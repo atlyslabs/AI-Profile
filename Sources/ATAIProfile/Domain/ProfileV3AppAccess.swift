@@ -41,6 +41,7 @@ struct ProfileV3LinkedApp: Identifiable, Equatable, Sendable {
 
     var isInstagram: Bool { id == Self.instagramID }
     var isAwaitingMessage: Bool { isInstagram && username != nil && !isConnected }
+    var handle: String? { username.map { "@" + $0 } }
 
     static var instagram: ProfileV3LinkedApp {
         ProfileV3LinkedApp(

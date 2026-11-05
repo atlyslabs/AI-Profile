@@ -6,9 +6,15 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
     struct ScrollRequest: Equatable {
         let sectionID: String
         let id = UUID()
+
+        var anchorID: String { ProfileV3CityProfileViewModel.sectionAnchorID(sectionID) }
     }
 
     static let addSlotID = "city_profile.add"
+
+    nonisolated static func sectionAnchorID(_ sectionID: String) -> String {
+        "city_section." + sectionID
+    }
 
     @Published private(set) var phase: ProfileV3LoadPhase = .loading
     @Published private(set) var content: ProfileV3CityProfile?
@@ -16,6 +22,8 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
         didSet {
             guard selection != oldValue else { return }
             selectedTab = nil
+            reachedSectionIDs = []
+            tabFollowResumes = nil
             syncForm()
         }
     }
@@ -33,6 +41,8 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
     private var forms: [String: ProfileV3AgentFormViewModel] = [:]
     private var pendingEditor: ProfileV3CityEditorModel?
     private var loadTask: Task<Void, Never>?
+    private var reachedSectionIDs: Set<String> = []
+    private var tabFollowResumes: ContinuousClock.Instant?
     private var refreshTask: Task<Void, Never>?
 
     init(
@@ -89,7 +99,23 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
 
     func selectTab(_ sectionID: String) {
         selectedTab = sectionID
+        tabFollowResumes = .now + .seconds(ProfileV3Theme.Motion.cityTabFollowPauseSeconds)
         scrollRequest = ScrollRequest(sectionID: sectionID)
+    }
+
+    func sectionReached(_ sectionID: String, isReached: Bool) {
+        if isReached {
+            reachedSectionIDs.insert(sectionID)
+        } else {
+            reachedSectionIDs.remove(sectionID)
+        }
+        if let tabFollowResumes, ContinuousClock.now < tabFollowResumes { return }
+        tabFollowResumes = nil
+        guard let tabs = selectedCity?.tabs else { return }
+        let reached = tabs.last { reachedSectionIDs.contains($0.sectionID) }?.sectionID
+        if selectedTab != reached {
+            selectedTab = reached
+        }
     }
 
     func tagLabel(for city: ProfileV3City) -> String {

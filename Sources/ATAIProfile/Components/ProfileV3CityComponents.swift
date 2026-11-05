@@ -618,16 +618,28 @@ struct ProfileV3CityTabStrip: View {
     private typealias Sizes = ProfileV3Theme.Sizes.City
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: Sizes.tabSpacing) {
-                ForEach(tabs) { tab in
-                    chip(tab, isSelected: tab.id == (selectedID ?? tabs.first?.id))
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: Sizes.tabSpacing) {
+                    ForEach(tabs) { tab in
+                        chip(tab, isSelected: tab.id == (selectedID ?? tabs.first?.id))
+                    }
+                }
+                .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
+                .padding(.vertical, Sizes.tabStripPadding)
+            }
+            .scrollClipDisabled()
+            .onAppear {
+                guard let selectedID else { return }
+                proxy.scrollTo(selectedID, anchor: .center)
+            }
+            .onChange(of: selectedID) { _, selectedID in
+                guard let selectedID else { return }
+                withAnimation(ProfileV3Theme.Motion.citySectionScroll) {
+                    proxy.scrollTo(selectedID, anchor: .center)
                 }
             }
-            .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.vertical, ProfileV3Theme.Space.s10)
         }
-        .scrollClipDisabled()
     }
 
     private func chip(_ tab: ProfileV3CitySectionStyle.Tab, isSelected: Bool) -> some View {

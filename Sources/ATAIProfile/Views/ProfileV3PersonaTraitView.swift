@@ -168,7 +168,7 @@ struct ProfileV3PersonaTraitContent: View {
     private func rowView(_ row: ProfileV3PersonaTrait.Row, connectsBelow: Bool) -> some View {
         HStack(alignment: .top, spacing: Persona.rowSpacing) {
             VStack(spacing: 0) {
-                icon(row.kind == .gmail ? .gmail : .edited)
+                rowIcon(row)
                     .opacity(row.isIgnored ? ProfileV3Theme.Opacity.personaIgnored : 1)
                 if connectsBelow {
                     ProfileV3PersonaConnector()
@@ -227,6 +227,24 @@ struct ProfileV3PersonaTraitContent: View {
             Spacer(minLength: 0)
         }
         .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private func rowIcon(_ row: ProfileV3PersonaTrait.Row) -> some View {
+        if let url = row.iconURL {
+            let glyph = row.kind == .gmail ? Persona.rowGmailGlyph.width : Persona.rowIcon
+            Circle()
+                .fill(ProfileV3Theme.Palette.sourceTile)
+                .frame(width: Persona.rowIcon, height: Persona.rowIcon)
+                .overlay {
+                    ProfileV3RemoteImage(url: url, contentMode: .fit, placeholder: .clear)
+                        .frame(width: glyph, height: glyph)
+                }
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+        } else {
+            icon(row.kind == .gmail ? .gmail : .edited)
+        }
     }
 
     private func icon(_ art: ProfileV3PersonaArt) -> some View {

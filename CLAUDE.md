@@ -60,7 +60,7 @@ xcrun simctl delete "$UDID"
 ```
 
 - Use a throwaway simulator, never the user's booted one. A cold build with package resolution takes about two minutes. Without `-IDEBuildingContinueBuildingAfterErrors=YES`, Xcode stops after the first failing batch.
-- Tests are swift-testing. As of 2026-11-04: 327 tests in 49 suites, 324 pass. The same three fail every run:
+- Tests are swift-testing. As of 2026-11-05: 338 tests in 50 suites, 335 pass. The same three fail every run:
   - `ProfileV3DestinationTests.theHubOpensALinkOnlyWhileItIsOnScreen` (lines 68–69): a link posted while the hub's tab is hidden still opens. Either `onDisappear` doesn't clear `isSettled` on a tab switch in a test window, or the hidden-tab guard doesn't work. Not investigated.
   - `ProfileV3OnboardingPresentationTests.theHubsOwnSurfaceRunsOnboardingOverTheTabBar` and `aFlowThatClosesItsOwnContainerIsReportedOnce`: the dismissal never completes in a window with no scene. Probably the harness, not the launcher.
 - Checking a design against Figma:
@@ -68,6 +68,7 @@ xcrun simctl delete "$UDID"
   - Download Figma's raster with `download_assets` (`defaultScale: 2`). Measure card-relative ink bands with a small Swift ImageIO script (PIL isn't installed). Delete the probe afterwards.
   - Inter text renders 0.5–1.5pt higher than Figma's; that's systematic, so don't offset single views.
   - `layer.render` draws no blur and a stray straight segment at capsule ends. Animations jump to their end in tests, because the window has no scene.
+  - An animated `ScrollViewProxy.scrollTo` never moves in a test window; an unanimated one does. `layer.render` also draws a scrolled page shifted and without its top overlay, and `drawHierarchy` draws nothing, so check scroll positions as numbers (scroll view offsets and frames in window coordinates).
   - To fill a Figma line box, pad the text vertically by `TypographyStyle.<style>.lineSpacingAdjustment / 2`.
 
 ## Architecture
@@ -138,14 +139,15 @@ xcrun simctl delete "$UDID"
   - scrolling and loading: `ProfileV3FadingScroll`, `ProfileV3ScreenLoader`, `ProfileV3PhasedLoad`, `ProfileV3SavePhase`;
   - cards and decoration: `profileV3AccessCard`, `ProfileV3FadeBand`, `ProfileV3Rule`/`ProfileV3DashedRule`, `ProfileV3RainbowGlow`;
   - small pieces: `ProfileV3CountryFlag`, `ProfileV3CopyButton`, `ProfileV3ErrorText`, `ProfileV3TagLabel`, `ProfileV3SegmentTrack`.
+  - motion: `ProfileV3Keyframes` plays a Figma keyframe track (holds, per-segment `UnitCurve`s) from a `TimelineView`'s elapsed time.
 - Analytics events (`Support/ProfileV3Analytics.swift`) follow the spec agreed on 2026-10-27: no default properties, personal data as specified. Tests record through the `@TaskLocal` `ProfileV3Analytics.scopedReporter`.
 - Session replay: views with personal data use `.postHogMask()`.
 
-## State (2026-11-04)
+## State (2026-11-05)
 
 ### Release
 
-- `origin/master` is at `75a363c` (travel persona analytics), on `723ffb1` (city profile behind its flag, the contact save fix, and the Settings debug City profile row that replaced the KYC state menu) and `64506d3` (benefit Learn more, the long Instagram handle fix and QA-2007); all three were pushed outside this session. `master` is two commits ahead, not pushed: `f97c8dc` (the plug icon on the connector deck) and the travel persona ring commit after it. `1.0.23` is on `e434d81` (Manav's Support row routing) and `1.0.22` on `8cc91dc`; nothing after `e434d81` is tagged.
+- `master` equals `origin/master` at `6471164` (the travel persona ring), on `f97c8dc` (the plug icon on the connector deck), `75a363c` (travel persona analytics), `723ffb1` (city profile behind its flag, the contact save fix, and the Settings debug City profile row that replaced the KYC state menu) and `64506d3` (benefit Learn more, the long Instagram handle fix and QA-2007), all pushed outside this session. The working tree holds, uncommitted: the city profile's sticky tab strip, tab scroll fix and scroll-following highlight; Vijay's 2026-11-05 design gaps (the Instagram intro, the Send a message redirect, the 7-second explainer, the split Connected panels and the glove box's Gmail route; see Product decisions); and the 2026-11-05 source icons contract (every field source icon, `next.profile_id`, Spidey Sense row icons; see Backend contracts). `1.0.23` is on `e434d81` (Manav's Support row routing) and `1.0.22` on `8cc91dc`; nothing after `e434d81` is tagged.
 - Tags `1.0.0` and `1.0.2`–`1.0.23` are on GitHub; `1.0.1` is local only. Tags are often cut straight from a commit with no release commit. When that happens, move the tag's "Unreleased" body into a `## <version> — <date>` section and keep only later changes under Unreleased (done for 1.0.17, 1.0.20 and 1.0.21; not yet for 1.0.22 and 1.0.23).
 - `README.md` still says "Version 1.0.1".
 
@@ -203,6 +205,13 @@ xcrun simctl delete "$UDID"
     - Stay `hotel_class` is `single_select` with `{value, label}` options.
     - Stay `preferred_hotels` has 100 groups with logos.
     - The field's `assist` is the subline under the control.
+  - Source icons (Abhishek, 2026-11-05; `vdc-k8s#23991`, merged 2026-11-05):
+    - A field's `source` is `{icon, icons, next: {go: "preference_sources", agent_type, field_key, profile_id}}`. `icons` lists one URL per kind of source, in this order: Gmail, you (`kyc/you.png?v=1`), then each AI assistant's Connectors icon. `icon` equals `icons[0]`. It shows on any field with a history.
+    - The sources row draws every icon (`ProfileV3SourceIconStack` `.logo`). The header pill's `.badge` keeps its two-icon cap. The sources call sends `next.profile_id` when present (`ProfileV3SectionSource.profileID`), else the form's traveller.
+    - The icons don't share a style: Gmail's is a bare 22pt logo, while you and the assistants send whole round badges (#EFEFEF tile, black ChatGPT disc). Spidey Sense rows (`ProfileV3PersonaTrait.Row.iconURL`) therefore draw by `kind`: a `gmail` row's icon sits on the grey tile at the Gmail glyph's size, and any other row's icon fills the 48pt tile. Without `icon`, rows draw the local art as before.
+    - The sources sheet's steps have no `kind`, so it still draws every icon at 22pt on its tile, and the you and assistant badges show small there. Open with BE: send `kind` on steps, or a Gmail badge, so every icon can fill its tile. Never match on the URLs.
+    - A stored value with no matching chip arrives as an extra option with `selected: true`, and shows as a selected chip with no client change.
+  - Food `dietary_style` (same day): a new first chip "Non-vegetarian". The server keeps one diet (the newest), but the field stays `multi_select_add`, so the app still lets two be picked. Choose-one would need a field-key special case, or BE sending `single_select_add`.
 - Vault (fort-knox): a login is sealed with AES-GCM under a key wrapped by the server's RSA key (OAEP-SHA256). A reveal opens an ECDH/HKDF box with the phone's Keychain key after Face ID.
 - Glove box (jaqen): `/me`, `/messages` (status, attention, action, sender logo) and the forwarding endpoints.
 - Permissions (harness): `GET /permissions` and `PUT /permissions/{key}` `{value}`.
@@ -215,11 +224,20 @@ xcrun simctl delete "$UDID"
 ### Product decisions that constrain changes
 
 - One package serves two hosts, Ayl and the Atlys app, so catalog copy shows in both. Six strings now say "Ayl".
-- App access in release lists only Instagram. Its waiting-for-a-DM card follows Figma `6595:16405`, and "Send a message" opens `https://ig.me/m/ayl.chat`. A long handle is cut short with an ellipsis so the action stays on one line (grukhs, 2026-11-04); `ProfileV3ConnectorAction` never wraps.
+- App access in release lists only Instagram. Its waiting-for-a-DM card follows Figma `6595:16405`. A long handle is cut short with an ellipsis so the action stays on one line (grukhs, 2026-11-04); `ProfileV3ConnectorAction` never wraps.
+  - Once connected (snapmap's `dm_connected`), Instagram stays in the list as well as under CONNECTED (user, 2026-11-05). Otherwise the release page is empty below the heading, since Instagram is its only app. The row is `listedConnectedApps`, drawn like the auto-connected row: logo, @handle and a green `connectorConnected`. Other connected apps leave the list, as in Figma 1917 (`3338:12183`).
+- Instagram motion (Vijay's design gaps, 2026-11-05; the user: "two animations - one is as it's there and the new addition is when send message is clicked"):
+  - The connect sheet opens on an intro, Figma `6595:15220`: reels fly into map pins, then a place card pops up. It plays once (3.4 s), holds 1 s (the frame's note), then shows the explainer, which now moves on after 7 s (was 15). Taps skip ahead. Reduce Motion shows the designed still.
+  - "Send a message" plays Figma `6595:14302` over App access (`ProfileV3InstagramRedirectOverlay`, the orb assembling from 44 particles) and opens `https://ig.me/m/ayl.chat` when the 2 s assembly ends. The redirect after linking stays in the sheet, unchanged.
+  - Both run on `ProfileV3Keyframes` tracks (Figma's keyframes and curves, `Motion.fastOutSlowIn` for cubic-bezier(0.4, 0, 0.2, 1)) evaluated in a `TimelineView`; the geometry tables are in `Theme+InstagramConnect`.
+  - Not matched: the 2pt backdrop blur under the overlay's white fade isn't drawn, and the wash keeps the sheet's top-to-bottom `instagramFollowWash` (the frame's is 195°). The shared `ProfileV3AylOrb` draws a white mark where `6595:14302` shows a lime one. The intro's shield and title sit at the shared sheet positions, 7pt above the frame, like the other steps.
+- Connected panels (Vijay, 2026-11-05): App access's Connected opens only the connected apps (route `.connectedApps`) and shows only once an app is connected; Information access's opens only the email connectors (`.controlPanel`). They used to share one deck.
+  - A successful edit from the apps panel pops back to App access once the edit sheet has closed (`editorDidDismiss`, chained through the sheet's `onDismiss`) (user, 2026-11-05). An Instagram relink resets `dm_connected`, so the panel used to sit empty. Closing the sheet without saving stays on the panel.
 - Vault:
   - Opening it with Face ID covers reveals until it is closed or the app goes to the background.
   - Saving a login only calls the API, and the sheet's fields aren't tagged as a username and password, so iOS doesn't offer to save them.
 - The glove box opens from the Settings card. Without KYC it shows the locked intro, even when Jaqen already has an address (QA-2007, 2026-11-04): Jaqen's `/me` doesn't check KYC (`eligible` is always true), so the client check is the board's main-traveler `kycStatus`.
+  - Its "Complete KYC" starts Gmail linking, the `gmail_connect` connector capture (Vijay, 2026-11-05: "for glove box we need to redirect to email linking flow, not all KYC flow"), not onboarding. If KYC is incomplete for another reason, linking Gmail alone may not unlock it; the capture continues with whatever step the server returns.
   - `ProfileV3SettingsViewModel.isMainTravellerKYCComplete()` uses the cached board only while it is younger than `ProfileV3HubViewModel.staleBoardAge`, else `loadLatestBoard()`. A failed fetch falls back to the cached board, then to unlocked.
   - The glove box runs that check alongside `/me` on every load. The Settings card's ACTIVATE pill shows for no address or no KYC.
   - An empty inbox shows one sample email. The virtual card shows the main traveler's short name and digits derived from the address.
@@ -235,6 +253,8 @@ xcrun simctl delete "$UDID"
   - Each city's preferences are a `ProfileV3AgentForm` edited by `ProfileV3AgentFormViewModel` (one per city, kept while dirty), so pickers, sources, custom rules and the save bar match the agents. `ProfileV3CityAgentRepository` sends its saves and source loads to the city.
   - A tag shows "Home (2)" when more than one city has it, and a purpose (Other) replaces the label with a pin icon. Logo chips show only selected options and a tap removes one; place rows open the picker. An opt-out dims the section.
   - The search sheet closes before the tag sheet opens (chained through `onDismiss`). Choosing a city already added jumps to it. Back on the tag sheet cancels the add.
+  - The tab strip is sticky (user, 2026-11-04; Figma `6739:16294` has no pinned state): the in-page strip reports when its top reaches `Sizes.City.pinnedTabsTop` (under the back button), then hides while the header draws a copy on a solid band with a 16pt fade. A tap scrolls to `sectionAnchorID(section)`, a clear view `sectionScrollInset` tall above each card, so the card lands under the pinned strip.
+  - The highlighted tab follows the scroll (user, 2026-11-04): each card reports when its top passes `sectionReachedLine` (8pt below the pinned strip), and `sectionReached` highlights the last tabbed section past it, else none (the first tab shows). For `cityTabFollowPauseSeconds` after a tap, crossings are recorded but don't move the highlight, so it doesn't step through the sections in between; a tap on a section that can't reach the strip keeps its highlight until the next crossing.
   - Not matched: Host Grotesk (city codes, intro title) isn't bundled, so Inter Medium stands in; Figma's `eraser_size_1` is Material `edit`; the plane-window and deck blurs can't be checked in probes. The seat art is cropped from the two sprite frames (`6736:5443`, `6736:5447`) into `profile_v3_seat_*`.
 - Agent sliders:
   - A slider whose server value is `null` saves `null` until it is moved, or until "rather not say" is turned off (`ProfileV3SliderField.isSet`). It still shows its midpoint.
@@ -244,9 +264,10 @@ xcrun simctl delete "$UDID"
 ### Ditto
 
 - In sync as of 2026-10-31. Ditto's project and library hold the catalog's 413 keys with identical values, and the catalog and generated Swift were rebuilt from Ditto by the pipeline. The rebuild is in `2ad3c52`, which is the comparison base for later drift.
-- Ditto owes hand-added keys (catalog now 421):
+- Ditto owes hand-added keys (catalog now 424):
   - 2026-11-01: `mo-aiprofile-loyalty-error-tier-valid-until-invalid` ("Enter the month as MM/YY, this month or later.", folder `loyalty-programs`, error tag).
   - 2026-11-04, City profile, folder `agents`: `mo-aiprofile-agents-header-city-profile`, `-header-add-city-profile`, `-label-city-tag-count`, `-loading-city-updating`, `-accessibility-add-city`, `-accessibility-edit-city-tag`, `-accessibility-delete-city`.
+  - 2026-11-05, Instagram intro, folder `agents`: `mo-aiprofile-agents-title-instagram-reels-plan`, `-label-instagram-sample-place`, `-label-instagram-sample-place-detail`.
 - That sync, at the user's request:
   - added the 44 hand-added keys that are in use;
   - pushed the 6 local value edits (the Atlys → Ayl copy and the "How you pay" text);
@@ -259,12 +280,13 @@ xcrun simctl delete "$UDID"
 
 - Saving a vault login shows no iOS "Save Password" sheet.
 - Instagram linking against snapmap in production, and the waiting card in Ayl.
+- The Instagram intro and Send a message redirect running on a device: probes checked frames rendered at fixed times and the overlay's layout (within 0.5pt of `6595:14302`), not the `TimelineView` playback, the blurs or the hand-off to Instagram.
 - KYC onboarding presented full screen over Ayl's tab bar.
 - Loyalty edit and tier on a device against production: that the Edit pill takes the tap rather than the row's selection button, that the tier `Menu` opens from inside the sheet window, and that a saved edit or tier shows after the reload.
 - QA-2008 fixes on a device: the AI connector prompt scrolling inside the sheet's own scroll view, and the Instagram explainer's green wash without Figma's noise.
 - Benefit Learn more in Ayl: that chat opens after the benefit cover closes, from the hub stack and from the benefits list.
 - QA-2007 against the backend: that the board reports KYC not done right after a Gmail disconnect, so the glove box locks.
-- City profile in Ayl (Settings' debug row, or the flag on): the carousel's selection and side-window scaling, the chained search → tag sheets, the fitted tag sheet with the keyboard, the deck and ring animations, and the window and deck blurs.
+- City profile in Ayl (Settings' debug row, or the flag on): the sticky tab strip and its animated scrolls (a probe checked positions with the scrolls unanimated), the carousel's selection and side-window scaling, the chained search → tag sheets, the fitted tag sheet with the keyboard, the deck and ring animations, and the window and deck blurs.
 - Motion that tests can't show: the save button's entry and exit, the persona loader's haptics, the glove box entrances, the hero and globe transitions.
 
 ### Open work
@@ -327,6 +349,7 @@ xcrun simctl delete "$UDID"
   - That error line starts with `macro expansion #expect`, so grep for `error:` anywhere in the line.
 - A stalled simulator pasteboard (the vault clipboard test) blocks the main actor, and dozens of tests then hit their 60-second limit. Re-run before suspecting the change.
 - An `.animation(_:value:)` outside a `safeAreaInset` doesn't reach the inset's own transitions. Put it on a persistent root inside the inset.
+- `ScrollViewProxy.scrollTo(id)` scrolls the first scroll view that holds `id`, and a `ForEach` element's identity counts. A nested horizontal `ForEach` (a tab strip) keyed by the same ids as the page's targets takes the scroll, so namespace the page's ids. The view that carries `.id` must itself have the frame you want; padding applied after `.id` doesn't move the target.
 - Concurrency:
   - Under `ApproachableConcurrency` a `nonisolated async` function runs on its caller's actor; use `@concurrent` for off-main work.
   - `import ATCore` brings Moya's `Task` into scope; write `Swift.Task`.

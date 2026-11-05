@@ -15,11 +15,14 @@ struct ProfileV3AppAccessTests {
         #expect(model.pendingApps.first?.asksForUsernameOnly == true)
         #expect(model.connectedApps.isEmpty)
         #expect(model.deckEntries.isEmpty)
+        #expect(!model.canOpenConnected)
         #expect(!model.showsConnectedHint)
     }
 
     @Test func addingCredentialsConnectsTheAppAndPointsToConnected() async throws {
         let model = makeModel()
+        let navigator = NavigatorStub(path: [.appAccess])
+        model.navigator = navigator
         model.load()
         try await waitUntil { model.phase == .loaded }
         let pendingGrab = model.pendingApps.first { $0.id == "grab" }
@@ -43,6 +46,7 @@ struct ProfileV3AppAccessTests {
         try await waitUntil { model.connectedApps.map(\.id) == ["grab"] }
 
         #expect(model.connectedApps.first?.username == "rahul@atlys.com")
+        #expect(model.listedConnectedApps.isEmpty)
         #expect(model.pendingApps.map(\.id) == ["instagram", "uber", "stripe", "plaid", "spotify", "strava"])
         #expect(model.saveCompletions == 1)
         #expect(model.showsConnectedHint)
@@ -54,6 +58,7 @@ struct ProfileV3AppAccessTests {
 
         model.tapConnected()
         #expect(!model.showsConnectedHint)
+        #expect(navigator.path == [.appAccess, .connectedApps])
     }
 
     @Test func newPasswordNeedsAWebsiteAndAddsAConnectedEntry() async throws {
@@ -93,8 +98,15 @@ struct ProfileV3AppAccessTests {
         let store = ProfileV3AppAccessStore()
         try store.connect("uber", credentials: ProfileV3AppCredentials(username: "rahul@atlys.com", password: "old"))
         let model = makeModel(store: store)
+        let navigator = NavigatorStub(path: [.appAccess, .connectedApps])
+        model.navigator = navigator
         model.load()
         try await waitUntil { model.phase == .loaded }
+
+        model.tapEdit("uber")
+        model.closeEditor()
+        model.editorDidDismiss()
+        #expect(navigator.path == [.appAccess, .connectedApps])
 
         model.tapEdit("uber")
         let editor = try #require(model.editor(from: .panel))
@@ -111,13 +123,16 @@ struct ProfileV3AppAccessTests {
         #expect(editor.phase == .saving)
         try await waitUntil { editor.phase == .saved }
         try await waitUntil { model.editor == nil }
+        #expect(navigator.path == [.appAccess, .connectedApps])
+        model.editorDidDismiss()
+        #expect(navigator.path == [.appAccess])
     }
 
     @Test func disconnectReturnsTheAppToTheListAndClosesThePanel() async throws {
         let store = ProfileV3AppAccessStore()
         try store.connect("grab", credentials: ProfileV3AppCredentials(username: "rahul", password: "secret"))
         let model = makeModel(store: store)
-        let navigator = NavigatorStub(path: [.appAccess, .controlPanel])
+        let navigator = NavigatorStub(path: [.appAccess, .connectedApps])
         model.navigator = navigator
         model.load()
         try await waitUntil { model.phase == .loaded }
@@ -154,7 +169,6 @@ struct ProfileV3AppAccessTests {
         let defaults = UserDefaults(suiteName: "profileV3.appAccess.\(UUID().uuidString)") ?? .standard
         return ProfileV3AppAccessModel(
             repository: repository,
-            connectors: ProfileV3ConnectorsSettingsModel(repository: repository),
             hints: ProfileV3HubHints(defaults: defaults)
         )
     }

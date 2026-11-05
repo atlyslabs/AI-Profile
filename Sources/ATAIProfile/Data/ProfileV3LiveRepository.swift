@@ -504,7 +504,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         let endpoint = ProfileV3API.preferenceSources(
             agentType: source.agentType,
             fieldKey: source.fieldKey,
-            profileID: profileID
+            profileID: source.profileID ?? profileID
         )
         let dto: ProfileV3PreferenceSourcesDTO = try await client.request(endpoint, action: "preference_sources")
         guard let sources = ProfileV3AgentMapper.preferenceSources(dto) else {

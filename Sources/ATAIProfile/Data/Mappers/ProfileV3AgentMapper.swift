@@ -304,7 +304,8 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             count: dto.count?.intValue.flatMap { $0 > 0 ? $0 : nil },
             label: text(dto.label),
             agentType: agentType,
-            fieldKey: text(next.fieldKey) ?? field.key
+            fieldKey: text(next.fieldKey) ?? field.key,
+            profileID: text(next.profileID)
         )
     }
 

@@ -65,7 +65,8 @@ enum ProfileV3PersonaMapper: ProfileV3DTOReading {
             delta: delta,
             deltaLabel: text(dto.deltaLabel) ?? (delta > 0 ? "+\(delta)" : "\(delta)"),
             isIgnored: dto.ignored == true,
-            action: dto.button.flatMap(personaAction)
+            action: dto.button.flatMap(personaAction),
+            iconURL: remoteURL(dto.icon)
         )
     }
 

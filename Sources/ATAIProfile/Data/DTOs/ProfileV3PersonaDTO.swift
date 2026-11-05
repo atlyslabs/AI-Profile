@@ -131,6 +131,7 @@ struct ProfileV3PersonaScaleDTO: Decodable, Equatable {
 struct ProfileV3PersonaRowDTO: Decodable, Equatable {
     let id: ProfileV3ScalarDTO?
     let kind: String?
+    let icon: String?
     let title: String?
     let subtitle: String?
     let delta: ProfileV3ScalarDTO?
@@ -143,6 +144,7 @@ struct ProfileV3PersonaRowDTO: Decodable, Equatable {
     enum CodingKeys: String, CodingKey {
         case id
         case kind
+        case icon
         case title
         case subtitle
         case delta

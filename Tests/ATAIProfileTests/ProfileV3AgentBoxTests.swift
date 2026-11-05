@@ -327,6 +327,49 @@ struct ProfileV3AgentBoxTests {
         #expect(ProfileV3SectionSourcesRow.caption(for: unlabelled) == ProfileV3Strings.sourcesCount(2))
     }
 
+    @Test func fieldSourcesListEveryKindOfSourceForTheirTraveller() throws {
+        let gmail = "https://media.atlys.com/b2c/ai-native/icons/kyc/gmail.png"
+        let you = "https://media.atlys.com/b2c/ai-native/icons/kyc/you.png?v=1"
+        let chatgpt = "https://media.atlys.com/b2c/ai-native/icons/connectors/chatgpt.png"
+        let mapped = try Self.flow(agentType: "flight", fields: """
+        [{"key":"airlines","label":"AIRLINES","input":"multi_select","options":[{"value":"EK","label":"Emirates"}],
+          "source":{"icon":"\(gmail)","icons":["\(gmail)","\(you)","\(chatgpt)"],
+                    "next":{"go":"preference_sources","agent_type":"flight","field_key":"airlines","profile_id":"p1"}}},
+         {"key":"stops","label":"STOPS","input":"single_select","options":[{"value":"nonstop","label":"Non-stop"}],
+          "source":{"icon":"\(you)","next":{"go":"preference_sources","agent_type":"flight","field_key":"stops"}}}]
+        """)
+        let sections = mapped.form.sections
+        try #require(sections.count == 2)
+
+        let source = try #require(sections[0].source)
+        let urls = source.icons.map { $0.url?.absoluteString }
+        #expect(urls == [gmail, you, chatgpt])
+        #expect(source.profileID == "p1")
+        #expect(ProfileV3SourceIconStack.visibleIcons(source.icons, style: .logo) == source.icons)
+        #expect(ProfileV3SourceIconStack.visibleIcons(source.icons, style: .badge).count == ProfileV3Theme.Counts.sourcesMaxIcons)
+
+        let older = try #require(sections[1].source)
+        let olderURLs = older.icons.map { $0.url?.absoluteString }
+        #expect(olderURLs == [you])
+        #expect(older.profileID == nil)
+    }
+
+    @Test func aStoredValueWithNoChipShowsAsASelectedChip() throws {
+        let mapped = try Self.flow(agentType: "itinerary", fields: #"""
+        [{"key":"activities","label":"ACTIVITIES","input":"multi_select_add",
+          "options":[{"value":"Hiking","label":"Hiking"},{"value":"Scuba diving","label":"Scuba diving","selected":true}],
+          "value":["Scuba diving"]}]
+        """#)
+        let section = try #require(mapped.form.sections.first)
+        guard case .chips(let field) = section.control else {
+            Issue.record("Activities should stay a chips section")
+            return
+        }
+        #expect(field.options.map(\.title) == ["Hiking", "Scuba diving"])
+        #expect(field.selection == ["Scuba diving"])
+        #expect(field.visibleOptions(limit: 1).map(\.title) == ["Scuba diving"])
+    }
+
     @Test func imperialHeightReadsAsFeetAndInchesAndSavesTheInchValue() throws {
         let mapped = try Self.flow(fields: #"""
         [{"key":"height_cm","label":"HEIGHT","input":"slider","unit":"in","display":"ft_in","min":47,"max":87,"value":71}]

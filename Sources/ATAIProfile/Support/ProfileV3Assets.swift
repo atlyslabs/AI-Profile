@@ -127,6 +127,18 @@ enum ProfileV3CityArt: String {
     var image: Image { Image(rawValue, bundle: .module) }
 }
 
+enum ProfileV3InstagramArt: String {
+    case map = "profile_v3_instagram_map"
+    case aurora = "profile_v3_instagram_reel_aurora"
+    case london = "profile_v3_instagram_reel_london"
+    case tokyo = "profile_v3_instagram_reel_tokyo"
+    case dining = "profile_v3_instagram_reel_dining"
+    case amalfi = "profile_v3_instagram_reel_amalfi"
+    case pin = "profile_v3_pin_distance"
+
+    var image: Image { Image(rawValue, bundle: .module) }
+}
+
 enum ProfileV3SeatArt: String {
     case economy
     case premiumEconomy = "premium_economy"

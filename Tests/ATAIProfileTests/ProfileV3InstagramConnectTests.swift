@@ -22,8 +22,12 @@ struct ProfileV3InstagramConnectTests {
         model.tapAddCredentials(instagram)
         #expect(model.editor == nil)
         let flow = try #require(model.instagram)
-        #expect(flow.step == .explainer)
+        #expect(flow.step == .intro)
 
+        flow.continueFromExplainer()
+        #expect(flow.step == .intro)
+        flow.continueFromIntro()
+        #expect(flow.step == .explainer)
         flow.continueFromExplainer()
         #expect(flow.step == .username)
         #expect(!flow.canSubmit)
@@ -47,11 +51,18 @@ struct ProfileV3InstagramConnectTests {
 
         model.tapAddCredentials(waiting)
         #expect(model.instagram == nil)
+        #expect(model.isRedirectingToInstagram)
+        #expect(opened == [ProfileV3InstagramUsername.messageURL])
+        model.tapAddCredentials(waiting)
+        try await Self.waitUntil { !model.isRedirectingToInstagram }
         #expect(opened == [ProfileV3InstagramUsername.messageURL, ProfileV3InstagramUsername.messageURL])
 
         store.messageInstagram()
         model.refreshIfAwaitingMessage()
         try await Self.waitUntil { model.connectedApps.map(\.id) == [ProfileV3LinkedApp.instagramID] }
+        let listed = model.listedConnectedApps.map(\.handle)
+        #expect(listed == ["@grukhs"])
+        #expect(model.canOpenConnected)
         let entry = try #require(model.deckEntries.first)
         #expect(!entry.canDisconnect)
         #expect(entry.hint.isEmpty)
@@ -64,6 +75,8 @@ struct ProfileV3InstagramConnectTests {
         try store.connect("grab", credentials: ProfileV3AppCredentials(username: "rahul", password: "secret"))
         let repository = ProfileV3MockRepository(delay: .zero, appAccess: store)
         let model = Self.appAccess(repository)
+        let navigator = PanelNavigatorStub(path: [.appAccess, .connectedApps])
+        model.navigator = navigator
         model.load()
         try await Self.waitUntil { model.phase == .loaded }
 
@@ -85,6 +98,8 @@ struct ProfileV3InstagramConnectTests {
         #expect(editor.canSubmit)
         editor.submit()
         try await Self.waitUntil { model.editor == nil }
+        model.editorDidDismiss()
+        #expect(navigator.path == [.appAccess])
         try await Self.waitUntil { model.pendingApps.first(where: \.isInstagram)?.username == "grukhs.travels" }
         #expect(model.pendingApps.first(where: \.isInstagram)?.isAwaitingMessage == true)
         #expect(model.connectedApps.map(\.id) == ["grab"])
@@ -97,19 +112,24 @@ struct ProfileV3InstagramConnectTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func theExplainerMovesOnByItselfAndTheRedirectOpensTheChat() async throws {
+    func theIntroAndExplainerMoveOnByThemselvesAndTheRedirectOpensTheChat() async throws {
         var opened: [URL] = []
         var finished = 0
         let flow = ProfileV3InstagramConnectModel(
             app: .instagram,
             repository: ProfileV3MockRepository(delay: .zero),
-            explainerSeconds: 0.1,
+            introSeconds: 0.1,
+            explainerSeconds: 0.3,
             openURL: { opened.append($0) },
             onFinish: { finished += 1 }
         )
-        #expect(ProfileV3Theme.Motion.instagramExplainerSeconds == 15)
+        #expect(ProfileV3Theme.Motion.instagramExplainerSeconds == 7)
+        #expect(ProfileV3Theme.Motion.InstagramIntro.seconds == 3.4)
+        #expect(ProfileV3Theme.Motion.InstagramIntro.holdSeconds == 1)
         #expect(ProfileV3Strings.instagramSampleHandle == "ayl")
         flow.start()
+        #expect(flow.step == .intro)
+        try await Self.waitUntil { flow.step == .explainer }
         try await Self.waitUntil { flow.step == .username }
 
         flow.username = "grukhs"
@@ -129,6 +149,7 @@ struct ProfileV3InstagramConnectTests {
             openURL: { _ in },
             onFinish: { finished += 1 }
         )
+        flow.continueFromIntro()
         flow.continueFromExplainer()
         flow.username = ProfileV3AppAccessStore.takenInstagramUsername
         flow.submit()
@@ -152,6 +173,7 @@ struct ProfileV3InstagramConnectTests {
             openURL: { _ in },
             onFinish: {}
         )
+        flow.continueFromIntro()
         flow.continueFromExplainer()
         flow.username = "grukhs!"
         flow.submit()
@@ -241,8 +263,8 @@ struct ProfileV3InstagramConnectTests {
         let defaults = UserDefaults(suiteName: "profileV3.instagram.\(UUID().uuidString)") ?? .standard
         return ProfileV3AppAccessModel(
             repository: repository,
-            connectors: ProfileV3ConnectorsSettingsModel(repository: repository),
             hints: ProfileV3HubHints(defaults: defaults),
+            redirectSeconds: 0.1,
             openURL: openURL
         )
     }
@@ -252,5 +274,14 @@ struct ProfileV3InstagramConnectTests {
             try await Swift.Task.sleep(for: .milliseconds(20))
         }
         #expect(condition())
+    }
+}
+
+@MainActor
+private final class PanelNavigatorStub: ProfileV3SettingsNavigating {
+    var path: [ProfileV3SettingsDestination]
+
+    init(path: [ProfileV3SettingsDestination]) {
+        self.path = path
     }
 }

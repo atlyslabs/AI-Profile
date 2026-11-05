@@ -81,6 +81,23 @@ struct ProfileV3SettingsGloveBoxTests {
         #expect(await unknown.isMainTravellerKYCComplete())
     }
 
+    @Test func completingKYCFromALockedGloveBoxOpensEmailLinking() {
+        let router = SettingsRouterSpy()
+        let viewModel = Self.settings(KYCBoardStub(cached: Self.board(kycComplete: false), fetchedAt: Date()))
+        viewModel.router = router
+        viewModel.tapGloveBox()
+
+        viewModel.connectEmailFromGloveBox()
+        #expect(!viewModel.isGloveBoxPresented)
+        #expect(router.captureSteps.isEmpty)
+        viewModel.gloveBoxDidClose()
+
+        #expect(router.captureSteps == [ProfileV3CaptureStepKey.gmailConnect])
+        #expect(router.onboardings == 0)
+        viewModel.gloveBoxDidClose()
+        #expect(router.captureSteps == [ProfileV3CaptureStepKey.gmailConnect])
+    }
+
     @Test func withoutAGloveBoxThereIsNoCard() {
         let viewModel = ProfileV3SettingsViewModel(deps: .preview(), repository: ProfileV3FailingRepository())
 
@@ -122,4 +139,36 @@ private struct KYCBoardStub: ProfileV3BoardRepository {
     func redeemBenefit(id: String) async throws {}
     func loadCoupons() async throws -> ProfileV3CouponsSheet { throw ProfileV3RepositoryError.unavailable }
     func loadCoupon(id: String) async throws -> ProfileV3CouponDetail? { nil }
+}
+
+@MainActor
+private final class SettingsRouterSpy: ProfileV3SettingsRouter {
+    private(set) var captureSteps: [String] = []
+    private(set) var onboardings = 0
+
+    func presentConnectorOnboarding() { onboardings += 1 }
+    func startConnectorCapture(_ step: String) { captureSteps.append(step) }
+    func presentDisconnectEmail() {}
+    func dismissDisconnectEmail() {}
+    func presentDisconnectProgress() {}
+    func dismissDisconnectProgress() {}
+    func connectorDidDisconnect(_ connector: ProfileV3ConnectorKey) {}
+    func presentSheet() {}
+    func dismissSheet() {}
+    func dismissSettings() {}
+    func dismissSettingsThenRestart(after pendingWrites: Task<Void, Never>?) {}
+    func restartAfterSaving(_ pendingWrites: Task<Void, Never>?) {}
+    func presentCoupons() {}
+    func presentInviteShare(_ invite: ProfileV3InviteCode) {}
+    func presentLoyaltyProgrammes() {}
+    func presentTermsOfService() {}
+    func presentSupport() {}
+    func openExternalURL(_ url: URL) {}
+    #if DEBUG
+    func presentCityProfile() {}
+    #endif
+    func showFlash(_ text: String, isSuccess: Bool) {}
+    func travellerDidChange() {}
+    func travellersDidChange() {}
+    func performLogout() {}
 }

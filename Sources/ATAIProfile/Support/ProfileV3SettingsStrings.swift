@@ -35,6 +35,9 @@ extension ProfileV3Strings {
     static var instagramStepFollow: String { ProfileV3L10n.moAiprofileAgentsTitleInstagramStepFollow }
     static var instagramStepFollowDetail: String { ProfileV3L10n.moAiprofileAgentsDescriptionInstagramStepFollow }
     static var instagramSampleHandle: String { ProfileV3L10n.moAiprofileAgentsLabelInstagramSampleHandle }
+    static var instagramReelsPlan: String { ProfileV3L10n.moAiprofileAgentsTitleInstagramReelsPlan }
+    static var instagramSamplePlace: String { ProfileV3L10n.moAiprofileAgentsLabelInstagramSamplePlace }
+    static var instagramSamplePlaceDetail: String { ProfileV3L10n.moAiprofileAgentsLabelInstagramSamplePlaceDetail }
     static var instagramFollow: String { ProfileV3L10n.moAiprofileAgentsLabelInstagramFollow }
     static var instagramHi: String { ProfileV3L10n.moAiprofileAgentsLabelInstagramHi }
     static var instagramComeSayHi: String { ProfileV3L10n.moAiprofileAgentsTitleInstagramComeSayHi }

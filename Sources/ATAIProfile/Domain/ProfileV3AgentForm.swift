@@ -62,6 +62,7 @@ struct ProfileV3SectionSource: Equatable {
     var label: String? = nil
     let agentType: String
     let fieldKey: String
+    var profileID: String? = nil
 }
 
 struct ProfileV3PreferenceSources: Equatable {
