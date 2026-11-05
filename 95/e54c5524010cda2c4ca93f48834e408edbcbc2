@@ -1,0 +1,163 @@
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_instagram_map.imageset/Contents.json
+  s_8bd9718b5e3b54::t_e657f012a735e1 1-15
+Sources/ATAIProfile/Resources/ProfileV3Localizable.xcstrings
+  s_8bd9718b5e3b54::t_3ea061c3a0acf5 1324-1347,1756-1767
+Sources/ATAIProfile/Presentation/ProfileV3CityProfileViewModel.swift
+  s_8bd9718b5e3b54::t_3ee688bab25f6b 9-10,16-17,119
+  s_8bd9718b5e3b54::t_cc08beeef8b312 25-26,44-45,102,106-118
+  s_8bd9718b5e3b54::t_9bfdaa9da91570 15
+  s_8bd9718b5e3b54::t_3dd28d6a70ed90 18,120
+Sources/ATAIProfile/Views/ProfileV3SettingsDestinationView.swift
+  s_8bd9718b5e3b54::t_ab3c03b23942c2 23-24,131-148,150-154,157-163,165,170
+  s_8bd9718b5e3b54::t_a84fd165d0f664 164
+Tests/ATAIProfileTests/ProfileV3CityProfileTests.swift
+  s_8bd9718b5e3b54::t_cc08beeef8b312 185-208
+  s_8bd9718b5e3b54::t_ccac4d1e3bdcb7 178-182
+  s_8bd9718b5e3b54::t_c305f9d6e3054c 183-184
+Sources/ATAIProfile/Components/ProfileV3AylOrbAssembly.swift
+  s_8bd9718b5e3b54::t_be014ead80c598 9,21,33
+  s_8bd9718b5e3b54::t_656687c47f4dd1 1-8,10-20,22-32,34-85
+Sources/ATAIProfile/Support/ProfileV3Keyframes.swift
+  s_8bd9718b5e3b54::t_5c7911c4ed47d7 1-40
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_instagram_reel_amalfi.imageset/Contents.json
+  s_8bd9718b5e3b54::t_e657f012a735e1 1-15
+Sources/ATAIProfile/Views/ProfileV3SettingsView.swift
+  s_8bd9718b5e3b54::t_6b543f0080bc77 146
+  s_8bd9718b5e3b54::t_71fdeda51c6ba5 75
+Tests/ATAIProfileTests/ProfileV3SettingsGloveBoxTests.swift
+  s_8bd9718b5e3b54::t_ecde7a8db6df3c 84-100,143-173
+  s_8bd9718b5e3b54::t_add54108bda22b 174
+Tests/ATAIProfileTests/ProfileV3AgentBoxTests.swift
+  s_8bd9718b5e3b54::t_d4b39006b07d24 330-372
+Sources/ATAIProfile/Support/ProfileV3SettingsStrings.swift
+  s_8bd9718b5e3b54::t_1bd720f2083211 38-40
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_instagram_reel_tokyo.imageset/Contents.json
+  s_8bd9718b5e3b54::t_e657f012a735e1 1-15
+CHANGELOG.md
+  s_8bd9718b5e3b54::t_51d746ddcbf9a5 133-138
+  s_8bd9718b5e3b54::t_3b245e7d1b3fb2 67-79,119-125
+  s_8bd9718b5e3b54::t_1230a2bfa07af9 19-21
+  s_8bd9718b5e3b54::t_dc7f6c0892e5be 126-129
+  s_8bd9718b5e3b54::t_7aefbb51c4ee00 130-132
+  s_8bd9718b5e3b54::t_8edc32a5c9a134 17-18,22
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_instagram_reel_dining.imageset/Contents.json
+  s_8bd9718b5e3b54::t_e657f012a735e1 1-15
+Tests/ATAIProfileTests/ProfileV3InstagramMotionTests.swift
+  s_8bd9718b5e3b54::t_73bc5b97b6da60 32-35
+  s_8bd9718b5e3b54::t_461bc49f4c1025 1-31,36-66
+Sources/ATAIProfile/Data/ProfileV3LiveRepository.swift
+  s_8bd9718b5e3b54::t_bac1c29e09bc97 507
+Tests/ATAIProfileTests/ProfileV3TravelPersonaTests.swift
+  s_8bd9718b5e3b54::t_d4b39006b07d24 64-82
+Sources/ATAIProfile/Components/ProfileV3InstagramReelsScene.swift
+  s_8bd9718b5e3b54::t_6eb3e38d4ac77c 1-207
+Sources/ATAIProfile/Domain/ProfileV3AppAccess.swift
+  s_8bd9718b5e3b54::t_470f0a510ad575 44
+Sources/ATAIProfile/Views/ProfileV3AppAccessView.swift
+  s_8bd9718b5e3b54::t_6b543f0080bc77 25-31,237,240-241
+  s_8bd9718b5e3b54::t_470f0a510ad575 92-103,171,180-183,190,192,194
+CLAUDE.md
+  s_8bd9718b5e3b54::t_51d746ddcbf9a5 208-214
+  s_8bd9718b5e3b54::t_1b5fef92e16e43 63,150
+  s_8bd9718b5e3b54::t_dc7f6c0892e5be 228
+  s_8bd9718b5e3b54::t_1230a2bfa07af9 257
+  s_8bd9718b5e3b54::t_8edc32a5c9a134 71,256,289,352
+  s_8bd9718b5e3b54::t_cf81e9b060ca20 146,227,229-234,240,267,270,283
+  s_8bd9718b5e3b54::t_41333352ef1b22 142
+  s_8bd9718b5e3b54::t_7aefbb51c4ee00 235
+Sources/ATAIProfile/Support/ProfileV3Theme+CityProfile.swift
+  s_8bd9718b5e3b54::t_cc08beeef8b312 60,217-219
+  s_8bd9718b5e3b54::t_3ee688bab25f6b 55-59
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_pin_distance.imageset/Contents.json
+  s_8bd9718b5e3b54::t_e657f012a735e1 1-16
+Sources/ATAIProfile/Domain/ProfileV3AgentForm.swift
+  s_8bd9718b5e3b54::t_bac1c29e09bc97 65
+Sources/ATAIProfile/Views/ProfileV3PersonaTraitView.swift
+  s_8bd9718b5e3b54::t_a01b8dc42275ad 171,232-242,244-247
+  s_8bd9718b5e3b54::t_b2e1e1ddb7cf8b 243
+  s_8bd9718b5e3b54::t_ecc25b7e909faa 248-249
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_instagram_reel_aurora.imageset/Contents.json
+  s_8bd9718b5e3b54::t_e657f012a735e1 1-15
+Sources/ATAIProfile/Presentation/ProfileV3SettingsViewModel.swift
+  s_8bd9718b5e3b54::t_71fdeda51c6ba5 52,151,155-156,159-160
+  s_8bd9718b5e3b54::t_6b543f0080bc77 73
+Sources/ATAIProfile/Support/ProfileV3Theme+Motion.swift
+  s_8bd9718b5e3b54::t_c6fc5c82dfd062 6
+Sources/ATAIProfile/Views/ProfileV3CityProfileView.swift
+  s_8bd9718b5e3b54::t_3ee688bab25f6b 52-54,70,74,98,104-105,126-132,192-194,197,200-202,204,221-224,280,285,306-315,319-323,325-330,336,341
+  s_8bd9718b5e3b54::t_8755b6c4b321e6 324,337
+  s_8bd9718b5e3b54::t_cc08beeef8b312 75-76,286,331-335
+  s_8bd9718b5e3b54::t_4d1599bf1bb10f 94
+Sources/ATAIProfile/Support/ProfileV3Assets.swift
+  s_8bd9718b5e3b54::t_e70db798075468 130-141
+Sources/ATAIProfile/Presentation/ProfileV3InstagramConnectModel.swift
+  s_8bd9718b5e3b54::t_9df304fca10109 8,14,29,33,40,47,62-69,74,114,119-135
+  s_8bd9718b5e3b54::t_5a7d9b3fe1d25d 136-137
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_pin_distance.imageset/profile_v3_pin_distance.svg
+  s_8bd9718b5e3b54::t_e657f012a735e1 1-3
+Tests/ATAIProfileTests/ProfileV3InstagramConnectTests.swift
+  s_8bd9718b5e3b54::t_3ff7001487a797 78-79,101-102,279-285
+  s_8bd9718b5e3b54::t_7309600e10aab7 63-65
+  s_8bd9718b5e3b54::t_b73f75d3cbf2ca 25,27-30,54-57,115,121-122,126,131-132,152,176,267
+  s_8bd9718b5e3b54::t_461bc49f4c1025 127-128
+  s_8bd9718b5e3b54::t_939dd7f988ceb2 286-287
+Tests/ATAIProfileTests/ProfileV3AppAccessTests.swift
+  s_8bd9718b5e3b54::t_a84fd165d0f664 101-102,106-110,126-128
+  s_8bd9718b5e3b54::t_abb4c19a05bdaa 18
+  s_8bd9718b5e3b54::t_8c8c27338da7d8 24-25,61,135
+  s_8bd9718b5e3b54::t_7309600e10aab7 49
+Sources/ATAIProfile/Data/DTOs/ProfileV3PersonaDTO.swift
+  s_8bd9718b5e3b54::t_a01b8dc42275ad 134,147
+Sources/ATAIProfile/Data/Mappers/ProfileV3AgentMapper.swift
+  s_8bd9718b5e3b54::t_bac1c29e09bc97 307-308
+Sources/ATAIProfile/Generated/ProfileV3L10n+Generated.swift
+  s_8bd9718b5e3b54::t_ad5b6eeaeebed1 248-251,320-321
+Sources/ATAIProfile/Support/ProfileV3Theme+InstagramConnect.swift
+  s_8bd9718b5e3b54::t_86333f53abc450 264-265,267
+  s_8bd9718b5e3b54::t_640269f3f7e37a 253-263,268,270-273
+  s_8bd9718b5e3b54::t_27576fc31b034f 105,121-122,125-127
+  s_8bd9718b5e3b54::t_71ed4ccc7387e5 266,269
+  s_8bd9718b5e3b54::t_340d1c6282811c 51-70,73,77-104,106-120,123-124,128-129
+  s_8bd9718b5e3b54::t_ec0135010daf9c 137-142,149-199,202-207
+  s_8bd9718b5e3b54::t_3496dfd010b4e5 71-72,74-76,200-201
+Sources/ATAIProfile/Views/ProfileV3InstagramRedirectOverlay.swift
+  s_8bd9718b5e3b54::t_a0de49e91131f3 1-17,19-22,24-42
+  s_8bd9718b5e3b54::t_45b08e441afee2 18,23
+Sources/ATAIProfile/Components/ProfileV3SourceIconStack.swift
+  s_8bd9718b5e3b54::t_bac1c29e09bc97 16-17,22
+Sources/ATAIProfile/Presentation/ProfileV3AppAccessModel.swift
+  s_8bd9718b5e3b54::t_a84fd165d0f664 28,139-144,201,207-211,220
+  s_8bd9718b5e3b54::t_470f0a510ad575 46
+  s_8bd9718b5e3b54::t_2189544b65dd2d 16,23,27,33,38,49,98,123,170-183
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_instagram_reel_london.imageset/Contents.json
+  s_8bd9718b5e3b54::t_e657f012a735e1 1-15
+Sources/ATAIProfile/Components/ProfileV3CityComponents.swift
+  s_8bd9718b5e3b54::t_3ee688bab25f6b 621-637
+  s_8bd9718b5e3b54::t_4d1599bf1bb10f 638-639
+Sources/ATAIProfile/Views/ProfileV3InstagramConnectSheet.swift
+  s_8bd9718b5e3b54::t_45b08e441afee2 212-213,215-218,225,229,232
+  s_8bd9718b5e3b54::t_72cc4a35980b58 14-15,58,74-94,197,211,214,219-224,226-228,230-231
+  s_8bd9718b5e3b54::t_4a339341e00176 233-234
+Sources/ATAIProfile/Presentation/ProfileV3SettingsRouting.swift
+  s_8bd9718b5e3b54::t_ab3c03b23942c2 11,34
+Sources/ATAIProfile/Data/Mappers/ProfileV3PersonaMapper.swift
+  s_8bd9718b5e3b54::t_a01b8dc42275ad 68-69
+Sources/ATAIProfile/Domain/ProfileV3TravelPersona.swift
+  s_8bd9718b5e3b54::t_a01b8dc42275ad 67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "95e54c5524010cda2c4ca93f48834e408edbcbc2",
+  "prompts": {},
+  "sessions": {
+    "s_8bd9718b5e3b54": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ea453c3-0ff0-4171-899c-238f1be76cd6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
