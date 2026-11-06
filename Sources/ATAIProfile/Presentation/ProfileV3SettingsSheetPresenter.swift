@@ -328,8 +328,14 @@ extension ProfileV3SettingsSheetPresenter {
 
     #if DEBUG
     func presentCityProfile() {
-        let repository = ProfileV3MockRepository(delay: ProfileV3CityProfileStore.latency, cities: .shared)
-        Self.topPresented()?.present(ProfileV3EntryPoint.makeCityProfile(profileID: nil, repository: repository), animated: true)
+        let cities = repository as? any ProfileV3CityPreferencesRepository
+            ?? ProfileV3MockRepository(delay: ProfileV3CityProfileStore.latency, cities: .shared)
+        let city = ProfileV3EntryPoint.makeCityProfile(
+            profileID: nil,
+            repository: cities,
+            placeSearch: ProfileV3EntryPoint.environment.placeSearch
+        )
+        Self.topPresented()?.present(city, animated: true)
     }
     #endif
 

@@ -9,6 +9,7 @@ struct ProfileV3RemoteImage: View {
     var placeholder: Color = ProfileV3Theme.Palette.imagePlaceholder
     var showsLoader = false
     var rotatesLandscapeToPortrait = false
+    var tint: Color?
     var onLoad: ((UIImage) -> Void)?
 
     @State private var image: UIImage?
@@ -23,8 +24,10 @@ struct ProfileV3RemoteImage: View {
             placeholder
             if let image {
                 Image(uiImage: image)
+                    .renderingMode(tint == nil ? .original : .template)
                     .resizable()
                     .aspectRatio(contentMode: contentMode)
+                    .foregroundStyle(tint ?? Color(at: .pureBlack))
                     .transition(Self.fade)
             } else if showsLoader && isLoading {
                 ProfileV3Spinner()

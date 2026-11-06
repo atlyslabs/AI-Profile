@@ -6,6 +6,7 @@ extension ProfileV3Theme {
         static let instagramExplainerSeconds: Double = 7
         static let instagramRedirectSeconds: Double = 1.8
         static let catalogueSearchDebounceMilliseconds = 300
+        static let placeSearchDebounceMilliseconds = 300
         static let catalogueLoaderMinimumMilliseconds = 400
         static let remoteImageFadeSeconds: Double = 0.3
         static let selection: Animation = .easeInOut(duration: 0.2)

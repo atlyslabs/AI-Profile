@@ -188,15 +188,7 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
     }
 
     private static func agents(_ tiles: [ProfileV3AgentTileDTO]) -> [ProfileV3Agent] {
-        let agents = tiles.compactMap(agent).filter { agent in
-            ProfileV3FeatureFlags.isCityProfileEnabled || agent.next?.opensCityProfile != true
-        }
-        #if DEBUG
-        if ProfileV3FeatureFlags.isCityProfileEnabled, !agents.contains(where: { $0.next?.opensCityProfile == true }) {
-            return agents + [ProfileV3CityProfileFixtures.agent]
-        }
-        #endif
-        return agents
+        tiles.compactMap(agent)
     }
 
     private static func agent(_ tile: ProfileV3AgentTileDTO) -> ProfileV3Agent? {
@@ -219,11 +211,11 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
 
     static func iconURL(_ token: String?) -> URL? {
         if let url = remoteURL(token) { return url }
-        switch text(token) {
-        case "orb_personal": return ProfileV3PlaceholderArt.agentPersonal.url
-        default: return nil
-        }
+        guard let name = text(token), name.hasPrefix(orbTokenPrefix), name.count > orbTokenPrefix.count else { return nil }
+        return ProfileV3RemoteArt.url("agent_" + name.dropFirst(orbTokenPrefix.count))
     }
+
+    private static let orbTokenPrefix = "orb_"
 
     private static func programmesUpdate(_ loyalty: ProfileV3LoyaltyCardDTO?) -> ProfileV3UpdateStamp? {
         if let latest = loyalty?.programs.compactMap({ timestamp($0.lastUpdatedAt) }).max() {

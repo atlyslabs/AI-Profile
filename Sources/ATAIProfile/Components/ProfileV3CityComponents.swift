@@ -247,7 +247,7 @@ struct ProfileV3CityCardShape: InsettableShape {
 }
 
 struct ProfileV3CitySectionCard<Content: View>: View {
-    let icon: String?
+    let icon: URL?
     let isComplete: Bool
     @ViewBuilder let content: Content
 
@@ -274,10 +274,9 @@ struct ProfileV3CitySectionCard<Content: View>: View {
                     .accessibilityHidden(true)
             }
             .overlay(alignment: .top) {
-                if let image = ProfileV3CityIcon.image(icon) {
-                    image
-                        .profileV3Icon(Sizes.notchIcon)
-                        .foregroundStyle(isComplete ? ProfileV3Theme.Palette.cityNotchComplete : ProfileV3Theme.Palette.cityNotchPending)
+                if let icon {
+                    ProfileV3RemoteImage(url: icon, contentMode: .fit, placeholder: .clear)
+                        .frame(width: Sizes.notchIcon, height: Sizes.notchIcon)
                         .padding(.top, Sizes.notchIconTop)
                         .accessibilityHidden(true)
                 }
@@ -286,31 +285,26 @@ struct ProfileV3CitySectionCard<Content: View>: View {
 }
 
 struct ProfileV3CityOrb: View {
+    let imageURL: URL
     let optionID: String
     let isSelected: Bool
 
     private typealias Sizes = ProfileV3Theme.Sizes.City
 
     var body: some View {
-        if let gradient = ProfileV3Theme.cityOrbGradient(optionID) {
-            Circle()
-                .fill(gradient)
-                .overlay(Circle().strokeBorder(ProfileV3Theme.Palette.cityOptionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
-                .opacity(isSelected ? 1 : ProfileV3Theme.Opacity.cityOrbIdle)
-                .overlay {
-                    if isSelected {
-                        ATIcon.SwiftUIImage.check
-                            .profileV3Icon(Sizes.optionOrbCheck)
-                            .foregroundStyle(ProfileV3Theme.cityOrbCheckTint(optionID))
-                    }
+        ProfileV3RemoteImage(url: imageURL, placeholder: ProfileV3Theme.Palette.cityOptionBorder)
+            .clipShape(Circle())
+            .overlay(Circle().strokeBorder(ProfileV3Theme.Palette.cityOptionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+            .opacity(isSelected ? 1 : ProfileV3Theme.Opacity.cityOrbIdle)
+            .overlay {
+                if isSelected {
+                    ATIcon.SwiftUIImage.check
+                        .profileV3Icon(Sizes.optionOrbCheck)
+                        .foregroundStyle(ProfileV3Theme.cityOrbCheckTint(optionID))
                 }
-                .frame(width: Sizes.optionOrb, height: Sizes.optionOrb)
-                .accessibilityHidden(true)
-        }
-    }
-
-    static func exists(for optionID: String) -> Bool {
-        ProfileV3Theme.cityOrbGradient(optionID) != nil
+            }
+            .frame(width: Sizes.optionOrb, height: Sizes.optionOrb)
+            .accessibilityHidden(true)
     }
 }
 
@@ -323,24 +317,31 @@ struct ProfileV3CityOptionChip: View {
     let title: String
     let isSelected: Bool
     var style = Style.outline
-    var icon: Image?
-    var orbID: String?
+    var iconURL: URL?
+    var orbURL: URL?
+    var orbID = ""
+    var isEnabled = true
     let action: () -> Void
 
     private typealias Sizes = ProfileV3Theme.Sizes.City
 
-    private var hasOrb: Bool { orbID.map(ProfileV3CityOrb.exists) ?? false }
+    private var hasOrb: Bool { orbURL != nil }
     private var isInk: Bool { style == .ink && isSelected }
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: Sizes.optionIconGap) {
-                if let orbID, hasOrb {
-                    ProfileV3CityOrb(optionID: orbID, isSelected: isSelected)
-                } else if let icon {
-                    icon
-                        .profileV3Icon(Sizes.optionOrb)
-                        .foregroundStyle(isInk ? Color(at: .pureWhite) : ProfileV3Theme.Palette.cityOptionText)
+                if let orbURL {
+                    ProfileV3CityOrb(imageURL: orbURL, optionID: orbID, isSelected: isSelected)
+                } else if let iconURL {
+                    ProfileV3RemoteImage(
+                        url: iconURL,
+                        contentMode: .fit,
+                        placeholder: .clear,
+                        tint: isInk ? Color(at: .pureWhite) : ProfileV3Theme.Palette.cityOptionText
+                    )
+                    .frame(width: Sizes.optionOrb, height: Sizes.optionOrb)
+                    .accessibilityHidden(true)
                 }
                 Text(title)
                     .typoGraphy(.B1InterMedium14)
@@ -357,6 +358,8 @@ struct ProfileV3CityOptionChip: View {
             .animation(ProfileV3Theme.Motion.selection, value: isSelected)
         }
         .buttonStyle(.profileV3Pressable(.selection))
+        .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : ProfileV3Theme.Opacity.disabled)
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
         .accessibilityLabel(title)
     }
@@ -493,10 +496,10 @@ struct ProfileV3CityClassCard: View {
 
     @ViewBuilder
     private var art: some View {
-        if let url = option.imageURL {
+        if let url = isSelected ? option.selectedImageURL ?? option.imageURL : option.imageURL {
             ProfileV3RemoteImage(url: url, contentMode: .fit, placeholder: .clear)
                 .opacity(isSelected ? 1 : ProfileV3Theme.Opacity.cityClassArt)
-        } else if let seat = ProfileV3SeatArt(rawValue: option.id) {
+        } else if let seat = ProfileV3SeatArt(optionValue: option.id) {
             seat.image(isSelected: isSelected)
                 .resizable()
                 .scaledToFit()
@@ -611,7 +614,7 @@ struct ProfileV3CityOptOutRow: View {
 }
 
 struct ProfileV3CityTabStrip: View {
-    let tabs: [ProfileV3CitySectionStyle.Tab]
+    let tabs: [ProfileV3CityTab]
     let selectedID: String?
     let onSelect: (String) -> Void
 
@@ -642,12 +645,14 @@ struct ProfileV3CityTabStrip: View {
         }
     }
 
-    private func chip(_ tab: ProfileV3CitySectionStyle.Tab, isSelected: Bool) -> some View {
+    private func chip(_ tab: ProfileV3CityTab, isSelected: Bool) -> some View {
         let tint = isSelected ? Color(at: .pureBlack) : ProfileV3Theme.Palette.cityOptionText
         return Button { onSelect(tab.id) } label: {
             HStack(spacing: Sizes.tabGap) {
-                ProfileV3CityIcon.image(tab.icon)?
-                    .profileV3Icon(Sizes.tabIcon)
+                if let iconURL = tab.iconURL {
+                    ProfileV3RemoteImage(url: iconURL, contentMode: .fit, placeholder: .clear, tint: tint)
+                        .frame(width: Sizes.tabIcon, height: Sizes.tabIcon)
+                }
                 Text(tab.title)
                     .typoGraphy(.T1InterBold11)
                     .textCase(.uppercase)
@@ -672,7 +677,8 @@ struct ProfileV3CityTabStrip: View {
 
 struct ProfileV3CityTagChip: View {
     let label: String
-    let icon: String?
+    let iconURL: URL?
+    var editsPurpose = true
     let onEdit: () -> Void
 
     private typealias Sizes = ProfileV3Theme.Sizes.City
@@ -681,8 +687,10 @@ struct ProfileV3CityTagChip: View {
         HStack(spacing: Sizes.tagRowGap) {
             Button(action: onEdit) {
                 HStack(spacing: Sizes.tagChipGap) {
-                    ProfileV3CityIcon.image(icon)?
-                        .profileV3Icon(Sizes.tagChipIcon)
+                    if let iconURL {
+                        ProfileV3RemoteImage(url: iconURL, contentMode: .fit, placeholder: .clear, tint: Color(at: .pureWhite))
+                            .frame(width: Sizes.tagChipIcon, height: Sizes.tagChipIcon)
+                    }
                     Text(label)
                         .typoGraphy(.B1InterMedium14)
                         .lineLimit(1)
@@ -697,17 +705,20 @@ struct ProfileV3CityTagChip: View {
                 .fixedSize(horizontal: true, vertical: false)
             }
             .buttonStyle(.profileV3Pressable(.selection))
+            .disabled(!editsPurpose)
             .accessibilityLabel(label)
-            .accessibilityHint(ProfileV3Strings.editCityTag)
-            Button(action: onEdit) {
-                ATIcon.SwiftUIImage.edit
-                    .profileV3Icon(ProfileV3Theme.Icon.xl)
-                    .foregroundStyle(Color(at: .pureWhite))
-                    .frame(width: Sizes.tagEditWidth, height: Sizes.tagChipHeight)
-                    .background(ink)
+            .accessibilityHint(editsPurpose ? ProfileV3Strings.editCityTag : "")
+            if editsPurpose {
+                Button(action: onEdit) {
+                    ATIcon.SwiftUIImage.edit
+                        .profileV3Icon(ProfileV3Theme.Icon.xl)
+                        .foregroundStyle(Color(at: .pureWhite))
+                        .frame(width: Sizes.tagEditWidth, height: Sizes.tagChipHeight)
+                        .background(ink)
+                }
+                .buttonStyle(.profileV3Pressable(.selection))
+                .accessibilityLabel(ProfileV3Strings.editCityTag)
             }
-            .buttonStyle(.profileV3Pressable(.selection))
-            .accessibilityLabel(ProfileV3Strings.editCityTag)
         }
     }
 
@@ -715,32 +726,6 @@ struct ProfileV3CityTagChip: View {
         Capsule()
             .fill(ProfileV3Theme.cityInkGradient)
             .overlay(Capsule().fill(ProfileV3Theme.cityInkShade))
-    }
-}
-
-struct ProfileV3CityShimmerText: View {
-    let text: String
-
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    var body: some View {
-        if reduceMotion {
-            label(phase: 0.5)
-        } else {
-            TimelineView(.animation) { context in
-                let seconds = context.date.timeIntervalSinceReferenceDate
-                let progress = seconds.truncatingRemainder(dividingBy: ProfileV3Theme.Motion.cityShimmerSeconds)
-                    / ProfileV3Theme.Motion.cityShimmerSeconds
-                label(phase: CGFloat(progress) * 1.6 - 0.3)
-            }
-        }
-    }
-
-    private func label(phase: CGFloat) -> some View {
-        Text(text)
-            .typoGraphy(.B2InterSemibold12)
-            .foregroundStyle(ProfileV3Theme.cityShimmerGradient(phase: phase))
-            .accessibilityLabel(text)
     }
 }
 

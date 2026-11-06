@@ -24,38 +24,49 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
             selectedTab = nil
             reachedSectionIDs = []
             tabFollowResumes = nil
-            syncForm()
+            syncCity()
         }
     }
+    @Published private(set) var screens: [String: ProfileV3City] = [:]
+    @Published private(set) var cityPhases: [String: ProfileV3LoadPhase] = [:]
     @Published private(set) var form: ProfileV3AgentFormViewModel?
     @Published private(set) var selectedTab: String?
     @Published private(set) var scrollRequest: ScrollRequest?
     @Published var search: ProfileV3CitySearchModel?
     @Published var editor: ProfileV3CityEditorModel?
-    @Published private(set) var citySources: ProfileV3SourcesViewModel?
 
     var onClose: () -> Void
 
     private let profileID: String?
     private let repository: any ProfileV3CityPreferencesRepository
+    private let placeSearch: (any ProfileV3PlaceSearching)?
     private var forms: [String: ProfileV3AgentFormViewModel] = [:]
     private var pendingEditor: ProfileV3CityEditorModel?
+    private var pendingSelection: String?
     private var loadTask: Task<Void, Never>?
+    private var cityTasks: [String: Task<Void, Never>] = [:]
     private var reachedSectionIDs: Set<String> = []
     private var tabFollowResumes: ContinuousClock.Instant?
-    private var refreshTask: Task<Void, Never>?
 
     init(
         profileID: String?,
         repository: any ProfileV3CityPreferencesRepository,
+        placeSearch: (any ProfileV3PlaceSearching)? = nil,
         onClose: @escaping () -> Void = {}
     ) {
         self.profileID = profileID
         self.repository = repository
+        self.placeSearch = placeSearch
         self.onClose = onClose
     }
 
-    var selectedCity: ProfileV3City? { content?.city(id: selection) }
+    var selectedCity: ProfileV3City? { selection.flatMap { screens[$0] } }
+
+    var selectedPorthole: ProfileV3CityPorthole? { content?.city(id: selection) }
+
+    var selectedCityPhase: ProfileV3LoadPhase {
+        selection.flatMap { cityPhases[$0] } ?? .loading
+    }
 
     var isOnAddSlot: Bool { selection == Self.addSlotID }
 
@@ -79,6 +90,11 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
         load()
     }
 
+    func retryCity() {
+        guard let selection, selection != Self.addSlotID else { return }
+        loadCity(selection)
+    }
+
     func close() {
         cancel()
         onClose()
@@ -86,7 +102,8 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
 
     func cancel() {
         loadTask?.cancel()
-        refreshTask?.cancel()
+        cityTasks.values.forEach { $0.cancel() }
+        cityTasks = [:]
         search?.cancel()
         editor?.cancel()
         forms.values.forEach { $0.cancelPendingWork() }
@@ -118,49 +135,15 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
         }
     }
 
-    func tagLabel(for city: ProfileV3City) -> String {
-        content?.tagLabel(for: city) ?? ""
-    }
-
-    func tagIcon(for city: ProfileV3City) -> String? {
-        guard city.tag.purpose?.nonEmpty == nil else { return Self.purposeIcon }
-        return content?.tag(id: city.tag.id)?.icon
-    }
-
-    func openCitySources() {
-        guard let city = selectedCity, let source = city.sources else { return }
-        let sources = ProfileV3SourcesViewModel(
-            source: source,
-            profileID: profileID,
-            repository: ProfileV3CityAgentRepository(cityID: city.id, base: repository)
-        )
-        sources.load()
-        citySources = sources
-    }
-
-    func closeCitySources() {
-        citySources?.cancel()
-        citySources = nil
-    }
-
     func startAdding() {
-        guard let content, search == nil, editor == nil else { return }
-        let search = ProfileV3CitySearchModel(
-            profileID: profileID,
-            repository: repository,
-            addedIDs: Set(content.cities.map(\.id))
-        )
+        guard content != nil, search == nil, editor == nil else { return }
+        let search = ProfileV3CitySearchModel(profileID: profileID, repository: repository)
         search.load()
         self.search = search
     }
 
     func choose(_ result: ProfileV3CitySearchResult) {
-        guard let content else { return }
-        if content.city(id: result.id) != nil {
-            selection = result.id
-        } else {
-            pendingEditor = makeEditor(.add(result), in: content)
-        }
+        pendingEditor = makeEditor(.add(result))
         search?.cancel()
         search = nil
     }
@@ -174,8 +157,8 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
     }
 
     func editSelectedCity() {
-        guard let content, let city = selectedCity, editor == nil else { return }
-        editor = makeEditor(.edit(city), in: content)
+        guard let city = selectedCity, city.editsPurpose, editor == nil else { return }
+        editor = makeEditor(.edit(cityID: city.id, code: city.code, name: city.name, imageURL: city.imageURL))
     }
 
     func editorDidDismiss() {
@@ -183,54 +166,76 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
         editor = nil
     }
 
-    private func makeEditor(_ mode: ProfileV3CityEditorModel.Mode, in content: ProfileV3CityProfile) -> ProfileV3CityEditorModel {
-        ProfileV3CityEditorModel(
-            mode: mode,
-            profile: content,
-            profileID: profileID,
-            repository: repository
-        ) { [weak self] outcome in
+    private func makeEditor(_ mode: ProfileV3CityEditorModel.Mode) -> ProfileV3CityEditorModel {
+        let editor = ProfileV3CityEditorModel(mode: mode, profileID: profileID, repository: repository) { [weak self] outcome in
             self?.finishEditing(outcome)
         }
+        editor.load()
+        return editor
     }
 
     private func finishEditing(_ outcome: ProfileV3CityEditorModel.Outcome) {
         switch outcome {
-        case .saved(let profile, let cityID):
-            apply(profile, selecting: cityID)
-        case .deleted(let profile, let cityID):
+        case .saved(let cityID):
+            pendingSelection = cityID
+            loadCity(cityID)
+            reloadIntro()
+        case .deleted(let cityID):
             let index = content?.cities.firstIndex { $0.id == cityID } ?? 0
-            let neighbour = profile.cities.indices.contains(index) ? profile.cities[index] : profile.cities.last
-            apply(profile, selecting: neighbour?.id ?? Self.addSlotID)
+            forget(cityID)
+            if var content {
+                content.cities.removeAll { $0.id == cityID }
+                self.content = content
+                let neighbour = content.cities.indices.contains(index) ? content.cities[index] : content.cities.last
+                selection = neighbour?.id ?? Self.addSlotID
+            }
+            reloadIntro()
         case .cancelled:
             break
         }
         editor = nil
     }
 
-    private func apply(_ profile: ProfileV3CityProfile, selecting slotID: String? = nil) {
+    private func apply(_ profile: ProfileV3CityProfile) {
         content = profile
-        forms = forms.filter { id, model in
-            guard let city = profile.city(id: id) else {
-                model.cancelPendingWork()
-                return false
-            }
-            return model.form == city.form || model.showsSaveBar
+        let ids = Set(profile.cities.map(\.id))
+        for id in Array(screens.keys) where !ids.contains(id) {
+            forget(id)
         }
-        let target = slotID ?? selection
-        let resolved = target.flatMap { $0 == Self.addSlotID || profile.city(id: $0) != nil ? $0 : nil }
+        let target = pendingSelection ?? selection
+        pendingSelection = nil
+        let resolved = target.flatMap { $0 == Self.addSlotID || ids.contains($0) ? $0 : nil }
             ?? profile.cities.first?.id
             ?? Self.addSlotID
         if resolved == selection {
-            syncForm()
+            syncCity()
         } else {
             selection = resolved
         }
     }
 
-    private func syncForm() {
-        guard let city = selectedCity else {
+    private func reloadIntro() {
+        let repository = repository
+        let profileID = profileID
+        loadTask?.cancel()
+        loadTask = Task { [weak self] in
+            guard let profile = try? await repository.loadCityProfile(profileID: profileID),
+                  let self, !Task.isCancelled else { return }
+            loadTask = nil
+            apply(profile)
+        }
+    }
+
+    private func syncCity() {
+        guard let selection, selection != Self.addSlotID else {
             if form != nil { form = nil }
+            return
+        }
+        guard let city = screens[selection] else {
+            if form != nil { form = nil }
+            if cityTasks[selection] == nil, cityPhases[selection] != .failed {
+                loadCity(selection)
+            }
             return
         }
         if let existing = forms[city.id] {
@@ -242,55 +247,81 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
             form: city.form,
             avatarURL: nil,
             profileID: profileID,
-            repository: ProfileV3CityAgentRepository(cityID: cityID, base: repository),
-            onSaved: { [weak self] in self?.refresh() },
+            repository: ProfileV3CityAgentRepository(cityID: cityID, save: city.save, base: repository),
+            placeSearch: placeSearch,
+            onSaved: { [weak self] in self?.loadCity(cityID) },
             onFinish: { [weak self] in self?.close() }
         )
         forms[cityID] = model
         form = model
     }
 
-    private func refresh() {
+    private func loadCity(_ cityID: String) {
         let repository = repository
         let profileID = profileID
-        refreshTask?.cancel()
-        refreshTask = Task { [weak self] in
-            guard let profile = try? await repository.loadCityProfile(profileID: profileID),
-                  let self, !Task.isCancelled else { return }
-            apply(profile)
+        cityTasks[cityID]?.cancel()
+        if screens[cityID] == nil {
+            cityPhases[cityID] = .loading
+        }
+        cityTasks[cityID] = Task { [weak self] in
+            do {
+                let city = try await repository.loadCity(cityID, profileID: profileID)
+                guard let self, !Task.isCancelled else { return }
+                cityTasks[cityID] = nil
+                screens[cityID] = city
+                cityPhases[cityID] = .loaded
+                if selection == cityID { syncCity() }
+            } catch is CancellationError {
+                return
+            } catch {
+                guard let self, !Task.isCancelled else { return }
+                cityTasks[cityID] = nil
+                if screens[cityID] == nil {
+                    cityPhases[cityID] = .failed
+                }
+            }
         }
     }
 
-    private static let purposeIcon = "location_on"
+    private func forget(_ cityID: String) {
+        cityTasks[cityID]?.cancel()
+        cityTasks[cityID] = nil
+        screens[cityID] = nil
+        cityPhases[cityID] = nil
+        forms[cityID]?.cancelPendingWork()
+        forms[cityID] = nil
+    }
 }
 
 @MainActor
 final class ProfileV3CitySearchModel: ObservableObject, Identifiable {
+    @Published private(set) var picker: ProfileV3CityPicker?
     @Published private(set) var results: [ProfileV3CitySearchResult] = []
     @Published private(set) var isSearching = false
+    @Published private(set) var hasFailed = false
+    @Published private(set) var loadMoreFailed = false
 
     let id = UUID()
-    let addedIDs: Set<String>
 
     private let profileID: String?
     private let repository: any ProfileV3CityProfileRepository
     private var searchTask: Task<Void, Never>?
+    private var pageTask: Task<Void, Never>?
     private var query = ""
 
-    init(profileID: String?, repository: any ProfileV3CityProfileRepository, addedIDs: Set<String>) {
+    init(profileID: String?, repository: any ProfileV3CityProfileRepository) {
         self.profileID = profileID
         self.repository = repository
-        self.addedIDs = addedIDs
     }
 
-    var options: [ProfileV3ChipOption] { results.map(\.option) }
-
-    func result(id: String) -> ProfileV3CitySearchResult? {
-        results.first { $0.id == id }
-    }
+    var hasMore: Bool { picker?.nextOffset != nil }
 
     func load() {
         run("", debounced: false)
+    }
+
+    func retry() {
+        run(query, debounced: false)
     }
 
     func setQuery(_ text: String) {
@@ -299,26 +330,68 @@ final class ProfileV3CitySearchModel: ObservableObject, Identifiable {
         run(trimmed, debounced: true)
     }
 
+    func loadMore() {
+        guard pageTask == nil, searchTask == nil, let offset = picker?.nextOffset else { return }
+        loadMoreFailed = false
+        let repository = repository
+        let profileID = profileID
+        let query = query
+        pageTask = Task { [weak self] in
+            do {
+                let page = try await repository.searchCities(query, offset: offset, profileID: profileID)
+                guard let self, !Task.isCancelled else { return }
+                pageTask = nil
+                guard page.query == self.query else { return }
+                let shown = Set(results.map(\.id))
+                results += page.results.filter { !shown.contains($0.id) }
+                picker = page
+            } catch {
+                guard let self, !Task.isCancelled else { return }
+                pageTask = nil
+                loadMoreFailed = true
+            }
+        }
+    }
+
+    func retryLoadMore() {
+        loadMoreFailed = false
+        loadMore()
+    }
+
     func cancel() {
         searchTask?.cancel()
         searchTask = nil
+        pageTask?.cancel()
+        pageTask = nil
     }
 
     private func run(_ text: String, debounced: Bool) {
         query = text
-        searchTask?.cancel()
+        cancel()
         isSearching = true
+        hasFailed = false
+        loadMoreFailed = false
         let repository = repository
         let profileID = profileID
         searchTask = Task { [weak self] in
             if debounced {
-                try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.catalogueSearchDebounceMilliseconds))
+                try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.citySearchDebounceMilliseconds))
             }
             guard !Task.isCancelled else { return }
-            let found = try? await repository.searchCities(text, profileID: profileID)
-            guard let self, !Task.isCancelled else { return }
-            results = found ?? []
-            isSearching = false
+            do {
+                let page = try await repository.searchCities(text, offset: 0, profileID: profileID)
+                guard let self, !Task.isCancelled else { return }
+                searchTask = nil
+                guard page.query == query else { return }
+                picker = page
+                results = page.results
+                isSearching = false
+            } catch {
+                guard let self, !Task.isCancelled else { return }
+                searchTask = nil
+                isSearching = false
+                hasFailed = true
+            }
         }
     }
 }
@@ -327,69 +400,59 @@ final class ProfileV3CitySearchModel: ObservableObject, Identifiable {
 final class ProfileV3CityEditorModel: ObservableObject, Identifiable {
     enum Mode: Equatable {
         case add(ProfileV3CitySearchResult)
-        case edit(ProfileV3City)
+        case edit(cityID: String, code: String, name: String, imageURL: URL?)
     }
 
     enum Step: Equatable {
-        case tag
         case purpose
+        case label
     }
 
-    enum Outcome {
-        case saved(ProfileV3CityProfile, cityID: String)
-        case deleted(ProfileV3CityProfile, cityID: String)
+    enum Outcome: Equatable {
+        case saved(cityID: String)
+        case deleted(cityID: String)
         case cancelled
     }
 
-    @Published private(set) var step = Step.tag
-    @Published private(set) var tagID: String?
-    @Published var purpose: String
-    @Published private(set) var phase = ProfileV3SavePhase.idle
+    @Published private(set) var phase: ProfileV3LoadPhase = .loading
+    @Published private(set) var sheet: ProfileV3CityPurposeSheet?
+    @Published private(set) var step = Step.purpose
+    @Published private(set) var purposeKey: String?
+    @Published var label = "" {
+        didSet {
+            guard label != oldValue else { return }
+            if let maxChars = labelInput?.maxChars, label.count > maxChars {
+                label = String(label.prefix(maxChars))
+                return
+            }
+            if errorMessage != nil { errorMessage = nil }
+        }
+    }
+    @Published private(set) var savePhase = ProfileV3SavePhase.idle
     @Published private(set) var errorMessage: String?
     @Published var confirmsDelete = false
     @Published private(set) var isDeleting = false
 
     let id = UUID()
     let mode: Mode
-    let profile: ProfileV3CityProfile
 
     private let profileID: String?
     private let repository: any ProfileV3CityProfileRepository
     private let onFinish: (Outcome) -> Void
+    private var loadTask: Task<Void, Never>?
     private var task: Task<Void, Never>?
+    private var original: (key: String, label: String?)?
 
     init(
         mode: Mode,
-        profile: ProfileV3CityProfile,
         profileID: String?,
         repository: any ProfileV3CityProfileRepository,
         onFinish: @escaping (Outcome) -> Void
     ) {
         self.mode = mode
-        self.profile = profile
         self.profileID = profileID
         self.repository = repository
         self.onFinish = onFinish
-        if case .edit(let city) = mode {
-            tagID = city.tag.id
-            purpose = city.tag.purpose ?? ""
-        } else {
-            purpose = ""
-        }
-    }
-
-    var cityID: String {
-        switch mode {
-        case .add(let result): return result.id
-        case .edit(let city): return city.id
-        }
-    }
-
-    var window: ProfileV3CityWindow.Content {
-        switch mode {
-        case .add(let result): return .city(code: result.code, name: result.name, imageURL: result.imageURL)
-        case .edit(let city): return .city(code: city.code, name: city.name, imageURL: city.imageURL)
-        }
     }
 
     var isEditing: Bool {
@@ -398,86 +461,128 @@ final class ProfileV3CityEditorModel: ObservableObject, Identifiable {
     }
 
     var title: String {
-        guard case .edit(let city) = mode else { return ProfileV3Strings.addCityProfile }
-        return city.name
+        if let title = sheet?.title.nonEmpty { return title }
+        switch mode {
+        case .add(let result): return result.name.uppercased()
+        case .edit(_, _, let name, _): return name.uppercased()
+        }
     }
 
-    var isBusy: Bool { phase == .saving || isDeleting }
+    var window: ProfileV3CityWindow.Content {
+        if let city = sheet?.city {
+            return .city(code: city.code, name: city.name, imageURL: city.imageURL)
+        }
+        switch mode {
+        case .add(let result): return .city(code: result.code, name: result.name, imageURL: nil)
+        case .edit(_, let code, let name, let imageURL): return .city(code: code, name: name, imageURL: imageURL)
+        }
+    }
 
-    var trimmedPurpose: String { purpose.trimmingCharacters(in: .whitespacesAndNewlines) }
+    var isBusy: Bool { savePhase == .saving || isDeleting }
+
+    var labelInput: ProfileV3CityPurposeSheet.Option.Input? { sheet?.option(key: purposeKey)?.input }
+
+    var trimmedLabel: String { label.trimmingCharacters(in: .whitespacesAndNewlines) }
+
+    var isLabelTaken: Bool { labelInput != nil && sheet?.isLabelUsed(trimmedLabel) == true }
 
     var canContinue: Bool {
-        guard let option = profile.tag(id: tagID) else { return false }
-        return !option.asksPurpose || !trimmedPurpose.isEmpty
+        guard let option = sheet?.option(key: purposeKey), !option.isDisabled || option.isSelected else { return false }
+        guard option.input != nil else { return true }
+        return !trimmedLabel.isEmpty && !isLabelTaken
     }
 
-    var canSavePurpose: Bool { !trimmedPurpose.isEmpty }
-
-    func label(for option: ProfileV3CityTagOption) -> String {
-        if option.asksPurpose, tagID == option.id, !trimmedPurpose.isEmpty {
-            return trimmedPurpose
+    func load() {
+        let repository = repository
+        let profileID = profileID
+        let code: String
+        let cityID: String?
+        switch mode {
+        case .add(let result):
+            code = result.code
+            cityID = nil
+        case .edit(let id, let cityCode, _, _):
+            code = cityCode
+            cityID = id
         }
-        let count = profile.taggedCount(option.id, excluding: cityID) + (tagID == option.id ? 1 : 0)
-        return count > 1 ? ProfileV3Strings.cityTagCount(option.label, count) : option.label
+        phase = .loading
+        loadTask?.cancel()
+        loadTask = Task { [weak self] in
+            do {
+                let sheet = try await repository.loadCityPurpose(code: code, cityID: cityID, profileID: profileID)
+                guard let self, !Task.isCancelled else { return }
+                apply(sheet)
+            } catch is CancellationError {
+                return
+            } catch {
+                guard let self, !Task.isCancelled else { return }
+                phase = .failed
+            }
+        }
     }
 
-    func select(_ option: ProfileV3CityTagOption) {
-        guard !isBusy else { return }
+    func select(_ option: ProfileV3CityPurposeSheet.Option) {
+        guard !isBusy, !option.isDisabled || option.isSelected else { return }
         errorMessage = nil
-        tagID = option.id
-        if option.asksPurpose {
-            step = .purpose
+        purposeKey = option.key
+        if option.input != nil {
+            if label.isEmpty, let value = option.input?.value { label = value }
+            step = .label
         }
     }
 
     func back() {
         guard !isBusy else { return }
         switch step {
-        case .purpose:
+        case .label:
             errorMessage = nil
-            step = .tag
-            if trimmedPurpose.isEmpty, profile.tag(id: tagID)?.asksPurpose == true {
-                tagID = originalTag?.id
+            step = .purpose
+            if trimmedLabel.isEmpty {
+                purposeKey = original?.key
             }
-        case .tag:
+        case .purpose:
             onFinish(.cancelled)
         }
     }
 
     func commit() {
-        guard let tagID, canContinue, !isBusy else { return }
-        let asksPurpose = profile.tag(id: tagID)?.asksPurpose == true
-        let tag = ProfileV3CityTag(id: tagID, purpose: asksPurpose ? trimmedPurpose : nil)
-        if tag == originalTag {
-            onFinish(.saved(profile, cityID: cityID))
+        guard let sheet, let purposeKey, canContinue, !isBusy else { return }
+        let label = labelInput == nil ? nil : trimmedLabel
+        if let original, original.key == purposeKey, label == original.label,
+           case .edit(let cityID, _, _, _) = mode {
+            onFinish(.saved(cityID: cityID))
             return
         }
-        phase = .saving
+        savePhase = .saving
         errorMessage = nil
         let repository = repository
-        let profileID = profileID
-        let cityID = cityID
-        let isEditing = isEditing
+        let action = sheet.submit
+        let editedID: String? = {
+            if case .edit(let cityID, _, _, _) = mode { return cityID }
+            return nil
+        }()
         task = Task { [weak self] in
             do {
-                let updated = isEditing
-                    ? try await repository.updateCityTag(cityID, tag: tag, profileID: profileID)
-                    : try await repository.addCity(cityID, tag: tag, profileID: profileID)
+                let cityID = try await repository.submitCityPurpose(action, purpose: purposeKey, label: label)
                 guard let self, !Task.isCancelled else { return }
-                phase = .idle
-                onFinish(.saved(updated, cityID: cityID))
+                savePhase = .idle
+                guard let resolved = cityID ?? editedID else {
+                    onFinish(.cancelled)
+                    return
+                }
+                onFinish(.saved(cityID: resolved))
             } catch is CancellationError {
                 return
             } catch {
                 guard let self, !Task.isCancelled else { return }
-                phase = .failed
+                savePhase = .failed
                 errorMessage = ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed)
             }
         }
     }
 
     func requestDelete() {
-        guard isEditing, !isBusy else { return }
+        guard sheet?.delete != nil, !isBusy else { return }
         errorMessage = nil
         confirmsDelete = true
     }
@@ -488,18 +593,16 @@ final class ProfileV3CityEditorModel: ObservableObject, Identifiable {
     }
 
     func confirmDelete() {
-        guard isEditing, !isDeleting else { return }
+        guard let delete = sheet?.delete, case .edit(let cityID, _, _, _) = mode, !isDeleting else { return }
         isDeleting = true
         let repository = repository
-        let profileID = profileID
-        let cityID = cityID
         task = Task { [weak self] in
             do {
-                let updated = try await repository.deleteCity(cityID, profileID: profileID)
+                try await repository.deleteCity(delete.action)
                 guard let self, !Task.isCancelled else { return }
                 isDeleting = false
                 confirmsDelete = false
-                onFinish(.deleted(updated, cityID: cityID))
+                onFinish(.deleted(cityID: cityID))
             } catch is CancellationError {
                 return
             } catch {
@@ -512,12 +615,18 @@ final class ProfileV3CityEditorModel: ObservableObject, Identifiable {
     }
 
     func cancel() {
+        loadTask?.cancel()
         task?.cancel()
         task = nil
     }
 
-    private var originalTag: ProfileV3CityTag? {
-        guard case .edit(let city) = mode else { return nil }
-        return city.tag
+    private func apply(_ sheet: ProfileV3CityPurposeSheet) {
+        self.sheet = sheet
+        if let selected = sheet.options.first(where: \.isSelected) {
+            purposeKey = selected.key
+            original = (selected.key, selected.input?.value)
+            if let value = selected.input?.value { label = value }
+        }
+        phase = .loaded
     }
 }

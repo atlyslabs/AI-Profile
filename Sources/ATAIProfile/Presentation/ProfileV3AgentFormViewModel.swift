@@ -13,6 +13,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     @Published private(set) var sources: ProfileV3SourcesViewModel?
     private(set) var sourcesSection: ProfileV3FormSection?
     @Published private(set) var pickerOptions: [ProfileV3ChipOption] = []
+    @Published private(set) var isSearchingPlaces = false
     @Published private(set) var previousPassports: ProfileV3PreviousPassports?
     @Published private(set) var previousPassportsPhase: ProfileV3LoadPhase = .loading
     @Published var showsPreviousPassports = false
@@ -29,6 +30,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
 
     private let profileID: String?
     private let repository: any ProfileV3AgentRepository
+    private let placeSearch: (any ProfileV3PlaceSearching)?
     private let residenceCode: @MainActor () -> String?
     private let onSaved: () -> Void
     private let onFinish: () -> Void
@@ -41,6 +43,9 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     private var passportScanTask: Task<Void, Never>?
     private var ridePickerTask: Task<Void, Never>?
     private var refreshTask: Task<Void, Never>?
+    private var placeTask: Task<Void, Never>?
+    private var placeQuery = ""
+    private var placeSuggestions: [ProfileV3PlaceSuggestion] = []
     private var pendingPassportScan: ProfileV3Directive?
     private var savedValues: ProfileV3AgentFormValues
     private var reportedTexts: [String: String] = [:]
@@ -50,6 +55,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         avatarURL: URL?,
         profileID: String? = nil,
         repository: any ProfileV3AgentRepository,
+        placeSearch: (any ProfileV3PlaceSearching)? = nil,
         residenceCode: @escaping @MainActor () -> String? = { nil },
         presentPassportScan: ((ProfileV3PassportScanRequest) -> Void)? = nil,
         onPassportUploaded: ((ProfileV3PassportSide, _ profileID: String?) -> Void)? = nil,
@@ -61,6 +67,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         self.avatarURL = avatarURL
         self.profileID = profileID
         self.repository = repository
+        self.placeSearch = placeSearch
         self.residenceCode = residenceCode
         self.presentPassportScan = presentPassportScan
         self.onPassportUploaded = onPassportUploaded
@@ -421,13 +428,122 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     }
 
     func openPicker(for sectionID: String) {
-        guard case .chips(let field) = form.sections.first(where: { $0.id == sectionID })?.control else { return }
-        pickerOptions = field.allOptions
+        guard case .chips = form.sections.first(where: { $0.id == sectionID })?.control else { return }
+        resetPlaceSearch()
         pickerSectionID = sectionID
+        refreshPickerOptions()
     }
 
     func closePicker() {
         pickerSectionID = nil
+        resetPlaceSearch()
+    }
+
+    func togglePickerOption(_ optionID: String, in sectionID: String) {
+        guard case .chips(let field)? = form.sections.first(where: { $0.id == sectionID })?.control else { return }
+        if field.allOptions.contains(where: { $0.id == optionID }) {
+            toggleOption(optionID, in: sectionID)
+        } else if let found = pickerOptions.first(where: { $0.id == optionID }) {
+            addTypedOption(found.title, in: sectionID)
+        }
+    }
+
+    func addTypedOption(_ text: String, in sectionID: String) {
+        guard case .chips(let field)? = form.sections.first(where: { $0.id == sectionID })?.control,
+              let entry = field.picker?.typedEntry else { return }
+        let name = Self.typedName(text, maxChars: entry.maxChars)
+        guard !name.isEmpty else { return }
+        if let existing = field.allOptions.first(where: { Self.folded($0.title) == Self.folded(name) }) {
+            if !field.selection.contains(existing.id) { toggleOption(existing.id, in: sectionID) }
+            return
+        }
+        guard field.selection.count < entry.maxItems else { return }
+        let option = ProfileV3ChipOption(id: name, title: name, place: entry.place)
+        update(sectionID) { section in
+            guard case .chips(var field) = section.control else { return }
+            field.options.append(option)
+            field.picker?.catalogue.append(option)
+            field.selection.insert(option.id)
+            section.control = .chips(field)
+        }
+        refreshPickerOptions()
+        trackChange(in: sectionID)
+    }
+
+    func searchesPlaces(in sectionID: String) -> Bool {
+        placeScope(in: sectionID) != nil
+    }
+
+    func searchPlaces(_ text: String) {
+        guard let sectionID = pickerSectionID, let scope = placeScope(in: sectionID), let placeSearch else { return }
+        placeTask?.cancel()
+        placeQuery = text
+        let query = Self.typedName(text, maxChars: .max)
+        guard !query.isEmpty else {
+            placeSuggestions = []
+            isSearchingPlaces = false
+            refreshPickerOptions()
+            return
+        }
+        isSearchingPlaces = true
+        refreshPickerOptions()
+        placeTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.placeSearchDebounceMilliseconds))
+            guard !Task.isCancelled else { return }
+            let found = await placeSearch.lodging(matching: query, in: scope)
+            guard let self, !Task.isCancelled, placeQuery == text else { return }
+            placeSuggestions = found
+            isSearchingPlaces = false
+            refreshPickerOptions()
+        }
+    }
+
+    private func placeScope(in sectionID: String) -> ProfileV3PlaceSearchScope? {
+        guard placeSearch != nil,
+              case .chips(let field)? = form.sections.first(where: { $0.id == sectionID })?.control else { return nil }
+        return field.picker?.typedEntry?.search
+    }
+
+    private func refreshPickerOptions() {
+        guard let sectionID = pickerSectionID,
+              case .chips(let field)? = form.sections.first(where: { $0.id == sectionID })?.control else { return }
+        let query = Self.typedName(placeQuery, maxChars: .max)
+        guard let entry = field.picker?.typedEntry, placeScope(in: sectionID) != nil, !query.isEmpty else {
+            pickerOptions = field.allOptions
+            return
+        }
+        var listed = Set<String>()
+        let found = placeSuggestions.compactMap { suggestion -> ProfileV3ChipOption? in
+            let name = Self.typedName(suggestion.name, maxChars: entry.maxChars)
+            guard !name.isEmpty, listed.insert(Self.folded(name)).inserted else { return nil }
+            let saved = field.allOptions.first { Self.folded($0.title) == Self.folded(name) }
+            return ProfileV3ChipOption(
+                id: saved?.id ?? name,
+                title: saved?.title ?? name,
+                subtitle: suggestion.detail,
+                place: entry.place
+            )
+        }
+        let saved = field.allOptions.filter {
+            $0.title.localizedCaseInsensitiveContains(query) && !listed.contains(Self.folded($0.title))
+        }
+        pickerOptions = saved + found
+    }
+
+    private func resetPlaceSearch() {
+        placeTask?.cancel()
+        placeTask = nil
+        placeQuery = ""
+        placeSuggestions = []
+        isSearchingPlaces = false
+    }
+
+    private static func typedName(_ text: String, maxChars: Int) -> String {
+        String(text.split(whereSeparator: \.isWhitespace).joined(separator: " ").prefix(maxChars))
+    }
+
+    private static func folded(_ text: String) -> String {
+        typedName(text, maxChars: .max).lowercased()
     }
 
     func openSources(for sectionID: String) {
@@ -639,6 +755,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     func cancelPendingWork() {
         saveTask?.cancel()
         refreshTask?.cancel()
+        placeTask?.cancel()
         passportScanTask?.cancel()
         passportScanTask = nil
         previousPassportsTask?.cancel()

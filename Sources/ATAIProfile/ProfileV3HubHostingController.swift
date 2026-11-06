@@ -118,7 +118,14 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
     }
 
     func openCityProfile(profileID: String?) {
-        present(ProfileV3EntryPoint.makeCityProfile(profileID: profileID, repository: repository), animated: true)
+        present(
+            ProfileV3EntryPoint.makeCityProfile(
+                profileID: profileID,
+                repository: repository,
+                placeSearch: environment.placeSearch
+            ),
+            animated: true
+        )
     }
 
     var opensChat: Bool { environment.app.opensChat }

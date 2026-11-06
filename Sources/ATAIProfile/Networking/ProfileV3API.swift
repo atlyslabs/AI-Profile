@@ -4,12 +4,17 @@ import Moya
 
 enum ProfileV3API {
     case board
-    case agent(type: ProfileV3AgentID, profileID: String?)
+    case agent(type: String, profileID: String?)
     case preferenceSources(agentType: String, fieldKey: String, profileID: String?)
     case ridePicker(agentType: String, profileID: String?)
     case rideRegions
     case travelPersona(profileID: String?)
     case personaTrait(trait: String, profileID: String?, page: Int)
+    case cityProfiles(profileID: String?)
+    case citySearch(query: String, offset: Int, profileID: String?)
+    case cityPurpose(code: String, cityID: String?, profileID: String?)
+    case city(id: String, profileID: String?)
+    case citySources(cityID: String, fieldKey: String)
     case pastTrips(profileID: String)
     case addTrip(profileID: String)
     case passportUpdate(profileID: String?)
@@ -89,7 +94,7 @@ extension ProfileV3API: ATCoreTargetType {
         case .board:
             return Self.boardBasePath
         case .agent(let type, _):
-            return Self.boardBasePath + "/agent/\(type.apiValue)"
+            return Self.boardBasePath + "/agent/\(type)"
         case .preferenceSources(let agentType, let fieldKey, _):
             return Self.boardBasePath + "/agent/\(agentType)/sources/\(fieldKey)"
         case .ridePicker(let agentType, _):
@@ -100,6 +105,16 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.boardBasePath + "/travel_persona"
         case .personaTrait(let trait, _, _):
             return Self.boardBasePath + "/travel_persona/\(trait)"
+        case .cityProfiles:
+            return Self.boardBasePath + "/cities"
+        case .citySearch:
+            return Self.boardBasePath + "/cities/search"
+        case .cityPurpose:
+            return Self.boardBasePath + "/cities/purpose"
+        case .city(let id, _):
+            return Self.boardBasePath + "/cities/\(id)"
+        case .citySources(let cityID, let fieldKey):
+            return Self.boardBasePath + "/cities/\(cityID)/sources/\(fieldKey)"
         case .pastTrips:
             return Self.boardBasePath + "/past_trips"
         case .addTrip:
@@ -242,8 +257,14 @@ extension ProfileV3API: ATCoreTargetType {
              .benefits(let profileID),
              .preferenceSources(_, _, let profileID),
              .editField(_, let profileID),
-             .travelPersona(let profileID):
+             .travelPersona(let profileID),
+             .cityProfiles(let profileID),
+             .city(_, let profileID):
             return Self.query(("profile_id", profileID))
+        case .citySearch(let query, let offset, let profileID):
+            return Self.query(("profile_id", profileID), ("q", query), ("offset", String(offset)))
+        case .cityPurpose(let code, let cityID, let profileID):
+            return Self.query(("code", code), ("city_id", cityID), ("profile_id", cityID == nil ? profileID : nil))
         case .personaTrait(_, let profileID, let page):
             return Self.query(("profile_id", profileID), ("page", String(page)))
         case .pastTrips(let profileID), .addTrip(let profileID):

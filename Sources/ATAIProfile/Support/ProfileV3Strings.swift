@@ -4,6 +4,7 @@ enum ProfileV3Strings {
     static var activate: String { ProfileV3L10n.moAiprofileGeneralButtonActivate }
     static var addChip: String { ProfileV3L10n.moAiprofileGeneralButtonAdd1 }
     static func addOption(_ label: String) -> String { ProfileV3L10n.moAiprofileGeneralButtonAddOption(label.lowercased()) }
+    static func addTyped(_ text: String) -> String { ProfileV3L10n.moAiprofileGeneralButtonAddOption(text) }
     static func maskedNumber(_ lastDigits: String) -> String { ProfileV3L10n.moAiprofileGeneralMaskedNumber(lastDigits) }
     static var settings: String { ProfileV3L10n.moAiprofileAccountHeaderSettings }
     static var permissions: String { ProfileV3L10n.moAiprofileAccountHeaderPermissions }
@@ -231,8 +232,5 @@ enum ProfileV3Strings {
     static var addCityProfile: String { ProfileV3L10n.moAiprofileAgentsHeaderAddCityProfile }
     static var addCity: String { ProfileV3L10n.moAiprofileAgentsAccessibilityAddCity }
     static var editCityTag: String { ProfileV3L10n.moAiprofileAgentsAccessibilityEditCityTag }
-    static var deleteCity: String { ProfileV3L10n.moAiprofileAgentsAccessibilityDeleteCity }
-    static var cityUpdating: String { ProfileV3L10n.moAiprofileAgentsLoadingCityUpdating }
-    static func cityTagCount(_ label: String, _ count: Int) -> String { ProfileV3L10n.moAiprofileAgentsLabelCityTagCount(label, count) }
     static let subtitleSeparator = " \u{B7} "
 }

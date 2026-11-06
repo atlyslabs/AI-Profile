@@ -121,6 +121,8 @@ extension ProfileV3Theme.Sizes {
         static let introTitleSize: CGFloat = 24
         static let introTitleTracking: CGFloat = -0.96
         static let introDeckTop: CGFloat = 70
+        static let cityLoadHeight: CGFloat = 320
+        static let purposeLoadHeight: CGFloat = 200
         static let introDeckHeight: CGFloat = 364
         static let deckCard = CGSize(width: 286.878, height: 326.722)
         static let deckCardRadius: CGFloat = 25.5
@@ -178,8 +180,6 @@ extension ProfileV3Theme.Palette {
     static let cityPlace = Color(hex: "FAFAFA")
     static let cityPlaceThumb = Color(hex: "EFEFEF")
     static let cityPlaceBorder = Color(at: .pureBlack).opacity(0.05)
-    static let cityShimmerBase = Color(at: .neutralGrey100)
-    static let cityShimmerPeak = Color(at: .neutralGrey300)
     static let cityDeckCard = Color(hex: "031624")
     static let cityDeckPill = Color(at: .pureWhite).opacity(0.2)
     static let cityDeckTagBorder = Color(at: .pureWhite).opacity(0.6)
@@ -217,7 +217,7 @@ extension ProfileV3Theme.Motion {
     static let citySectionScrollSeconds: Double = 0.4
     static let citySectionScroll: Animation = .easeInOut(duration: citySectionScrollSeconds)
     static let cityTabFollowPauseSeconds: Double = citySectionScrollSeconds + 0.1
-    static let cityShimmerSeconds: Double = 1.4
+    static let citySearchDebounceMilliseconds = 250
 }
 
 extension ProfileV3Theme {
@@ -267,55 +267,7 @@ extension ProfileV3Theme {
         endPoint: UnitPoint(x: 0.18, y: 0.88)
     )
 
-    static func cityShimmerGradient(phase: CGFloat) -> LinearGradient {
-        LinearGradient(
-            stops: [
-                .init(color: Palette.cityShimmerBase, location: phase - 0.3),
-                .init(color: Palette.cityShimmerPeak, location: phase),
-                .init(color: Palette.cityShimmerBase, location: phase + 0.3)
-            ],
-            startPoint: .leading,
-            endPoint: .trailing
-        )
-    }
-
-    static func cityOrbGradient(_ optionID: String) -> LinearGradient? {
-        let stops: [Gradient.Stop]
-        switch optionID {
-        case "early_morning":
-            stops = [
-                .init(color: Color(hex: "26265A"), location: 0), .init(color: Color(hex: "86588F"), location: 0.5),
-                .init(color: Color(hex: "D9789B"), location: 0.75), .init(color: Color(hex: "FCA78B"), location: 1)
-            ]
-        case "morning":
-            stops = [
-                .init(color: Color(hex: "8BD0F3"), location: 0), .init(color: Color(hex: "CEE7EF"), location: 0.5),
-                .init(color: Color(hex: "FDE2C3"), location: 0.75), .init(color: Color(hex: "FCA78B"), location: 1)
-            ]
-        case "noon":
-            stops = [
-                .init(color: Color(hex: "0079DE"), location: 0), .init(color: Color(hex: "7ED0FC"), location: 0.55),
-                .init(color: Color(hex: "B9E6FF"), location: 1)
-            ]
-        case "evening":
-            stops = [
-                .init(color: Color(hex: "43286D"), location: 0), .init(color: Color(hex: "BD467F"), location: 0.5),
-                .init(color: Color(hex: "FF8A59"), location: 0.75), .init(color: Color(hex: "FFCC68"), location: 1)
-            ]
-        case "night":
-            stops = [
-                .init(color: Color(hex: "091440"), location: 0), .init(color: Color(hex: "102473"), location: 0.5),
-                .init(color: Color(hex: "475AA1"), location: 1)
-            ]
-        case "late_night":
-            stops = [.init(color: Color(hex: "03030D"), location: 0), .init(color: Color(hex: "191940"), location: 1)]
-        default:
-            return nil
-        }
-        return LinearGradient(stops: stops, startPoint: .leading, endPoint: .trailing)
-    }
-
     static func cityOrbCheckTint(_ optionID: String) -> Color {
-        optionID == "morning" ? Color(at: .neutralGrey900) : Color(at: .pureWhite)
+        optionID.lowercased() == "morning" ? Color(at: .neutralGrey900) : Color(at: .pureWhite)
     }
 }

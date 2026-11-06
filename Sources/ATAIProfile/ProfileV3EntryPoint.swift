@@ -141,9 +141,10 @@ public enum ProfileV3EntryPoint {
 
     static func makeCityProfile(
         profileID: String?,
-        repository: any ProfileV3CityPreferencesRepository
+        repository: any ProfileV3CityPreferencesRepository,
+        placeSearch: (any ProfileV3PlaceSearching)?
     ) -> UIViewController {
-        ProfileV3CityProfileHostingController(profileID: profileID, repository: repository)
+        ProfileV3CityProfileHostingController(profileID: profileID, repository: repository, placeSearch: placeSearch)
     }
 
     static func makeProgrammes(

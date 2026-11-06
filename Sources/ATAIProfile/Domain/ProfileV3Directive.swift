@@ -36,7 +36,7 @@ enum ProfileV3Route: Equatable {
     case connectors
     case connectorControlPanel
     case disconnectConfirm(ProfileV3ConnectorKey)
-    case agent(ProfileV3AgentID, profileID: String?)
+    case agent(String, profileID: String?)
     case globeStats(profileID: String)
     case loyaltyAdd
     case loyaltyEnterDetails(programID: String, programName: String?, kind: String?)
@@ -102,8 +102,10 @@ extension ProfileV3Directive {
         case "disconnect_confirm":
             return connectorKey.map(ProfileV3Route.disconnectConfirm) ?? .unsupported(go)
         case "agent":
-            guard let agent = agentType.flatMap(ProfileV3AgentID.init(apiValue:)) else { return .unsupported(go) }
-            return .agent(agent, profileID: profile)
+            guard let type = agentType?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty else {
+                return .unsupported(go)
+            }
+            return .agent(ProfileV3AgentID(apiValue: type)?.rawValue ?? type, profileID: profile)
         case "globe_stats":
             return profile.map { ProfileV3Route.globeStats(profileID: $0) } ?? .unsupported(go)
         case "loyalty_add":
@@ -178,13 +180,13 @@ extension ProfileV3Directive {
         case "add_trip":
             return .addTrip(profileID: profile)
         case ProfileV3Directive.cityProfileRoute:
-            return ProfileV3FeatureFlags.isCityProfileEnabled ? .cityProfile(profileID: profile) : .unsupported(go)
+            return .cityProfile(profileID: profile)
         default:
             return .unsupported(go)
         }
     }
 
-    static let cityProfileRoute = "city_profile"
+    static let cityProfileRoute = "city_profiles"
 
     var opensCityProfile: Bool { go == Self.cityProfileRoute }
 

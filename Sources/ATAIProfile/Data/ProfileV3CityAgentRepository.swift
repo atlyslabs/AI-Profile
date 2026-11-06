@@ -2,14 +2,15 @@ import Foundation
 
 struct ProfileV3CityAgentRepository: ProfileV3AgentRepository {
     let cityID: String
+    var save: ProfileV3BoardAction?
     let base: any ProfileV3CityPreferencesRepository
 
-    func loadAgentFlow(agentID: String, profileID: String?) async throws -> ProfileV3AgentFlow {
-        try await base.loadAgentFlow(agentID: agentID, profileID: profileID)
+    func loadAgentFlow(agentID _: String, profileID: String?) async throws -> ProfileV3AgentFlow {
+        .preferences(try await base.loadCity(cityID, profileID: profileID).form)
     }
 
-    func saveAgentForm(_ form: ProfileV3AgentForm, profileID: String?, profileIDs _: [String]?) async throws -> String? {
-        try await base.saveCityPreferences(form, cityID: cityID, profileID: profileID)
+    func saveAgentForm(_ form: ProfileV3AgentForm, profileID _: String?, profileIDs _: [String]?) async throws -> String? {
+        try await base.saveCityPreferences(form, cityID: cityID, action: save)
         return nil
     }
 
@@ -40,7 +41,7 @@ struct ProfileV3CityAgentRepository: ProfileV3AgentRepository {
 
     func loadPreferenceSources(_ source: ProfileV3SectionSource, profileID: String?) async throws
         -> ProfileV3PreferenceSources {
-        try await base.loadCitySources(source, cityID: cityID, profileID: profileID)
+        try await base.loadCitySources(source, cityID: cityID)
     }
 
     func loadRidePicker(agentType: String, profileID: String?) async throws -> ProfileV3RidePicker {

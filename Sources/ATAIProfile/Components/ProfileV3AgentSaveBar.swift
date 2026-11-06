@@ -65,8 +65,13 @@ struct ProfileV3AgentOptionPicker: View {
                 options: viewModel.pickerOptions,
                 selection: field.selection,
                 listLabel: picker.listLabel,
+                isSearching: viewModel.isSearchingPlaces,
+                onQueryChange: viewModel.searchesPlaces(in: section.id) ? { viewModel.searchPlaces($0) } : nil,
                 onBack: viewModel.closePicker,
-                onToggle: { viewModel.toggleOption($0, in: section.id) }
+                onToggle: { viewModel.togglePickerOption($0, in: section.id) },
+                onAdd: picker.typedEntry.map { entry in
+                    field.selection.count < entry.maxItems ? { viewModel.addTypedOption($0, in: section.id) } : nil
+                } ?? nil
             )
         }
     }

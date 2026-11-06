@@ -23,6 +23,7 @@ let package = Package(
         .package(url: "https://github.com/kean/Nuke.git", from: "12.0.0"),
         .package(url: "https://github.com/Moya/Moya.git", from: "14.0.0"),
         .package(url: "https://github.com/PostHog/posthog-ios.git", from: "3.71.0"),
+        .package(url: "https://github.com/googlemaps/ios-places-sdk", from: "10.1.0"),
     ],
     targets: [
         .target(
@@ -37,6 +38,7 @@ let package = Package(
                 .product(name: "PhoneNumberKit", package: "PhoneNumberKit"),
                 .product(name: "PostHog", package: "posthog-ios"),
                 .product(name: "Nuke", package: "Nuke"),
+                .product(name: "GooglePlaces", package: "ios-places-sdk"),
             ],
             resources: [
                 .process("Resources"),

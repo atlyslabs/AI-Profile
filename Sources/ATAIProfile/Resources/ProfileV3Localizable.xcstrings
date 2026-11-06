@@ -733,18 +733,6 @@
         }
       }
     },
-    "mo-aiprofile-agents-accessibility-delete-city": {
-      "comment": "City profile: button to delete a city from the profile.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete city profile"
-          }
-        }
-      }
-    },
     "mo-aiprofile-agents-accessibility-edit-city-tag": {
       "comment": "City profile: button to change why the traveler visits a city.",
       "extractionState": "manual",
@@ -1237,18 +1225,6 @@
         }
       }
     },
-    "mo-aiprofile-agents-label-city-tag-count": {
-      "comment": "City profile: a city tag with how many cities share it, e.g. Home (2).",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ (%2$@)"
-          }
-        }
-      }
-    },
     "mo-aiprofile-agents-label-credential-store": {
       "comment": "Settings card title for the secure credential store.",
       "extractionState": "manual",
@@ -1533,18 +1509,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Website"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-agents-loading-city-updating": {
-      "comment": "City profile: shown on a section while the agent gathers a new city’s preferences.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Update information"
           }
         }
       }

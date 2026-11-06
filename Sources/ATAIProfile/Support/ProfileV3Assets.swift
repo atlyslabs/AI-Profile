@@ -145,6 +145,11 @@ enum ProfileV3SeatArt: String {
     case business
     case first
 
+    init?(optionValue: String) {
+        let slug = optionValue.lowercased().split(whereSeparator: \.isWhitespace).joined(separator: "_")
+        self.init(rawValue: slug == "first_class" ? "first" : slug)
+    }
+
     func image(isSelected: Bool) -> Image {
         Image("profile_v3_seat_\(rawValue)\(isSelected ? "_selected" : "")", bundle: .module)
     }

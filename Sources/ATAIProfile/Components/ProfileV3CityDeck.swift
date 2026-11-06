@@ -2,7 +2,7 @@ import ATUIKit
 import SwiftUI
 
 struct ProfileV3CityDeck: View {
-    let samples: [ProfileV3CityIntro.Sample]
+    let samples: [ProfileV3CitySample]
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var start = Date()
@@ -90,7 +90,7 @@ struct ProfileV3CityDeckPose: Equatable {
 }
 
 private struct ProfileV3CityDeckCard: View {
-    let sample: ProfileV3CityIntro.Sample
+    let sample: ProfileV3CitySample
 
     private typealias Sizes = ProfileV3Theme.Sizes.City
 
@@ -115,7 +115,7 @@ private struct ProfileV3CityDeckCard: View {
             .lineLimit(1)
             .padding(Sizes.deckPadding)
             VStack(spacing: Sizes.deckPillSpacing) {
-                ForEach(Array(sample.highlights.prefix(2).enumerated()), id: \.offset) { index, text in
+                ForEach(Array(sample.lines.prefix(2).enumerated()), id: \.offset) { index, text in
                     pill(text)
                         .rotationEffect(.degrees(index == 0 ? Sizes.deckPillTilt : Sizes.deckPillTiltSecond))
                 }
@@ -129,9 +129,11 @@ private struct ProfileV3CityDeckCard: View {
 
     private var tag: some View {
         HStack(spacing: ProfileV3Theme.Space.s8) {
-            ProfileV3CityIcon.image(sample.tagIcon)?
-                .profileV3Icon(Sizes.deckTagIcon)
-            Text(sample.tag)
+            if let iconURL = sample.purpose.iconURL {
+                ProfileV3RemoteImage(url: iconURL, contentMode: .fit, placeholder: .clear, tint: Color(at: .pureWhite))
+                    .frame(width: Sizes.deckTagIcon, height: Sizes.deckTagIcon)
+            }
+            Text(sample.purpose.label)
                 .typoGraphy(.B2InterMedium12)
         }
         .padding(.horizontal, ProfileV3Theme.Space.s12)
@@ -157,7 +159,7 @@ private struct ProfileV3CityDeckCard: View {
 
 #if DEBUG
 #Preview("City deck") {
-    ProfileV3CityDeck(samples: ProfileV3CityProfileFixtures.intro.samples)
+    ProfileV3CityDeck(samples: ProfileV3CityProfileFixtures.samples)
         .padding(.vertical, ProfileV3Theme.Space.s50)
         .background(Color(at: .pureWhite))
 }

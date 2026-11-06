@@ -18,29 +18,15 @@ struct ProfileV3CityProfileView: View {
             }
             .background(Color(at: .pureWhite))
             .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(isPresented: showsCitySources) {
-                if let sources = viewModel.citySources {
-                    ProfileV3ProgrammeSourcesView(viewModel: sources, onBack: viewModel.closeCitySources)
-                        .navigationBarBackButtonHidden(true)
-                        .toolbar(.hidden, for: .navigationBar)
-                }
-            }
         }
         .sheet(item: $viewModel.search, onDismiss: viewModel.searchDidDismiss) { search in
             ProfileV3CitySearchSheet(model: search, onBack: { viewModel.search = nil }, onChoose: viewModel.choose)
         }
         .sheet(item: $viewModel.editor, onDismiss: viewModel.editorDidDismiss) { editor in
-            ProfileV3CityTagSheet(model: editor)
+            ProfileV3CityPurposeSheetView(model: editor)
         }
         .profileV3TapToDismissKeyboard()
         .task { viewModel.loadIfNeeded() }
-    }
-
-    private var showsCitySources: Binding<Bool> {
-        Binding(
-            get: { viewModel.citySources != nil },
-            set: { if !$0 { viewModel.closeCitySources() } }
-        )
     }
 }
 
@@ -51,7 +37,7 @@ private struct ProfileV3CityProfileScreen: View {
     @State private var headerPin = ProfileV3HeaderPin()
     @State private var areTabsPinned = false
 
-    static let coordinateSpace = "ProfileV3CityProfileScreen"
+    nonisolated static let coordinateSpace = "ProfileV3CityProfileScreen"
 
     private typealias Sizes = ProfileV3Theme.Sizes.City
 
@@ -61,16 +47,16 @@ private struct ProfileV3CityProfileScreen: View {
                 VStack(spacing: 0) {
                     carousel
                         .padding(.top, ProfileV3Theme.Sizes.Agent.backTop + ProfileV3Theme.Sizes.circleButton + Sizes.carouselTop)
-                    if let city = viewModel.selectedCity, let form = viewModel.form {
+                    if viewModel.isOnAddSlot || viewModel.selection == nil {
+                        intro
+                            .transition(.opacity)
+                    } else if let city = viewModel.selectedCity, let form = viewModel.form {
                         ProfileV3CityPreferences(
                             city: city,
-                            tagLabel: viewModel.tagLabel(for: city),
-                            tagIcon: viewModel.tagIcon(for: city),
                             selectedTab: viewModel.selectedTab,
                             areTabsPinned: areTabsPinned,
                             form: form,
                             onEditTag: viewModel.editSelectedCity,
-                            onOpenCitySources: viewModel.openCitySources,
                             onSelectTab: viewModel.selectTab,
                             onTabsPinned: { areTabsPinned = $0 },
                             onSectionReached: viewModel.sectionReached
@@ -78,7 +64,8 @@ private struct ProfileV3CityProfileScreen: View {
                         .id(city.id)
                         .transition(.opacity)
                     } else {
-                        intro
+                        ProfileV3LoadStateView(phase: viewModel.selectedCityPhase, retry: viewModel.retryCity)
+                            .frame(height: Sizes.cityLoadHeight)
                             .transition(.opacity)
                     }
                 }
@@ -140,7 +127,7 @@ private struct ProfileV3CityProfileScreen: View {
             ForEach(content.cities) { city in
                 window(.city(code: city.code, name: city.name, imageURL: city.imageURL), id: city.id)
             }
-            window(.add(label: content.addSlot.label, detail: content.addSlot.detail), id: ProfileV3CityProfileViewModel.addSlotID)
+            window(.add(label: content.add.label, detail: content.add.detail), id: ProfileV3CityProfileViewModel.addSlotID)
         }
     }
 
@@ -168,15 +155,15 @@ private struct ProfileV3CityProfileScreen: View {
 
     private var intro: some View {
         VStack(spacing: 0) {
-            Text(content.intro.title)
+            Text(content.headline)
                 .font(.Inter.get(size: Sizes.introTitleSize, weight: .medium))
                 .tracking(Sizes.introTitleTracking)
                 .foregroundStyle(Color(at: .pureBlack))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: Sizes.introTitleWidth)
                 .padding(.top, Sizes.introTitleTop)
-            if !content.intro.samples.isEmpty {
-                ProfileV3CityDeck(samples: content.intro.samples)
+            if !content.samples.isEmpty {
+                ProfileV3CityDeck(samples: content.samples)
                     .padding(.top, Sizes.introDeckTop)
             }
         }
@@ -274,13 +261,10 @@ private struct ProfileV3CityRuleEditor: View {
 
 private struct ProfileV3CityPreferences: View {
     let city: ProfileV3City
-    let tagLabel: String
-    let tagIcon: String?
     let selectedTab: String?
     let areTabsPinned: Bool
     @ObservedObject var form: ProfileV3AgentFormViewModel
     let onEditTag: () -> Void
-    let onOpenCitySources: () -> Void
     let onSelectTab: (String) -> Void
     let onTabsPinned: (Bool) -> Void
     let onSectionReached: (String, Bool) -> Void
@@ -290,14 +274,19 @@ private struct ProfileV3CityPreferences: View {
     var body: some View {
         let agentForm = form.form
         VStack(spacing: 0) {
-            ProfileV3CityTagChip(label: tagLabel, icon: tagIcon, onEdit: onEditTag)
-                .padding(.top, Sizes.tagRowTop)
-            if agentForm.foundCount > 0 {
-                foundHeading(agentForm)
+            ProfileV3CityTagChip(
+                label: city.purpose.label,
+                iconURL: city.purpose.iconURL,
+                editsPurpose: city.editsPurpose,
+                onEdit: onEditTag
+            )
+            .padding(.top, Sizes.tagRowTop)
+            if let found = city.found, found.count > 0 {
+                foundHeading(found)
                     .padding(.top, Sizes.foundTop)
             }
             if let sources = city.sources {
-                ProfileV3CitySourcesSummary(source: sources, action: onOpenCitySources)
+                ProfileV3CitySourcesSummary(sources: sources)
                     .padding(.top, Sizes.sourcesTop)
             }
             let tabs = city.tabs
@@ -325,7 +314,6 @@ private struct ProfileV3CityPreferences: View {
                         ProfileV3CitySectionView(
                             section: section,
                             style: city.style(for: section.id),
-                            isUpdating: city.isUpdating,
                             form: form
                         )
                         .onGeometryChange(for: Bool.self) { proxy in
@@ -347,10 +335,9 @@ private struct ProfileV3CityPreferences: View {
         }
     }
 
-    private func foundHeading(_ agentForm: ProfileV3AgentForm) -> some View {
-        let fraction = "\(agentForm.foundCount)/\(agentForm.totalCount)"
-        let full = ProfileV3Strings.found + ProfileV3Strings.preferencesFound(agentForm.foundCount, of: agentForm.totalCount, noun: agentForm.noun)
-        var text = AttributedString(full)
+    private func foundHeading(_ found: ProfileV3CityFound) -> some View {
+        let fraction = "\(found.count)/\(found.total)"
+        var text = AttributedString(found.label)
         text.foregroundColor = ProfileV3Theme.Palette.countryText.opacity(ProfileV3Theme.Opacity.cityFoundNoun)
         if let range = text.range(of: fraction) {
             text[text.startIndex..<range.upperBound].foregroundColor = ProfileV3Theme.Palette.countryText
@@ -363,58 +350,43 @@ private struct ProfileV3CityPreferences: View {
 }
 
 private struct ProfileV3CitySourcesSummary: View {
-    let source: ProfileV3SectionSource
-    let action: () -> Void
+    let sources: ProfileV3CitySources
 
     private typealias Sizes = ProfileV3Theme.Sizes.City
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: Sizes.sourcesChevronGap) {
-                HStack(spacing: ProfileV3Theme.Space.s8) {
-                    HStack(spacing: Sizes.sourcesIconOverlap) {
-                        ForEach(Array(source.icons.prefix(ProfileV3Theme.Counts.sourcesMaxIcons).enumerated()), id: \.offset) { _, icon in
-                            ProfileV3RemoteImage(url: icon.url, contentMode: .fit, placeholder: .clear)
-                                .padding(ProfileV3Theme.Space.s4)
-                                .frame(width: Sizes.sourcesIcon, height: Sizes.sourcesIcon)
-                                .background(Circle().fill(Color(at: .pureWhite)))
-                                .overlay(Circle().strokeBorder(ProfileV3Theme.Palette.cardBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
-                        }
-                    }
-                    if let caption = ProfileV3SectionSourcesRow.caption(for: source) {
-                        Text(caption)
-                            .typoGraphy(.B2InterSemibold12)
-                            .foregroundStyle(ProfileV3Theme.Palette.citySourcesText)
-                    }
+        HStack(spacing: ProfileV3Theme.Space.s8) {
+            HStack(spacing: Sizes.sourcesIconOverlap) {
+                ForEach(Array(sources.icons.enumerated()), id: \.offset) { _, icon in
+                    ProfileV3RemoteImage(url: icon.url, contentMode: .fit, placeholder: .clear)
+                        .frame(width: Sizes.sourcesIcon, height: Sizes.sourcesIcon)
+                        .background(Circle().fill(Color(at: .pureWhite)))
+                        .clipShape(Circle())
+                        .overlay(Circle().strokeBorder(ProfileV3Theme.Palette.cardBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
                 }
-                ATIcon.SwiftUIImage.chevronRight
-                    .profileV3Icon(Sizes.sourcesChevron)
-                    .foregroundStyle(ProfileV3Theme.Palette.citySourcesText)
             }
-            .contentShape(Rectangle())
+            .accessibilityHidden(true)
+            Text(sources.label)
+                .typoGraphy(.B2InterSemibold12)
+                .foregroundStyle(ProfileV3Theme.Palette.citySourcesText)
         }
-        .buttonStyle(.profileV3Pressable)
-        .accessibilityLabel(ProfileV3Strings.viewSources)
-        .accessibilityValue(ProfileV3SectionSourcesRow.caption(for: source) ?? "")
+        .accessibilityElement(children: .combine)
     }
 }
 
 struct ProfileV3CitySectionView: View {
     let section: ProfileV3FormSection
     let style: ProfileV3CitySectionStyle
-    let isUpdating: Bool
     let form: ProfileV3AgentFormViewModel
-
-    @State private var sliderPreview: Double?
 
     private typealias Sizes = ProfileV3Theme.Sizes.City
 
     var body: some View {
-        ProfileV3CitySectionCard(icon: style.icon, isComplete: hasValue) {
+        ProfileV3CitySectionCard(icon: hasValue ? style.activeIconURL ?? style.iconURL : style.iconURL, isComplete: hasValue) {
             VStack(alignment: .leading, spacing: 0) {
                 header
                     .padding(.top, Sizes.cardTitleTop)
-                if let subtitle = style.subtitle?.nonEmpty, showsSubtitle {
+                if let subtitle = style.subtitle?.nonEmpty, !hasValue {
                     Text(subtitle)
                         .typoGraphy(.B2InterMedium12)
                         .foregroundStyle(Color(at: .neutralGrey400))
@@ -422,10 +394,7 @@ struct ProfileV3CitySectionView: View {
                         .frame(maxWidth: Sizes.noteWidth, alignment: .leading)
                         .padding(.top, ProfileV3Theme.Space.s8)
                 }
-                if isUpdating, !hasValue {
-                    ProfileV3CityShimmerText(text: ProfileV3Strings.cityUpdating)
-                        .padding(.top, Sizes.cardHeaderGap)
-                } else if let source = section.source {
+                if let source = section.source {
                     ProfileV3SectionSourcesRow(source: source) { form.openSources(for: section.id) }
                         .padding(.top, Sizes.cardHeaderGap)
                 }
@@ -458,16 +427,12 @@ struct ProfileV3CitySectionView: View {
                 .foregroundStyle(Color(at: .pureBlack))
                 .accessibilityAddTraits(.isHeader)
             Spacer(minLength: 0)
-            if let readout {
-                (Text(readout.value).foregroundStyle(Color(at: .pureBlack))
-                    + Text(readout.detail.map { " \($0)" } ?? "").foregroundStyle(ProfileV3Theme.Palette.secondaryText))
-                    .typoGraphy(.H7InterMedium16)
-            }
         }
         .overlay(alignment: .trailing) {
             if picksMore {
                 ProfileV3CityAddButton(accessibilityLabel: section.title) { form.openPicker(for: section.id) }
                     .padding(.trailing, Sizes.cardTrailingPadding - Sizes.cardPadding)
+                    .disabled(isOptedOut)
             }
         }
     }
@@ -491,22 +456,7 @@ struct ProfileV3CitySectionView: View {
             }
             .padding(.horizontal, -Sizes.cardPadding)
             .padding(.top, Sizes.cardContentTop - ProfileV3Theme.Space.s8)
-        case .slider(let field):
-            VStack(alignment: .leading, spacing: ProfileV3Theme.Sizes.sliderRulerSpacing) {
-                ProfileV3PreferenceSlider(
-                    field: field,
-                    label: section.title,
-                    onPreview: { preview in
-                        if sliderPreview != preview { sliderPreview = preview }
-                    },
-                    onChange: { form.setSliderValue($0, in: section.id) }
-                )
-                if let optOut = field.optOut {
-                    ProfileV3CheckboxRow(title: optOut.title, isOn: optOut.isOn) { form.setOptOut(!optOut.isOn, in: section.id) }
-                }
-            }
-            .padding(.top, Sizes.sliderTop)
-        case .text, .date, .passport, .cars, .baggage, .customRules:
+        case .slider, .text, .date, .passport, .cars, .baggage, .customRules:
             EmptyView()
         }
     }
@@ -529,7 +479,7 @@ struct ProfileV3CitySectionView: View {
                 }
                 .padding(.horizontal, -Sizes.cardPadding)
             }
-        case .places:
+        case .rows:
             if !field.selectedOptions.isEmpty {
                 VStack(spacing: Sizes.placeSpacing) {
                     ForEach(field.selectedOptions) { option in
@@ -537,11 +487,12 @@ struct ProfileV3CitySectionView: View {
                     }
                 }
             }
-        case .grid, .cards, .slider:
+        case .grid, .tiles:
             ProfileV3CityOptionGrid(options: field.options) { option in
                 ProfileV3CityOptionChip(
                     title: option.title,
                     isSelected: field.selection.contains(option.id),
+                    orbURL: option.logoURL,
                     orbID: option.id
                 ) {
                     form.toggleOption(option.id, in: section.id)
@@ -556,7 +507,7 @@ struct ProfileV3CitySectionView: View {
     }
 
     private var hidesUnselected: Bool {
-        style.layout == .logos || style.layout == .places
+        style.layout == .logos || style.layout == .rows
     }
 
     private var picksMore: Bool {
@@ -568,21 +519,11 @@ struct ProfileV3CitySectionView: View {
         chipField?.optOut?.isOn == true
     }
 
-    private var showsSubtitle: Bool {
-        style.layout == .slider || !hasValue
-    }
-
-    private var readout: (value: String, detail: String?)? {
-        guard case .slider(let field) = section.control, field.isSet || sliderPreview != nil else { return nil }
-        return field.previewing(sliderPreview).readout
-    }
-
     private var hasValue: Bool {
         switch section.control {
         case .chips(let field): return !field.selection.isEmpty || field.optOut?.isOn == true
         case .cards(let field): return !field.selection.isEmpty
-        case .slider(let field): return field.isSet || field.optOut?.isOn == true
-        case .text, .date, .passport, .cars, .baggage, .customRules: return section.status == .complete
+        case .slider, .text, .date, .passport, .cars, .baggage, .customRules: return section.status == .complete
         }
     }
 }
@@ -598,7 +539,7 @@ struct ProfileV3CitySectionView: View {
     ProfileV3CityProfileView(
         viewModel: ProfileV3CityProfileViewModel(
             profileID: nil,
-            repository: ProfileV3MockRepository(cities: ProfileV3CityProfileStore(profile: ProfileV3CityProfileFixtures.empty))
+            repository: ProfileV3MockRepository(cities: ProfileV3CityProfileStore(entries: []))
         )
     )
 }

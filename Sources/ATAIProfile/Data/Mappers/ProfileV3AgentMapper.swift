@@ -361,7 +361,7 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
         }
     }
 
-    private static func customRules(from field: ProfileV3AgentFieldDTO) -> ProfileV3CustomRulesField {
+    static func customRules(from field: ProfileV3AgentFieldDTO) -> ProfileV3CustomRulesField {
         let editor = field.editor
         let confirm = field.deleteConfirm
         return ProfileV3CustomRulesField(
@@ -433,12 +433,12 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
         return ProfileV3CardOption(id: id, code: option.displayLabel, detail: option.detail ?? "")
     }
 
-    private static func preselectedIDs(of field: ProfileV3AgentFieldDTO) -> [String] {
+    static func preselectedIDs(of field: ProfileV3AgentFieldDTO) -> [String] {
         let selected = field.selectedOptions.compactMap(\.id)
         return field.allowsMultiple ? selected : Array(selected.prefix(1))
     }
 
-    private static func chips(from field: ProfileV3AgentFieldDTO) -> ProfileV3ChipField {
+    static func chips(from field: ProfileV3AgentFieldDTO) -> ProfileV3ChipField {
         let options = field.options.compactMap(chipOption(from:))
         let preselected = preselectedIDs(of: field)
         let picker = field.offersAdd

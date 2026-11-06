@@ -245,9 +245,17 @@ struct ProfileV3ChipField: Equatable {
 }
 
 struct ProfileV3OptionPicker: Equatable {
+    struct TypedEntry: Equatable {
+        let maxItems: Int
+        let maxChars: Int
+        var place: ProfileV3ChipOption.Place?
+        var search: ProfileV3PlaceSearchScope?
+    }
+
     let title: String
     var catalogue: [ProfileV3ChipOption]
     var listLabel: String?
+    var typedEntry: TypedEntry?
 }
 
 struct ProfileV3CardOption: Identifiable, Equatable {
@@ -255,6 +263,7 @@ struct ProfileV3CardOption: Identifiable, Equatable {
     let code: String
     let detail: String
     var imageURL: URL?
+    var selectedImageURL: URL?
 }
 
 struct ProfileV3CardField: Equatable {
@@ -301,6 +310,7 @@ struct ProfileV3SliderField: Equatable {
 struct ProfileV3OptOut: Equatable {
     let title: String
     var isOn: Bool
+    var key: String?
 }
 
 struct ProfileV3TextFieldValue: Equatable {
