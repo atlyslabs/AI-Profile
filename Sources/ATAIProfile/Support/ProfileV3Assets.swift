@@ -127,11 +127,28 @@ enum ProfileV3CityArt: String {
     var image: Image { Image(rawValue, bundle: .module) }
 }
 
+enum ProfileV3InstagramArt: String {
+    case map = "profile_v3_instagram_map"
+    case aurora = "profile_v3_instagram_reel_aurora"
+    case london = "profile_v3_instagram_reel_london"
+    case tokyo = "profile_v3_instagram_reel_tokyo"
+    case dining = "profile_v3_instagram_reel_dining"
+    case amalfi = "profile_v3_instagram_reel_amalfi"
+    case pin = "profile_v3_pin_distance"
+
+    var image: Image { Image(rawValue, bundle: .module) }
+}
+
 enum ProfileV3SeatArt: String {
     case economy
     case premiumEconomy = "premium_economy"
     case business
     case first
+
+    init?(optionValue: String) {
+        let slug = optionValue.lowercased().split(whereSeparator: \.isWhitespace).joined(separator: "_")
+        self.init(rawValue: slug == "first_class" ? "first" : slug)
+    }
 
     func image(isSelected: Bool) -> Image {
         Image("profile_v3_seat_\(rawValue)\(isSelected ? "_selected" : "")", bundle: .module)

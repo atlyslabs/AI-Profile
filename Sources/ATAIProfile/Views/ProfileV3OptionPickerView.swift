@@ -10,6 +10,7 @@ struct ProfileV3OptionPickerView: View {
     var onQueryChange: ((String) -> Void)?
     let onBack: () -> Void
     let onToggle: (String) -> Void
+    var onAdd: ((String) -> Void)?
 
     @State private var query = ""
 
@@ -23,6 +24,12 @@ struct ProfileV3OptionPickerView: View {
         }
     }
 
+    private var typedTitle: String? {
+        guard onAdd != nil, !trimmedQuery.isEmpty,
+              !options.contains(where: { $0.title.caseInsensitiveCompare(trimmedQuery) == .orderedSame }) else { return nil }
+        return trimmedQuery
+    }
+
     var body: some View {
         let filtered = self.filtered
         VStack(spacing: 0) {
@@ -34,8 +41,12 @@ struct ProfileV3OptionPickerView: View {
                 ProfileV3Spinner(accessibilityLabel: ProfileV3Strings.loading)
                     .padding(.top, ProfileV3Theme.Sizes.emptyStateTop)
                     .frame(maxHeight: .infinity, alignment: .top)
-            } else if filtered.isEmpty {
-                emptyState
+            } else if filtered.isEmpty, typedTitle == nil {
+                if trimmedQuery.isEmpty {
+                    Color.clear
+                } else {
+                    emptyState
+                }
             } else {
                 list(filtered)
             }
@@ -51,14 +62,33 @@ struct ProfileV3OptionPickerView: View {
                     ProfileV3TagLabel(text: listLabel, style: .solid(ProfileV3Theme.Palette.secondaryText))
                         .padding(.bottom, ProfileV3Theme.Sizes.Picker.listLabelBottom)
                 }
+                if onQueryChange == nil {
+                    typedRow
+                }
                 ForEach(filtered) { option in
                     ProfileV3OptionPickerRow(option: option, isSelected: selection.contains(option.id)) {
                         onToggle(option.id)
                     }
                 }
+                if onQueryChange != nil {
+                    typedRow
+                }
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .padding(.top, ProfileV3Theme.Space.s40)
+        }
+    }
+
+    @ViewBuilder
+    private var typedRow: some View {
+        if let typedTitle {
+            ProfileV3OptionPickerRow(
+                option: ProfileV3ChipOption(id: typedTitle, title: ProfileV3Strings.addTyped(typedTitle)),
+                isSelected: false
+            ) {
+                onAdd?(typedTitle)
+                query = ""
+            }
         }
     }
 

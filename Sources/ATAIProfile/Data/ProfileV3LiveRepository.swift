@@ -51,10 +51,8 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
     }
 
     func loadAgentFlow(agentID: String, profileID: String?) async throws -> ProfileV3AgentFlow {
-        guard let agent = ProfileV3AgentID(rawValue: agentID) else {
-            throw ProfileV3RepositoryError.agentNotFound
-        }
-        let endpoint = ProfileV3API.agent(type: agent, profileID: profileID)
+        let type = ProfileV3AgentID(rawValue: agentID)?.apiValue ?? agentID
+        let endpoint = ProfileV3API.agent(type: type, profileID: profileID)
         let dto: ProfileV3AgentScreenDTO = try await client.request(endpoint, action: "agent")
         let country = await accountCountry(for: profileID)
         let name = await travellerName(for: profileID)
@@ -388,76 +386,74 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return ProfileV3AgentMapper.rideRegions(dto)
     }
 
-    func loadCityProfile(profileID _: String?) async throws -> ProfileV3CityProfile {
-        #if DEBUG
-        if ProfileV3FeatureFlags.isCityProfileEnabled {
-            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
-            return ProfileV3CityProfileStore.shared.snapshot()
-        }
-        #endif
-        throw ProfileV3Error.notImplemented(action: "city_profile")
+    func loadCityProfile(profileID: String?) async throws -> ProfileV3CityProfile {
+        let dto: ProfileV3CityProfilesDTO = try await client.request(
+            ProfileV3API.cityProfiles(profileID: profileID),
+            action: "city_profiles"
+        )
+        return ProfileV3CityProfileMapper.profile(dto)
     }
 
-    func searchCities(_ query: String, profileID _: String?) async throws -> [ProfileV3CitySearchResult] {
-        #if DEBUG
-        if ProfileV3FeatureFlags.isCityProfileEnabled {
-            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
-            return ProfileV3CityProfileStore.shared.search(query)
+    func loadCity(_ cityID: String, profileID: String?) async throws -> ProfileV3City {
+        let dto: ProfileV3CityScreenDTO = try await client.request(
+            ProfileV3API.city(id: cityID, profileID: profileID),
+            action: "city_profile"
+        )
+        guard let city = ProfileV3CityProfileMapper.city(dto, cityID: cityID) else {
+            throw ProfileV3RepositoryError.unavailable
         }
-        #endif
-        throw ProfileV3Error.notImplemented(action: "city_profile_search")
+        return city
     }
 
-    func addCity(_ cityID: String, tag: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
-        #if DEBUG
-        if ProfileV3FeatureFlags.isCityProfileEnabled {
-            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
-            return try ProfileV3CityProfileStore.shared.add(cityID, tag: tag)
-        }
-        #endif
-        throw ProfileV3Error.notImplemented(action: "add_city_profile")
+    func searchCities(_ query: String, offset: Int, profileID: String?) async throws -> ProfileV3CityPicker {
+        let dto: ProfileV3CityPickerDTO = try await client.request(
+            ProfileV3API.citySearch(query: query, offset: offset, profileID: profileID),
+            action: "city_picker"
+        )
+        return ProfileV3CityProfileMapper.picker(dto)
     }
 
-    func updateCityTag(_ cityID: String, tag: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
-        #if DEBUG
-        if ProfileV3FeatureFlags.isCityProfileEnabled {
-            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
-            return try ProfileV3CityProfileStore.shared.updateTag(cityID, tag: tag)
+    func loadCityPurpose(code: String, cityID: String?, profileID: String?) async throws -> ProfileV3CityPurposeSheet {
+        let dto: ProfileV3CityPurposeSheetDTO = try await client.request(
+            ProfileV3API.cityPurpose(code: code, cityID: cityID, profileID: profileID),
+            action: "city_purpose"
+        )
+        guard let sheet = ProfileV3CityProfileMapper.purposeSheet(dto) else {
+            throw ProfileV3RepositoryError.unavailable
         }
-        #endif
-        throw ProfileV3Error.notImplemented(action: "edit_city_profile")
+        return sheet
     }
 
-    func deleteCity(_ cityID: String, profileID _: String?) async throws -> ProfileV3CityProfile {
-        #if DEBUG
-        if ProfileV3FeatureFlags.isCityProfileEnabled {
-            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
-            return ProfileV3CityProfileStore.shared.delete(cityID)
-        }
-        #endif
-        throw ProfileV3Error.notImplemented(action: "delete_city_profile")
+    func submitCityPurpose(_ action: ProfileV3BoardAction, purpose: String, label: String?) async throws -> String? {
+        let body = try JSONEncoder().encode(ProfileV3CitySubmitRequest(action: action, purpose: purpose, label: label))
+        let data = try await client.requestData(.submit(body: body), action: action.name ?? "city_purpose")
+        await store.invalidate()
+        return ProfileV3CityProfileMapper.cityID(fromWrite: data)
     }
 
-    func saveCityPreferences(_ form: ProfileV3AgentForm, cityID: String, profileID _: String?) async throws {
-        #if DEBUG
-        if ProfileV3FeatureFlags.isCityProfileEnabled {
-            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
-            try ProfileV3CityProfileStore.shared.save(form, cityID: cityID)
-            return
-        }
-        #endif
-        throw ProfileV3Error.notImplemented(action: "save_city_preferences")
+    func deleteCity(_ action: ProfileV3BoardAction) async throws {
+        let body = try JSONEncoder().encode(ProfileV3CitySubmitRequest(action: action))
+        try await submit(body, action: action.name ?? "delete_city_profile")
     }
 
-    func loadCitySources(_: ProfileV3SectionSource, cityID _: String, profileID _: String?) async throws
-        -> ProfileV3PreferenceSources {
-        #if DEBUG
-        if ProfileV3FeatureFlags.isCityProfileEnabled {
-            try await Task.sleep(for: ProfileV3CityProfileStore.latency)
-            return ProfileV3AgentFixtures.airlineSources
+    func saveCityPreferences(_ form: ProfileV3AgentForm, cityID: String, action: ProfileV3BoardAction?) async throws {
+        let served = action ?? ProfileV3BoardAction(fields: [
+            "action": .string(ProfileV3CityProfileMapper.saveAction),
+            "city_id": .string(cityID)
+        ])
+        let request = ProfileV3CitySubmitRequest(action: served, values: ProfileV3CitySubmission.values(for: form))
+        try await submit(try JSONEncoder().encode(request), action: served.name ?? ProfileV3CityProfileMapper.saveAction)
+    }
+
+    func loadCitySources(_ source: ProfileV3SectionSource, cityID: String) async throws -> ProfileV3PreferenceSources {
+        let dto: ProfileV3PreferenceSourcesDTO = try await client.request(
+            ProfileV3API.citySources(cityID: cityID, fieldKey: source.fieldKey),
+            action: "city_preference_sources"
+        )
+        guard let sources = ProfileV3AgentMapper.preferenceSources(dto) else {
+            throw ProfileV3RepositoryError.unavailable
         }
-        #endif
-        throw ProfileV3Error.notImplemented(action: "city_profile_sources")
+        return sources
     }
 
     func loadTravelPersona(profileID: String?) async throws -> ProfileV3TravelPersona {
@@ -508,7 +504,7 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         let endpoint = ProfileV3API.preferenceSources(
             agentType: source.agentType,
             fieldKey: source.fieldKey,
-            profileID: profileID
+            profileID: source.profileID ?? profileID
         )
         let dto: ProfileV3PreferenceSourcesDTO = try await client.request(endpoint, action: "preference_sources")
         guard let sources = ProfileV3AgentMapper.preferenceSources(dto) else {

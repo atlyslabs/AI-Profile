@@ -61,6 +61,25 @@ struct ProfileV3TravelPersonaTests {
         #expect(trait.startingPoint == nil)
     }
 
+    @Test func traitRowsCarryTheServerSourceIcon() throws {
+        let dto = try JSONDecoder().decode(ProfileV3PersonaTraitScreenDTO.self, from: Data(#"""
+        {"type":"persona_trait","trait":"comfort","title":"Comfort","score":40,
+         "calculation":{"title":"See how your score was calculated","items":[
+           {"id":"g1","kind":"gmail","icon":"https://media.atlys.com/b2c/ai-native/icons/kyc/gmail.png","title":"Lounge access"},
+           {"id":"u1","kind":"user","icon":"https://media.atlys.com/b2c/ai-native/icons/connectors/chatgpt.png","title":"From ChatGPT"},
+           {"id":"u2","kind":"user","title":"Raised to 40"}
+         ]}}
+        """#.utf8))
+        let trait = ProfileV3PersonaMapper.trait(dto, trait: "comfort")
+        let icons = trait.rows.map { $0.iconURL?.absoluteString }
+        #expect(trait.rows.map(\.kind) == [.gmail, .user, .user])
+        #expect(icons == [
+            "https://media.atlys.com/b2c/ai-native/icons/kyc/gmail.png",
+            "https://media.atlys.com/b2c/ai-native/icons/connectors/chatgpt.png",
+            nil
+        ])
+    }
+
     @Test func scaleHighlightsTheThirdTheValueFallsIn() {
         func active(_ value: Int) -> Int? {
             ProfileV3PersonaTrait.Scale(range: 0 ... 100, value: value, labels: ["a", "b", "c"]).activeLabelIndex
@@ -421,6 +440,50 @@ struct ProfileV3TravelPersonaTests {
         while trait.phase == .loading { try await Task.sleep(for: .milliseconds(10)) }
 
         #expect(repository.events == ["submit:adventure", "trait:adventure"])
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func aSavedKnobOrTraitActionTellsTheHubToRefresh() async throws {
+        var saves = 0
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(),
+            isEditable: true,
+            onSaved: { saves += 1 }
+        )
+        try await loaded(viewModel)
+
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 70)
+        while viewModel.notice == nil { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(saves == 1)
+
+        viewModel.open("adventure")
+        let trait = try #require(viewModel.trait)
+        trait.perform(
+            ProfileV3PersonaTrait.Action(label: "Ignore", submit: ProfileV3BoardAction(fields: [:])),
+            id: "src-1"
+        )
+        while saves < 2 { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(trait.busyActionIDs.isEmpty)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func aRefusedSaveLeavesTheHubAlone() async throws {
+        var saves = 0
+        let viewModel = ProfileV3TravelPersonaViewModel(
+            profileID: "main",
+            repository: PersonaRepositoryStub(submitError: ProfileV3Error.notImplemented(action: "set_persona_score")),
+            isEditable: true,
+            onSaved: { saves += 1 }
+        )
+        try await loaded(viewModel)
+
+        viewModel.beginDrag("adventure")
+        viewModel.endDrag("adventure", score: 70)
+        while viewModel.notice == nil { try await Task.sleep(for: .milliseconds(10)) }
+        #expect(viewModel.notice?.isError == true)
+        #expect(saves == 0)
     }
 
     private static let board = [

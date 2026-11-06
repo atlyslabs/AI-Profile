@@ -270,7 +270,7 @@ struct ProfileV3HubView: View {
             }
             .profileV3EntryReveal(isRevealed(.agentsHeader))
             ProfileV3AgentGrid(
-                agents: home.agents,
+                agents: viewModel.agents,
                 isKYCComplete: home.kycStatus.isComplete,
                 onActivate: viewModel.tapAgent
             )

@@ -13,26 +13,29 @@ final class ProfileV3AppAccessModel: ObservableObject {
     @Published private(set) var saveCompletions = 0
     @Published private(set) var disconnectCompletions = 0
     @Published private(set) var disconnectingID: String?
+    @Published private(set) var isRedirectingToInstagram = false
 
     weak var navigator: ProfileV3SettingsNavigating?
     weak var router: (any ProfileV3SettingsFeedbackRouting)?
 
-    let connectors: ProfileV3ConnectorsSettingsModel
     private let repository: any ProfileV3AppAccessRepository
     private let hints: ProfileV3HubHints
+    private let redirectSeconds: Double
     private let openURL: @MainActor (URL) -> Void
     private var loadTask: Task<Void, Never>?
     private var disconnectTask: Task<Void, Never>?
+    private var redirectTask: Task<Void, Never>?
+    private var leavesPanelAfterEditor = false
 
     init(
         repository: any ProfileV3AppAccessRepository,
-        connectors: ProfileV3ConnectorsSettingsModel,
         hints: ProfileV3HubHints = ProfileV3HubHints(),
+        redirectSeconds: Double = ProfileV3Theme.Motion.AylOrbAssembly.seconds,
         openURL: @escaping @MainActor (URL) -> Void = { UIApplication.shared.open($0) }
     ) {
         self.repository = repository
-        self.connectors = connectors
         self.hints = hints
+        self.redirectSeconds = redirectSeconds
         self.openURL = openURL
         hasSeenHint = hints.hasSeenConnectedAppsHint
     }
@@ -40,9 +43,10 @@ final class ProfileV3AppAccessModel: ObservableObject {
     var autoConnected: [ProfileV3AutoConnectedApp] { content?.autoConnected ?? [] }
     var pendingApps: [ProfileV3LinkedApp] { content?.pending ?? [] }
     var connectedApps: [ProfileV3LinkedApp] { content?.connected ?? [] }
+    var listedConnectedApps: [ProfileV3LinkedApp] { connectedApps.filter(\.isInstagram) }
 
     var canOpenConnected: Bool {
-        !connectedApps.isEmpty || connectors.canOpenControlPanel
+        !connectedApps.isEmpty
     }
 
     var showsConnectedHint: Bool {
@@ -71,7 +75,6 @@ final class ProfileV3AppAccessModel: ObservableObject {
     func open() {
         navigator?.push(.appAccess)
         load()
-        connectors.load()
     }
 
     func load() {
@@ -92,7 +95,7 @@ final class ProfileV3AppAccessModel: ObservableObject {
             return
         }
         guard !app.isAwaitingMessage else {
-            openURL(ProfileV3InstagramUsername.messageURL)
+            redirectToInstagram()
             return
         }
         instagram?.cancel()
@@ -117,7 +120,7 @@ final class ProfileV3AppAccessModel: ObservableObject {
 
     func tapConnected() {
         dismissHint()
-        connectors.openControlPanel()
+        navigator?.push(.connectedApps)
     }
 
     func dismissHint() {
@@ -131,6 +134,12 @@ final class ProfileV3AppAccessModel: ObservableObject {
         editor.cancel()
         self.editor = nil
         load()
+    }
+
+    func editorDidDismiss() {
+        guard leavesPanelAfterEditor else { return }
+        leavesPanelAfterEditor = false
+        leavePanel()
     }
 
     func disconnect(_ appID: String) {
@@ -158,6 +167,20 @@ final class ProfileV3AppAccessModel: ObservableObject {
 
     func cancelReads() {
         loadTask?.cancel()
+        redirectTask?.cancel()
+        isRedirectingToInstagram = false
+    }
+
+    private func redirectToInstagram() {
+        guard !isRedirectingToInstagram else { return }
+        isRedirectingToInstagram = true
+        let seconds = redirectSeconds
+        redirectTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(seconds))
+            guard let self, !Task.isCancelled else { return }
+            openURL(ProfileV3InstagramUsername.messageURL)
+            isRedirectingToInstagram = false
+        }
     }
 
     private func present(_ mode: ProfileV3AppCredentialsViewModel.Mode, from origin: ProfileV3AppCredentialsViewModel.Origin) {
@@ -175,9 +198,15 @@ final class ProfileV3AppAccessModel: ObservableObject {
     }
 
     private func finishEditing() {
+        leavesPanelAfterEditor = editor?.origin == .panel
         editor = nil
         saveCompletions += 1
         load()
+    }
+
+    private func leavePanel() {
+        guard let navigator else { return }
+        navigator.path = Array(navigator.path.prefix { $0.isPage })
     }
 
     private func finishDisconnect(_ appID: String) {
@@ -188,9 +217,7 @@ final class ProfileV3AppAccessModel: ObservableObject {
         disconnectingID = nil
         disconnectCompletions += 1
         deckResetToken += 1
-        if let navigator {
-            navigator.path = Array(navigator.path.prefix { $0.isPage })
-        }
+        leavePanel()
         load()
     }
 }

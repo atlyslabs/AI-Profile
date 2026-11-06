@@ -49,7 +49,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     @ObservationIgnored private var presentTask: Task<Void, Never>?
     @ObservationIgnored private var monogramTask: Task<Void, Never>?
     @ObservationIgnored private var gloveBoxTask: Task<Void, Never>?
-    @ObservationIgnored private var startsKYCAfterGloveBox = false
+    @ObservationIgnored private var connectsEmailAfterGloveBox = false
 
     init(
         deps: ProfileV3SettingsDependencies,
@@ -71,7 +71,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         self.fields = fields
         let connectors = ProfileV3ConnectorsSettingsModel(repository: repository, travellerID: profileID, photoPlaces: photoPlaces)
         self.connectors = connectors
-        appAccess = ProfileV3AppAccessModel(repository: repository, connectors: connectors)
+        appAccess = ProfileV3AppAccessModel(repository: repository)
         credentialStore = ProfileV3CredentialStoreModel(repository: repository)
         travellers = ProfileV3TravellersSettingsModel(
             deps: deps,
@@ -149,16 +149,16 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     }
 
     func gloveBoxDidClose() {
-        guard startsKYCAfterGloveBox else {
+        guard connectsEmailAfterGloveBox else {
             loadGloveBoxStatus()
             return
         }
-        startsKYCAfterGloveBox = false
-        router?.presentConnectorOnboarding()
+        connectsEmailAfterGloveBox = false
+        router?.startConnectorCapture(ProfileV3CaptureStepKey.gmailConnect)
     }
 
-    func completeKYCFromGloveBox() {
-        startsKYCAfterGloveBox = true
+    func connectEmailFromGloveBox() {
+        connectsEmailAfterGloveBox = true
         isGloveBoxPresented = false
     }
 

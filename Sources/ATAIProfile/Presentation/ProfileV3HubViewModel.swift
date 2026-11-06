@@ -88,6 +88,7 @@ final class ProfileV3HubViewModel {
     private(set) var pendingBenefit: ProfileV3Benefit?
     private(set) var isSyncingKYC = false
     private(set) var kycStepCompletions = 0
+    private(set) var savedPersonaProfileIDs: Set<String>
 
     @ObservationIgnored weak var router: ProfileV3HubRouter?
 
@@ -130,6 +131,7 @@ final class ProfileV3HubViewModel {
         placeholderName = userFirstName?.nonEmpty?.lowercased()
         showsHoldHint = hints.isHoldHintDue
         playsFlipDemo = hints.isFlipDemoDue
+        savedPersonaProfileIDs = hints.personaSavedProfileIDs
         if let cached = repository.cachedBoard(), let profile = cached.mainProfile {
             board = cached
             selectedPassID = profile.pass.id
@@ -146,6 +148,26 @@ final class ProfileV3HubViewModel {
     var home: ProfileV3Home? {
         if case .content(let home) = phase { return home }
         return nil
+    }
+
+    var agents: [ProfileV3Agent] {
+        (home?.agents ?? []).map { agent in
+            guard !agent.hasData,
+                  case .travelPersona(let profileID)? = agent.next?.route(fallbackProfileID: selectedPassID),
+                  let profileID, savedPersonaProfileIDs.contains(profileID) else { return agent }
+            return ProfileV3Agent(
+                id: agent.id,
+                name: agent.name,
+                summary: agent.summary,
+                avatarURL: agent.avatarURL,
+                isActive: agent.activate == nil,
+                hasData: true,
+                foundCount: agent.foundCount,
+                totalCount: agent.totalCount,
+                next: agent.next,
+                activate: agent.activate
+            )
+        }
     }
 
     var selectedPass: ProfileV3WorldPass? {
@@ -221,6 +243,14 @@ final class ProfileV3HubViewModel {
             guard !Task.isCancelled else { return }
             resumePendingFlow()
         }
+    }
+
+    func travelPersonaSaved(profileID: String?) {
+        if let profileID = profileID ?? selectedPassID, !savedPersonaProfileIDs.contains(profileID) {
+            savedPersonaProfileIDs.insert(profileID)
+            hints.personaSavedProfileIDs = savedPersonaProfileIDs
+        }
+        requestRefresh()
     }
 
     func refreshAfterCapture(profileID: String, completedSteps: [String]) {

@@ -260,28 +260,31 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func searchCities(_: String, profileID _: String?) async throws -> [ProfileV3CitySearchResult] {
+    func loadCity(_: String, profileID _: String?) async throws -> ProfileV3City {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func addCity(_: String, tag _: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
+    func searchCities(_: String, offset _: Int, profileID _: String?) async throws -> ProfileV3CityPicker {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func updateCityTag(_: String, tag _: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
+    func loadCityPurpose(code _: String, cityID _: String?, profileID _: String?) async throws -> ProfileV3CityPurposeSheet {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func deleteCity(_: String, profileID _: String?) async throws -> ProfileV3CityProfile {
+    func submitCityPurpose(_: ProfileV3BoardAction, purpose _: String, label _: String?) async throws -> String? {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func saveCityPreferences(_: ProfileV3AgentForm, cityID _: String, profileID _: String?) async throws {
+    func deleteCity(_: ProfileV3BoardAction) async throws {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func loadCitySources(_: ProfileV3SectionSource, cityID _: String, profileID _: String?) async throws
-        -> ProfileV3PreferenceSources {
+    func saveCityPreferences(_: ProfileV3AgentForm, cityID _: String, action _: ProfileV3BoardAction?) async throws {
+        throw ProfileV3RepositoryError.unavailable
+    }
+
+    func loadCitySources(_: ProfileV3SectionSource, cityID _: String) async throws -> ProfileV3PreferenceSources {
         throw ProfileV3RepositoryError.unavailable
     }
 

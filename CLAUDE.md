@@ -40,6 +40,7 @@ This folder is the Swift package `ATAIProfile` (repo `atlyslabs/AI-Profile`), th
 | marmelroy/PhoneNumberKit | from 3.6.0 | 3.8.0 | PhoneNumberKit |
 | kean/Nuke | from 12.0.0 | 12.9.0 | Nuke |
 | PostHog/posthog-ios | from 3.71.0 | 3.92.0 | PostHog |
+| googlemaps/ios-places-sdk | from 10.1.0 | 10.15.0 | GooglePlaces |
 
 ## Build and test
 
@@ -60,7 +61,7 @@ xcrun simctl delete "$UDID"
 ```
 
 - Use a throwaway simulator, never the user's booted one. A cold build with package resolution takes about two minutes. Without `-IDEBuildingContinueBuildingAfterErrors=YES`, Xcode stops after the first failing batch.
-- Tests are swift-testing. As of 2026-11-04: 327 tests in 49 suites, 324 pass. The `feature/photos-visited-countries` branch adds `ProfileV3PhotoPlacesTests` (18, never run; Done item 176). The same three fail every run:
+- Tests are swift-testing. As of 2026-11-05: 342 tests in 50 suites, 339 pass. The `feature/photos-visited-countries` branch adds `ProfileV3PhotoPlacesTests` (18, never run; Done item 176). The same three fail every run:
   - `ProfileV3DestinationTests.theHubOpensALinkOnlyWhileItIsOnScreen` (lines 68–69): a link posted while the hub's tab is hidden still opens. Either `onDisappear` doesn't clear `isSettled` on a tab switch in a test window, or the hidden-tab guard doesn't work. Not investigated.
   - `ProfileV3OnboardingPresentationTests.theHubsOwnSurfaceRunsOnboardingOverTheTabBar` and `aFlowThatClosesItsOwnContainerIsReportedOnce`: the dismissal never completes in a window with no scene. Probably the harness, not the launcher.
 - Checking a design against Figma:
@@ -68,6 +69,7 @@ xcrun simctl delete "$UDID"
   - Download Figma's raster with `download_assets` (`defaultScale: 2`). Measure card-relative ink bands with a small Swift ImageIO script (PIL isn't installed). Delete the probe afterwards.
   - Inter text renders 0.5–1.5pt higher than Figma's; that's systematic, so don't offset single views.
   - `layer.render` draws no blur and a stray straight segment at capsule ends. Animations jump to their end in tests, because the window has no scene.
+  - An animated `ScrollViewProxy.scrollTo` never moves in a test window; an unanimated one does. `layer.render` also draws a scrolled page shifted and without its top overlay, and `drawHierarchy` draws nothing, so check scroll positions as numbers (scroll view offsets and frames in window coordinates).
   - To fill a Figma line box, pad the text vertically by `TypographyStyle.<style>.lineSpacingAdjustment / 2`.
 
 ## Architecture
@@ -97,7 +99,7 @@ xcrun simctl delete "$UDID"
   - `ProfileV3CouponsHost`.
   - `ProfileV3AppHost`: logout, flash, restart, floating-bar clearance, `opensChat`/`openChat(prompt:)`.
   - `ProfileV3InviteHost` (optional): the invite code sheet.
-  - Also: the analytics reporter, the field validator and the country list.
+  - Also: the analytics reporter, the field validator, the country list and the optional `placesAPIKey` (the city hotel search; `ProfileV3Environment.placeSearch` is nil without it).
 - Entry points (`ProfileV3EntryPoint`): `makeHub`, `makeHubSurface`, `presentAddTraveller`, `prefetchBoard`, and `open(_:)` for deep links (`ProfileV3Destination`).
 - `AppIntegration/ProfileV3Host` holds the vdcios implementations (`VDCProfileV3Composition.configure()` plus one file per host). They are copied into `vdcios/VDCApp/Modules/ProfileV3Host` and aren't compiled here. Ayl's hosts live in AI-Native.
 
@@ -138,15 +140,17 @@ xcrun simctl delete "$UDID"
   - scrolling and loading: `ProfileV3FadingScroll`, `ProfileV3ScreenLoader`, `ProfileV3PhasedLoad`, `ProfileV3SavePhase`;
   - cards and decoration: `profileV3AccessCard`, `ProfileV3FadeBand`, `ProfileV3Rule`/`ProfileV3DashedRule`, `ProfileV3RainbowGlow`;
   - small pieces: `ProfileV3CountryFlag`, `ProfileV3CopyButton`, `ProfileV3ErrorText`, `ProfileV3TagLabel`, `ProfileV3SegmentTrack`.
+  - motion: `ProfileV3Keyframes` plays a Figma keyframe track (holds, per-segment `UnitCurve`s) from a `TimelineView`'s elapsed time.
 - Analytics events (`Support/ProfileV3Analytics.swift`) follow the spec agreed on 2026-10-27: no default properties, personal data as specified. Tests record through the `@TaskLocal` `ProfileV3Analytics.scopedReporter`.
 - Session replay: views with personal data use `.postHogMask()`.
 
-## State (2026-11-04)
+## State (2026-11-05)
 
 ### Release
 
-- `master` is three commits ahead of `origin/master` (`e434d81`, Manav's Support row routing, on `8cc91dc` and the QA-2008 fixes `a53e774`), not pushed: `64506d3` (benefit Learn more, the long Instagram handle fix and QA-2007), `723ffb1` (city profile behind its flag, the contact save fix, and the Settings debug City profile row that replaced the KYC state menu) and the travel persona analytics fix after it. `a53e774` and `2ad3c52` (loyalty edit and tier, hub refresh, agent fields, Ditto rebuild) were pushed outside this session. `1.0.21` is on `df4009c`; nothing after it is tagged.
-- Tags `1.0.0` and `1.0.2`–`1.0.21` are on GitHub; `1.0.1` is local only. Tags are often cut straight from a commit with no release commit. When that happens, move the tag's "Unreleased" body into a `## <version> — <date>` section and keep only later changes under Unreleased (done for 1.0.17, 1.0.20 and 1.0.21).
+- `master` is at `95e54c5` (Instagram motion, the split Connected panels, the connected Instagram row and the return after a panel edit, the glove box's Gmail route, source icons, and the city profile's sticky tabs with the highlight that follows scrolling), one commit ahead of `origin/master` at `6471164` (the travel persona ring) and not pushed. `6471164` is on `f97c8dc` (the plug icon on the connector deck), `75a363c` (travel persona analytics), `723ffb1` (city profile behind its flag, the contact save fix, and the Settings debug City profile row that replaced the KYC state menu) and `64506d3` (benefit Learn more, the long Instagram handle fix and QA-2007), all pushed outside this session. `1.0.23` is on `e434d81` (Manav's Support row routing) and `1.0.22` on `8cc91dc`; nothing after `e434d81` is tagged.
+- Uncommitted: the city profile's live wiring to `vdc-k8s#24000` (2026-11-05 evening; see Backend contracts and the City profile decision), server-driven agent tiles (the city flag is gone; see Product decisions), and the city hotel search on Google Places (see the City profile decision). Full suite 339/342 (the known three) and a Release build pass; nothing ran against the real backend or Google Places.
+- Tags `1.0.0` and `1.0.2`–`1.0.23` are on GitHub; `1.0.1` is local only. Tags are often cut straight from a commit with no release commit. When that happens, move the tag's "Unreleased" body into a `## <version> — <date>` section and keep only later changes under Unreleased (done for 1.0.17, 1.0.20 and 1.0.21; not yet for 1.0.22 and 1.0.23).
 - `README.md` still says "Version 1.0.1".
 
 ### Feature flags (`ProfileV3FeatureFlags`)
@@ -173,15 +177,16 @@ xcrun simctl delete "$UDID"
 | `isGloveBoxCardTransactionsEnabled` | false | The virtual card's transactions and View all |
 | `isAgentCustomRulesEnabled` | true | Custom rules on agent forms |
 | `isPassportBackPageEnabled` | true | The FRONT/BACK passport row |
-| `isCityProfileEnabled` | false | City profile (no backend yet). Off hides a served `city_profile` tile and makes the route unsupported; on in DEBUG adds a demo tile and serves `ProfileV3CityProfileStore.shared`. In DEBUG, Settings' debug section opens the flow on that store whatever the flag (`ProfileV3SettingsSheetPresenter.presentCityProfile`); it replaced the KYC state menu |
 
 ### Backend contracts
 
-- City profile (2026-11-04): no backend yet; the client is built against `ProfileV3CityProfileRepository`, and `ProfileV3LiveRepository` throws `notImplemented` for it in Release. Proposed shape, to agree with BE:
-  - The tile is an agent tile with `next: {go: "city_profile"}` (`ProfileV3Route.cityProfile`).
-  - The screen (`ProfileV3CityProfile`) sends the cities, the tag options (`{id, label, icon, asks_purpose}`, icons are Material Icons names), the Add slot's label and detail, the intro title and sample cards, the purpose field's label, placeholder and save label, the Continue label and the delete confirmation copy.
-  - Each city sends `{id, code, name, country, image_url, tag: {id, purpose}}`, its sources, and its preferences in the agent form's field schema, plus per section `layout` (`logos`, `grid`, `cards`, `places`, `slider`), `icon`, `tab` and `subtitle` (`ProfileV3CitySectionStyle`). Chips fields take an `opt_out` like sliders. A newly added city is `is_updating` until the agent fills it.
-  - Writes: search (`searchCities`), add, edit tag and delete return the whole screen; `saveCityPreferences` takes the city's form; `loadCitySources` takes a section's source.
+- City profile (Abhishek, 2026-11-05; `vdc-k8s#24000`, merged 2026-11-05; needs ai-memory's `city_profiles` table deployed before ai-kyc):
+  - Tile: an agent tile `{agent_type: "city", icon: "orb_city", next: {go: "city_profiles", profile_id}, activate?}` before Travel persona. No art exists for `orb_city`.
+  - Screens (`GET` under `/board/cities`): intro `?profile_id=` (portholes, `add`, `headline`, three static samples); picker `/search?profile_id=&q=&offset=` (pages of 20, `q` echoed, `next_offset` null at the end; the client debounces 250 ms and drops a reply whose `q` isn't the current text); purpose sheet `/purpose?code=&profile_id=` to add, `?code=&city_id=` for the pencil; city `/{city_id}?profile_id=`; card history `/{city_id}/sources/{field_key}` (the sources sheet shape).
+  - Purpose sheet: home, work and leisure once each per traveller (`disabled`); `other` takes a name (`input`, max 30), unique ignoring case and spacing, checked against `used_labels` while typing (`label_taken` inline). Writes echo `submit` with `purpose` and `label`: `create_city_profile` replies `{city_id}`, `update_city_purpose` too; the pencil's `delete` (`delete_city_profile`) carries `confirm {title, body, confirm_label, cancel_label}`. Errors come with ready messages: 409 `purpose_taken`/`label_taken`, 422 `label_required`/`label_too_long`/`unknown_city_code`, 404 `unknown_city`, 503 `city_profiles_unavailable`. The same city can be added again with another purpose.
+  - City screen: `purpose` (with `edit.next`), `found {count, total, label}`, `sources {count, label, icons}` (no `next`, so the summary isn't tappable), `tabs`, six cards and `custom_rules`, and `save {action: save_city_preferences, city_id}`. Cards are agent fields plus `subtitle`, `footer`, `icon {active_url, inactive_url, active}`, `found`, `layout` (`chips_with_icon` with `add` = logo chips, without = the timing orbs; `tiles` = class with `image_url`/`selected_image_url`, empty for now; `chips`; `rows` = hotels), `add {search: airlines|client_hotels}`, `optout {key, label, value}` and `source {count, icons, next: {go: city_preference_sources}}`. Every card sends `tab` as an object, so the agent field DTO's `tab` (the baggage tab title) is lossy.
+  - Hotels are `input: "free_list"`: a list of one-line names (`max_items` 20, `max_chars` 120). `add.search: "client_hotels"` means the app searches hotels itself (Ashish: "a general search using the Places SDK"); see the City profile decision.
+  - Save sends the complete city (`ProfileV3CitySubmission`): every card's list, each opt-out key as a bool, and `custom_rules`.
 - Board: home, settings, agents, loyalty, past trips, travel persona, passports and AI connectors. Writes go to `/board/submit` and echo the served action object.
   - Past trips are country-only; several countries go as one `countries` list.
   - Loyalty edit (`vdc-k8s#23247`, 2026-10-26; ai-kyc is deployed, ai-memory's `PATCH /profile/loyalty` deploy wasn't confirmed):
@@ -193,6 +198,7 @@ xcrun simctl delete "$UDID"
     - In an edit, a sent `tier` resets the month to the sent one (or that default). A month sent alone keeps the saved tier, and a blank one is ignored.
     - 422 `kyc_invalid_request` with "Pick a tier from the list." or "Enter the month as MM/YY, this month or later."
   - The personal agent's `passport_empty` shows the placeholder card, and the passport card's `father`/`mother`/`spouse`/`address` keys feed the back page.
+  - An agent tile's ring follows its `updated_label`: blank shows the gradient arc with "+", any text shows the green ring. ai-kyc sends the label once the traveller has saved that agent (`agents_meta` in `api/board.py`), but `travel_persona.grid_tile` hard-codes `""`, so the persona tile never turns green.
   - AI connectors: `settings/connectors/ai/{connector}` and its `/connect`, saved with `connect_ai_connector`. Its `synced_at` comes as Python `isoformat()` (microseconds, `+00:00`).
   - Custom rules are the agent screen's `custom_rules` field and save with the agent.
   - Benefit detail (`GET /board/benefits/{id}`) can send `learn_more: {label, next: {go: "ai_chat", prompt}}`. Only a label with an `ai_chat` prompt is kept (`ProfileV3BenefitLearnMore`).
@@ -202,6 +208,13 @@ xcrun simctl delete "$UDID"
     - Stay `hotel_class` is `single_select` with `{value, label}` options.
     - Stay `preferred_hotels` has 100 groups with logos.
     - The field's `assist` is the subline under the control.
+  - Source icons (Abhishek, 2026-11-05; `vdc-k8s#23991`, merged 2026-11-05):
+    - A field's `source` is `{icon, icons, next: {go: "preference_sources", agent_type, field_key, profile_id}}`. `icons` lists one URL per kind of source, in this order: Gmail, you (`kyc/you.png?v=1`), then each AI assistant's Connectors icon. `icon` equals `icons[0]`. It shows on any field with a history.
+    - The sources row draws every icon (`ProfileV3SourceIconStack` `.logo`). The header pill's `.badge` keeps its two-icon cap. The sources call sends `next.profile_id` when present (`ProfileV3SectionSource.profileID`), else the form's traveller.
+    - The icons don't share a style: Gmail's is a bare 22pt logo, while you and the assistants send whole round badges (#EFEFEF tile, black ChatGPT disc). Spidey Sense rows (`ProfileV3PersonaTrait.Row.iconURL`) therefore draw by `kind`: a `gmail` row's icon sits on the grey tile at the Gmail glyph's size, and any other row's icon fills the 48pt tile. Without `icon`, rows draw the local art as before.
+    - The sources sheet's steps have no `kind`, so it still draws every icon at 22pt on its tile, and the you and assistant badges show small there. Open with BE: send `kind` on steps, or a Gmail badge, so every icon can fill its tile. Never match on the URLs.
+    - A stored value with no matching chip arrives as an extra option with `selected: true`, and shows as a selected chip with no client change.
+  - Food `dietary_style` (same day, corrected the same evening): `single_select` with a new first chip "Non-vegetarian"; one diet, no "+ Add". The client already draws it as choose-one chips; a diet saved earlier that isn't a chip comes as an extra selected option.
 - Vault (fort-knox): a login is sealed with AES-GCM under a key wrapped by the server's RSA key (OAEP-SHA256). A reveal opens an ECDH/HKDF box with the phone's Keychain key after Face ID.
 - Glove box (jaqen): `/me`, `/messages` (status, attention, action, sender logo) and the forwarding endpoints.
 - Permissions (harness): `GET /permissions` and `PUT /permissions/{key}` `{value}`.
@@ -214,15 +227,25 @@ xcrun simctl delete "$UDID"
 ### Product decisions that constrain changes
 
 - One package serves two hosts, Ayl and the Atlys app, so catalog copy shows in both. Six strings now say "Ayl".
-- App access in release lists only Instagram. Its waiting-for-a-DM card follows Figma `6595:16405`, and "Send a message" opens `https://ig.me/m/ayl.chat`. A long handle is cut short with an ellipsis so the action stays on one line (grukhs, 2026-11-04); `ProfileV3ConnectorAction` never wraps.
+- Agent tiles are server-driven (user, 2026-11-05: "there shouldn't be any client update if any of the agent is added in future"). The grid shows every tile the board sends, and `go: agent` opens the generic agent screen (`/board/agent/{agent_type}`) for any `agent_type`, known to `ProfileV3AgentID` or not. A tile's `icon` is a URL, or an `orb_<name>` token that resolves to `ik.imagekit.io/atlys/b2c/profile-v3/agent_<name>.png`; upload new art there under that name. The seven current agents have art; `agent_city.png` is missing, so the city orb is blank. A new `go` value still needs client code for its screen; until then the tile shows and a tap does nothing.
+- App access in release lists only Instagram. Its waiting-for-a-DM card follows Figma `6595:16405`. A long handle is cut short with an ellipsis so the action stays on one line (grukhs, 2026-11-04); `ProfileV3ConnectorAction` never wraps.
+  - Once connected (snapmap's `dm_connected`), Instagram stays in the list as well as under CONNECTED (user, 2026-11-05). Otherwise the release page is empty below the heading, since Instagram is its only app. The row is `listedConnectedApps`, drawn like the auto-connected row: logo, @handle and a green `connectorConnected`. Other connected apps leave the list, as in Figma 1917 (`3338:12183`).
+- Instagram motion (Vijay's design gaps, 2026-11-05; the user: "two animations - one is as it's there and the new addition is when send message is clicked"):
+  - The connect sheet opens on an intro, Figma `6595:15220`: reels fly into map pins, then a place card pops up. It plays once (3.4 s), holds 1 s (the frame's note), then shows the explainer, which now moves on after 7 s (was 15). Taps skip ahead. Reduce Motion shows the designed still.
+  - "Send a message" plays Figma `6595:14302` over App access (`ProfileV3InstagramRedirectOverlay`, the orb assembling from 44 particles) and opens `https://ig.me/m/ayl.chat` when the 2 s assembly ends. The redirect after linking stays in the sheet, unchanged.
+  - Both run on `ProfileV3Keyframes` tracks (Figma's keyframes and curves, `Motion.fastOutSlowIn` for cubic-bezier(0.4, 0, 0.2, 1)) evaluated in a `TimelineView`; the geometry tables are in `Theme+InstagramConnect`.
+  - Not matched: the 2pt backdrop blur under the overlay's white fade isn't drawn, and the wash keeps the sheet's top-to-bottom `instagramFollowWash` (the frame's is 195°). The shared `ProfileV3AylOrb` draws a white mark where `6595:14302` shows a lime one. The intro's shield and title sit at the shared sheet positions, 7pt above the frame, like the other steps.
+- Connected panels (Vijay, 2026-11-05): App access's Connected opens only the connected apps (route `.connectedApps`) and shows only once an app is connected; Information access's opens only the email connectors (`.controlPanel`). They used to share one deck.
+  - A successful edit from the apps panel pops back to App access once the edit sheet has closed (`editorDidDismiss`, chained through the sheet's `onDismiss`) (user, 2026-11-05). An Instagram relink resets `dm_connected`, so the panel used to sit empty. Closing the sheet without saving stays on the panel.
 - Vault:
   - Opening it with Face ID covers reveals until it is closed or the app goes to the background.
   - Saving a login only calls the API, and the sheet's fields aren't tagged as a username and password, so iOS doesn't offer to save them.
 - The glove box opens from the Settings card. Without KYC it shows the locked intro, even when Jaqen already has an address (QA-2007, 2026-11-04): Jaqen's `/me` doesn't check KYC (`eligible` is always true), so the client check is the board's main-traveler `kycStatus`.
+  - Its "Complete KYC" starts Gmail linking, the `gmail_connect` connector capture (Vijay, 2026-11-05: "for glove box we need to redirect to email linking flow, not all KYC flow"), not onboarding. If KYC is incomplete for another reason, linking Gmail alone may not unlock it; the capture continues with whatever step the server returns.
   - `ProfileV3SettingsViewModel.isMainTravellerKYCComplete()` uses the cached board only while it is younger than `ProfileV3HubViewModel.staleBoardAge`, else `loadLatestBoard()`. A failed fetch falls back to the cached board, then to unlocked.
   - The glove box runs that check alongside `/me` on every load. The Settings card's ACTIVATE pill shows for no address or no KYC.
   - An empty inbox shows one sample email. The virtual card shows the main traveler's short name and digits derived from the address.
-- Travel persona: the delight loader shows for the first five loads, and a drag saves on release. Its edits report as `profile_agent_preference_changed` (`travel_person_agent`, the trait as `sectionName`): a knob change as it is submitted, with the score, and a trait-screen action after it succeeds, with the server action name (2026-11-04, aadi's report of 2026-10-30). It sends no `profile_agent_form_saved`, since it has no Save.
+- Travel persona: the delight loader shows for the first five loads, and a drag saves on release. Its edits report as `profile_agent_preference_changed` (`travel_person_agent`, the trait as `sectionName`): a knob change as it is submitted, with the score, and a trait-screen action after it succeeds, with the server action name (2026-11-04, aadi's report of 2026-10-30). It sends no `profile_agent_form_saved`, since it has no Save. After the first saved knob change or trait action the tile counts as saved, like the other agents (user, 2026-11-04): each success calls the hub's `travelPersonaSaved(profileID:)` through `makeTravelPersona(onSaved:)`, which refetches the board and records the traveller in `ProfileV3HubHints.personaSavedProfileIDs`. `ProfileV3HubViewModel.agents` shows a persona tile with no label as saved for those travellers; the grid reads it instead of `home.agents`.
 - Loyalty edit (user's call, 2026-11-01):
   - It starts from an "Edit" pill on each card in the programmes edit mode (the delete selection), where "View insight" sits.
   - It reuses the add flow's details sheet: `ProfileV3AddProgrammeViewModel(editing:)`, which skips the loader, back button and step dots.
@@ -232,9 +255,17 @@ xcrun simctl delete "$UDID"
 - Benefit Learn more (2026-11-04, Figma `5648:13079`): the detail's footer shows it only when the host opens chat. A tap closes the detail and the benefits list, then opens chat through `afterOverlaysClose`, once the hub's cover is down. With "Got it" or "Redeem" it stacks on top (no design for both).
 - City profile (2026-11-04, Figma `6592:8147`, `6739:7548`, `6739:8232`, `6739:15148`, `6739:16063`, `6805:7626`, `6766:17091`, `6766:17366`, `6766:18995`, `6739:16294`, `6805:7463`):
   - Each city's preferences are a `ProfileV3AgentForm` edited by `ProfileV3AgentFormViewModel` (one per city, kept while dirty), so pickers, sources, custom rules and the save bar match the agents. `ProfileV3CityAgentRepository` sends its saves and source loads to the city.
-  - A tag shows "Home (2)" when more than one city has it, and a purpose (Other) replaces the label with a pin icon. Logo chips show only selected options and a tap removes one; place rows open the picker. An opt-out dims the section.
-  - The search sheet closes before the tag sheet opens (chained through `onDismiss`). Choosing a city already added jumps to it. Back on the tag sheet cancels the add.
+  - The intro's portholes come from `GET /board/cities`; selecting one loads its screen (`ProfileV3CityProfileViewModel.screens`, with its own load state and retry), and a save reloads it. Purpose chips, tab icons and the sample deck draw the server's icons as tinted templates (`ProfileV3RemoteImage(tint:)`, the PNGs are grey glyphs); card notches draw `icon.active_url`/`inactive_url` as sent, picked by the card's live value. Logo chips show only selected options and a tap removes one; hotel rows open the picker. An opt-out dims the section but keeps its chips.
+  - The picker sheet closes before the purpose sheet opens (chained through `onDismiss`). "Other" moves to the name step on the same sheet; Back there with no name cancels the choice, and Back on the first step cancels the add. Delete confirms in a fitted sheet over the purpose sheet.
+  - Class tiles fall back to the bundled seat art (`ProfileV3SeatArt(optionValue:)`) while the server's images are empty; timing chips draw the server's orb, dimmed when unpicked, with a tick (dark on "Morning").
+  - The tab strip is sticky (user, 2026-11-04; Figma `6739:16294` has no pinned state): the in-page strip reports when its top reaches `Sizes.City.pinnedTabsTop` (under the back button), then hides while the header draws a copy on a solid band with a 16pt fade. A tap scrolls to `sectionAnchorID(section)`, a clear view `sectionScrollInset` tall above each card, so the card lands under the pinned strip.
+  - The highlighted tab follows the scroll (user, 2026-11-04): each card reports when its top passes `sectionReachedLine` (8pt below the pinned strip), and `sectionReached` highlights the last tabbed section past it, else none (the first tab shows). For `cityTabFollowPauseSeconds` after a tap, crossings are recorded but don't move the highlight, so it doesn't step through the sections in between; a tap on a section that can't reach the strip keeps its highlight until the next crossing.
   - Not matched: Host Grotesk (city codes, intro title) isn't bundled, so Inter Medium stands in; Figma's `eraser_size_1` is Material `edit`; the plane-window and deck blurs can't be checked in probes. The seat art is cropped from the two sprite frames (`6736:5443`, `6736:5447`) into `profile_v3_seat_*`.
+  - Hotel search (user, 2026-11-05: "check for onboarding flow, whether they have this handling, if you find that - need to handle it here too"): the hotels picker searches Google Places as AI-KYC's `KYCAddressPlacesService` does, through `ProfileV3PlaceSearching` (`ProfileV3GooglePlaceSearch`). It runs only when `TypedEntry.search` (the city's name and `country_code`) is set and the host passed `placesAPIKey`; otherwise hotels are typed only ("+Add …").
+    - Request: legacy `findAutocompletePredictions` (KYC's call; the new `fetchAutocompleteSuggestions` needs Places API (New) on the key, which nobody confirmed), `types = ["lodging"]`, `countries = [country_code]`, the city's name appended unless typed, 300 ms debounce, up to 8 results.
+    - Only the name is saved, and a prediction's primary text is the place's name, so there's no session token and no place details call (a session that ends without details bills per request anyway).
+    - The list: saved hotels that match the text first, then suggestions, deduped by name ignoring case and spacing. A suggestion whose name is already saved takes that option's id, so picking one checks it in place. "+Add …" goes last while searching.
+    - Keys: Ayl must pass `AppSecrets.googlePlacesAPIKey` (the key it gives KYC in `KYCFeature`); `AppIntegration`'s vdcios composition passes `AppConfiguration.shared.googleMapsSDKAPIKey`. `GMSPlacesClient.provideAPIKey` runs once per process; KYC and vdcios's AppDelegate call it too, which the 10.x docs allow.
 - Agent sliders:
   - A slider whose server value is `null` saves `null` until it is moved, or until "rather not say" is turned off (`ProfileV3SliderField.isSet`). It still shows its midpoint.
   - Money values read as symbol + compact amount + unit (`₹10K/hour`; a letter symbol gets a space: `AED 50/hour`).
@@ -245,7 +276,8 @@ xcrun simctl delete "$UDID"
 - In sync as of 2026-10-31. Ditto's project and library hold the catalog's 413 keys with identical values, and the catalog and generated Swift were rebuilt from Ditto by the pipeline. The rebuild is in `2ad3c52`, which is the comparison base for later drift.
 - Ditto owes hand-added keys (catalog now 421):
   - 2026-11-01: `mo-aiprofile-loyalty-error-tier-valid-until-invalid` ("Enter the month as MM/YY, this month or later.", folder `loyalty-programs`, error tag).
-  - 2026-11-04, City profile, folder `agents`: `mo-aiprofile-agents-header-city-profile`, `-header-add-city-profile`, `-label-city-tag-count`, `-loading-city-updating`, `-accessibility-add-city`, `-accessibility-edit-city-tag`, `-accessibility-delete-city`.
+  - 2026-11-04, City profile, folder `agents`: `mo-aiprofile-agents-header-city-profile`, `-header-add-city-profile`, `-accessibility-add-city`, `-accessibility-edit-city-tag`. Three more (`-label-city-tag-count`, `-loading-city-updating`, `-accessibility-delete-city`) were dropped on 2026-11-05 when the live wiring made them unused; they never reached Ditto.
+  - 2026-11-05, Instagram intro, folder `agents`: `mo-aiprofile-agents-title-instagram-reels-plan`, `-label-instagram-sample-place`, `-label-instagram-sample-place-detail`.
 - That sync, at the user's request:
   - added the 44 hand-added keys that are in use;
   - pushed the 6 local value edits (the Atlys → Ayl copy and the "How you pay" text);
@@ -258,19 +290,24 @@ xcrun simctl delete "$UDID"
 
 - Saving a vault login shows no iOS "Save Password" sheet.
 - Instagram linking against snapmap in production, and the waiting card in Ayl.
+- The Instagram intro and Send a message redirect running on a device: probes checked frames rendered at fixed times and the overlay's layout (within 0.5pt of `6595:14302`), not the `TimelineView` playback, the blurs or the hand-off to Instagram.
 - KYC onboarding presented full screen over Ayl's tab bar.
 - Loyalty edit and tier on a device against production: that the Edit pill takes the tap rather than the row's selection button, that the tier `Menu` opens from inside the sheet window, and that a saved edit or tier shows after the reload.
 - QA-2008 fixes on a device: the AI connector prompt scrolling inside the sheet's own scroll view, and the Instagram explainer's green wash without Figma's noise.
-- Benefit Learn more in Ayl: that chat opens after the benefit cover closes, from the hub stack and from the benefits list.
+- Benefit Learn more in Ayl opens chat, but the chat then freezes (see Open work).
 - QA-2007 against the backend: that the board reports KYC not done right after a Gmail disconnect, so the glove box locks.
-- City profile in Ayl (Settings' debug row, or the flag on): the carousel's selection and side-window scaling, the chained search → tag sheets, the fitted tag sheet with the keyboard, the deck and ring animations, and the window and deck blurs.
+- City profile against the live backend (the hub's tile, or Settings' debug row in DEBUG): every screen and write, the 409/422 messages, paging and the stale-reply check, and that the hotel card's typed names save. Also in Ayl: the sticky tab strip and its animated scrolls (a probe checked positions with the scrolls unanimated), the carousel's selection and side-window scaling, the chained picker → purpose sheets, the fitted purpose sheet with the keyboard, the deck and ring animations, and the window and deck blurs.
+- The city hotel search against Google Places with each host's key: lodging results in the city, the country filter, and the key's API restrictions.
 - Motion that tests can't show: the save button's entry and exit, the persona loader's haptics, the glove box entrances, the hero and globe transitions.
 
 ### Open work
 
-- QA-2007 (glove box KYC lock) is fixed in `64506d3`, not pushed or tagged.
-- Travel persona analytics (aadi, 2026-10-30): fixed in the commit after `723ffb1`, not pushed or tagged; Ayl needs a tag with it.
-- Contact save in Ayl (2026-11-04): every tag up to `1.0.21` takes the traveller only from the host, and Ayl's host sends none, so Confirm fails before `PATCH /api/pensieve/v1/profile/edit` and plays only the error haptic. Ayl pins `1.0.20`. The board fallback (`ProfileV3SettingsDependencies.travellerID`) is in `723ffb1`, not pushed or tagged; a probe confirmed it sends the PATCH from a cached or refetched board. Ayl needs a tag with it.
+- Benefit Learn more freezes chat in Ayl (Vijay, 1.0.1 (32), 2026-11-05; reproducible). The profile side completes: the cover closes and `openChat(prompt:)` runs. The 15:04 watchdog report of 2026-11-04 (build 30, `0x8BADF00D`, failed to terminate in 5 s) caught the main thread looping in AI-Chat's transcript: `AICTranscriptView`'s content-end preference calls `ChatScrollController.contentChanged(end:)`, which writes the observed `markerContentEnd` during a render and schedules another. Likely trigger: `ChatDeepLinkView` sends the prompt on boot while its sheet is still presenting. The fix belongs in AI-Chat; nothing to change here. Build 32 was built from local `../AI-Chat` (`feat/browser-session-card`) and `../AI-Profile` (Ayl's working tree overrides the 1.0.23 pin). Confirm with Crashlytics (user ID `wHiPLaavFHdJSROXCPYEZuZey8z1`).
+- QA-2007 (glove box KYC lock) is fixed in `64506d3`, pushed but not tagged.
+- Travel persona analytics (aadi, 2026-10-30): fixed in `75a363c`, pushed but not tagged; Ayl needs a tag with it.
+- Source icon follow-up with BE (2026-11-05, see Backend contracts): send `kind` on the sources sheet's steps, or a Gmail badge, so every icon can fill its tile.
+- Travel persona ring (2026-11-04, `6471164`, pushed but not tagged): the client marks the tile saved on this device after the first save. That marker is device-local, so a reinstall or another device shows "+" again. BE owes a sticky "saved" signal: `grid_tile` should send `be-aiprofile-board-updated-label` once the traveller has saved a score or ignore action. Persona `user` rows can disappear (a drag back merges to zero), so it needs its own marker. Android needs the same refetch after a save; its screenshot showed the bug.
+- Contact save in Ayl (2026-11-04): every tag up to `1.0.23` takes the traveller only from the host, and Ayl's host sends none, so Confirm fails before `PATCH /api/pensieve/v1/profile/edit` and plays only the error haptic. Ayl pins `1.0.20`. The board fallback (`ProfileV3SettingsDependencies.travellerID`) is in `723ffb1`, pushed but not tagged; a probe confirmed it sends the PATCH from a cached or refetched board. Ayl needs a tag with it.
 - QA-2008 (2026-11-02): QA-2009, -2011, -2043 and -2050 are fixed in `a53e774` (pushed, not tagged). QA-2042 needs snapmap migration 043 on the environment QA tested; the app now shows client copy for that 500.
 - vdcios integration:
   - Pin a version instead of `branch: master`.
@@ -307,7 +344,7 @@ xcrun simctl delete "$UDID"
     - Closing the programmes page after only viewing it doesn't refresh the hub; that page loads `/loyalty/page/{id}` itself.
     - The KYC sync stops polling when the KYC steps clear, so a Gmail import that lands later shows only on the next stale refresh.
 - Loyalty edit leftover: the insight screen's `edit` button (`program_insight.edit` → `loyalty_edit_details`) isn't decoded or shown.
-- City profile, behind `isCityProfileEnabled` (2026-11-04): agree the contract above with BE, then add the DTOs, mappers and `ProfileV3API` cases and replace the live repository's `notImplemented`. Analytics events aren't specified, so none are sent. The older frames (`6592:8685`, `6593:10316`, `6595:10925`, `6595:11473`: a "Never book · N Airlines" row and sheet) weren't in this round.
+- City profile: wired to the live backend on 2026-11-05 and shown whenever the board sends its tile (uncommitted; the flag is gone). Builds before this change still drop or ignore the tile; in 1.0.20, Ayl's pin, it shows and a tap does nothing. Still open: Ayl passing `placesAPIKey` (until it does, hotels are typed only there), art for the tile's `orb_city` (upload `agent_city.png`, see the agent tiles decision), and the class tile images (empty on the server). The server tracks the city events (`ai_profile_city_*`), so the client sends none. The older frames (`6592:8685`, `6593:10316`, `6595:10925`, `6595:11473`: a "Never book · N Airlines" row and sheet) weren't in this round.
 - Known trade-offs:
   - `ProfileV3ServerFailureBox` keeps one envelope, so concurrent failures can swap codes.
   - `ATCoreCacheConfig`'s default expiry looks like a units slip; the package passes seven days.
@@ -343,9 +380,11 @@ Not on `master`. This section exists only on the branch; Done items 1–175 are 
   - That error line starts with `macro expansion #expect`, so grep for `error:` anywhere in the line.
 - A stalled simulator pasteboard (the vault clipboard test) blocks the main actor, and dozens of tests then hit their 60-second limit. Re-run before suspecting the change.
 - An `.animation(_:value:)` outside a `safeAreaInset` doesn't reach the inset's own transitions. Put it on a persistent root inside the inset.
+- `ScrollViewProxy.scrollTo(id)` scrolls the first scroll view that holds `id`, and a `ForEach` element's identity counts. A nested horizontal `ForEach` (a tab strip) keyed by the same ids as the page's targets takes the scroll, so namespace the page's ids. The view that carries `.id` must itself have the frame you want; padding applied after `.id` doesn't move the target.
 - Concurrency:
   - Under `ApproachableConcurrency` a `nonisolated async` function runs on its caller's actor; use `@concurrent` for off-main work.
   - `import ATCore` brings Moya's `Task` into scope; write `Swift.Task`.
+- `ProfileV3PlaceSearch.swift` builds with four deprecation warnings for the legacy Places autocomplete; AI-KYC's address search has the same ones.
 - `TimelineSchedule` lives in SwiftUICore, so leading-dot extensions on it aren't found. Construct `ProfileV3AmbientSchedule(isPaused:)`.
 - Assets:
   - Asset-catalog SVGs drop filters, `foreignObject` and backdrop blur.

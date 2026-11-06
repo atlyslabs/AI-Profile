@@ -2,27 +2,23 @@ import Foundation
 
 #if DEBUG
 enum ProfileV3CityProfileFixtures {
-    static let agentType = "city_profile"
+    static let agentType = ProfileV3CityProfileMapper.agentType
 
     static let agent = ProfileV3Agent(
         id: agentType,
-        name: "City profile",
-        summary: "added 2 cuisines for upcoming trip",
+        name: "city profile",
+        summary: "Knows how you travel in each city.",
         avatarURL: nil,
         isActive: false,
         hasData: false,
         foundCount: 0,
         totalCount: 0,
-        next: ProfileV3Directive(go: agentType),
-        activate: ProfileV3Directive(go: agentType)
+        next: ProfileV3Directive(go: ProfileV3Directive.cityProfileRoute),
+        activate: nil
     )
 
-    static let tags = [
-        ProfileV3CityTagOption(id: "home", label: "Home", icon: "home"),
-        ProfileV3CityTagOption(id: "work", label: "Work", icon: "work"),
-        ProfileV3CityTagOption(id: "leisure", label: "Leisure", icon: "golf_course"),
-        ProfileV3CityTagOption(id: "other", label: "Other", icon: "edit", asksPurpose: true)
-    ]
+    static let iconBase = "https://media.atlys.com/b2c/ai-native/icons/city"
+    static let youIcon = URL(string: "https://media.atlys.com/b2c/ai-native/icons/kyc/you.png?v=1")
 
     static let catalogue = [
         city("BOM", "Mumbai", "India", country: "IN"),
@@ -32,102 +28,120 @@ enum ProfileV3CityProfileFixtures {
         city("BKK", "Bangkok", "Thailand", country: "TH"),
         city("HKT", "Phuket", "Thailand", country: "TH"),
         city("SIN", "Singapore", "Singapore", country: "SG"),
-        city("LHR", "London", "United Kingdom", country: "GB"),
-        city("CDG", "Paris", "France", country: "FR"),
-        city("JFK", "New York", "United States", country: "US"),
-        city("NRT", "Tokyo", "Japan", country: "JP"),
-        city("IST", "Istanbul", "Turkey", country: "TR"),
+        city("LON", "London", "United Kingdom", country: "GB"),
+        city("PAR", "Paris", "France", country: "FR"),
+        city("NYC", "New York", "United States", country: "US"),
+        city("TYO", "Tokyo", "Japan", country: "JP"),
+        city("IST", "Istanbul", "Türkiye", country: "TR"),
         city("DPS", "Bali", "Indonesia", country: "ID"),
         city("KUL", "Kuala Lumpur", "Malaysia", country: "MY"),
         city("MLE", "Mal\u{E9}", "Maldives", country: "MV")
     ]
 
-    static var profile: ProfileV3CityProfile {
-        ProfileV3CityProfile(
-            cities: [
-                makeCity(catalogue[0], tag: ProfileV3CityTag(id: "home"), filled: true),
-                makeCity(catalogue[4], tag: ProfileV3CityTag(id: "leisure"), filled: true)
-            ],
-            tags: tags,
-            addSlot: ProfileV3CityAddSlot(label: "Add", detail: "Frequent destination"),
-            intro: intro,
-            purpose: ProfileV3CityPurpose(label: "Purpose of visit*", placeholder: "Parent\u{2019}s home", saveLabel: "Save"),
-            continueLabel: "Continue",
-            deleteConfirm: ProfileV3CityDeleteConfirm(
-                title: "Are you sure you want to delete city profile",
-                confirmLabel: "Delete city profile",
-                cancelLabel: "Keep city profile"
-            )
+    static let purposeKeys = ["home", "work", "leisure", "other"]
+
+    static func purpose(_ key: String, label: String? = nil) -> ProfileV3CityPurpose {
+        let names = ["home": "Home", "work": "Work", "leisure": "Leisure", "other": "Other"]
+        let shown = key == "other" ? label?.nonEmpty ?? "Other" : names[key] ?? "Other"
+        return ProfileV3CityPurpose(key: key, label: shown, iconURL: URL(string: "\(iconBase)/purpose-\(key).png"))
+    }
+
+    static let samples = [
+        ProfileV3CitySample(
+            code: "BOM",
+            name: "Mumbai",
+            imageURL: ProfileV3DestinationArt.url(for: "IN"),
+            purpose: purpose("home"),
+            lines: ["Always book late night flights", "No airport pick-up needed"]
+        ),
+        ProfileV3CitySample(
+            code: "DXB",
+            name: "Dubai",
+            imageURL: ProfileV3DestinationArt.url(for: "AE"),
+            purpose: purpose("work"),
+            lines: ["Preferred stay: JW Marriott Marquis", "Always book Emirates"]
+        ),
+        ProfileV3CitySample(
+            code: "HKT",
+            name: "Phuket",
+            imageURL: ProfileV3DestinationArt.url(for: "TH"),
+            purpose: purpose("leisure"),
+            lines: ["Airport pick-up: a large car for the family", "Vegetarian Asian flight meal"]
+        )
+    ]
+
+    static func form(_ values: Values = Values()) -> ProfileV3AgentForm {
+        ProfileV3AgentForm(
+            agentID: agentType,
+            agentTag: "City profile",
+            foundCount: values.foundCount,
+            totalCount: cardKeys.count,
+            noun: "",
+            summary: "",
+            sources: ProfileV3FormSources(icons: [], count: 0),
+            sections: [
+                chips(
+                    "airlines", "Preferred airlines",
+                    options: airlines,
+                    selected: values.airlines,
+                    picker: ProfileV3OptionPicker(title: "+Add preferred airlines", catalogue: airlines)
+                ),
+                ProfileV3FormSection(
+                    id: "class",
+                    title: "Class",
+                    status: values.cabin.isEmpty ? .pending : .complete,
+                    control: .cards(ProfileV3CardField(
+                        options: ["Economy", "Premium economy", "Business", "First class"].map {
+                            ProfileV3CardOption(id: $0, code: $0, detail: "")
+                        },
+                        selection: Set(values.cabin),
+                        allowsMultiple: true
+                    )),
+                    note: flightNote
+                ),
+                chips(
+                    "seat", "Seat selection",
+                    options: titled(["Window", "Middle", "Aisle", "Extra legroom", "Cheapest"]),
+                    selected: values.seat,
+                    optOut: ProfileV3OptOut(title: "Always avoid non-reclining seats", isOn: values.avoidNonReclining, key: "avoid_non_reclining")
+                ),
+                chips(
+                    "timings", "Preferred flight timings",
+                    options: ["Early morning", "Morning", "Afternoon", "Evening", "Night", "Late night"].map { title in
+                        let slug = title.lowercased().replacingOccurrences(of: " ", with: "-")
+                        return ProfileV3ChipOption(id: title, title: title, logoURL: URL(string: "\(iconBase)/timing-\(slug).png"))
+                    },
+                    selected: values.timings
+                ),
+                chips(
+                    "pickup", "Airport pick-up",
+                    options: [ProfileV3ChipOption(id: "private", title: "Private"), ProfileV3ChipOption(id: "public", title: "Public")],
+                    selected: values.pickup,
+                    optOut: ProfileV3OptOut(title: "No need to book airport pick-up in this city", isOn: values.noPickup, key: "no_pickup"),
+                    note: "Your agent uses these preferences to book the right airport pick-up for you."
+                ),
+                hotels(values.hotels, noStay: values.noStay),
+                ProfileV3AgentFixtures.customRulesSection(values.customRules)
+            ]
         )
     }
 
-    static var empty: ProfileV3CityProfile {
-        var profile = profile
-        profile.cities = []
-        return profile
+    struct Values: Equatable {
+        var airlines: [String] = []
+        var cabin: [String] = []
+        var seat: [String] = []
+        var timings: [String] = []
+        var pickup: [String] = []
+        var hotels: [String] = []
+        var avoidNonReclining = false
+        var noPickup = false
+        var noStay = false
+        var customRules: [String] = []
+
+        var foundCount: Int {
+            [airlines, cabin, seat, timings, pickup, hotels].filter { !$0.isEmpty }.count
+        }
     }
-
-    static let intro = ProfileV3CityIntro(
-        title: "Your travel style, tailored to the city you\u{2019}re in.",
-        samples: [
-            ProfileV3CityIntro.Sample(
-                id: "BOM",
-                code: "BOM",
-                name: "Mumbai",
-                imageURL: ProfileV3DestinationArt.url(for: "IN"),
-                tag: "Home",
-                tagIcon: "home",
-                highlights: ["Always book late night flights", "No airport pick up needed"]
-            ),
-            ProfileV3CityIntro.Sample(
-                id: "DXB",
-                code: "DXB",
-                name: "Dubai",
-                imageURL: ProfileV3DestinationArt.url(for: "AE"),
-                tag: "Work",
-                tagIcon: "work",
-                highlights: ["Preferred stay: JW Marriott, Marquis", "Always book Emirates, no check in bags"]
-            ),
-            ProfileV3CityIntro.Sample(
-                id: "HKT",
-                code: "HKT",
-                name: "Phuket",
-                imageURL: ProfileV3DestinationArt.url(for: "TH"),
-                tag: "Leisure",
-                tagIcon: "golf_course",
-                highlights: ["Airport Pick up - Grab XL - 12 seats", "Vegetarian asian flight meal"]
-            )
-        ]
-    )
-
-    static let sources = [
-        ProfileV3SourceIcon(url: ProfileV3AgentFixtures.gmailSourceIcon),
-        ProfileV3SourceIcon(url: ProfileV3AgentFixtures.emiratesSourceIcon)
-    ]
-
-    static let styles: [String: ProfileV3CitySectionStyle] = [
-        "preferred_airlines": ProfileV3CitySectionStyle(layout: .logos, icon: "flight", tab: .init(title: "Airlines", icon: "flight")),
-        "cabin_class": ProfileV3CitySectionStyle(layout: .cards, icon: "airplane_ticket", tab: .init(title: "Class", icon: "airplane_ticket")),
-        "seat_preference": ProfileV3CitySectionStyle(
-            icon: "airline_seat_recline_extra",
-            tab: .init(title: "Seat", icon: "airline_seat_recline_extra")
-        ),
-        "dietary_style": ProfileV3CitySectionStyle(icon: "restaurant", tab: .init(title: "Dietary style", icon: "restaurant")),
-        "flight_timings": ProfileV3CitySectionStyle(icon: "flight_takeoff", tab: .init(title: "Timings", icon: "flight_takeoff")),
-        "time_value_per_hour": ProfileV3CitySectionStyle(
-            layout: .slider,
-            icon: "payments",
-            tab: .init(title: "Fast or affordable", icon: "payments"),
-            subtitle: "Set how much you\u{2019}re willing to pay to save time in transit."
-        ),
-        "airport_pickup": ProfileV3CitySectionStyle(icon: "hail", tab: .init(title: "Pick up", icon: "hail")),
-        "preferred_hotels": ProfileV3CitySectionStyle(
-            layout: .places,
-            icon: "hotel",
-            tab: .init(title: "Hotels", icon: "hotel"),
-            subtitle: "Your usual hotels. Your kind of neighborhood. Your agent keeps track."
-        )
-    ]
 
     static let airlines = [
         ProfileV3ChipOption(id: "emirates", title: "Emirates", logoURL: ProfileV3AgentFixtures.emiratesSourceIcon),
@@ -143,163 +157,127 @@ enum ProfileV3CityProfileFixtures {
         ProfileV3ChipOption(id: "air-india", title: "Air India")
     ]
 
-    static func makeCity(_ result: ProfileV3CitySearchResult, tag: ProfileV3CityTag, filled: Bool) -> ProfileV3City {
-        let form = form(code: result.code, filled: filled)
+    static let filled = Values(
+        airlines: ["emirates", "singapore-airlines"],
+        cabin: ["Premium economy"],
+        seat: ["Aisle"],
+        timings: ["Early morning", "Evening"],
+        hotels: ["Taj Lands End", "Trident Nariman Point"],
+        noPickup: true,
+        customRules: ["Book the 7am Rajdhani when flights are over \u{20B9}12K"]
+    )
+
+    static let cardKeys = ["airlines", "class", "seat", "timings", "pickup", "hotels"]
+
+    static let styles: [String: ProfileV3CitySectionStyle] = [
+        "airlines": style("airlines", .logos, "The airlines you like to fly to this city"),
+        "class": style("class", .tiles, "How you like to fly here"),
+        "seat": style("seat", .grid, "Where you like to sit on these flights"),
+        "timings": style("timings", .grid, "When you like to fly in and out"),
+        "pickup": style("pickup", .grid, "How you get from the airport"),
+        "hotels": style("hotels", .rows, "Where you like to stay in this city", maxItems: 20, maxChars: 120)
+    ]
+
+    static let tabs = zip(cardKeys, ["Airlines", "Class", "Seat", "Timings", "Pick-up", "Hotels"]).map { key, title in
+        ProfileV3CityTab(sectionID: key, title: title, iconURL: URL(string: "\(iconBase)/\(key)-off.png"))
+    }
+
+    static func screen(
+        id: String,
+        result: ProfileV3CitySearchResult,
+        purpose: ProfileV3CityPurpose,
+        form: ProfileV3AgentForm,
+        cities: [ProfileV3CityPorthole]
+    ) -> ProfileV3City {
+        var form = form
+        let scope = ProfileV3PlaceSearchScope(city: result.name, countryCode: result.countryCode)
+        for index in form.sections.indices {
+            guard case .chips(var field) = form.sections[index].control, field.picker?.typedEntry != nil else { continue }
+            field.picker?.typedEntry?.search = scope
+            form.sections[index].control = .chips(field)
+        }
+        let found = form.sections.filter { cardKeys.contains($0.id) && hasValue($0) }.count
+        let sourced = form.sections.filter { $0.source != nil }.count
         return ProfileV3City(
-            id: result.id,
+            id: id,
             code: result.code,
             name: result.name,
             country: result.country,
-            imageURL: result.imageURL,
-            tag: tag,
+            countryCode: result.countryCode,
+            imageURL: ProfileV3DestinationArt.url(for: result.countryCode ?? ""),
+            purpose: purpose,
+            found: ProfileV3CityFound(count: found, total: cardKeys.count, label: "Found \(found)/\(cardKeys.count) preferences"),
+            sources: sourced == 0 ? nil : ProfileV3CitySources(
+                count: sourced,
+                label: sourced == 1 ? "1 source" : "\(sourced) sources",
+                icons: [ProfileV3SourceIcon(url: youIcon)]
+            ),
+            tabs: tabs,
             form: form,
             styles: styles,
-            sources: filled ? source("city") : nil,
-            isUpdating: !filled
+            save: ProfileV3BoardAction(fields: [
+                "label": .string("save changes"),
+                "action": .string(ProfileV3CityProfileMapper.saveAction),
+                "city_id": .string(id)
+            ]),
+            cities: cities
         )
     }
 
-    static func form(code: String, filled: Bool) -> ProfileV3AgentForm {
-        let places = places(for: code)
-        return ProfileV3AgentForm(
-            agentID: agentType,
-            agentTag: "City profile",
-            foundCount: filled ? 6 : 0,
-            totalCount: 8,
-            noun: "flight",
-            summary: "",
-            sources: ProfileV3FormSources(icons: filled ? sources : [], count: filled ? 3 : 0),
-            sections: [
-                chips(
-                    "preferred_airlines", "Preferred Airlines",
-                    options: Array(airlines.prefix(2)),
-                    selected: filled ? ["emirates", "singapore-airlines"] : [],
-                    picker: ProfileV3OptionPicker(title: "+Add preferred airlines", catalogue: airlines),
-                    note: flightNote,
-                    source: filled ? source("preferred_airlines") : nil
-                ),
-                ProfileV3FormSection(
-                    id: "cabin_class",
-                    title: "Class",
-                    status: filled ? .complete : .pending,
-                    control: .cards(ProfileV3CardField(
-                        options: [
-                            ProfileV3CardOption(id: "economy", code: "Economy", detail: ""),
-                            ProfileV3CardOption(id: "premium_economy", code: "Premium Economy", detail: ""),
-                            ProfileV3CardOption(id: "business", code: "Business", detail: ""),
-                            ProfileV3CardOption(id: "first", code: "First", detail: "")
-                        ],
-                        selection: filled ? ["premium_economy"] : []
-                    )),
-                    note: ProfileV3FormNote(text: flightNote),
-                    source: filled ? source("cabin_class") : nil
-                ),
-                chips(
-                    "seat_preference", "Seat selection",
-                    options: titled(["Window", "Aisle", "Extra Leg room", "Cheapest"]),
-                    optOut: "Always avoid non-reclining seats",
-                    note: flightNote
-                ),
-                chips(
-                    "dietary_style", "Dietary style",
-                    options: titled(["Vegetarian", "Vegan", "Jain", "Halal"]),
-                    selected: filled ? ["vegetarian"] : [],
-                    note: flightNote,
-                    source: filled ? source("dietary_style") : nil
-                ),
-                chips(
-                    "flight_timings", "Preferred flight timings",
-                    options: [
-                        ProfileV3ChipOption(id: "early_morning", title: "Early morning"),
-                        ProfileV3ChipOption(id: "morning", title: "Morning"),
-                        ProfileV3ChipOption(id: "noon", title: "Noon"),
-                        ProfileV3ChipOption(id: "evening", title: "Evening"),
-                        ProfileV3ChipOption(id: "night", title: "Night"),
-                        ProfileV3ChipOption(id: "late_night", title: "Late night")
-                    ],
-                    selected: filled ? ["early_morning", "morning", "evening"] : [],
-                    note: flightNote,
-                    source: filled ? source("flight_timings") : nil
-                ),
-                ProfileV3FormSection(
-                    id: "time_value_per_hour",
-                    title: "Fast or affordable",
-                    status: filled ? .complete : .pending,
-                    control: .slider(ProfileV3SliderField(
-                        value: 100,
-                        range: 0...200,
-                        step: 10,
-                        format: .money(symbol: "$", unit: "/hour"),
-                        isSet: filled
-                    )),
-                    note: ProfileV3FormNote(text: flightNote),
-                    source: filled ? source("time_value_per_hour") : nil
-                ),
-                chips(
-                    "airport_pickup", "Airport Pick up",
-                    options: titled(["Private", "Public"]),
-                    allowsMultiple: false,
-                    optOut: "No need to book airport pick-up in this city",
-                    note: flightNote
-                ),
-                chips(
-                    "preferred_hotels", "Preferred Hotels",
-                    options: Array(places.prefix(2)),
-                    selected: filled ? Array(places.prefix(2)).map(\.id) : [],
-                    picker: ProfileV3OptionPicker(title: "Add preferred hotel", catalogue: places, listLabel: "Popular locations"),
-                    optOut: "Do not book stay in this city",
-                    note: "Your agent uses these preferences to prioritize the right stays for you."
-                ),
-                ProfileV3AgentFixtures.customRulesSection(filled ? ["Book the 7am Rajdhani when flights are over \u{20B9}12K"] : [])
-            ]
-        )
-    }
-
-    private static let flightNote = "Your agent uses these preferences to prioritize the right flights for you."
-
-    private static func places(for code: String) -> [ProfileV3ChipOption] {
-        switch code {
-        case "BOM":
-            return [
-                ProfileV3ChipOption(id: "taj-lands-end", title: "Taj Lands End", subtitle: "Bandra West", place: .hotel),
-                ProfileV3ChipOption(id: "bandra-west", title: "Bandra West", subtitle: "Location", place: .location),
-                ProfileV3ChipOption(id: "colaba", title: "Colaba", subtitle: "South Mumbai", place: .location),
-                ProfileV3ChipOption(id: "lower-parel", title: "Lower Parel", subtitle: "Central Mumbai", place: .location),
-                ProfileV3ChipOption(id: "trident-nariman", title: "Trident Nariman Point", subtitle: "South Mumbai", place: .hotel)
-            ]
-        case "DEL":
-            return [
-                ProfileV3ChipOption(id: "fairleys", title: "Fairleys Hotel and Resort, Chattarpur", subtitle: "Central Delhi", place: .hotel),
-                ProfileV3ChipOption(id: "chhatarpur-farm-road", title: "Chhatarpur Farm Road", subtitle: "Location", place: .location),
-                ProfileV3ChipOption(id: "hauz-khas", title: "Hauz Khas", subtitle: "South Delhi", place: .location),
-                ProfileV3ChipOption(id: "connaught-place", title: "Connaught Place", subtitle: "Central Delhi", place: .location)
-            ]
-        default:
-            return [
-                ProfileV3ChipOption(id: "\(code.lowercased())-old-town", title: "Old Town", subtitle: "Location", place: .location),
-                ProfileV3ChipOption(id: "\(code.lowercased())-marriott", title: "Marriott", subtitle: "City centre", place: .hotel),
-                ProfileV3ChipOption(id: "\(code.lowercased())-airport", title: "Near the airport", subtitle: "Location", place: .location),
-                ProfileV3ChipOption(id: "\(code.lowercased())-hyatt", title: "Hyatt Regency", subtitle: "Business district", place: .hotel)
-            ]
+    static func hasValue(_ section: ProfileV3FormSection) -> Bool {
+        switch section.control {
+        case .chips(let field): return !field.selection.isEmpty
+        case .cards(let field): return !field.selection.isEmpty
+        default: return false
         }
     }
 
-    private static func city(_ code: String, _ name: String, _ countryName: String, country: String) -> ProfileV3CitySearchResult {
-        ProfileV3CitySearchResult(
-            id: code,
-            code: code,
-            name: name,
-            country: countryName,
-            imageURL: ProfileV3DestinationArt.url(for: country)
+    private static let flightNote = ProfileV3FormNote(text: "Your agent uses these preferences to prioritize the right flights for you.")
+
+    private static func style(
+        _ key: String,
+        _ layout: ProfileV3CitySectionStyle.Layout,
+        _ subtitle: String,
+        maxItems: Int? = nil,
+        maxChars: Int? = nil
+    ) -> ProfileV3CitySectionStyle {
+        ProfileV3CitySectionStyle(
+            layout: layout,
+            iconURL: URL(string: "\(iconBase)/\(key)-off.png"),
+            activeIconURL: URL(string: "\(iconBase)/\(key)-on.png"),
+            subtitle: subtitle,
+            maxItems: maxItems,
+            maxChars: maxChars
         )
     }
 
-    private static func source(_ fieldKey: String) -> ProfileV3SectionSource {
-        ProfileV3SectionSource(icons: sources, count: 3, agentType: agentType, fieldKey: fieldKey)
+    private static func hotels(_ names: [String], noStay: Bool) -> ProfileV3FormSection {
+        let options = names.map { ProfileV3ChipOption(id: $0, title: $0, place: .hotel) }
+        return ProfileV3FormSection(
+            id: "hotels",
+            title: "Preferred hotels",
+            status: names.isEmpty ? .pending : .complete,
+            control: .chips(ProfileV3ChipField(
+                options: options,
+                selection: Set(names),
+                picker: ProfileV3OptionPicker(
+                    title: "+Add preferred hotels",
+                    catalogue: options,
+                    typedEntry: ProfileV3OptionPicker.TypedEntry(maxItems: 20, maxChars: 120, place: .hotel)
+                ),
+                preselectedIDs: names,
+                optOut: ProfileV3OptOut(title: "Do not book stay in this city", isOn: noStay, key: "no_stay")
+            )),
+            note: ProfileV3FormNote(text: "Your agent uses these preferences to find the right stay for you.")
+        )
+    }
+
+    private static func city(_ code: String, _ name: String, _ countryName: String, country: String) -> ProfileV3CitySearchResult {
+        ProfileV3CitySearchResult(code: code, name: name, country: countryName, countryCode: country)
     }
 
     private static func titled(_ titles: [String]) -> [ProfileV3ChipOption] {
-        titles.map { ProfileV3ChipOption(id: $0.lowercased().replacingOccurrences(of: " ", with: "_"), title: $0) }
+        titles.map { ProfileV3ChipOption(id: $0, title: $0) }
     }
 
     private static func chips(
@@ -307,11 +285,9 @@ enum ProfileV3CityProfileFixtures {
         _ title: String,
         options: [ProfileV3ChipOption],
         selected: [String] = [],
-        allowsMultiple: Bool = true,
         picker: ProfileV3OptionPicker? = nil,
-        optOut: String? = nil,
-        note: String,
-        source: ProfileV3SectionSource? = nil
+        optOut: ProfileV3OptOut? = nil,
+        note: String? = nil
     ) -> ProfileV3FormSection {
         ProfileV3FormSection(
             id: id,
@@ -320,86 +296,218 @@ enum ProfileV3CityProfileFixtures {
             control: .chips(ProfileV3ChipField(
                 options: options,
                 selection: Set(selected),
-                allowsMultiple: allowsMultiple,
                 picker: picker,
-                optOut: optOut.map { ProfileV3OptOut(title: $0, isOn: false) }
+                preselectedIDs: selected,
+                optOut: optOut
             )),
-            note: ProfileV3FormNote(text: note),
-            source: source
+            note: note.map { ProfileV3FormNote(text: $0) } ?? flightNote
         )
     }
 }
 
 final class ProfileV3CityProfileStore: @unchecked Sendable {
+    struct Entry: Equatable {
+        let id: String
+        let code: String
+        var purpose: String
+        var label: String?
+        var form: ProfileV3AgentForm
+    }
+
     static let shared = ProfileV3CityProfileStore()
     static let latency: Duration = .milliseconds(500)
+    static let pageSize = 20
 
     private let lock = NSLock()
-    private var profile: ProfileV3CityProfile
+    private var entries: [Entry]
+    private var nextID: Int
     private let catalogue: [ProfileV3CitySearchResult]
 
     init(
-        profile: ProfileV3CityProfile = ProfileV3CityProfileFixtures.profile,
+        entries: [Entry] = ProfileV3CityProfileStore.sampleEntries,
         catalogue: [ProfileV3CitySearchResult] = ProfileV3CityProfileFixtures.catalogue
     ) {
-        self.profile = profile
+        self.entries = entries
         self.catalogue = catalogue
+        nextID = entries.count + 1
     }
 
-    func snapshot() -> ProfileV3CityProfile {
-        lock.withLock { profile }
-    }
+    static let sampleEntries = [
+        Entry(id: "c1", code: "BOM", purpose: "home", form: ProfileV3CityProfileFixtures.form(ProfileV3CityProfileFixtures.filled)),
+        Entry(id: "c2", code: "BKK", purpose: "leisure", form: ProfileV3CityProfileFixtures.form())
+    ]
 
-    func search(_ query: String) -> [ProfileV3CitySearchResult] {
-        let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return catalogue }
-        return catalogue.filter { result in
-            [result.name, result.code, result.country ?? ""].contains { $0.localizedCaseInsensitiveContains(query) }
+    func profile() -> ProfileV3CityProfile {
+        lock.withLock {
+            ProfileV3CityProfile(
+                title: "City profile",
+                cities: portholes(),
+                add: ProfileV3CityAddSlot(label: "ADD", detail: "Frequent destination"),
+                headline: "Your travel style, tailored to the city you\u{2019}re in.",
+                samples: ProfileV3CityProfileFixtures.samples
+            )
         }
     }
 
-    func add(_ cityID: String, tag: ProfileV3CityTag) throws -> ProfileV3CityProfile {
-        guard let result = catalogue.first(where: { $0.id == cityID }) else {
-            throw ProfileV3Error.invalidRequest(message: nil)
-        }
-        return try mutate { profile in
-            guard profile.city(id: cityID) == nil else {
-                throw ProfileV3Error.server(code: "city_exists", message: nil)
+    func city(_ cityID: String) throws -> ProfileV3City {
+        try lock.withLock {
+            guard let entry = entries.first(where: { $0.id == cityID }), let result = result(entry.code) else {
+                throw ProfileV3Error.server(code: "unknown_city", message: "This city profile isn\u{2019}t there anymore.")
             }
-            profile.cities.append(ProfileV3CityProfileFixtures.makeCity(result, tag: tag, filled: false))
+            return ProfileV3CityProfileFixtures.screen(
+                id: entry.id,
+                result: result,
+                purpose: ProfileV3CityProfileFixtures.purpose(entry.purpose, label: entry.label),
+                form: entry.form,
+                cities: portholes()
+            )
         }
     }
 
-    func updateTag(_ cityID: String, tag: ProfileV3CityTag) throws -> ProfileV3CityProfile {
-        try mutate { profile in
-            guard let index = profile.cities.firstIndex(where: { $0.id == cityID }) else {
-                throw ProfileV3Error.invalidRequest(message: nil)
+    func picker(_ query: String, offset: Int, pageSize: Int = ProfileV3CityProfileStore.pageSize) -> ProfileV3CityPicker {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let matches = trimmed.isEmpty ? catalogue : catalogue.filter { result in
+            [result.name, result.code, result.country ?? ""].contains { $0.localizedCaseInsensitiveContains(trimmed) }
+        }
+        let start = min(max(offset, 0), matches.count)
+        let end = min(start + pageSize, matches.count)
+        return ProfileV3CityPicker(
+            title: "+ City profile",
+            searchPlaceholder: "Search",
+            heading: trimmed.isEmpty ? "POPULAR CITIES" : "",
+            emptyTitle: "No city found",
+            emptySubtitle: "Try the city\u{2019}s name or its 3-letter code.",
+            query: query,
+            offset: start,
+            nextOffset: end < matches.count ? end : nil,
+            results: Array(matches[start..<end])
+        )
+    }
+
+    func purposeSheet(code: String, cityID: String?) throws -> ProfileV3CityPurposeSheet {
+        try lock.withLock {
+            let editing = cityID.flatMap { id in entries.first { $0.id == id } }
+            guard let result = result(editing?.code ?? code) else {
+                throw ProfileV3Error.server(code: "unknown_city_code", message: "Pick a city from the list.")
             }
-            profile.cities[index].tag = tag
+            let others = entries.filter { $0.id != editing?.id }
+            let taken = Set(others.map(\.purpose).filter { $0 != "other" })
+            let options = ProfileV3CityProfileFixtures.purposeKeys.map { key -> ProfileV3CityPurposeSheet.Option in
+                let purpose = ProfileV3CityProfileFixtures.purpose(key)
+                return ProfileV3CityPurposeSheet.Option(
+                    key: key,
+                    label: purpose.label,
+                    iconURL: purpose.iconURL,
+                    isDisabled: taken.contains(key),
+                    isSelected: editing?.purpose == key,
+                    input: key == "other"
+                        ? .init(label: "Purpose", placeholder: "e.g. Visiting parents", maxChars: 30, value: editing?.purpose == "other" ? editing?.label : nil)
+                        : nil
+                )
+            }
+            let submit: ProfileV3BoardAction
+            var delete: ProfileV3CityPurposeSheet.Delete?
+            if let editing {
+                submit = ProfileV3BoardAction(fields: ["action": .string("update_city_purpose"), "city_id": .string(editing.id)])
+                delete = ProfileV3CityPurposeSheet.Delete(
+                    label: "Delete city profile",
+                    action: ProfileV3BoardAction(fields: ["action": .string("delete_city_profile"), "city_id": .string(editing.id)]),
+                    confirm: ProfileV3CityDeleteConfirm(
+                        title: "Delete \(result.name)?",
+                        message: "Your preferences for this city will be removed.",
+                        confirmLabel: "Delete",
+                        cancelLabel: "Cancel"
+                    )
+                )
+            } else {
+                submit = ProfileV3BoardAction(fields: ["action": .string("create_city_profile"), "code": .string(result.code)])
+            }
+            return ProfileV3CityPurposeSheet(
+                title: result.name.uppercased(),
+                city: .init(code: result.code, name: result.name, countryCode: result.countryCode, imageURL: ProfileV3DestinationArt.url(for: result.countryCode ?? "")),
+                options: options,
+                usedLabels: others.compactMap { $0.purpose == "other" ? $0.label : nil },
+                labelTaken: "You already use this for another city.",
+                submitLabel: editing == nil ? "Continue" : "Save",
+                submit: submit,
+                delete: delete
+            )
         }
     }
 
-    func delete(_ cityID: String) -> ProfileV3CityProfile {
-        (try? mutate { $0.cities.removeAll { $0.id == cityID } }) ?? snapshot()
+    func submit(_ action: ProfileV3BoardAction, purpose: String, label: String?) throws -> String {
+        try lock.withLock {
+            let cityID = action.fields["city_id"]?.stringValue
+            let others = entries.filter { $0.id != cityID }
+            let trimmed = label?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty
+            if purpose == "other" {
+                guard let trimmed else { throw ProfileV3Error.invalidRequest(message: "Type a purpose.") }
+                let folded = ProfileV3CityPurposeSheet.folded(trimmed)
+                if others.contains(where: { $0.purpose == "other" && $0.label.map(ProfileV3CityPurposeSheet.folded) == folded }) {
+                    throw ProfileV3Error.conflict(code: "label_taken", message: "You already use \u{201C}\(trimmed)\u{201D} for another city.")
+                }
+            } else if others.contains(where: { $0.purpose == purpose }) {
+                throw ProfileV3Error.conflict(code: "purpose_taken", message: "You already have a \(purpose) city. Pick another purpose.")
+            }
+            switch action.name {
+            case "update_city_purpose":
+                guard let index = entries.firstIndex(where: { $0.id == cityID }) else {
+                    throw ProfileV3Error.server(code: "unknown_city", message: "This city profile isn\u{2019}t there anymore.")
+                }
+                entries[index].purpose = purpose
+                entries[index].label = purpose == "other" ? trimmed : nil
+                return entries[index].id
+            default:
+                guard let code = action.fields["code"]?.stringValue, result(code) != nil else {
+                    throw ProfileV3Error.invalidRequest(message: "Pick a city from the list.")
+                }
+                let id = "c\(nextID)"
+                nextID += 1
+                entries.insert(
+                    Entry(id: id, code: code, purpose: purpose, label: purpose == "other" ? trimmed : nil, form: ProfileV3CityProfileFixtures.form()),
+                    at: 0
+                )
+                return id
+            }
+        }
+    }
+
+    func delete(_ action: ProfileV3BoardAction) {
+        lock.withLock {
+            entries.removeAll { $0.id == action.fields["city_id"]?.stringValue }
+        }
     }
 
     func save(_ form: ProfileV3AgentForm, cityID: String) throws {
-        _ = try mutate { profile in
-            guard let index = profile.cities.firstIndex(where: { $0.id == cityID }) else {
-                throw ProfileV3Error.invalidRequest(message: nil)
+        try lock.withLock {
+            guard let index = entries.firstIndex(where: { $0.id == cityID }) else {
+                throw ProfileV3Error.server(code: "unknown_city", message: "This city profile isn\u{2019}t there anymore.")
             }
-            profile.cities[index].form = form
-            profile.cities[index].isUpdating = false
+            entries[index].form = form
         }
     }
 
-    private func mutate(_ change: (inout ProfileV3CityProfile) throws -> Void) throws -> ProfileV3CityProfile {
-        try lock.withLock {
-            var draft = profile
-            try change(&draft)
-            profile = draft
-            return draft
+    func snapshot() -> [Entry] {
+        lock.withLock { entries }
+    }
+
+    private func portholes() -> [ProfileV3CityPorthole] {
+        entries.compactMap { entry in
+            guard let result = result(entry.code) else { return nil }
+            return ProfileV3CityPorthole(
+                id: entry.id,
+                code: result.code,
+                name: result.name,
+                country: result.country,
+                countryCode: result.countryCode,
+                imageURL: ProfileV3DestinationArt.url(for: result.countryCode ?? ""),
+                purpose: ProfileV3CityProfileFixtures.purpose(entry.purpose, label: entry.label)
+            )
         }
+    }
+
+    private func result(_ code: String) -> ProfileV3CitySearchResult? {
+        catalogue.first { $0.code == code }
     }
 }
 #endif

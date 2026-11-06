@@ -14,6 +14,7 @@ final class ProfileV3Environment {
     let coupons: any ProfileV3CouponsHost
     let invites: any ProfileV3InviteHost
     let app: any ProfileV3AppHost
+    let placeSearch: (any ProfileV3PlaceSearching)?
     let boardStore: ProfileV3BoardStore
 
     lazy var photoPlaces: ProfileV3PhotoPlacesSync = {
@@ -42,6 +43,7 @@ final class ProfileV3Environment {
         self.coupons = actions.coupons
         self.invites = actions.invites ?? ProfileV3UnavailableInviteHost()
         self.app = actions.app
+        self.placeSearch = ProfileV3GooglePlaceSearch(apiKey: actions.placesAPIKey)
         self.boardStore = ProfileV3BoardStore(client: client, session: provider)
         ProfileV3Analytics.install(actions.analytics)
         ProfileV3FieldValidation.install(actions.validation)

@@ -107,36 +107,40 @@ struct ProfileV3MockRepository: ProfileV3Repository {
 
     func loadCityProfile(profileID _: String?) async throws -> ProfileV3CityProfile {
         try await Task.sleep(for: delay)
-        return cities.snapshot()
+        return cities.profile()
     }
 
-    func searchCities(_ query: String, profileID _: String?) async throws -> [ProfileV3CitySearchResult] {
+    func loadCity(_ cityID: String, profileID _: String?) async throws -> ProfileV3City {
         try await Task.sleep(for: delay)
-        return cities.search(query)
+        return try cities.city(cityID)
     }
 
-    func addCity(_ cityID: String, tag: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
+    func searchCities(_ query: String, offset: Int, profileID _: String?) async throws -> ProfileV3CityPicker {
         try await Task.sleep(for: delay)
-        return try cities.add(cityID, tag: tag)
+        return cities.picker(query, offset: offset)
     }
 
-    func updateCityTag(_ cityID: String, tag: ProfileV3CityTag, profileID _: String?) async throws -> ProfileV3CityProfile {
+    func loadCityPurpose(code: String, cityID: String?, profileID _: String?) async throws -> ProfileV3CityPurposeSheet {
         try await Task.sleep(for: delay)
-        return try cities.updateTag(cityID, tag: tag)
+        return try cities.purposeSheet(code: code, cityID: cityID)
     }
 
-    func deleteCity(_ cityID: String, profileID _: String?) async throws -> ProfileV3CityProfile {
+    func submitCityPurpose(_ action: ProfileV3BoardAction, purpose: String, label: String?) async throws -> String? {
         try await Task.sleep(for: delay)
-        return cities.delete(cityID)
+        return try cities.submit(action, purpose: purpose, label: label)
     }
 
-    func saveCityPreferences(_ form: ProfileV3AgentForm, cityID: String, profileID _: String?) async throws {
+    func deleteCity(_ action: ProfileV3BoardAction) async throws {
+        try await Task.sleep(for: delay)
+        cities.delete(action)
+    }
+
+    func saveCityPreferences(_ form: ProfileV3AgentForm, cityID: String, action _: ProfileV3BoardAction?) async throws {
         try await Task.sleep(for: delay)
         try cities.save(form, cityID: cityID)
     }
 
-    func loadCitySources(_: ProfileV3SectionSource, cityID _: String, profileID _: String?) async throws
-        -> ProfileV3PreferenceSources {
+    func loadCitySources(_: ProfileV3SectionSource, cityID _: String) async throws -> ProfileV3PreferenceSources {
         try await Task.sleep(for: delay)
         return ProfileV3AgentFixtures.airlineSources
     }

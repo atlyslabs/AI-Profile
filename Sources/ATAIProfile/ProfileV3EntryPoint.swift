@@ -133,16 +133,18 @@ public enum ProfileV3EntryPoint {
 
     static func makeTravelPersona(
         profileID: String?,
-        repository: any ProfileV3PersonaRepository
+        repository: any ProfileV3PersonaRepository,
+        onSaved: @escaping () -> Void = {}
     ) -> UIViewController {
-        ProfileV3TravelPersonaHostingController(profileID: profileID, repository: repository)
+        ProfileV3TravelPersonaHostingController(profileID: profileID, repository: repository, onSaved: onSaved)
     }
 
     static func makeCityProfile(
         profileID: String?,
-        repository: any ProfileV3CityPreferencesRepository
+        repository: any ProfileV3CityPreferencesRepository,
+        placeSearch: (any ProfileV3PlaceSearching)?
     ) -> UIViewController {
-        ProfileV3CityProfileHostingController(profileID: profileID, repository: repository)
+        ProfileV3CityProfileHostingController(profileID: profileID, repository: repository, placeSearch: placeSearch)
     }
 
     static func makeProgrammes(

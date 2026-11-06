@@ -733,18 +733,6 @@
         }
       }
     },
-    "mo-aiprofile-agents-accessibility-delete-city": {
-      "comment": "City profile: button to delete a city from the profile.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete city profile"
-          }
-        }
-      }
-    },
     "mo-aiprofile-agents-accessibility-edit-city-tag": {
       "comment": "City profile: button to change why the traveler visits a city.",
       "extractionState": "manual",
@@ -1249,18 +1237,6 @@
         }
       }
     },
-    "mo-aiprofile-agents-label-city-tag-count": {
-      "comment": "City profile: a city tag with how many cities share it, e.g. Home (2).",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ (%2$@)"
-          }
-        }
-      }
-    },
     "mo-aiprofile-agents-label-credential-store": {
       "comment": "Settings card title for the secure credential store.",
       "extractionState": "manual",
@@ -1329,6 +1305,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "ayl"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-instagram-sample-place": {
+      "comment": "Sample place name on the map card in the first Instagram connect step.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nobu Dubai"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-label-instagram-sample-place-detail": {
+      "comment": "Sample price and cuisine under the place name on the map card in the first Instagram connect step.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AED 500+ ·  Japanese rest."
           }
         }
       }
@@ -1537,18 +1537,6 @@
         }
       }
     },
-    "mo-aiprofile-agents-loading-city-updating": {
-      "comment": "City profile: shown on a section while the agent gathers a new city’s preferences.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Update information"
-          }
-        }
-      }
-    },
     "mo-aiprofile-agents-privacy-text-security": {
       "comment": "Privacy reassurance text for agent data integration.",
       "extractionState": "manual",
@@ -1749,6 +1737,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Get to know @ayl.chat"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-agents-title-instagram-reels-plan": {
+      "comment": "Title of the first Instagram connect step, above the reels that fly into a map.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn your travel Reels into an actual plan."
           }
         }
       }

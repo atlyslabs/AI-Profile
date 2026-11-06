@@ -64,6 +64,7 @@ struct ProfileV3PersonaTrait: Equatable {
         let deltaLabel: String
         let isIgnored: Bool
         var action: Action?
+        var iconURL: URL?
     }
 
     struct StartingPoint: Equatable {

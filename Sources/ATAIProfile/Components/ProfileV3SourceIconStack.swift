@@ -13,13 +13,13 @@ struct ProfileV3SourceIconStack: View {
 
     private typealias Logo = ProfileV3Theme.Sizes.SectionSources
 
-    private var visibleIcons: [ProfileV3SourceIcon] {
-        Array(icons.prefix(ProfileV3Theme.Counts.sourcesMaxIcons))
+    static func visibleIcons(_ icons: [ProfileV3SourceIcon], style: Style) -> [ProfileV3SourceIcon] {
+        style == .logo ? icons : Array(icons.prefix(ProfileV3Theme.Counts.sourcesMaxIcons))
     }
 
     var body: some View {
         HStack(spacing: style == .logo ? Logo.logoOverlap : ProfileV3Theme.Sizes.sourcesIconOverlap) {
-            ForEach(Array(visibleIcons.enumerated()), id: \.offset) { _, icon in
+            ForEach(Array(Self.visibleIcons(icons, style: style).enumerated()), id: \.offset) { _, icon in
                 switch style {
                 case .badge: badge(icon)
                 case .logo: logo(icon)

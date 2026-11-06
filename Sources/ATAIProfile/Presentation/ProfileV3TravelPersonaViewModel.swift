@@ -36,6 +36,7 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
     private let profileID: String?
     private let repository: any ProfileV3PersonaRepository
     private let hints: ProfileV3HubHints
+    private let onSaved: () -> Void
     private var loadTask: Task<Void, Never>?
     private var saveTask: Task<Void, Never>?
     private var adjustTask: Task<Void, Never>?
@@ -47,13 +48,15 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
         repository: any ProfileV3PersonaRepository,
         isEditable: Bool = ProfileV3FeatureFlags.isPersonaEditingEnabled,
         hints: ProfileV3HubHints = ProfileV3HubHints(),
-        onClose: @escaping () -> Void = {}
+        onClose: @escaping () -> Void = {},
+        onSaved: @escaping () -> Void = {}
     ) {
         self.profileID = profileID
         self.repository = repository
         self.isEditable = isEditable
         self.hints = hints
         self.onClose = onClose
+        self.onSaved = onSaved
     }
 
     var isDragging: Bool { draggingTraitID != nil }
@@ -190,6 +193,7 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
                 show(.failed(ProfileV3Error.message(for: failure, fallback: ProfileV3Strings.saveFailed)))
             } else {
                 show(.saved)
+                onSaved()
             }
         } while savesAgain
         saveTask = nil
@@ -221,7 +225,10 @@ final class ProfileV3TravelPersonaViewModel: ObservableObject {
             page: page,
             repository: repository,
             isEditable: isEditable,
-            onChanged: { [weak self] in self?.load() }
+            onChanged: { [weak self] in
+                self?.load()
+                self?.onSaved()
+            }
         )
         coach = nil
         trait = viewModel

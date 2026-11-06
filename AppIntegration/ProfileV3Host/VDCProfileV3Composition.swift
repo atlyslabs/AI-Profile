@@ -14,7 +14,8 @@ enum VDCProfileV3Composition {
             analytics: VDCProfileV3Analytics(),
             globe: VDCProfileV3GlobeRenderer(),
             validation: VDCProfileV3FieldValidator(),
-            countries: VDCProfileV3Countries.catalogue
+            countries: VDCProfileV3Countries.catalogue,
+            placesAPIKey: AppConfiguration.shared.googleMapsSDKAPIKey
         ))
     }
 }

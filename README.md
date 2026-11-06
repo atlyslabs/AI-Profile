@@ -14,7 +14,8 @@ module is `ATAIProfile`; its types keep the app's `ProfileV3` prefix. Versions a
 iOS 17+, Swift 6 language mode with the `ApproachableConcurrency` upcoming feature, and
 `swift-tools-version: 6.4`, so it needs Xcode 27. It depends on ATCore 1.0.16, ATUIKit 1.3.7,
 ATAuthKit 1.0.44, DittoRuntimeStrings (ditto-migrate-toolkit 0.0.1), PhoneNumberKit 3.6.0, Nuke
-12.0.0 and Moya 14.0.0, all `from:`. A host that already uses them resolves one copy of each.
+12.0.0, Moya 14.0.0 and GooglePlaces (ios-places-sdk 10.1.0), all `from:`. A host that already uses
+them resolves one copy of each.
 
 Architecture rule this package follows: **only the profile surface lives here.** Sign-in and user
 data, KYC onboarding, identity capture, the globe's land, the coupons screen, logout, restart and
@@ -62,11 +63,14 @@ protocol — see "Deliberately out of scope" below.
        analytics: MyAnalytics(),
        globe: MyGlobeRenderer(),
        validation: MyFieldValidator(),
-       countries: myCountries
+       countries: myCountries,
+       placesAPIKey: myGooglePlacesKey
    ))
    ```
 
-   `countries` is optional. Left unset, the package uses ATUIKit's country list. Profile events are
+   `countries` is optional. Left unset, the package uses ATUIKit's country list. `placesAPIKey` is
+   optional too: with it, the city profile's hotels card searches hotels in the city with Google
+   Places. Without it, people type hotel names by hand. Profile events are
    delivered to the host's `ProfileV3AnalyticsReporting`; the package does not send them itself.
    `appVersion` (sent as `x-app-version`, defaulting to the bundle's short version) and extra Moya
    `plugins` are optional arguments of `registerConfigurationProvider`.
@@ -124,6 +128,7 @@ dependency; the host only supplies the current token.
 | `globe` | `ProfileV3GlobeRendering` | Preparing and drawing the globe's land |
 | `validation` | `ProfileV3FieldValidating` | Email and passport-number checks |
 | `countries` | `[ProfileV3Country]?` | The country list for pickers, currency and lookups. Unset uses ATUIKit's directory |
+| `placesAPIKey` | `String?` | The Google Places key for the city profile's hotel search, the same key KYC uses. The package passes it to `GMSPlacesClient.provideAPIKey` once. Unset leaves typed names only |
 
 - Two images in the host's asset catalog, `WhatsApp` and `reserve_logo_clear`. Every other image
   ships in the package bundle, and remote art loads with Nuke from

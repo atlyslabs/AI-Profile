@@ -239,7 +239,7 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
     let value: ProfileV3AgentValueDTO?
     let note: String?
     let group: String?
-    let tab: String?
+    private let rawTab: ProfileV3LossyDTO<String>?
     let addLabel: String?
     let maxRules: ProfileV3ScalarDTO?
     private let rawOptions: [ProfileV3LossyDTO<ProfileV3AgentOptionDTO>]?
@@ -275,7 +275,7 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
         case value
         case note
         case group
-        case tab
+        case rawTab = "tab"
         case addLabel = "add_label"
         case maxRules = "max_rules"
         case rawEditor = "editor"
@@ -294,6 +294,8 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
     var source: ProfileV3FieldSourceDTO? { rawSource?.value }
 
     var next: ProfileV3DirectiveDTO? { rawNext?.value }
+
+    var tab: String? { rawTab?.value }
 
     var assistLink: ProfileV3AssistLinkDTO? { rawAssistLink?.value }
 

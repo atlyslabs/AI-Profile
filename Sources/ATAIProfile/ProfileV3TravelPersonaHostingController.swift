@@ -6,8 +6,8 @@ final class ProfileV3TravelPersonaHostingController: UIHostingController<Profile
     private let viewModel: ProfileV3TravelPersonaViewModel
     private let profileID: String?
 
-    init(profileID: String?, repository: any ProfileV3PersonaRepository) {
-        let viewModel = ProfileV3TravelPersonaViewModel(profileID: profileID, repository: repository)
+    init(profileID: String?, repository: any ProfileV3PersonaRepository, onSaved: @escaping () -> Void = {}) {
+        let viewModel = ProfileV3TravelPersonaViewModel(profileID: profileID, repository: repository, onSaved: onSaved)
         self.viewModel = viewModel
         self.profileID = profileID
         super.init(rootView: ProfileV3TravelPersonaView(viewModel: viewModel))

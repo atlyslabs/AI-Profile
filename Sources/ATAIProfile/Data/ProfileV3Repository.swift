@@ -158,13 +158,13 @@ protocol ProfileV3PersonaRepository: Sendable {
 
 protocol ProfileV3CityProfileRepository: Sendable {
     func loadCityProfile(profileID: String?) async throws -> ProfileV3CityProfile
-    func searchCities(_ query: String, profileID: String?) async throws -> [ProfileV3CitySearchResult]
-    func addCity(_ cityID: String, tag: ProfileV3CityTag, profileID: String?) async throws -> ProfileV3CityProfile
-    func updateCityTag(_ cityID: String, tag: ProfileV3CityTag, profileID: String?) async throws -> ProfileV3CityProfile
-    func deleteCity(_ cityID: String, profileID: String?) async throws -> ProfileV3CityProfile
-    func saveCityPreferences(_ form: ProfileV3AgentForm, cityID: String, profileID: String?) async throws
-    func loadCitySources(_ source: ProfileV3SectionSource, cityID: String, profileID: String?) async throws
-        -> ProfileV3PreferenceSources
+    func loadCity(_ cityID: String, profileID: String?) async throws -> ProfileV3City
+    func searchCities(_ query: String, offset: Int, profileID: String?) async throws -> ProfileV3CityPicker
+    func loadCityPurpose(code: String, cityID: String?, profileID: String?) async throws -> ProfileV3CityPurposeSheet
+    func submitCityPurpose(_ action: ProfileV3BoardAction, purpose: String, label: String?) async throws -> String?
+    func deleteCity(_ action: ProfileV3BoardAction) async throws
+    func saveCityPreferences(_ form: ProfileV3AgentForm, cityID: String, action: ProfileV3BoardAction?) async throws
+    func loadCitySources(_ source: ProfileV3SectionSource, cityID: String) async throws -> ProfileV3PreferenceSources
 }
 
 typealias ProfileV3HubRepository = ProfileV3BoardRepository & ProfileV3PastTripsRepository

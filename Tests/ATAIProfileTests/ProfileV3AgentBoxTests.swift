@@ -169,6 +169,31 @@ struct ProfileV3AgentBoxTests {
         #expect(router.openedAgentsRequiringKYC.isEmpty)
     }
 
+    @Test func aSavedTravelPersonaShowsAsSavedFromItsFirstSave() throws {
+        let board = try Self.board(mainKYC: nil, tiles: #"""
+        [{"agent_type":"food","name":"food","next":{"go":"agent","agent_type":"food","profile_id":"main"}},
+         {"agent_type":"travel_persona","name":"travel persona","updated_label":"",
+          "next":{"go":"travel_persona","profile_id":"main"}}]
+        """#)
+        let hints = ProfileV3HubHints(
+            defaults: try #require(UserDefaults(suiteName: "profileV3.persona.saved.\(UUID().uuidString)"))
+        )
+        let viewModel = ProfileV3HubViewModel(repository: CachedBoardRepository(board: board), hints: hints)
+        #expect(viewModel.agents.map(\.hasData) == [false, false])
+
+        viewModel.travelPersonaSaved(profileID: "co")
+        #expect(viewModel.agents.map(\.hasData) == [false, false])
+
+        viewModel.travelPersonaSaved(profileID: "main")
+        let persona = try #require(viewModel.agents.last)
+        #expect(persona.hasData && persona.isActive)
+        #expect(viewModel.agents.first?.hasData == false)
+        #expect(viewModel.home?.agents.last?.hasData == false)
+
+        let relaunched = ProfileV3HubViewModel(repository: CachedBoardRepository(board: board), hints: hints)
+        #expect(relaunched.agents.map(\.hasData) == [false, true])
+    }
+
     @Test(.timeLimit(.minutes(1)))
     func savingAnAgentFormTellsTheHubBeforeTheSheetCloses() async {
         var events: [String] = []
@@ -300,6 +325,49 @@ struct ProfileV3AgentBoxTests {
         var unlabelled = bare
         unlabelled.count = 2
         #expect(ProfileV3SectionSourcesRow.caption(for: unlabelled) == ProfileV3Strings.sourcesCount(2))
+    }
+
+    @Test func fieldSourcesListEveryKindOfSourceForTheirTraveller() throws {
+        let gmail = "https://media.atlys.com/b2c/ai-native/icons/kyc/gmail.png"
+        let you = "https://media.atlys.com/b2c/ai-native/icons/kyc/you.png?v=1"
+        let chatgpt = "https://media.atlys.com/b2c/ai-native/icons/connectors/chatgpt.png"
+        let mapped = try Self.flow(agentType: "flight", fields: """
+        [{"key":"airlines","label":"AIRLINES","input":"multi_select","options":[{"value":"EK","label":"Emirates"}],
+          "source":{"icon":"\(gmail)","icons":["\(gmail)","\(you)","\(chatgpt)"],
+                    "next":{"go":"preference_sources","agent_type":"flight","field_key":"airlines","profile_id":"p1"}}},
+         {"key":"stops","label":"STOPS","input":"single_select","options":[{"value":"nonstop","label":"Non-stop"}],
+          "source":{"icon":"\(you)","next":{"go":"preference_sources","agent_type":"flight","field_key":"stops"}}}]
+        """)
+        let sections = mapped.form.sections
+        try #require(sections.count == 2)
+
+        let source = try #require(sections[0].source)
+        let urls = source.icons.map { $0.url?.absoluteString }
+        #expect(urls == [gmail, you, chatgpt])
+        #expect(source.profileID == "p1")
+        #expect(ProfileV3SourceIconStack.visibleIcons(source.icons, style: .logo) == source.icons)
+        #expect(ProfileV3SourceIconStack.visibleIcons(source.icons, style: .badge).count == ProfileV3Theme.Counts.sourcesMaxIcons)
+
+        let older = try #require(sections[1].source)
+        let olderURLs = older.icons.map { $0.url?.absoluteString }
+        #expect(olderURLs == [you])
+        #expect(older.profileID == nil)
+    }
+
+    @Test func aStoredValueWithNoChipShowsAsASelectedChip() throws {
+        let mapped = try Self.flow(agentType: "itinerary", fields: #"""
+        [{"key":"activities","label":"ACTIVITIES","input":"multi_select_add",
+          "options":[{"value":"Hiking","label":"Hiking"},{"value":"Scuba diving","label":"Scuba diving","selected":true}],
+          "value":["Scuba diving"]}]
+        """#)
+        let section = try #require(mapped.form.sections.first)
+        guard case .chips(let field) = section.control else {
+            Issue.record("Activities should stay a chips section")
+            return
+        }
+        #expect(field.options.map(\.title) == ["Hiking", "Scuba diving"])
+        #expect(field.selection == ["Scuba diving"])
+        #expect(field.visibleOptions(limit: 1).map(\.title) == ["Scuba diving"])
     }
 
     @Test func imperialHeightReadsAsFeetAndInchesAndSavesTheInchValue() throws {

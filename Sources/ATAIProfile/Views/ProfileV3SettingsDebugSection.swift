@@ -10,7 +10,7 @@ struct ProfileV3SettingsDebugSection: View {
             ProfileV3DashedDivider()
             ProfileV3TagLabel(text: "Debug")
             ProfileV3SettingsRow(icon: ATIcon.SwiftUIImage.locationCity, title: "City profile", action: onOpenCityProfile)
-            Text("Opens the city profile flow on sample data, since it has no backend yet. Edits last until the app quits.")
+            Text("Opens City profile on this account's real data.")
                 .typoGraphy(.B2InterMedium12)
                 .foregroundStyle(Color(at: .neutralGrey400))
         }

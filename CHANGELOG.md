@@ -7,29 +7,49 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Added
 
-- City profile (Figma `6739:7548` and the frames around it), client only and behind
-  `ProfileV3FeatureFlags.isCityProfileEnabled`, which is off: there is no backend yet. A board tile
-  whose `next` is `{go: "city_profile"}` opens it as a page sheet; with the flag off the tile is
-  hidden and the route is unsupported.
-  - A carousel of plane-window cities, ending in an "Add" window, shows each city's tag ("Home",
-    "Home (2)" when cities share it, or the traveler's own purpose), "Found 6/8 flight
-    preferences", its sources, a tab strip that scrolls to a section, and notched section cards.
+- City profile (Figma `6739:7548` and the frames around it), wired to the backend from
+  `vdc-k8s#24000`. The board tile (`agent_type: "city"`, `next: {go: "city_profiles"}`) opens it
+  as a page sheet.
+  - The intro (`GET /board/cities`) is a carousel of plane-window cities, each with its purpose,
+    ending in an "Add" window that shows the headline and the three-card sample deck from
+    `6739:8232`. Selecting a city loads its screen (`GET /board/cities/{id}`), with a retry if it
+    fails: the purpose chip and its pencil, the server's "Found 3/6 preferences" and sources
+    summary, a tab strip, six notched cards (airlines, class, seat, timings, pick-up, hotels) and
+    custom rules.
+  - The tab strip pins under the header once it scrolls up there. A tap scrolls the page so the
+    section's card starts just under the pinned strip, and the strip scrolls the selected tab into
+    view. Scrolling by hand moves the highlight to the last section that has reached the strip
+    (the first tab at the top); for the moment a tap's own scroll runs, crossings are ignored, so
+    the highlight stays on the tapped tab.
   - The cards reuse the agent form fields. Each city is a `ProfileV3AgentForm` edited by
     `ProfileV3AgentFormViewModel`, so the pickers, sources, custom rules and "save changes" bar
-    work as they do for agents. Saves go to the city through `ProfileV3CityAgentRepository`.
-  - Layouts: logo chips (airlines), seat-art class cards, a two-column option grid (with
-    time-of-day orbs), the money slider, and hotel or location rows. Chips fields can carry an
-    opt-out checkbox ("Do not book stay in this city"), which also renders in agent forms.
-  - Adding a city: search ("+ City profile"), a tag sheet (Home, Work, Leisure, Other), a purpose
-    field for Other, then the new city shows its sections shimmering "Update information" until
-    the agent fills them. Editing a tag offers delete, with a confirmation.
-  - The "Add" slot shows the intro and the three-card deck animation from `6739:8232`.
-  - Seven client strings were hand-added (`mo-aiprofile-agents-*city*`); add them in Ditto.
-  - In DEBUG builds, Settings' debug section has a "City profile" row that opens the flow on the
-    demo store, with the flag off. It replaces the KYC state menu, whose board override
+    work as they do for agents. A save sends the whole city (`save_city_preferences`, every card
+    plus `avoid_non_reclining`, `no_pickup` and `no_stay`), then reloads it.
+  - Layouts: logo chips with the airline picker, seat tiles (the server's images when it sends
+    them, else the bundled seat art), option chips with the server's time-of-day orbs, and hotel
+    rows. Opt-outs ("Do not book stay in this city") dim a card and keep its chips.
+  - Hotels are a free list of names, up to 20 of 120 characters. With the host's `placesAPIKey`,
+    the picker searches Google Places for lodging as you type, like KYC's address search: in the
+    city's country, with the city's name added to the query, 300 ms after the last keystroke. Your
+    saved hotels that match come first, then up to eight found ones with their area; picking one
+    adds its name. "+Add …" stays at the end for a name Places doesn't know, and is the only way
+    to add a hotel without a key.
+  - Adding a city: a paged picker (`GET /board/cities/search`, 250 ms debounce, late replies to an
+    older search dropped, flags, "POPULAR CITIES" before typing), then the purpose sheet
+    (`GET /board/cities/purpose`). Home, Work and Leisure are once each and show greyed out when
+    used; Other asks for a name that no other city uses, checked as you type. The same city can be
+    added again with another purpose. The pencil opens the same sheet with Save and a delete that
+    confirms first. The server's messages show for a refused write.
+  - Four client strings were hand-added (`mo-aiprofile-agents-*city*`); add them in Ditto.
+  - In DEBUG builds, Settings' debug section has a "City profile" row that opens the live flow.
+    It replaces the KYC state menu, whose board override
     (`ProfileV3DebugKYCScenario`) is gone, so a scenario picked earlier no longer rewrites boards.
 - The option picker shows a subtitle next to a row's title ("Bangkok (BKK) · Thailand"), a hotel
-  or map thumbnail, and an optional list label ("Popular locations").
+  or map thumbnail, and an optional list label ("Popular locations"). A picker with nothing to list
+  stays blank until you type, rather than showing the no-results message.
+- `ProfileV3HostActions.placesAPIKey` (optional) and a GooglePlaces dependency (`ios-places-sdk`
+  from 10.1.0, the version range KYC uses) for the hotel search. Hosts pass the key they give KYC;
+  the package calls `GMSPlacesClient.provideAPIKey` with it once.
 - Loyalty programmes can be edited. In the programmes page's edit mode (where cards are picked for
   deletion), every card has an "Edit" pill where "View insight" sits. It opens the add flow's
   details sheet, filled from `GET /board/loyalty/edit/{program_id}?profile_id=` (slashes in the id
@@ -58,9 +78,27 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   or any other `go` hides the button. The tap logs `profile_cta_clicked` with origin
   `benefit_detail` and the benefit's id. When "Got it" or "Redeem" also shows, the two buttons
   stack, with Learn more on top.
+- Connecting Instagram opens on an intro (Figma `6595:15220`): under "Turn your travel Reels into an
+  actual plan.", five reels shrink into pins on a map, the map fades in and a place card pops up.
+  It runs once (3.4 s), holds for a second, then moves on to the explainer; a tap skips ahead.
+  With Reduce Motion the designed still shows instead. The photos, map and pin glyph are bundled
+  (`profile_v3_instagram_*`, `profile_v3_pin_distance`, about 0.8 MB). Three keys were hand-added
+  (`mo-aiprofile-agents-title-instagram-reels-plan`, `-label-instagram-sample-place` and
+  `-sample-place-detail`); add them in Ditto.
+- "Send a message" on the waiting Instagram card plays the redirect from Figma `6595:14302` over
+  App access before opening the chat with @ayl.chat. The orb assembles from 44 particles over 2 s
+  above a white fade and the green wash, with "...Come say hi!", "Follow us, drop in a text" and
+  "Redirecting you to instagram...". Touches are blocked while it plays, a second tap is ignored,
+  and closing Settings cancels it. The redirect after linking a username, inside the sheet, is
+  unchanged.
 
 ### Changed
 
+- The hub shows every agent tile the board sends, so a new agent needs no app update. City profile
+  now shows (the `isCityProfileEnabled` flag is gone, and `city_profiles` always opens it). A tile
+  whose `go` is `agent` opens the agent screen for any `agent_type`, where an unknown type used to
+  do nothing. Tile art comes from the `icon` URL, or an `orb_<name>` token resolves to
+  `profile-v3/agent_<name>.png` on the CDN (`agent_city.png` isn't uploaded yet).
 - While Instagram waits for its first DM, its App access card follows the design: the saved handle
   as the title ("@grukhs"), "Send a message" (was "Send a DM"), and "Get to know @ayl.chat" over
   "Drop in a message or just share something funny..." in place of the one-line status. The
@@ -94,6 +132,29 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   shows straight away a newer board another screen has already fetched. Programmes that reach the
   server another way (the Gmail import, chat, another device) now appear on the pass's back face
   without relaunching. This refresh shows no spinner and no error.
+- The Control panel's connector deck, where Gmail and apps are disconnected, now heads its
+  "CONNECTORS" label with the plug icon (`plugConnect`), the same icon as the Settings card,
+  instead of the database icon.
+- The Instagram explainer moves on after 7 seconds (was 15).
+- App access's Connected panel shows only connected apps, and Information access's shows only the
+  email connectors; both used to show one deck with every card. App access shows "Connected" only
+  once an app is connected (an email connector no longer counts). The apps deck is the new settings
+  route `connectedApps`, and `ProfileV3AppAccessModel` no longer takes the connectors model.
+- "Complete KYC" on a locked glove box now starts Gmail linking (the `gmail_connect` capture, the
+  same flow as Information access's Gmail card) instead of KYC onboarding.
+- A connected Instagram stays listed on App access, as a row like Splits' "auto connected" one:
+  its logo, the @handle and a green "connected". It is also under Connected, where Edit lives.
+  Instagram is the only app in release, so once the DM to @ayl.chat registered the page used to
+  show nothing below the heading. Other connected apps still move to Connected only.
+- Saving an edit from App access's Connected panel goes back to App access once the edit sheet has
+  closed. A relinked Instagram waits for a new DM, so it leaves the panel, which used to stay open
+  and empty.
+- A field's sources row draws every icon the server lists in `source.icons` (Gmail, you, then each
+  AI assistant), where it used to stop at two, and the sources sheet is fetched for the field's
+  `next.profile_id` when one is sent.
+- Spidey Sense rows draw the row's `icon` when the server sends one: a Gmail row's on the grey tile
+  at the Gmail glyph's size, any other row's (you, an AI assistant) filling the tile. Rows without
+  `icon` draw by `kind` as before.
 
 ### Fixed
 
@@ -101,6 +162,11 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   autosave sends, and each action on a trait's screen ("Ignore", "Ignore all", "Undo"), now sends
   `profile_agent_preference_changed` with `agentName: travel_person_agent`, the trait as
   `sectionName`, and the new score or the server action name as `changedValue`.
+- The Travel persona tile kept its "+" ring after the persona was edited. From the first saved knob
+  change or trait action it now shows the green ring, like an agent with saved preferences, and
+  the hub refetches its board as it does after the other agents save. ai-kyc always sends the
+  tile's `updated_label` empty, so the app remembers which travelers' personas were saved on this
+  device (`ProfileV3HubHints.personaSavedProfileIDs`) until the board sends a label for it.
 - Saving contact info (email or phone) in Settings made no request when the host has no selected
   traveller, which is always the case in Ayl: the save failed before
   `PATCH /api/pensieve/v1/profile/edit` and only the error haptic played. The save, and the

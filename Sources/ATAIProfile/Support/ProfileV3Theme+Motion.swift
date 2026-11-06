@@ -3,9 +3,10 @@ import SwiftUI
 extension ProfileV3Theme {
     enum Motion {
         static let ambientFrameInterval: TimeInterval = 1.0 / 24
-        static let instagramExplainerSeconds: Double = 15
+        static let instagramExplainerSeconds: Double = 7
         static let instagramRedirectSeconds: Double = 1.8
         static let catalogueSearchDebounceMilliseconds = 300
+        static let placeSearchDebounceMilliseconds = 300
         static let catalogueLoaderMinimumMilliseconds = 400
         static let remoteImageFadeSeconds: Double = 0.3
         static let selection: Animation = .easeInOut(duration: 0.2)

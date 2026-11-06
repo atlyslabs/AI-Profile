@@ -5,12 +5,13 @@ import UIKit
 @MainActor
 final class ProfileV3InstagramConnectModel: ObservableObject, Identifiable {
     enum Step: Equatable {
+        case intro
         case explainer
         case username
         case redirect
     }
 
-    @Published private(set) var step: Step = .explainer
+    @Published private(set) var step: Step = .intro
     @Published var username = "" {
         didSet {
             guard username != oldValue, errorMessage != nil else { return }
@@ -25,22 +26,25 @@ final class ProfileV3InstagramConnectModel: ObservableObject, Identifiable {
     let app: ProfileV3LinkedApp
 
     private let repository: any ProfileV3AppAccessRepository
+    private let introSeconds: Double
     private let explainerSeconds: Double
     private let openURL: @MainActor (URL) -> Void
     private let onFinish: () -> Void
-    private var explainerTask: Task<Void, Never>?
+    private var stepTask: Task<Void, Never>?
     private var submitTask: Task<Void, Never>?
     private var redirectTask: Task<Void, Never>?
 
     init(
         app: ProfileV3LinkedApp,
         repository: any ProfileV3AppAccessRepository,
+        introSeconds: Double = ProfileV3Theme.Motion.InstagramIntro.seconds + ProfileV3Theme.Motion.InstagramIntro.holdSeconds,
         explainerSeconds: Double = ProfileV3Theme.Motion.instagramExplainerSeconds,
         openURL: @escaping @MainActor (URL) -> Void = { UIApplication.shared.open($0) },
         onFinish: @escaping () -> Void
     ) {
         self.app = app
         self.repository = repository
+        self.introSeconds = introSeconds
         self.explainerSeconds = explainerSeconds
         self.openURL = openURL
         self.onFinish = onFinish
@@ -55,18 +59,19 @@ final class ProfileV3InstagramConnectModel: ObservableObject, Identifiable {
     }
 
     func start() {
-        guard step == .explainer, explainerTask == nil else { return }
-        let seconds = explainerSeconds
-        explainerTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(seconds))
-            guard let self, !Task.isCancelled else { return }
-            continueFromExplainer()
-        }
+        guard stepTask == nil else { return }
+        scheduleNextStep()
+    }
+
+    func continueFromIntro() {
+        guard step == .intro else { return }
+        step = .explainer
+        scheduleNextStep()
     }
 
     func continueFromExplainer() {
-        explainerTask?.cancel()
         guard step == .explainer else { return }
+        stepTask?.cancel()
         step = .username
     }
 
@@ -106,9 +111,28 @@ final class ProfileV3InstagramConnectModel: ObservableObject, Identifiable {
     }
 
     func cancel() {
-        explainerTask?.cancel()
+        stepTask?.cancel()
         submitTask?.cancel()
         redirectTask?.cancel()
+    }
+
+    private func scheduleNextStep() {
+        stepTask?.cancel()
+        let seconds: Double
+        switch step {
+        case .intro: seconds = introSeconds
+        case .explainer: seconds = explainerSeconds
+        case .username, .redirect: return
+        }
+        stepTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(seconds))
+            guard let self, !Task.isCancelled else { return }
+            if step == .intro {
+                continueFromIntro()
+            } else {
+                continueFromExplainer()
+            }
+        }
     }
 
     private func redirect() {

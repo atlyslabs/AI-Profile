@@ -12,6 +12,7 @@ public struct ProfileV3HostActions {
     public var globe: any ProfileV3GlobeRendering
     public var validation: any ProfileV3FieldValidating
     public var countries: [ProfileV3Country]?
+    public var placesAPIKey: String?
 
     public init(
         account: any ProfileV3AccountHost,
@@ -23,7 +24,8 @@ public struct ProfileV3HostActions {
         globe: any ProfileV3GlobeRendering,
         validation: any ProfileV3FieldValidating,
         countries: [ProfileV3Country]? = nil,
-        invites: (any ProfileV3InviteHost)? = nil
+        invites: (any ProfileV3InviteHost)? = nil,
+        placesAPIKey: String? = nil
     ) {
         self.account = account
         self.app = app
@@ -35,5 +37,6 @@ public struct ProfileV3HostActions {
         self.validation = validation
         self.countries = countries
         self.invites = invites
+        self.placesAPIKey = placesAPIKey
     }
 }

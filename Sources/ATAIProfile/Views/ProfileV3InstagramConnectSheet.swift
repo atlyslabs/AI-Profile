@@ -11,6 +11,8 @@ struct ProfileV3InstagramConnectSheet: View {
         VStack(spacing: 0) {
             ZStack(alignment: .top) {
                 switch model.step {
+                case .intro:
+                    intro.transition(.opacity)
                 case .explainer:
                     explainer.transition(.opacity)
                 case .username:
@@ -53,7 +55,7 @@ struct ProfileV3InstagramConnectSheet: View {
                 ProfileV3Theme.instagramFollowWash
                     .frame(height: Layout.followWashHeight)
                     .offset(y: Layout.followWashTop)
-            case .username:
+            case .intro, .username:
                 EmptyView()
             }
         }
@@ -67,6 +69,27 @@ struct ProfileV3InstagramConnectSheet: View {
             ProfileV3AppLogo(url: model.app.iconURL, size: Credentials.glyph)
         }
         .padding(.top, ProfileV3Theme.Sizes.Agent.backTop + Credentials.shieldTop)
+    }
+
+    private var intro: some View {
+        Button(action: model.continueFromIntro) {
+            ZStack(alignment: .top) {
+                ProfileV3InstagramReelsScene()
+                    .padding(.top, ProfileV3Theme.Sizes.Agent.backTop + Credentials.shieldTop + Layout.introSceneOffset)
+                VStack(spacing: 0) {
+                    shield
+                    Text(ProfileV3Strings.instagramReelsPlan)
+                        .typoGraphy(.H4DentonMedium24)
+                        .foregroundStyle(Color(at: .pureBlack))
+                        .multilineTextAlignment(.center)
+                        .frame(width: Layout.introTitleWidth)
+                        .padding(.top, Layout.introTitleTop)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     private var explainer: some View {
@@ -171,14 +194,8 @@ struct ProfileV3InstagramConnectSheet: View {
             .padding(.top, Layout.redirectFieldTop)
             ProfileV3AylOrb(size: Layout.redirectOrb)
                 .padding(.top, Layout.redirectOrbTop)
-            Text(ProfileV3Strings.instagramComeSayHi)
-                .typoGraphy(.H5InterMedium20)
-                .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.instagramLead))
+            ProfileV3InstagramRedirectCopy()
                 .padding(.top, Layout.redirectLeadTop)
-            Text(ProfileV3Strings.instagramFollowUs)
-                .typoGraphy(.H5InterMedium20)
-                .foregroundStyle(Color(at: .pureBlack))
-                .padding(.top, Layout.redirectTitleTop)
             Spacer(minLength: 0)
             Text(ProfileV3Strings.instagramRedirecting)
                 .typoGraphy(.B1InterSemibold14)
@@ -188,6 +205,30 @@ struct ProfileV3InstagramConnectSheet: View {
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .accessibilityElement(children: .combine)
+    }
+}
+
+struct ProfileV3InstagramRedirectCopy: View {
+    var fillsLineBoxes = false
+
+    private typealias Layout = ProfileV3Theme.Sizes.InstagramConnect
+
+    private var lineBoxPadding: CGFloat {
+        fillsLineBoxes ? TypographyStyle.H5InterMedium20.lineSpacingAdjustment / 2 : 0
+    }
+
+    var body: some View {
+        VStack(spacing: Layout.redirectTitleTop) {
+            Text(ProfileV3Strings.instagramComeSayHi)
+                .typoGraphy(.H5InterMedium20)
+                .foregroundStyle(Color(at: .pureBlack).opacity(ProfileV3Theme.Opacity.instagramLead))
+                .padding(.vertical, lineBoxPadding)
+            Text(ProfileV3Strings.instagramFollowUs)
+                .typoGraphy(.H5InterMedium20)
+                .foregroundStyle(Color(at: .pureBlack))
+                .padding(.vertical, lineBoxPadding)
+        }
+        .multilineTextAlignment(.center)
     }
 }
 
