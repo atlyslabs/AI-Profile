@@ -31,7 +31,7 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   - Hotels are a free list of names, up to 20 of 120 characters. With the host's `placesAPIKey`,
     the picker searches Google Places for lodging as you type, like KYC's address search: in the
     city's country, with the city's name added to the query, 300 ms after the last keystroke. Your
-    saved hotels that match come first, then up to eight found ones with their area; picking one
+    saved hotels that match come first, then up to five found ones with their area; picking one
     adds its name. "+Add …" stays at the end for a name Places doesn't know, and is the only way
     to add a hotel without a key.
   - Adding a city: a paged picker (`GET /board/cities/search`, 250 ms debounce, late replies to an
