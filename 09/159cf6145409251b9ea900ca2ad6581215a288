@@ -1,0 +1,68 @@
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_edit_pen.imageset/Contents.json
+  s_23224d965db0a7::t_71efa5afc27b82 1-16
+CHANGELOG.md
+  s_23224d965db0a7::t_2a13bf61eb736d 97-100,171-175
+  s_23224d965db0a7::t_01491c813f1cda 106
+  s_23224d965db0a7::t_3e89bf27eb878b 103-105
+  s_23224d965db0a7::t_516e00c0279f8e 101-102
+Sources/ATAIProfile/Views/ProfileV3SettingsDestinationView.swift
+  s_23224d965db0a7::t_e69593d1a7aed7 252
+Sources/ATAIProfile/Views/ProfileV3AppAccessView.swift
+  s_23224d965db0a7::t_71efa5afc27b82 106-110,124,135-144,154-158
+Sources/ATAIProfile/Support/ProfileV3Assets.swift
+  s_23224d965db0a7::t_3e89bf27eb878b 53,55
+  s_23224d965db0a7::t_71efa5afc27b82 109
+Tests/ATAIProfileTests/ProfileV3TravellerRelationshipTests.swift
+  s_23224d965db0a7::t_e69593d1a7aed7 112-130
+Sources/ATAIProfile/Views/ProfileV3AddTravellerView.swift
+  s_23224d965db0a7::t_e69593d1a7aed7 12
+Sources/ATAIProfile/Views/ProfileV3InformationAccessView.swift
+  s_23224d965db0a7::t_71efa5afc27b82 210,213,229-237,245-259
+  s_23224d965db0a7::t_673b5786351c05 260
+Sources/ATAIProfile/Presentation/ProfileV3TravellersSettingsModel.swift
+  s_23224d965db0a7::t_e69593d1a7aed7 17,311-321,325
+Tests/ATAIProfileTests/ProfileV3InstagramConnectTests.swift
+  s_23224d965db0a7::t_798db5f1e6c45e 115-147
+  s_23224d965db0a7::t_e4aa4d9662da8b 114
+Sources/ATAIProfile/Support/ProfileV3Theme+AppAccess.swift
+  s_23224d965db0a7::t_71efa5afc27b82 12-15
+CLAUDE.md
+  s_23224d965db0a7::t_75543199ef2d48 231
+  s_23224d965db0a7::t_3e89bf27eb878b 233
+  s_23224d965db0a7::t_01491c813f1cda 185,306
+  s_23224d965db0a7::t_36da77753cf3f7 232
+  s_23224d965db0a7::t_2a13bf61eb736d 243-244,307
+  s_23224d965db0a7::t_7f78d894b4feb5 64,153,381
+  s_23224d965db0a7::t_5ecfc9b96d337d 151
+  s_23224d965db0a7::t_605503225b1f26 354
+Tests/ATAIProfileTests/ProfileV3CityProfileTests.swift
+  s_23224d965db0a7::t_7fc666bec055ef 32,50-53
+  s_23224d965db0a7::t_3e89bf27eb878b 49,54-55
+  s_23224d965db0a7::t_99f6a3085fbcde 23-24,29,35-36,43-44
+  s_23224d965db0a7::t_9986aff8065aef 56-57
+Sources/ATAIProfile/Presentation/ProfileV3AppAccessModel.swift
+  s_23224d965db0a7::t_71efa5afc27b82 121-125
+Sources/ATAIProfile/Resources/ProfileV3.xcassets/profile_v3_edit_pen.imageset/profile_v3_edit_pen.svg
+  s_23224d965db0a7::t_71efa5afc27b82 3
+  s_23224d965db0a7::t_c783dfd1f391d7 1-2
+Sources/ATAIProfile/Presentation/ProfileV3SettingsSheetPresenter.swift
+  s_23224d965db0a7::t_e69593d1a7aed7 93
+Sources/ATAIProfile/Data/Mappers/ProfileV3BoardMapper.swift
+  s_23224d965db0a7::t_3e89bf27eb878b 202
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "09159cf6145409251b9ea900ca2ad6581215a288",
+  "prompts": {},
+  "sessions": {
+    "s_23224d965db0a7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cdacd9de-e2e5-440b-bfd4-a60813439445",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
