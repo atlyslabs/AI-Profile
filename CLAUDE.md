@@ -61,7 +61,7 @@ xcrun simctl delete "$UDID"
 ```
 
 - Use a throwaway simulator, never the user's booted one. A cold build with package resolution takes about two minutes. Without `-IDEBuildingContinueBuildingAfterErrors=YES`, Xcode stops after the first failing batch.
-- Tests are swift-testing. As of 2026-11-06: 345 tests in 50 suites, 342 pass. The same three fail every run:
+- Tests are swift-testing. As of 2026-11-06: 345 tests in 50 suites, 342 pass. The `feature/photos-visited-countries` branch adds `ProfileV3PhotoPlacesTests` (18, never run; Done item 176). The same three fail every run:
   - `ProfileV3DestinationTests.theHubOpensALinkOnlyWhileItIsOnScreen` (lines 68–69): a link posted while the hub's tab is hidden still opens. Either `onDisappear` doesn't clear `isSettled` on a tab switch in a test window, or the hidden-tab guard doesn't work. Not investigated.
   - `ProfileV3OnboardingPresentationTests.theHubsOwnSurfaceRunsOnboardingOverTheTabBar` and `aFlowThatClosesItsOwnContainerIsReportedOnce`: the dismissal never completes in a window with no scene. Probably the harness, not the launcher.
 - Checking a design against Figma:
@@ -356,6 +356,24 @@ xcrun simctl delete "$UDID"
   - `ProfileV3ServerFailureBox` keeps one envelope, so concurrent failures can swap codes.
   - `ATCoreCacheConfig`'s default expiry looks like a units slip; the package passes seven days.
   - The old `DataManager` board cache is orphaned.
+
+### Photos connector branch (`feature/photos-visited-countries`, PR #1)
+
+Not on `master`. This section exists only on the branch; Done items 1–175 are in `git show 550b009:CLAUDE.md`.
+
+176. **Photos connector reads only where photos were taken (Mohak, 2026-10-17; branch `feature/photos-visited-countries`, draft PR atlyslabs/AI-Profile#1; package-only).**
+    - `ProfileV3ConnectorKey.photos`. A server `connectors[]` row with `key: "photos"` now renders (unknown keys were dropped); with `ProfileV3FeatureFlags.isPhotoPlacesEnabled` (default false) the client appends the row itself. Its status comes from the device (`ProfileV3PhotoPlacesSync.isConnected`), not the server's `connected`. `ProfileV3Connector.canConnect` lets Connect work without a KYC capture step.
+    - Connect: `ProfileV3PhotoPlacesSync.connect()` asks for `.readWrite` photo access (full or limited). Declined shows the `photosAccessDenied` flash. `ProfileV3PhotoLibrary` fetches `PHAsset` images and reads only `location` and `creationDate`, never image data.
+    - On device: `ProfileV3PhotoPlaceTally` dedupes coordinates into 0.01° cells. `ProfileV3CountryLocator` does point-in-polygon with a bounding-box prefilter on `Resources/ProfileV3CountryShapes.geojson` (Natural Earth 50m admin-0, public domain, 237 ISO codes, simplified to 0.02° and rounded to 2 decimals, 794 KB; Somaliland→SO, N. Cyprus→CY, Siachen→IN). Points within 0.25° of a coast snap to the nearest country. The scan runs in a `@concurrent` function, off the main actor.
+    - State per user in `UserDefaults` (`profileV3.photoPlaces.<uid>`): connected flag, `scannedThrough`, per-country totals, `needsUpload`. Full access re-scans only `creationDate > scannedThrough` and merges. Limited access re-scans the selection every time. Raw coordinates are never stored or sent.
+    - Upload: `POST board/submit` `{"action":"sync_photo_places","access","scanned_through","countries":[{"country_code","photo_count","first_seen","last_seen"}]}` (ISO-8601 dates, full totals each time). A failed upload retries on the next sync. The backend action does not exist yet (Abhishek).
+    - Triggers: hub `viewDidLoad` calls `syncIfConnected()`. Revoked permission, or a server disconnect of `photos` from the control panel, calls `disconnect()`, which stops the scan and clears local state.
+    - Globe: `ProfileV3HubViewModel.latestPasses` (item 60) appends the photo countries to the main pass's `visitedCountryCodes`, so the expanded detail globe and flag list show them. The branch first did this with `extraVisitedCodes` and `mergingVisited`, which item 60 removed. The Countries stat number still comes from the server.
+    - Host: needs `NSPhotoLibraryUsageDescription` (AYL updated in its own PR). New strings `mo-aiprofile-agents-label-photos` and `mo-aiprofile-agents-error-photos-access` (add to Ditto).
+    - Names: server rows show the served `label` as is (item 75: no client fallbacks or normalising). Only the row the client appends behind `isPhotoPlacesEnabled` uses the local `photosConnector` string, because no server label exists for it. The two keys were added to the catalogue and the generated file by hand, against the Ditto rule above; regenerate after adding them in Ditto.
+    - Disconnect: a `photos` disconnect clears local state first, then reports through `connectorDidDisconnect` (item 84), so the hub's `refreshAfterDisconnecting` also runs for it. `reflects` settles on the first board for any key but Gmail.
+    - Tests: `ProfileV3PhotoPlacesTests` (18). Not built or run: written on Linux without a Swift toolchain. The locator algorithm and bundled data were checked with a Python mirror (32 city points).
+    - Unbuilt: the branch has been merged with `master` many times without a Swift toolchain, so it needs an `xcodebuild … test` run before the PR is merged.
 
 ## Gotchas
 

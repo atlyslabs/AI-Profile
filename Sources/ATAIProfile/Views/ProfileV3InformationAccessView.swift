@@ -161,7 +161,7 @@ private struct ProfileV3ConnectorCardRow: View {
             } else {
                 ProfileV3ConnectorAction(
                     title: connector.connectLabel ?? ProfileV3Strings.connectConnector,
-                    action: connector.captureStep == nil ? nil : onConnect
+                    action: connector.canConnect ? onConnect : nil
                 )
             }
         }
