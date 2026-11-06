@@ -9,7 +9,7 @@ struct ProfileV3AddTravellerView: View {
     var isSaving = false
     var canSubmit = false
     var passportError: String?
-    let onBack: () -> Void
+    let onBack: (() -> Void)?
     let onClose: () -> Void
     var onRetry: () -> Void = {}
     var onCitizenshipTap: () -> Void = {}

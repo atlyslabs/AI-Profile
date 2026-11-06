@@ -118,6 +118,11 @@ final class ProfileV3AppAccessModel: ObservableObject {
         present(.edit(app), from: .panel)
     }
 
+    func tapEditHandle(_ app: ProfileV3LinkedApp) {
+        guard app.isAwaitingMessage else { return }
+        present(.edit(app), from: .page)
+    }
+
     func tapConnected() {
         dismissHint()
         navigator?.push(.connectedApps)

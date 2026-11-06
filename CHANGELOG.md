@@ -94,6 +94,16 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
+- While Instagram waits for its first DM, a pen next to the handle edits it (Figma `6595:16405`,
+  node `7196:11333`: a 20pt grey chip with Material's `pen_size_4`). It opens the same username
+  sheet as the Connected panel's Edit, from App access itself, and a save re-links the new handle,
+  which waits for its own DM; the page stays put. VoiceOver gets an Edit action on the card.
+- Agent orbs follow Figma `6592:8147`. Flight shows the plane window and airport logistics the
+  spoon: the CDN has those two files the other way round (`agent_flight.png` is the spoon), so
+  `ProfileV3PlaceholderArt.agentFlight` and `.agentAirport` point at each other's file, and a
+  known agent's tile now uses that art unless the server sends a full URL; an `orb_<name>` token
+  still resolves to `agent_<name>.png` for agents the app doesn't know. City profile's orb is
+  `agent_city.png` on the CDN, like the rest.
 - The hub shows every agent tile the board sends, so a new agent needs no app update. City profile
   now shows (the `isCityProfileEnabled` flag is gone, and `city_profiles` always opens it). A tile
   whose `go` is `agent` opens the agent screen for any `agent_type`, where an unknown type used to
@@ -158,6 +168,11 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Fixed
 
+- Adding a traveller from the profile home page (or the add-traveller link) opened the travellers
+  list underneath, so the sheet had a back button that led to editing travellers (Vijay). It now
+  opens on the add form alone, with only the close button; from Settings → Travellers the form
+  keeps its back button. After a save the sheet shows the travellers list with the "added" toast,
+  as before.
 - Changing the travel persona sent no analytics event (aadi, 2026-10-30). Each knob change the
   autosave sends, and each action on a trait's screen ("Ignore", "Ignore all", "Undo"), now sends
   `profile_agent_preference_changed` with `agentName: travel_person_agent`, the trait as

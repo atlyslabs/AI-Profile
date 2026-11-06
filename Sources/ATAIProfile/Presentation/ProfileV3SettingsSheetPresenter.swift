@@ -90,8 +90,7 @@ final class ProfileV3SettingsSheetPresenter {
     var isOpen: Bool { !isFinished }
 
     func presentAddTraveller() {
-        viewModel.travellers.open()
-        viewModel.travellers.tapAdd()
+        viewModel.travellers.openAdd()
     }
 
     func close(then action: @escaping () -> Void) {

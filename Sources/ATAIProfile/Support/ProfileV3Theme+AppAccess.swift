@@ -9,6 +9,10 @@ extension ProfileV3Theme.Sizes {
         static let messagePromptSpacing = ProfileV3Theme.Space.s10
         static let messagePromptBodyWidth: CGFloat = 206
         static let messagePromptBottom: CGFloat = 37
+        static let editChip: CGFloat = 20
+        static let editGlyph: CGFloat = 10
+        static let editChipGap = ProfileV3Theme.Space.s8
+        static let editChipHitInset: CGFloat = 12
         static let hintTop: CGFloat = 53
         static let hintTrailing = ProfileV3Theme.Space.s28
         static let hint = CGSize(width: 145, height: 62.4884)
