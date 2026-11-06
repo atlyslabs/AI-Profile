@@ -112,6 +112,40 @@ struct ProfileV3InstagramConnectTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
+    func theWaitingCardsPenRelinksTheHandleAndStaysOnAppAccess() async throws {
+        let store = ProfileV3AppAccessStore()
+        let repository = ProfileV3MockRepository(delay: .zero, appAccess: store)
+        _ = try await repository.linkInstagram(username: "grukhs")
+        let model = Self.appAccess(repository)
+        let navigator = PanelNavigatorStub(path: [.appAccess])
+        model.navigator = navigator
+        model.load()
+        try await Self.waitUntil { model.pendingApps.first(where: \.isInstagram)?.isAwaitingMessage == true }
+        let pending = model.pendingApps.first(where: \.isInstagram)
+        let waiting = try #require(pending)
+
+        model.tapEditHandle(.instagram)
+        #expect(model.editor == nil)
+
+        model.tapEditHandle(waiting)
+        #expect(model.editor(from: .panel) == nil)
+        let editor = try #require(model.editor(from: .page))
+        #expect(!editor.asksForPassword)
+        #expect(editor.title == ProfileV3Strings.appUsernameTitle)
+        #expect(editor.credentials.username == "grukhs")
+        #expect(!editor.canSubmit)
+
+        editor.credentials.username = "grukhs.travels"
+        editor.submit()
+        try await Self.waitUntil { model.editor == nil }
+        model.editorDidDismiss()
+        #expect(navigator.path == [.appAccess])
+        try await Self.waitUntil { model.pendingApps.first(where: \.isInstagram)?.username == "grukhs.travels" }
+        #expect(model.pendingApps.first(where: \.isInstagram)?.isAwaitingMessage == true)
+        #expect(model.connectedApps.isEmpty)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
     func theIntroAndExplainerMoveOnByThemselvesAndTheRedirectOpensTheChat() async throws {
         var opened: [URL] = []
         var finished = 0

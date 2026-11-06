@@ -20,27 +20,39 @@ struct ProfileV3CityProfileTests {
           {"agent_type":"flight","name":"flight","icon":"orb_flight","updated_label":"updated","next":{"go":"agent","agent_type":"flight"}},
           {"agent_type":"airport_logistics","name":"airport logistics","icon":"orb_airport","next":{"go":"agent","agent_type":"airport_logistics"}},
           {"agent_type":"city","name":"city profile","icon":"orb_city","next":{"go":"city_profiles","profile_id":"main"}},
-          {"agent_type":"visa","name":"visa","icon":"https://media.atlys.com/visa.png","next":{"go":"agent","agent_type":"visa","profile_id":"main"}}
+          {"agent_type":"visa","name":"visa","icon":"https://media.atlys.com/visa.png","next":{"go":"agent","agent_type":"visa","profile_id":"main"}},
+          {"agent_type":"stay","name":"stay","icon":"https://media.atlys.com/stay.png","next":{"go":"agent","agent_type":"stay"}}
         ]}]}]}
         """#
         let board = ProfileV3BoardMapper.board(try JSONDecoder().decode(ProfileV3BoardDTO.self, from: Data(json.utf8)))
         let agents = try #require(board.mainProfile?.home.agents)
-        #expect(agents.map(\.id) == ["flight", "airport-logistics", "city", "visa"])
+        #expect(agents.map(\.id) == ["flight", "airport-logistics", "city", "visa", "stay"])
         let art = agents.map { $0.avatarURL?.absoluteString }
         #expect(art == [
+            ProfileV3RemoteArt.url("agent_airport")?.absoluteString,
             ProfileV3RemoteArt.url("agent_flight")?.absoluteString,
-            ProfileV3PlaceholderArt.agentAirport.url?.absoluteString,
             ProfileV3RemoteArt.url("agent_city")?.absoluteString,
-            "https://media.atlys.com/visa.png"
+            "https://media.atlys.com/visa.png",
+            "https://media.atlys.com/stay.png"
         ])
         let routes = agents.map { $0.next?.route(fallbackProfileID: "main") }
         #expect(routes == [
             .agent("flight", profileID: "main"),
             .agent("airport-logistics", profileID: "main"),
             .cityProfile(profileID: "main"),
-            .agent("visa", profileID: "main")
+            .agent("visa", profileID: "main"),
+            .agent("stay", profileID: "main")
         ])
         #expect(ProfileV3API.agent(type: "visa", profileID: "main").path.hasSuffix("/board/agent/visa"))
+    }
+
+    @Test func flightAndAirportUseEachOthersCDNOrb() {
+        let cdn = { (file: String) in ProfileV3RemoteArt.url(file) }
+        #expect(ProfileV3PlaceholderArt.agent(.flight).url == cdn("agent_airport"))
+        #expect(ProfileV3PlaceholderArt.agent(.airportLogistics).url == cdn("agent_flight"))
+        #expect(ProfileV3PlaceholderArt.agent(.personal).url == cdn("agent_personal"))
+        #expect(ProfileV3BoardMapper.iconURL("orb_city") == cdn("agent_city"))
+        #expect(ProfileV3BoardMapper.iconURL("orb_personal") == cdn("agent_personal"))
     }
 
     // MARK: - Mapping

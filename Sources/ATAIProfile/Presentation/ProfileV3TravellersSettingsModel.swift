@@ -14,6 +14,7 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
     @Published private(set) var addScreen: ProfileV3AddTravellerScreen?
     @Published private(set) var addPhase: ProfileV3LoadPhase = .loading
     @Published private(set) var isAddingTraveller = false
+    @Published private(set) var isAddOnly = false
     @Published var newTraveller = ProfileV3AddTravellerSubmission()
     @Published private(set) var rejectedPassport: String?
     @Published private(set) var toast: String?
@@ -307,9 +308,21 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
     }
 
     func tapAdd() {
+        startAdd(alone: false)
+    }
+
+    func openAdd() {
+        ProfileV3Analytics.screen(.travellers)
+        toastTask?.cancel()
+        toast = nil
+        startAdd(alone: true)
+    }
+
+    private func startAdd(alone: Bool) {
         let contact = currentContact()
         newTraveller = ProfileV3AddTravellerSubmission(regionISO: contact.regionISO, dialCode: contact.dialCode)
         rejectedPassport = nil
+        isAddOnly = alone
         navigator?.push(.addTraveller)
         loadAddScreen()
     }

@@ -103,7 +103,11 @@ struct ProfileV3AppAccessContent: View {
                     )
                 }
                 ForEach(model.pendingApps) { app in
-                    ProfileV3AppAccessRow(app: app) { model.tapAddCredentials(app) }
+                    ProfileV3AppAccessRow(
+                        app: app,
+                        onAdd: { model.tapAddCredentials(app) },
+                        onEdit: { model.tapEditHandle(app) }
+                    )
                 }
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
@@ -117,6 +121,7 @@ struct ProfileV3AppAccessContent: View {
 private struct ProfileV3AppAccessRow: View {
     let app: ProfileV3LinkedApp
     let onAdd: () -> Void
+    let onEdit: () -> Void
 
     private typealias Access = ProfileV3Theme.Sizes.InformationAccess
     private typealias Layout = ProfileV3Theme.Sizes.AppAccess
@@ -127,14 +132,16 @@ private struct ProfileV3AppAccessRow: View {
                 icon: ATIcon.SwiftUIImage.globe,
                 iconURL: app.iconURL,
                 isIconRound: true,
-                title: title
-            ) {
-                ProfileV3ConnectorAction(
-                    title: actionTitle,
-                    action: onAdd,
-                    style: app.isAwaitingMessage ? .B1InterSemibold14 : .H7InterSemibold16
-                )
-            }
+                title: title,
+                accessory: {
+                    ProfileV3ConnectorAction(
+                        title: actionTitle,
+                        action: onAdd,
+                        style: app.isAwaitingMessage ? .B1InterSemibold14 : .H7InterSemibold16
+                    )
+                },
+                onEdit: app.isAwaitingMessage ? onEdit : nil
+            )
             if app.isAwaitingMessage {
                 messagePrompt
             }
@@ -144,6 +151,11 @@ private struct ProfileV3AppAccessRow: View {
         .profileV3AccessCard(cornerRadius: Access.cardRadius)
         .accessibilityElement(children: .combine)
         .accessibilityAction(named: actionTitle, onAdd)
+        .accessibilityActions {
+            if app.isAwaitingMessage {
+                Button(ProfileV3Strings.editConnector, action: onEdit)
+            }
+        }
     }
 
     private var messagePrompt: some View {

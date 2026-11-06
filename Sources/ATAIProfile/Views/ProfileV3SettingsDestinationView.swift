@@ -249,7 +249,7 @@ private struct ProfileV3SettingsTravellersScreen: View {
                 isSaving: model.isAddingTraveller,
                 canSubmit: model.canSubmitNewTraveller,
                 passportError: model.newTravellerPassportError,
-                onBack: onBack,
+                onBack: model.isAddOnly ? nil : onBack,
                 onClose: onClose,
                 onRetry: model.loadAddScreen,
                 onCitizenshipTap: model.tapAddCitizenship,

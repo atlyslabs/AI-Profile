@@ -109,6 +109,25 @@ struct ProfileV3TravellerRelationshipTests {
         #expect(!model.canSaveRelationship)
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func addingFromTheHomePageOpensAddOnItsOwnAndTheListStillStepsBack() async throws {
+        let settings = ProfileV3SettingsViewModel.preview(
+            repository: ProfileV3MockRepository(delay: .zero, session: ProfileV3SessionStore())
+        )
+        settings.travellers.openAdd()
+        #expect(settings.path == [.addTraveller])
+        #expect(settings.travellers.isAddOnly)
+        try await Self.waitUntil { settings.travellers.addScreen != nil }
+
+        settings.tapClose()
+        #expect(settings.path.isEmpty)
+
+        settings.travellers.open()
+        settings.travellers.tapAdd()
+        #expect(settings.path == [.editTravellers, .addTraveller])
+        #expect(!settings.travellers.isAddOnly)
+    }
+
     @Test func relationshipFieldWithoutInputIsSingleSelect() throws {
         let field = try editField(#"{"field":"relationship","options":[{"value":"son"}]}"#)
         #expect(field.input == .singleSelect)

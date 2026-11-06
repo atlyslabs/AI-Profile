@@ -199,7 +199,7 @@ enum ProfileV3BoardMapper: ProfileV3DTOReading {
             id: known?.rawValue ?? type,
             name: text(tile.name) ?? text(tile.title) ?? "",
             summary: tile.blurb ?? "",
-            avatarURL: iconURL(tile.icon),
+            avatarURL: remoteURL(tile.icon) ?? known.flatMap { ProfileV3PlaceholderArt.agent($0).url } ?? iconURL(tile.icon),
             isActive: tile.activate == nil && hasData,
             hasData: hasData,
             foundCount: 0,

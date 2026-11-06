@@ -207,8 +207,10 @@ struct ProfileV3ConnectorCardTitle<Accessory: View>: View {
     var isIconRound = false
     let title: String
     @ViewBuilder var accessory: () -> Accessory
+    var onEdit: (() -> Void)?
 
     private typealias Layout = ProfileV3Theme.Sizes.InformationAccess
+    private typealias Chip = ProfileV3Theme.Sizes.AppAccess
 
     var body: some View {
         HStack(spacing: ProfileV3Theme.Space.s12) {
@@ -224,16 +226,37 @@ struct ProfileV3ConnectorCardTitle<Accessory: View>: View {
                     .profileV3Icon(Layout.cardIcon)
                     .foregroundStyle(Color(at: .pureBlack))
             }
-            Text(title)
-                .typoGraphy(.H7InterMedium16)
-                .foregroundStyle(Color(at: .pureBlack))
-                .lineLimit(1)
+            HStack(spacing: Chip.editChipGap) {
+                Text(title)
+                    .typoGraphy(.H7InterMedium16)
+                    .foregroundStyle(Color(at: .pureBlack))
+                    .lineLimit(1)
+                if let onEdit {
+                    editChip(onEdit)
+                }
+            }
             Spacer(minLength: ProfileV3Theme.Space.s8)
             accessory()
         }
         .padding(.leading, Layout.cardLeading)
         .padding(.trailing, Layout.cardTrailing)
         .padding(.top, Layout.cardTop)
+    }
+
+    private func editChip(_ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            ProfileV3ConnectorGlyph.editPen.image
+                .resizable()
+                .scaledToFit()
+                .frame(width: Chip.editGlyph, height: Chip.editGlyph)
+                .frame(width: Chip.editChip, height: Chip.editChip)
+                .background(Circle().fill(Color(at: .neutralGrey50)))
+                .padding(Chip.editChipHitInset)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.profileV3Pressable)
+        .padding(-Chip.editChipHitInset)
+        .accessibilityLabel(ProfileV3Strings.editConnector)
     }
 }
 
