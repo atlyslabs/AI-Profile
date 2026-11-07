@@ -162,13 +162,25 @@ private struct ProfileV3CityDeckCard: View {
 private struct ProfileV3CityDeckTagGlass: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *), ProfileV3FeatureFlags.isFloatingControlGlassEnabled {
-            content.glassEffect(.regular, in: Capsule())
+            content.background(ProfileV3GlassCapsule())
         } else {
             content
                 .background(.ultraThinMaterial, in: Capsule())
                 .overlay(Capsule().strokeBorder(ProfileV3Theme.Palette.cityDeckTagBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
         }
     }
+}
+
+@available(iOS 26.0, *)
+private struct ProfileV3GlassCapsule: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        let view = UIVisualEffectView(effect: UIGlassEffect(style: .regular))
+        view.cornerConfiguration = .capsule()
+        view.isUserInteractionEnabled = false
+        return view
+    }
+
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {}
 }
 
 #if DEBUG

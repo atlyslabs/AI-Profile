@@ -178,8 +178,10 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
     design's width (QA-2120).
   - Timing orbs are drawn in full colour whether picked or not, as in Figma `6739:16294`; a pick
     adds the tick (QA-2121).
-  - The sample deck's purpose tag has the design's frosted fill and soft shadow, with Liquid Glass
-    on iOS 26 (QA-2113).
+  - The sample deck's purpose tag has the design's glass: Liquid Glass on iOS 26 (a material and
+    hairline before), a 10% white fill and a soft shadow (QA-2113). The glass is UIKit's
+    `UIGlassEffect`: SwiftUI's `glassEffect` swells on a tilted view, so the tag grew and shrank as
+    each card turned to the front.
   - The delete confirmation uses the design's 24pt glyph and 23pt gap above the buttons
     (QA-2122).
   - The purpose sheet ends at its Continue/Save button: the fitted sheet already adds the bottom
