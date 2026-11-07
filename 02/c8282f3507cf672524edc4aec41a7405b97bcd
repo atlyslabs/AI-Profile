@@ -1,0 +1,26 @@
+Sources/ATAIProfile/Components/ProfileV3CityDeck.swift
+  s_23224d965db0a7::t_357dbebcbcdd2e 165,174-183
+  s_23224d965db0a7::t_cb95701e1844be 184-185
+CHANGELOG.md
+  s_23224d965db0a7::t_a811330baf75da 181
+  s_23224d965db0a7::t_4abefb206ce286 182-184
+CLAUDE.md
+  s_23224d965db0a7::t_4abefb206ce286 72,156,269,310,385
+  s_23224d965db0a7::t_48edb773009f99 148,152,155
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "02c8282f3507cf672524edc4aec41a7405b97bcd",
+  "prompts": {},
+  "sessions": {
+    "s_23224d965db0a7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cdacd9de-e2e5-440b-bfd4-a60813439445",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
