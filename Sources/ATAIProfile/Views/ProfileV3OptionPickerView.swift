@@ -8,6 +8,7 @@ struct ProfileV3OptionPickerView: View {
     var listLabel: String?
     var isSearching = false
     var onQueryChange: ((String) -> Void)?
+    var onReachEnd: (() -> Void)?
     let onBack: () -> Void
     let onToggle: (String) -> Void
     var onAdd: ((String) -> Void)?
@@ -68,6 +69,9 @@ struct ProfileV3OptionPickerView: View {
                 ForEach(filtered) { option in
                     ProfileV3OptionPickerRow(option: option, isSelected: selection.contains(option.id)) {
                         onToggle(option.id)
+                    }
+                    .onAppear {
+                        if option.id == filtered.last?.id { onReachEnd?() }
                     }
                 }
                 if onQueryChange != nil {

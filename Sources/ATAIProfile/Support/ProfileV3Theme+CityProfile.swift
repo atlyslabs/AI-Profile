@@ -87,7 +87,8 @@ extension ProfileV3Theme.Sizes {
         static let tightTracking: CGFloat = -0.56
         static let optionLeading: CGFloat = 21
         static let optionOrbLeading = ProfileV3Theme.Space.s12
-        static let optionTrailing: CGFloat = 17
+        static let optionTrailing = ProfileV3Theme.Space.s12
+        static let optionTitleLines = 2
         static let optionOrb = ProfileV3Theme.Icon.xl
         static let optionOrbCheck = ProfileV3Theme.Icon.sm
         static let optionIconGap = ProfileV3Theme.Space.s10
@@ -116,6 +117,7 @@ extension ProfileV3Theme.Sizes {
         static let sliderTop = ProfileV3Theme.Space.s24
         static let shimmerWidth: CGFloat = 110
         static let saveBarClearance: CGFloat = 120
+        static let preferencesBottom = ProfileV3Theme.Space.s24
         static let introTitleTop: CGFloat = 44
         static let introTitleWidth: CGFloat = 310
         static let introTitleSize: CGFloat = 24
@@ -133,6 +135,8 @@ extension ProfileV3Theme.Sizes {
         static let deckTagTop = ProfileV3Theme.Space.s20
         static let deckTagHeight: CGFloat = 28.5
         static let deckTagIcon = ProfileV3Theme.Icon.md
+        static let deckTagShadowRadius: CGFloat = 3.5
+        static let deckTagShadowY: CGFloat = 2.8
         static let deckPill = CGSize(width: 234.284, height: 58.969)
         static let deckPillRadius: CGFloat = 47.813
         static let deckPillBlur: CGFloat = 9.563
@@ -183,6 +187,8 @@ extension ProfileV3Theme.Palette {
     static let cityDeckCard = Color(hex: "031624")
     static let cityDeckPill = Color(at: .pureWhite).opacity(0.2)
     static let cityDeckTagBorder = Color(at: .pureWhite).opacity(0.6)
+    static let cityDeckTagFill = Color(at: .pureWhite).opacity(0.1)
+    static let cityDeckTagShadow = Color(at: .pureBlack).opacity(0.05)
     static let cityButtonGlow = Color(at: .pureBlack).opacity(0.25)
 }
 
@@ -197,7 +203,6 @@ extension ProfileV3Theme.Opacity {
     static let cityAddRingFade: Double = 0.12
     static let cityFoundNoun: Double = 0.5
     static let cityClassArt: Double = 0.5
-    static let cityOrbIdle: Double = 0.3
     static let cityPlaceSubtitle: Double = 0.5
     static let cityDeckMiddle: Double = 0.8
     static let cityDeckBack: Double = 0.4
@@ -209,10 +214,11 @@ extension ProfileV3Theme.Motion {
     static let cityRingSpreadSeconds: Double = 0.592
     static let cityRingPeakScale: CGFloat = 1.025
     static let cityRingSettleScale: CGFloat = 1.055
-    static let cityDeckStepSeconds: Double = 1.6
-    static let cityDeckHoldSeconds: Double = 0.8
+    static let cityDeckStepSeconds: Double = 3.0
+    static let cityDeckHoldSeconds: Double = 2.2
     static let cityDeckMoveSeconds: Double = 0.55
-    static let cityDeckFadeStartSeconds: Double = 0.98
+    static let cityDeckFadeLeadSeconds: Double = 0.18
+    static let cityDeckFadeStartSeconds: Double = cityDeckHoldSeconds + cityDeckFadeLeadSeconds
     static let cityDeckRevealSeconds: Double = 0.18
     static let citySectionScrollSeconds: Double = 0.4
     static let citySectionScroll: Animation = .easeInOut(duration: citySectionScrollSeconds)

@@ -138,7 +138,9 @@ private struct ProfileV3CityDeckCard: View {
         }
         .padding(.horizontal, ProfileV3Theme.Space.s12)
         .frame(height: Sizes.deckTagHeight)
-        .overlay(Capsule().strokeBorder(ProfileV3Theme.Palette.cityDeckTagBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+        .background(Capsule().fill(ProfileV3Theme.Palette.cityDeckTagFill))
+        .modifier(ProfileV3CityDeckTagGlass())
+        .shadow(color: ProfileV3Theme.Palette.cityDeckTagShadow, radius: Sizes.deckTagShadowRadius, y: Sizes.deckTagShadowY)
     }
 
     private func pill(_ text: String) -> some View {
@@ -154,6 +156,18 @@ private struct ProfileV3CityDeckCard: View {
                     .fill(ProfileV3Theme.Palette.cityDeckPill)
                     .background(.ultraThinMaterial, in: Capsule())
             }
+    }
+}
+
+private struct ProfileV3CityDeckTagGlass: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *), ProfileV3FeatureFlags.isFloatingControlGlassEnabled {
+            content.glassEffect(.regular, in: Capsule())
+        } else {
+            content
+                .background(.ultraThinMaterial, in: Capsule())
+                .overlay(Capsule().strokeBorder(ProfileV3Theme.Palette.cityDeckTagBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+        }
     }
 }
 

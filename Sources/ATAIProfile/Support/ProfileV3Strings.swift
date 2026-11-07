@@ -5,6 +5,7 @@ enum ProfileV3Strings {
     static var addChip: String { ProfileV3L10n.moAiprofileGeneralButtonAdd1 }
     static func addOption(_ label: String) -> String { ProfileV3L10n.moAiprofileGeneralButtonAddOption(label.lowercased()) }
     static func addTyped(_ text: String) -> String { ProfileV3L10n.moAiprofileGeneralButtonAddOption(text) }
+    static var popularLocations: String { ProfileV3L10n.moAiprofileAgentsLabelPopularLocations }
     static func maskedNumber(_ lastDigits: String) -> String { ProfileV3L10n.moAiprofileGeneralMaskedNumber(lastDigits) }
     static var settings: String { ProfileV3L10n.moAiprofileAccountHeaderSettings }
     static var permissions: String { ProfileV3L10n.moAiprofileAccountHeaderPermissions }

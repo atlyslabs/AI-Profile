@@ -265,6 +265,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelPersonaPlanning: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-persona-planning", fallback: "Planning") }
   /// Travel persona loader: trait label on the processing dial.
   internal static var moAiprofileAgentsLabelPersonaSocial: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-persona-social", fallback: "Social") }
+  /// List label above the hotels Google finds in a city before anything is typed in the preferred hotels picker.
+  internal static var moAiprofileAgentsLabelPopularLocations: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-popular-locations", fallback: "Popular locations") }
   /// Label for an agent preference slider setting.
   internal static var moAiprofileAgentsLabelPreferenceSlider: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-preference-slider", fallback: "Preference") }
   /// Call to action text related to agent access.

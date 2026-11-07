@@ -170,7 +170,6 @@ struct ProfileV3CityPurposeSheetView: View {
             }
             .transition(.opacity)
         }
-        .padding(.bottom, Sizes.tagSheetBottom)
         .animation(ProfileV3Theme.Motion.expand, value: model.step)
         .animation(ProfileV3Theme.Motion.contentFade, value: model.phase)
     }
@@ -234,7 +233,7 @@ struct ProfileV3CityPurposeSheetView: View {
         if let input = model.labelInput {
             VStack(spacing: 0) {
                 ProfileV3LabelledField(
-                    label: input.label,
+                    label: ProfileV3Strings.requiredLabel(input.label),
                     placeholder: input.placeholder,
                     text: $model.label,
                     error: model.isLabelTaken ? sheet.labelTaken.nonEmpty : model.errorMessage
@@ -249,6 +248,7 @@ struct ProfileV3CityPurposeSheetView: View {
                 )
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.top, Sizes.purposeButtonTop)
+                .padding(.bottom, Sizes.tagSheetBottom)
             }
         }
     }
@@ -274,6 +274,7 @@ extension ProfileV3ConfirmationView {
             primaryTitle: confirm.confirmLabel,
             secondaryTitle: confirm.cancelLabel,
             isPrimaryLoading: isDeleting,
+            metrics: .rule,
             onBack: onBack,
             onPrimary: onConfirm,
             onSecondary: onBack

@@ -1453,6 +1453,18 @@
         }
       }
     },
+    "mo-aiprofile-agents-label-popular-locations": {
+      "comment": "List label above the hotels Google finds in a city before anything is typed in the preferred hotels picker.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Popular locations"
+          }
+        }
+      }
+    },
     "mo-aiprofile-agents-label-preference-slider": {
       "comment": "Label for an agent preference slider setting.",
       "extractionState": "manual",

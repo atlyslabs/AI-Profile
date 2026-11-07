@@ -69,7 +69,7 @@ private struct ProfileV3CityProfileScreen: View {
                             .transition(.opacity)
                     }
                 }
-                .padding(.bottom, Sizes.saveBarClearance)
+                .padding(.bottom, viewModel.form == nil ? Sizes.saveBarClearance : Sizes.preferencesBottom)
                 .animation(ProfileV3Theme.Motion.contentFade, value: viewModel.selection)
                 .profileV3ScrollOffsetAnchor(headerPin.offsetBinding)
             }
@@ -386,7 +386,7 @@ struct ProfileV3CitySectionView: View {
             VStack(alignment: .leading, spacing: 0) {
                 header
                     .padding(.top, Sizes.cardTitleTop)
-                if let subtitle = style.subtitle?.nonEmpty, !hasValue {
+                if let subtitle = style.subtitle?.nonEmpty {
                     Text(subtitle)
                         .typoGraphy(.B2InterMedium12)
                         .foregroundStyle(Color(at: .neutralGrey400))
