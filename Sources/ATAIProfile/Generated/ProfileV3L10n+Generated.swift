@@ -269,6 +269,8 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileAgentsLabelPersonaSocial: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-persona-social", fallback: "Social") }
   /// Label for the Photos connector, which reads only where photos were taken.
   internal static var moAiprofileAgentsLabelPhotos: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-photos", fallback: "Photos") }
+  /// List label above the hotels Google finds in a city before anything is typed in the preferred hotels picker.
+  internal static var moAiprofileAgentsLabelPopularLocations: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-popular-locations", fallback: "Popular locations") }
   /// Label for an agent preference slider setting.
   internal static var moAiprofileAgentsLabelPreferenceSlider: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-agents-label-preference-slider", fallback: "Preference") }
   /// Call to action text related to agent access.
@@ -424,7 +426,7 @@ internal enum ProfileV3L10n {
   /// Navigation close button.
   internal static var moAiprofileGeneralButtonClose: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-button-close", fallback: "Close") }
   /// Generic confirm button for edits.
-  internal static var moAiprofileGeneralButtonConfirm: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-button-confirm", fallback: "Confirm edit") }
+  internal static var moAiprofileGeneralButtonConfirm: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-button-confirm", fallback: "Update") }
   /// Action button to establish a connection.
   internal static var moAiprofileGeneralButtonConnect: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-button-connect", fallback: "Connect") }
   /// Primary action button label.
@@ -528,10 +530,6 @@ internal enum ProfileV3L10n {
   /// Metadata label for update timestamps.
   internal static func moAiprofileGeneralMetadataUpdatedOn(_ p1: Any) -> String {
     return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-metadata-updated-on", String(describing: p1), fallback: "updated on %1$@")
-  }
-  /// Header for past trip options by country.
-  internal static func moAiprofileGeneralPastTripOptions(_ p1: Any) -> String {
-    return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-past-trip-options", String(describing: p1), fallback: "%1$@ trip options")
   }
   /// Instructional text displayed when search results are empty.
   internal static var moAiprofileGeneralSearchEmptySubtitle: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-general-search-empty-subtitle", fallback: "Please try searching for another option or check for any spelling errors") }

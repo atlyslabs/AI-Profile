@@ -129,14 +129,11 @@ private struct ProfileV3EmailConnectorCard: View {
                 }
             }
             if isConnected {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: Layout.chipSpacing) {
-                        ProfileV3ConnectedEmailChip(address: connector.accountEmail ?? connector.name)
-                    }
-                }
-                .contentMargins(.horizontal, Layout.cardLeading, for: .scrollContent)
-                .padding(.top, Layout.chipsTop)
-                .padding(.bottom, Layout.chipsBottom)
+                ProfileV3ConnectedEmailChip(address: connector.accountEmail ?? connector.name)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, Layout.cardLeading)
+                    .padding(.top, Layout.chipsTop)
+                    .padding(.bottom, Layout.chipsBottom)
             }
         }
         .frame(minHeight: Layout.cardHeight, alignment: .top)
@@ -295,6 +292,7 @@ private struct ProfileV3ConnectedEmailChip: View {
                 .typoGraphy(.B1InterSemibold14)
                 .foregroundStyle(ProfileV3Theme.Palette.accessChipText)
                 .lineLimit(1)
+                .truncationMode(.middle)
         }
         .padding(.vertical, Layout.chipPadding)
         .padding(.leading, Layout.chipPadding)

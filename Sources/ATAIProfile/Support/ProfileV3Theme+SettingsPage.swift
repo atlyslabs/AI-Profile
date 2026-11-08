@@ -92,7 +92,6 @@ extension ProfileV3Theme.Sizes {
         static let cardIcon = ProfileV3Theme.Icon.lg
         static let chipsTop: CGFloat = 27
         static let chipsBottom: CGFloat = 36
-        static let chipSpacing = ProfileV3Theme.Space.s16
         static let chipLogo = ProfileV3Theme.Icon.xl
         static let chipPadding: CGFloat = 2
         static let chipTrailing = ProfileV3Theme.Space.s8

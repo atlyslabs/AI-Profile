@@ -168,6 +168,51 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Fixed
 
+- Device-size QA (QA-1973):
+  - The world pass detail's globe has room on short phones (QA-2037). The expanded card sits in a
+    full-screen cover that hides the floating bar, so its height no longer subtracts the bar's
+    clearance. A card still shorter than its 380:716 design takes the shortfall out of its header,
+    stats and bottom spacing (down to 16, 24 and 28pt) before the globe shrinks. On an iPhone SE
+    the globe grows from about 25pt to 182pt; on the largest phones the card now matches Figma's
+    716pt height and 262pt globe. The visited-country markers also scale with the globe, since
+    their 20–43pt design sizes covered a small one as a cluster of white bubbles.
+  - A disabled `ProfileV3ContinueButton` keeps its white fill and border and dims only its title.
+    It used to fade as a whole, so content scrolled under the CTA bar showed through it; on an SE
+    the Add traveler button sat over the relationship chips with no visible border (QA-2038).
+  - Information access truncates a long email in the middle. Its chip sat in a horizontal scroll
+    view and ran past the card's edge (QA-2036).
+  - The edit screens' confirm button reads "Update" instead of "Confirm edit": contact info, edit
+    traveler, residence, citizenship and the country picker (QA-2039).
+  - A past trip shows a delete icon where its ⋮ was, and a tap opens the delete confirmation.
+    Since trips lost their dates, the ⋮ menu held only "Delete", so a delete took an extra tap.
+    A trip the server doesn't let you delete shows no icon (QA-2040).
+- City profile QA (QA-2110):
+  - A card keeps its subtitle when an option is picked; it used to disappear, which also jolted the
+    chips and the save bar on every tap (QA-2119, QA-2118).
+  - The preferences page no longer leaves 120pt of blank space under the last card; the save bar's
+    inset already clears it (QA-2116).
+  - Option chips wrap a long label onto two lines instead of truncating it on narrower phones, and
+    their trailing padding matches the orb side (12pt), so "Early morning" fits on one line at the
+    design's width (QA-2120).
+  - Timing orbs are drawn in full colour whether picked or not, as in Figma `6739:16294`; a pick
+    adds the tick (QA-2121).
+  - The sample deck's purpose tag has the design's glass: Liquid Glass on iOS 26 (a material and
+    hairline before), a 10% white fill and a soft shadow (QA-2113). The glass is UIKit's
+    `UIGlassEffect`: SwiftUI's `glassEffect` swells on a tilted view, so the tag grew and shrank as
+    each card turned to the front.
+  - The delete confirmation uses the design's 24pt glyph and 23pt gap above the buttons
+    (QA-2122).
+  - The purpose sheet ends at its Continue/Save button: the fitted sheet already adds the bottom
+    inset, so the extra 57pt left about 128pt below the button (QA-2123). The name step keeps it.
+  - The "Other" name field is marked required (QA-2115).
+  - The intro's sample deck shows each card for 3.0s instead of Figma's 1.6s (QA-2112): a card
+    rests 2.2s, then the designed 0.55s swipe plays. The "Add" ring keeps its 1.6s pulse.
+  - The hotels picker lists the city's hotels before anything is typed, under "Popular locations"
+    as in Figma `6766:18995` (QA-2117). They come from Google's Text Search ("hotels in <city>",
+    type `lodging`, the city's region) with the host's Places key, 20 at a time as you scroll, up
+    to Google's 60, each with its area ("Colaba"). Saved hotels come first, and a city's list is
+    kept while that city is open, so reopening the picker doesn't search again. Typing still uses
+    autocomplete. New client string `mo-aiprofile-agents-label-popular-locations`.
 - Adding a traveller from the profile home page (or the add-traveller link) opened the travellers
   list underneath, so the sheet had a back button that led to editing travellers (Vijay). It now
   opens on the add form alone, with only the close button; from Settings → Travellers the form

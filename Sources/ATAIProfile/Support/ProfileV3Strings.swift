@@ -5,6 +5,7 @@ enum ProfileV3Strings {
     static var addChip: String { ProfileV3L10n.moAiprofileGeneralButtonAdd1 }
     static func addOption(_ label: String) -> String { ProfileV3L10n.moAiprofileGeneralButtonAddOption(label.lowercased()) }
     static func addTyped(_ text: String) -> String { ProfileV3L10n.moAiprofileGeneralButtonAddOption(text) }
+    static var popularLocations: String { ProfileV3L10n.moAiprofileAgentsLabelPopularLocations }
     static func maskedNumber(_ lastDigits: String) -> String { ProfileV3L10n.moAiprofileGeneralMaskedNumber(lastDigits) }
     static var settings: String { ProfileV3L10n.moAiprofileAccountHeaderSettings }
     static var permissions: String { ProfileV3L10n.moAiprofileAccountHeaderPermissions }
@@ -24,7 +25,6 @@ enum ProfileV3Strings {
     static var statAirports: String { ProfileV3L10n.moAiprofileProfileStatLabelAirports }
     static var statAirlines: String { ProfileV3L10n.moAiprofileProfileStatLabelAirlines }
     static func visitedCountries(_ count: Int) -> String { ProfileV3L10n.moAiprofileProfileAccessibilityVisitedCountries(count) }
-    static func pastTripOptions(_ country: String) -> String { ProfileV3L10n.moAiprofileGeneralPastTripOptions(country) }
     static func pastTripLabel(country: String, month: String, year: Int) -> String { ProfileV3L10n.moAiprofileGeneralTripDateLabel(country, month, year) }
     static var alwaysAsk: String { ProfileV3L10n.moAiprofileAgentSettingsAlwaysAsk }
     static var permissionAlways: String { ProfileV3L10n.moAiprofileAgentSettingsAlways }

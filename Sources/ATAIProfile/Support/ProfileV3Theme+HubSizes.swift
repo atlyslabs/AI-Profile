@@ -120,9 +120,13 @@ extension ProfileV3Theme.Sizes {
         static let aspectRatio: CGFloat = 380 / 716
         static let pillFlag: CGFloat = 20
         static let pillFlagOverlap: CGFloat = -4
+        static let headerTop = ProfileV3Theme.Space.s30
         static let statsTop: CGFloat = 62
         static let statsHorizontal: CGFloat = 40
         static let bottom: CGFloat = 60
+        static let compactHeaderTop = ProfileV3Theme.Space.s16
+        static let compactStatsTop = ProfileV3Theme.Space.s24
+        static let compactBottom = ProfileV3Theme.Space.s28
     }
 
     enum Flip {

@@ -96,7 +96,7 @@ private struct ProfileV3SettingsFieldScreen: View {
                 title: field.title,
                 icon: ATIcon.SwiftUIImage.language,
                 selected: field.currentCountry ?? model.citizenship,
-                confirmTitle: ProfileV3Strings.confirmEdit,
+                confirmTitle: ProfileV3Strings.update,
                 onBack: onBack,
                 onSelect: model.selectCitizenship
             )
@@ -107,7 +107,7 @@ private struct ProfileV3SettingsFieldScreen: View {
                 selected: field.currentCountry ?? model.currencyCountry,
                 trailing: ProfileV3CurrencyCodes.code(for:),
                 searchText: ProfileV3CurrencyCodes.searchText(for:),
-                confirmTitle: ProfileV3Strings.confirmEdit,
+                confirmTitle: ProfileV3Strings.update,
                 onBack: onBack,
                 onSelect: model.selectCurrency
             )

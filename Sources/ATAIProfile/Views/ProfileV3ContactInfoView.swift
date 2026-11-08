@@ -54,7 +54,7 @@ struct ProfileV3ContactInfoView: View {
         .background(Color(at: .pureWhite))
         .safeAreaInset(edge: .bottom) {
             ProfileV3ContinueButton(
-                title: ProfileV3Strings.confirmEdit,
+                title: ProfileV3Strings.update,
                 isLoading: viewModel.isSaving,
                 isEnabled: viewModel.canSave
             ) {

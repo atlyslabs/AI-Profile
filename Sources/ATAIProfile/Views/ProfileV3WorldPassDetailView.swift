@@ -11,13 +11,19 @@ struct ProfileV3WorldPassDetailView: View {
     var onTrips: ((ProfileV3Directive) -> Void)?
 
     var body: some View {
+        GeometryReader { proxy in
+            content(spacing: ProfileV3WorldPassDetailSpacing(size: proxy.size))
+        }
+    }
+
+    private func content(spacing: ProfileV3WorldPassDetailSpacing) -> some View {
         let flagCodes = pass.uniqueVisitedCountryCodes
-        ZStack {
+        return ZStack {
             streak
                 .opacity(showsChrome ? 1 : 0)
             VStack(spacing: 0) {
                 ProfileV3WorldPassHeader(brand: pass.brand)
-                    .padding(.top, ProfileV3Theme.Space.s30)
+                    .padding(.top, spacing.headerTop)
                     .opacity(showsChrome ? 1 : 0)
                 Color.clear
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -56,9 +62,9 @@ struct ProfileV3WorldPassDetailView: View {
                 }
                 .opacity(showsChrome ? 1 : 0)
                 statsGrid
-                    .padding(.top, ProfileV3Theme.Sizes.Detail.statsTop)
+                    .padding(.top, spacing.statsTop)
                     .padding(.horizontal, ProfileV3Theme.Sizes.Detail.statsHorizontal)
-                    .padding(.bottom, ProfileV3Theme.Sizes.Detail.bottom)
+                    .padding(.bottom, spacing.bottom)
                     .opacity(showsChrome ? 1 : 0)
             }
         }
@@ -228,6 +234,24 @@ private struct ProfileV3StatItem: View {
                 .typoGraphy(.H3InterMedium28)
                 .foregroundStyle(Color(at: .pureWhite))
         }
+    }
+}
+
+struct ProfileV3WorldPassDetailSpacing: Equatable {
+    let headerTop: CGFloat
+    let statsTop: CGFloat
+    let bottom: CGFloat
+
+    init(size: CGSize) {
+        typealias Detail = ProfileV3Theme.Sizes.Detail
+        let room = (Detail.headerTop - Detail.compactHeaderTop)
+            + (Detail.statsTop - Detail.compactStatsTop)
+            + (Detail.bottom - Detail.compactBottom)
+        let shortfall = max(size.width / Detail.aspectRatio - size.height, 0)
+        let squeeze = room > 0 ? min(shortfall / room, 1) : 0
+        headerTop = Detail.headerTop - (Detail.headerTop - Detail.compactHeaderTop) * squeeze
+        statsTop = Detail.statsTop - (Detail.statsTop - Detail.compactStatsTop) * squeeze
+        bottom = Detail.bottom - (Detail.bottom - Detail.compactBottom) * squeeze
     }
 }
 

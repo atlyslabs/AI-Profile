@@ -102,7 +102,11 @@ struct ProfileV3PastTripsView: View {
             onRevealEnd: { viewModel.didFinishReveal(trip.id) }
         )
         .id(trip.revision)
-        .overlay(alignment: .topTrailing) { moreButton(trip) }
+        .overlay(alignment: .topTrailing) {
+            if let delete = trip.delete {
+                deleteButton(trip, label: delete.label)
+            }
+        }
         .zIndex(viewModel.revealingTripID == trip.id ? -1 : 0)
         .opacity(hasEntered ? 1 : 0)
         .offset(y: hasEntered || reduceMotion ? 0 : Sizes.entranceOffset)
@@ -117,17 +121,18 @@ struct ProfileV3PastTripsView: View {
         )
     }
 
-    private func moreButton(_ trip: ProfileV3PastTrip) -> some View {
-        Button { viewModel.tapMore(trip) } label: {
-            ATIcon.SwiftUIImage.moreVert
-                .profileV3Icon(ProfileV3Theme.Icon.xl)
-                .foregroundStyle(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.tripMore))
+    private func deleteButton(_ trip: ProfileV3PastTrip, label: String) -> some View {
+        Button { viewModel.tapDelete(trip) } label: {
+            ATIcon.SwiftUIImage.delete
+                .profileV3Icon(ProfileV3Theme.Icon.lg)
+                .foregroundStyle(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.tripDelete))
                 .frame(width: ProfileV3Theme.Control.tapTarget, height: ProfileV3Theme.Control.tapTarget)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.profileV3Pressable(.selection))
-        .offset(x: Sizes.moreOffsetX, y: Sizes.moreOffsetY)
-        .accessibilityLabel(ProfileV3Strings.pastTripOptions(trip.countryName))
+        .offset(x: Sizes.deleteOffsetX, y: Sizes.deleteOffsetY)
+        .accessibilityLabel(label)
+        .accessibilityValue(trip.countryName)
     }
 
     private var header: some View {

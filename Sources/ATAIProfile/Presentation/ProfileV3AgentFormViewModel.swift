@@ -14,6 +14,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     private(set) var sourcesSection: ProfileV3FormSection?
     @Published private(set) var pickerOptions: [ProfileV3ChipOption] = []
     @Published private(set) var isSearchingPlaces = false
+    @Published private(set) var pickerListLabel: String?
     @Published private(set) var previousPassports: ProfileV3PreviousPassports?
     @Published private(set) var previousPassportsPhase: ProfileV3LoadPhase = .loading
     @Published var showsPreviousPassports = false
@@ -46,6 +47,10 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     private var placeTask: Task<Void, Never>?
     private var placeQuery = ""
     private var placeSuggestions: [ProfileV3PlaceSuggestion] = []
+    private var popularTask: Task<Void, Never>?
+    private var popularPlaces: [ProfileV3PlaceSuggestion] = []
+    private var popularToken: String?
+    private var popularScope: ProfileV3PlaceSearchScope?
     private var pendingPassportScan: ProfileV3Directive?
     private var savedValues: ProfileV3AgentFormValues
     private var reportedTexts: [String: String] = [:]
@@ -432,6 +437,41 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         resetPlaceSearch()
         pickerSectionID = sectionID
         refreshPickerOptions()
+        loadPopularPlaces(in: sectionID)
+    }
+
+    func loadMorePopularPlaces() {
+        guard placeQuery.isEmpty, popularTask == nil, let token = popularToken,
+              let scope = popularScope, let placeSearch else { return }
+        popularTask = Task { [weak self] in
+            let page = await placeSearch.popularLodging(in: scope, pageToken: token)
+            guard let self, !Task.isCancelled else { return }
+            popularTask = nil
+            guard popularScope == scope else { return }
+            popularPlaces += page.places
+            popularToken = page.nextPageToken
+            refreshPickerOptions()
+        }
+    }
+
+    private func loadPopularPlaces(in sectionID: String) {
+        guard let scope = placeScope(in: sectionID), let placeSearch else { return }
+        if popularScope == scope, popularTask != nil || !popularPlaces.isEmpty { return }
+        popularTask?.cancel()
+        popularScope = scope
+        popularPlaces = []
+        popularToken = nil
+        isSearchingPlaces = true
+        popularTask = Task { [weak self] in
+            let page = await placeSearch.popularLodging(in: scope, pageToken: nil)
+            guard let self, !Task.isCancelled else { return }
+            popularTask = nil
+            guard popularScope == scope else { return }
+            popularPlaces = page.places
+            popularToken = page.nextPageToken
+            if placeQuery.isEmpty { isSearchingPlaces = false }
+            refreshPickerOptions()
+        }
     }
 
     func closePicker() {
@@ -481,7 +521,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         let query = Self.typedName(text, maxChars: .max)
         guard !query.isEmpty else {
             placeSuggestions = []
-            isSearchingPlaces = false
+            isSearchingPlaces = popularTask != nil
             refreshPickerOptions()
             return
         }
@@ -508,26 +548,38 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         guard let sectionID = pickerSectionID,
               case .chips(let field)? = form.sections.first(where: { $0.id == sectionID })?.control else { return }
         let query = Self.typedName(placeQuery, maxChars: .max)
-        guard let entry = field.picker?.typedEntry, placeScope(in: sectionID) != nil, !query.isEmpty else {
+        pickerListLabel = nil
+        guard let entry = field.picker?.typedEntry, placeScope(in: sectionID) != nil else {
             pickerOptions = field.allOptions
             return
         }
-        var listed = Set<String>()
-        let found = placeSuggestions.compactMap { suggestion -> ProfileV3ChipOption? in
-            let name = Self.typedName(suggestion.name, maxChars: entry.maxChars)
-            guard !name.isEmpty, listed.insert(Self.folded(name)).inserted else { return nil }
-            let saved = field.allOptions.first { Self.folded($0.title) == Self.folded(name) }
-            return ProfileV3ChipOption(
-                id: saved?.id ?? name,
-                title: saved?.title ?? name,
-                subtitle: suggestion.detail,
-                place: entry.place
-            )
+        guard !query.isEmpty else {
+            let popular = placeOptions(popularPlaces, field: field, entry: entry)
+            let listed = Set(popular.map { Self.folded($0.title) })
+            pickerOptions = field.allOptions.filter { !listed.contains(Self.folded($0.title)) } + popular
+            pickerListLabel = popular.isEmpty ? nil : ProfileV3Strings.popularLocations
+            return
         }
+        let found = placeOptions(placeSuggestions, field: field, entry: entry)
+        let listed = Set(found.map { Self.folded($0.title) })
         let saved = field.allOptions.filter {
             $0.title.localizedCaseInsensitiveContains(query) && !listed.contains(Self.folded($0.title))
         }
         pickerOptions = saved + found
+    }
+
+    private func placeOptions(
+        _ places: [ProfileV3PlaceSuggestion],
+        field: ProfileV3ChipField,
+        entry: ProfileV3OptionPicker.TypedEntry
+    ) -> [ProfileV3ChipOption] {
+        var listed = Set<String>()
+        return places.compactMap { place in
+            let name = Self.typedName(place.name, maxChars: entry.maxChars)
+            guard !name.isEmpty, listed.insert(Self.folded(name)).inserted else { return nil }
+            let saved = field.allOptions.first { Self.folded($0.title) == Self.folded(name) }
+            return ProfileV3ChipOption(id: saved?.id ?? name, title: saved?.title ?? name, subtitle: place.detail, place: entry.place)
+        }
     }
 
     private func resetPlaceSearch() {
@@ -535,7 +587,8 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         placeTask = nil
         placeQuery = ""
         placeSuggestions = []
-        isSearchingPlaces = false
+        isSearchingPlaces = popularTask != nil
+        pickerListLabel = nil
     }
 
     private static func typedName(_ text: String, maxChars: Int) -> String {
@@ -756,6 +809,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         saveTask?.cancel()
         refreshTask?.cancel()
         placeTask?.cancel()
+        popularTask?.cancel()
         passportScanTask?.cancel()
         passportScanTask = nil
         previousPassportsTask?.cancel()

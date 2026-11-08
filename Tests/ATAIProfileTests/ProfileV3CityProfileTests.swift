@@ -429,13 +429,71 @@ struct ProfileV3CityProfileTests {
 
     // MARK: - Hotel search
 
-    @Test func theHotelSearchLooksForLodgingInTheCity() {
+    @Test func theHotelSearchLooksForLodgingInTheCity() throws {
         let scope = ProfileV3PlaceSearchScope(city: "Mumbai", countryCode: "IN")
         #expect(scope.query(for: "  Taj   Lands ") == "Taj Lands Mumbai")
         #expect(scope.query(for: "Oberoi mumbai") == "Oberoi mumbai")
         #expect(scope.query(for: "   ").isEmpty)
         #expect(ProfileV3GooglePlaceSearch(apiKey: nil) == nil)
         #expect(ProfileV3GooglePlaceSearch(apiKey: "  ") == nil)
+        #expect(scope.area(in: "Apollo Bandar, Colaba, Mumbai, Maharashtra 400001, India") == "Colaba")
+        #expect(scope.area(in: "Andheri - Kurla Rd, Marol, Andheri East, Mumbai, Maharashtra 400059, India") == "Andheri East")
+        #expect(scope.area(in: "Mumbai, Maharashtra") == nil)
+        #expect(scope.area(in: nil) == nil)
+        let json = #"""
+        {"results":[{"place_id":"a","name":"Hotel Cliffton","formatted_address":"Swami Vivekanand Rd, Bandra West, Mumbai"}],
+         "next_page_token":"tok","status":"OK"}
+        """#
+        let decoded = try JSONDecoder().decode(ProfileV3TextSearchResponse.self, from: Data(json.utf8))
+        #expect(decoded.results?.first?.placeID == "a")
+        #expect(decoded.results?.first?.formattedAddress == "Swami Vivekanand Rd, Bandra West, Mumbai")
+        #expect(decoded.nextPageToken == "tok")
+    }
+
+    @Test func theHotelsPickerListsTheCitysPopularHotelsBeforeTyping() async throws {
+        let places = ProfileV3StubPlaceSearch(results: [], popularPages: [
+            nil: ProfileV3PlacePage(places: [
+                ProfileV3PlaceSuggestion(id: "g1", name: "The Taj Mahal Palace, Mumbai", detail: "Colaba"),
+                ProfileV3PlaceSuggestion(id: "g2", name: "Trident Nariman Point", detail: "Nariman Point"),
+            ], nextPageToken: "page-2"),
+            "page-2": ProfileV3PlacePage(places: [
+                ProfileV3PlaceSuggestion(id: "g3", name: "Hotel Sahara Star", detail: "Vile Parle East"),
+                ProfileV3PlaceSuggestion(id: "g4", name: "The Taj Mahal Palace,  Mumbai", detail: "Colaba"),
+            ]),
+        ])
+        let viewModel = Self.viewModel(placeSearch: places)
+        viewModel.load()
+        try await Self.waitUntil { viewModel.form != nil }
+        let form = try #require(viewModel.form)
+
+        form.openPicker(for: "hotels")
+        #expect(form.isSearchingPlaces)
+        try await Self.waitUntil { !form.isSearchingPlaces }
+        #expect(form.pickerOptions.map(\.title) == ["Taj Lands End", "The Taj Mahal Palace, Mumbai", "Trident Nariman Point"])
+        #expect(form.pickerOptions.map(\.subtitle) == [nil, "Colaba", "Nariman Point"])
+        #expect(form.pickerListLabel == ProfileV3Strings.popularLocations)
+
+        form.loadMorePopularPlaces()
+        try await Self.waitUntil { form.pickerOptions.count == 4 }
+        #expect(places.popularRequests == [nil, "page-2"])
+        #expect(form.pickerOptions.last?.title == "Hotel Sahara Star")
+        form.loadMorePopularPlaces()
+        #expect(places.popularRequests == [nil, "page-2"])
+
+        form.togglePickerOption("Hotel Sahara Star", in: "hotels")
+        guard case .chips(let field)? = form.form.sections.first(where: { $0.id == "hotels" })?.control else {
+            Issue.record("Hotels should stay a chips section")
+            return
+        }
+        #expect(field.selection.contains("Hotel Sahara Star"))
+        #expect(form.pickerOptions.count == 4)
+
+        form.closePicker()
+        form.openPicker(for: "hotels")
+        #expect(places.popularRequests == [nil, "page-2"])
+        #expect(form.pickerListLabel == ProfileV3Strings.popularLocations)
+        form.searchPlaces("taj")
+        #expect(form.pickerListLabel == nil)
     }
 
     @Test func aFoundHotelIsAddedByItsName() async throws {
@@ -627,14 +685,22 @@ private final class ProfileV3StubPlaceSearch: ProfileV3PlaceSearching {
     }
 
     let results: [ProfileV3PlaceSuggestion]
+    let popularPages: [String?: ProfileV3PlacePage]
     private(set) var requests: [Request] = []
+    private(set) var popularRequests: [String?] = []
 
-    init(results: [ProfileV3PlaceSuggestion]) {
+    init(results: [ProfileV3PlaceSuggestion], popularPages: [String?: ProfileV3PlacePage] = [:]) {
         self.results = results
+        self.popularPages = popularPages
     }
 
     func lodging(matching text: String, in scope: ProfileV3PlaceSearchScope) async -> [ProfileV3PlaceSuggestion] {
         requests.append(Request(text: text, scope: scope))
         return results
+    }
+
+    func popularLodging(in scope: ProfileV3PlaceSearchScope, pageToken: String?) async -> ProfileV3PlacePage {
+        popularRequests.append(pageToken)
+        return popularPages[pageToken] ?? ProfileV3PlacePage(places: [])
     }
 }
