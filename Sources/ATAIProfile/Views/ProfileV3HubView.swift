@@ -317,7 +317,7 @@ struct ProfileV3HubView: View {
         let top = ProfileV3Theme.Sizes.hubBarBottom + ProfileV3Theme.Space.s40
         let maxHeight = max(
             0,
-            viewport.height - top - floatingBarClearance - ProfileV3Theme.Space.s16
+            viewport.height - top - ProfileV3Theme.Space.s16
         )
         let idealHeight = cardWidth / ProfileV3Theme.Sizes.Detail.aspectRatio
         let cardHeight = maxHeight > 0 ? min(idealHeight, maxHeight) : idealHeight

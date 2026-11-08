@@ -169,9 +169,13 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 ### Fixed
 
 - Device-size QA (QA-1973):
-  - The world pass detail scales its visited-country markers with the globe. On an iPhone SE the
-    card leaves the globe about 80pt, and the markers kept their 20–43pt design sizes, so they
-    covered it as a cluster of white bubbles (QA-2037).
+  - The world pass detail's globe has room on short phones (QA-2037). The expanded card sits in a
+    full-screen cover that hides the floating bar, so its height no longer subtracts the bar's
+    clearance. A card still shorter than its 380:716 design takes the shortfall out of its header,
+    stats and bottom spacing (down to 16, 24 and 28pt) before the globe shrinks. On an iPhone SE
+    the globe grows from about 25pt to 182pt; on the largest phones the card now matches Figma's
+    716pt height and 262pt globe. The visited-country markers also scale with the globe, since
+    their 20–43pt design sizes covered a small one as a cluster of white bubbles.
   - A disabled `ProfileV3ContinueButton` keeps its white fill and border and dims only its title.
     It used to fade as a whole, so content scrolled under the CTA bar showed through it; on an SE
     the Add traveler button sat over the relationship chips with no visible border (QA-2038).
