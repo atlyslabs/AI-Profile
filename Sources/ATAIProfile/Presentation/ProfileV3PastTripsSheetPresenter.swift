@@ -33,14 +33,6 @@ final class ProfileV3PastTripsSheetPresenter {
             presentFloating(onDismiss: onDismiss) {
                 ProfileV3AddPastTripSheet(viewModel: editor) { [weak viewModel] in viewModel?.dismissSheet() }
             }
-        case .actions:
-            let trip = viewModel.actionsTrip
-            presentFloating(onDismiss: onDismiss) {
-                ProfileV3PastTripActionsSheet(
-                    deleteTitle: trip?.delete?.label ?? "",
-                    onDelete: viewModel.tapDelete
-                )
-            }
         case .confirmDelete:
             slot.present(
                 cornerRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius,

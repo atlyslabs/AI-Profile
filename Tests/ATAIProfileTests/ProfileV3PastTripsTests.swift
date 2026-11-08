@@ -266,7 +266,7 @@ struct ProfileV3PastTripsTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func aTripOffersOnlyDeleteAndOnlyWhenTheServerServesIt() async throws {
+    func theDeleteButtonConfirmsOnlyWhenTheServerServesADelete() async throws {
         let repository = TripsRepositoryStub(
             trips: [
                 ProfileV3PastTrip(id: "41", countryCode: "JP", date: .init(year: 2025, month: 3)),
@@ -286,12 +286,9 @@ struct ProfileV3PastTripsTests {
         let dated = try #require(viewModel.trips.first)
         let undated = try #require(viewModel.trips.last)
 
-        viewModel.tapMore(dated)
+        viewModel.tapDelete(dated)
         #expect(viewModel.sheet == nil)
-        viewModel.tapMore(undated)
-        #expect(viewModel.sheet == .actions("country:IT"))
-        #expect(viewModel.actionsTrip?.delete?.label == "Delete")
-        viewModel.tapDelete()
+        viewModel.tapDelete(undated)
         #expect(viewModel.sheet == .confirmDelete("country:IT"))
     }
 
@@ -309,8 +306,7 @@ struct ProfileV3PastTripsTests {
         try await waitUntil { viewModel.phase == .loaded }
         let trip = try #require(viewModel.trips.first)
 
-        viewModel.tapMore(trip)
-        viewModel.tapDelete()
+        viewModel.tapDelete(trip)
         #expect(viewModel.sheet == .confirmDelete(trip.id))
         viewModel.confirmDelete()
         try await waitUntil { !repository.deleted.isEmpty && !viewModel.isDeleting }
@@ -334,8 +330,7 @@ struct ProfileV3PastTripsTests {
         try await waitUntil { viewModel.phase == .loaded }
         let trip = try #require(viewModel.trips.first)
 
-        viewModel.tapMore(trip)
-        viewModel.tapDelete()
+        viewModel.tapDelete(trip)
         viewModel.confirmDelete()
         try await waitUntil { viewModel.notice != nil }
         #expect(viewModel.notice == "The traveller list is unavailable right now.")

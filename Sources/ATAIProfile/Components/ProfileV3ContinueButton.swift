@@ -17,6 +17,8 @@ struct ProfileV3ContinueButton: View {
         isEnabled ? tint : (disabledTint ?? tint)
     }
 
+    private var dimsLabel: Bool { !isEnabled && disabledTint == nil }
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: ProfileV3Theme.Sizes.Save.buttonSpacing) {
@@ -37,6 +39,7 @@ struct ProfileV3ContinueButton: View {
                     .typoGraphy(.B1InterSemibold14)
             }
             .foregroundStyle(foreground)
+            .opacity(dimsLabel ? ProfileV3Theme.Opacity.disabled : 1)
             .padding(.horizontal, horizontalPadding)
             .frame(maxWidth: .infinity)
             .frame(height: ProfileV3Theme.Sizes.Save.buttonHeight)
@@ -45,7 +48,6 @@ struct ProfileV3ContinueButton: View {
         }
         .buttonStyle(.profileV3Pressable(.impact(weight: .medium)))
         .disabled(!isEnabled || isLoading)
-        .opacity(isEnabled || disabledTint != nil ? 1 : ProfileV3Theme.Opacity.disabled)
         .accessibilityLabel(title)
         .accessibilityValue(isLoading ? ProfileV3Strings.loading : "")
     }

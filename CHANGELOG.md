@@ -168,6 +168,20 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Fixed
 
+- Device-size QA (QA-1973):
+  - The world pass detail scales its visited-country markers with the globe. On an iPhone SE the
+    card leaves the globe about 80pt, and the markers kept their 20–43pt design sizes, so they
+    covered it as a cluster of white bubbles (QA-2037).
+  - A disabled `ProfileV3ContinueButton` keeps its white fill and border and dims only its title.
+    It used to fade as a whole, so content scrolled under the CTA bar showed through it; on an SE
+    the Add traveler button sat over the relationship chips with no visible border (QA-2038).
+  - Information access truncates a long email in the middle. Its chip sat in a horizontal scroll
+    view and ran past the card's edge (QA-2036).
+  - The edit screens' confirm button reads "Update" instead of "Confirm edit": contact info, edit
+    traveler, residence, citizenship and the country picker (QA-2039).
+  - A past trip shows a delete icon where its ⋮ was, and a tap opens the delete confirmation.
+    Since trips lost their dates, the ⋮ menu held only "Delete", so a delete took an extra tap.
+    A trip the server doesn't let you delete shows no icon (QA-2040).
 - City profile QA (QA-2110):
   - A card keeps its subtitle when an option is picked; it used to disappear, which also jolted the
     chips and the save bar on every tap (QA-2119, QA-2118).

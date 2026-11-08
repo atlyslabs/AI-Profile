@@ -25,7 +25,6 @@ enum ProfileV3Strings {
     static var statAirports: String { ProfileV3L10n.moAiprofileProfileStatLabelAirports }
     static var statAirlines: String { ProfileV3L10n.moAiprofileProfileStatLabelAirlines }
     static func visitedCountries(_ count: Int) -> String { ProfileV3L10n.moAiprofileProfileAccessibilityVisitedCountries(count) }
-    static func pastTripOptions(_ country: String) -> String { ProfileV3L10n.moAiprofileGeneralPastTripOptions(country) }
     static func pastTripLabel(country: String, month: String, year: Int) -> String { ProfileV3L10n.moAiprofileGeneralTripDateLabel(country, month, year) }
     static var alwaysAsk: String { ProfileV3L10n.moAiprofileAgentSettingsAlwaysAsk }
     static var permissionAlways: String { ProfileV3L10n.moAiprofileAgentSettingsAlways }

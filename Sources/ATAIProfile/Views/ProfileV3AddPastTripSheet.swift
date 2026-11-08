@@ -93,35 +93,3 @@ private struct ProfileV3TripSheetButton: View {
     }
 }
 
-struct ProfileV3PastTripActionsSheet: View {
-    let deleteTitle: String
-    let onDelete: () -> Void
-
-    private typealias Sizes = ProfileV3Theme.Sizes.TripSheet
-
-    var body: some View {
-        VStack(spacing: 0) {
-            if !deleteTitle.isEmpty {
-                Button(action: onDelete) {
-                    HStack(spacing: Sizes.actionGap) {
-                        ATIcon.SwiftUIImage.delete
-                            .profileV3Icon(Sizes.actionIcon)
-                            .foregroundStyle(ProfileV3Theme.Palette.silverGrey)
-                            .accessibilityHidden(true)
-                        Text(deleteTitle)
-                            .typoGraphy(.H7InterMedium16)
-                            .foregroundStyle(Color(at: .pureBlack))
-                        Spacer(minLength: 0)
-                    }
-                    .frame(height: Sizes.actionRowHeight)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.profileV3Pressable(.selection))
-                .accessibilityLabel(deleteTitle)
-            }
-        }
-        .padding(.horizontal, Sizes.inset)
-        .padding(.top, Sizes.actionsTop)
-        .frame(height: Sizes.actionsHeight, alignment: .top)
-    }
-}

@@ -6,7 +6,6 @@ import SwiftUI
 final class ProfileV3PastTripsViewModel: ObservableObject {
     enum Sheet: Equatable {
         case add
-        case actions(String)
         case confirmDelete(String)
     }
 
@@ -63,11 +62,6 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         screen?.deleteConfirm ?? ProfileV3TripDeleteConfirm(title: "", confirmLabel: "", cancelLabel: "")
     }
 
-    var actionsTrip: ProfileV3PastTrip? {
-        guard case .actions(let id) = sheet else { return nil }
-        return trips.first { $0.id == id }
-    }
-
     func start() {
         guard !hasStarted else { return }
         hasStarted = true
@@ -95,13 +89,8 @@ final class ProfileV3PastTripsViewModel: ObservableObject {
         present(.add)
     }
 
-    func tapMore(_ trip: ProfileV3PastTrip) {
+    func tapDelete(_ trip: ProfileV3PastTrip) {
         guard sheet == nil, revealingTripID == nil, trip.delete != nil else { return }
-        present(.actions(trip.id))
-    }
-
-    func tapDelete() {
-        guard let trip = actionsTrip, trip.delete != nil else { return }
         present(.confirmDelete(trip.id))
     }
 

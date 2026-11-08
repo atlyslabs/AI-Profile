@@ -141,7 +141,7 @@ struct ProfileV3EditTravellerFormView: View {
 
     private var confirmBar: some View {
         ProfileV3ContinueButton(
-            title: ProfileV3Strings.confirmEdit,
+            title: ProfileV3Strings.update,
             isLoading: isSaving,
             isEnabled: traveller.canSave && isPhoneValid && passportError == nil,
             action: onConfirm

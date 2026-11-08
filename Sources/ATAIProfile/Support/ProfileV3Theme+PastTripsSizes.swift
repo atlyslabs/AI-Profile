@@ -19,8 +19,8 @@ extension ProfileV3Theme.Sizes {
         static let yearTop: CGFloat = 260.5
         static let yearSize: CGFloat = 80
         static let yearTracking: CGFloat = -3.2
-        static let moreOffsetX: CGFloat = 44
-        static let moreOffsetY: CGFloat = 20
+        static let deleteOffsetX: CGFloat = 44
+        static let deleteOffsetY: CGFloat = 20
         static let headerFade: CGFloat = 150
         static let fab: CGFloat = 60
         static let fabIconRotation = Angle.degrees(45)
@@ -63,11 +63,6 @@ extension ProfileV3Theme.Sizes {
         static let ctaBottom = ProfileV3Theme.Space.s20
         static let countryHeight: CGFloat = 612
         static let errorBottom = ProfileV3Theme.Space.s12
-        static let actionsHeight: CGFloat = 116
-        static let actionRowHeight = ProfileV3Theme.Control.tapTarget
-        static let actionsTop: CGFloat = 51.5
-        static let actionIcon = ProfileV3Theme.Icon.md
-        static let actionGap = ProfileV3Theme.Space.s10
     }
 
     enum PastTripsPill {
@@ -97,7 +92,7 @@ extension ProfileV3Theme.Palette {
 }
 
 extension ProfileV3Theme.Opacity {
-    static let tripMore: Double = 0.4
+    static let tripDelete: Double = 0.4
     static let tripMonth: Double = 0.6
     static let tripPhotoStroke: Double = 0.4
     static let tripScrim: Double = 0.64

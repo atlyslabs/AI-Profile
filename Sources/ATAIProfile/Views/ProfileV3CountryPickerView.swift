@@ -96,7 +96,7 @@ struct ProfileV3CountryPickerView: View {
         selected: .india,
         trailing: ProfileV3CurrencyCodes.code(for:),
         searchText: ProfileV3CurrencyCodes.searchText(for:),
-        confirmTitle: ProfileV3Strings.confirmEdit,
+        confirmTitle: ProfileV3Strings.update,
         onBack: {},
         onSelect: { _ in }
     )

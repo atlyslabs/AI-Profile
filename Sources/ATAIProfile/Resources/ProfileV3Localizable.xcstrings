@@ -2348,7 +2348,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Confirm edit"
+            "value": "Update"
           }
         }
       }
@@ -2829,18 +2829,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "updated on %1$@"
-          }
-        }
-      }
-    },
-    "mo-aiprofile-general-past-trip-options": {
-      "comment": "Header for past trip options by country.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ trip options"
           }
         }
       }

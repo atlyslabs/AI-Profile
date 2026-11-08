@@ -84,6 +84,7 @@ extension ProfileV3Theme {
         static let dragMinimumDistance: CGFloat = 2
 
         static let markerDiameters: [CGFloat] = [42.84, 34.1, 33.52, 26.07, 26.07, 19.79]
+        static let markerSphereRadius: CGFloat = 131
         static let markerFlareRatio: CGFloat = 0.864
         static let markerFlareRotation = Angle.degrees(-124.72)
         static let markerFlareOpacity = 0.8

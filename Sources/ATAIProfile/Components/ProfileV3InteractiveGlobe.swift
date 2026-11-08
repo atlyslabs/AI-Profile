@@ -206,6 +206,7 @@ struct ProfileV3InteractiveGlobe: View {
 
     private func drawMarkers(in context: GraphicsContext, projection: ProfileV3Globe.Projection, at date: Date) {
         let flare = flare.map { context.resolve($0) }
+        let sphereScale = min(projection.radius / Globe.markerSphereRadius, 1)
         for (index, code) in visitedCountryCodes.enumerated() {
             guard let location = ProfileV3GlobeLocations.coordinate(for: code) else { continue }
             let (point, depth) = projection.project(latitude: location.latitude, longitude: location.longitude)
@@ -218,6 +219,7 @@ struct ProfileV3InteractiveGlobe: View {
             guard opacity > 0 else { continue }
             let nearness = CGFloat(min(max(depth, 0), 1))
             let diameter = Globe.markerDiameters[index % Globe.markerDiameters.count]
+                * sphereScale
                 * entrance.scale
                 * (1 - Globe.markerDepthShrink * (1 - nearness))
 

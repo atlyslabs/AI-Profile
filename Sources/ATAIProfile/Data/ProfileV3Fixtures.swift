@@ -419,7 +419,7 @@ enum ProfileV3Fixtures {
             field: ProfileV3AddTravellerField.relationshipKey,
             title: "Relationship",
             input: .singleSelect,
-            submitLabel: ProfileV3Strings.confirmEdit,
+            submitLabel: ProfileV3Strings.update,
             currentCode: selected,
             options: relationshipOptions.map {
                 ProfileV3EditField.Option(value: $0.value, title: $0.title, isSelected: $0.value == selected)

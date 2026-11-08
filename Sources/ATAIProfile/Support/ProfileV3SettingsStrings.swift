@@ -120,7 +120,7 @@ extension ProfileV3Strings {
     static var howThisIsUsedEmphasis: String { ProfileV3L10n.moAiprofileDocumentsTextHowUsedEmphasis }
     static var connectorNeedsAttention: String { ProfileV3L10n.moAiprofileAccountStatusNeedsAttention }
     static var deleteAccount: String { ProfileV3L10n.moAiprofileAccountButtonDelete }
-    static var confirmEdit: String { ProfileV3L10n.moAiprofileGeneralButtonConfirm }
+    static var update: String { ProfileV3L10n.moAiprofileGeneralButtonConfirm }
     static var logoutConfirmTitle: String { ProfileV3L10n.moAiprofileAccountConfirmationLogout }
     static var staySignedIn: String { ProfileV3L10n.moAiprofileAccountButtonStaySignedIn }
     static var proceedToDelete: String { ProfileV3L10n.moAiprofileAccountButtonConfirmDelete }
