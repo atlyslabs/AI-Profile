@@ -50,6 +50,17 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 - `ProfileV3HostActions.placesAPIKey` (optional) and a GooglePlaces dependency (`ios-places-sdk`
   from 10.1.0, the version range KYC uses) for the hotel search. Hosts pass the key they give KYC;
   the package calls `GMSPlacesClient.provideAPIKey` with it once.
+- Home city search in Personal Info. An agent `text` field that the board marks with
+  `search: "client_cities"` opens the option picker as a Google city search instead of the
+  keyboard. The field looks like the text fields around it.
+  - The search is Places autocomplete filtered to cities, 300 ms after the last keystroke, with the
+    residence country ranked first but no country left out. Rows show the city and its region
+    ("Mumbai · Maharashtra, India") on a map tile.
+  - The saved city shows ticked before you type, and stays in the list while it matches.
+  - Picking a city saves its name only ("New York", not "New York, NY, USA") and closes the
+    picker; tapping the saved city keeps it. There's no typed entry.
+  - Without the hint or the host's `placesAPIKey`, the field stays a text field. ai-kyc doesn't
+    send the hint yet.
 - Loyalty programmes can be edited. In the programmes page's edit mode (where cards are picked for
   deletion), every card has an "Edit" pill where "View insight" sits. It opens the add flow's
   details sheet, filled from `GET /board/loyalty/edit/{program_id}?profile_id=` (slashes in the id
@@ -194,8 +205,10 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   - Option chips wrap a long label onto two lines instead of truncating it on narrower phones, and
     their trailing padding matches the orb side (12pt), so "Early morning" fits on one line at the
     design's width (QA-2120).
-  - Timing orbs are drawn in full colour whether picked or not, as in Figma `6739:16294`; a pick
-    adds the tick (QA-2121).
+  - Timing orbs follow Figma `6739:7548` again: full colour with the tick when picked, 30% when
+    not (QA-2121). The dull colours QA saw come from the server's art, not the app: the
+    `timing-*.png` files on the CDN have the faded look baked in over white, and
+    `timing-noon.png` is missing. Full-colour replacements have to be uploaded.
   - The sample deck's purpose tag has the design's glass: Liquid Glass on iOS 26 (a material and
     hairline before), a 10% white fill and a soft shadow (QA-2113). The glass is UIKit's
     `UIGlassEffect`: SwiftUI's `glassEffect` swells on a tilted view, so the tag grew and shrank as

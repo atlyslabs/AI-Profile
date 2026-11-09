@@ -57,6 +57,7 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
     private static let labelledSliderRange: ClosedRange<Double> = 0...100
     private static let preferenceSourcesRoute = "preference_sources"
     private static let viewSourceEmailsAction = "view_source_emails"
+    private static let citySearch = "client_cities"
 
     static func flow(
         from dto: ProfileV3AgentScreenDTO,
@@ -335,7 +336,11 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
             return .slider(slider(from: field))
         case .text:
             return .text(
-                ProfileV3TextFieldValue(value: field.value?.stringValue ?? "", placeholder: placeholder(for: field))
+                ProfileV3TextFieldValue(
+                    value: field.value?.stringValue ?? "",
+                    placeholder: placeholder(for: field),
+                    search: text(field.search) == citySearch ? .cities : nil
+                )
             )
         case .date:
             return date(from: field, residuals: &residuals)

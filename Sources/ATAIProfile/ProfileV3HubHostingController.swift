@@ -148,6 +148,7 @@ extension ProfileV3HubHostingController: ProfileV3HubRouter {
                     kyc: environment.kyc,
                     isCoTraveller: viewModel.isCoTraveller(profileID),
                     residenceCode: { [account = environment.account] in account.snapshot().residenceCode },
+                    placeSearch: environment.placeSearch,
                     onSaved: { [weak viewModel] in viewModel?.requestRefresh() }
                 ),
                 animated: true

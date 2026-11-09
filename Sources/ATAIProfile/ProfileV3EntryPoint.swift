@@ -117,6 +117,7 @@ public enum ProfileV3EntryPoint {
         kyc: (any ProfileV3KYCHost)? = nil,
         isCoTraveller: Bool = false,
         residenceCode: @escaping @MainActor () -> String? = { nil },
+        placeSearch: (any ProfileV3PlaceSearching)? = nil,
         onSaved: @escaping () -> Void = {}
     ) -> UIViewController {
         ProfileV3AgentFlowHostingController(
@@ -127,6 +128,7 @@ public enum ProfileV3EntryPoint {
             kyc: kyc,
             isCoTraveller: isCoTraveller,
             residenceCode: residenceCode,
+            placeSearch: placeSearch,
             onSaved: onSaved
         )
     }

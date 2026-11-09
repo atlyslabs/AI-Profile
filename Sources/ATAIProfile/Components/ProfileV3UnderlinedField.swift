@@ -38,6 +38,32 @@ struct ProfileV3UnderlinedField: View {
     }
 }
 
+struct ProfileV3UnderlinedSearchField: View {
+    let placeholder: String
+    var accessibilityLabel: String?
+    let value: String
+    let action: () -> Void
+
+    private var shown: String? { value.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty }
+
+    var body: some View {
+        Button(action: action) {
+            ProfileV3ContentWidthLayout(minWidth: ProfileV3Theme.Sizes.underlinedFieldWidth) {
+                Text(shown ?? placeholder.lowercased())
+                    .typoGraphy(.B1InterMedium14)
+                    .foregroundStyle(shown == nil ? ProfileV3Theme.Palette.placeholderText : Color(at: .pureBlack))
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .profileV3UnderlinedFieldStyle(isFocused: false, width: nil)
+                    .contentShape(Rectangle())
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(accessibilityLabel ?? placeholder)
+        .accessibilityValue(shown ?? "")
+    }
+}
+
 private struct ProfileV3ContentWidthLayout: Layout {
     let minWidth: CGFloat
 

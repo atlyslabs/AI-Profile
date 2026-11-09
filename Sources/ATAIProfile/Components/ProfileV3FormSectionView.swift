@@ -139,16 +139,25 @@ struct ProfileV3FormSectionView: View {
             }
             .frame(maxWidth: .infinity)
         case .text(let field):
-            ProfileV3UnderlinedField(
-                placeholder: field.placeholder,
-                accessibilityLabel: section.title,
-                text: Binding(get: { field.value }, set: onTextChange),
-                keyboard: field.keyboard == .phone ? .phonePad : .default,
-                growsWithContent: !field.isDate,
-                onFocusChange: { isFocused in
-                    if !isFocused { onTextCommit?() }
-                }
-            )
+            if field.search != nil, let onAdd {
+                ProfileV3UnderlinedSearchField(
+                    placeholder: field.placeholder,
+                    accessibilityLabel: section.title,
+                    value: field.value,
+                    action: onAdd
+                )
+            } else {
+                ProfileV3UnderlinedField(
+                    placeholder: field.placeholder,
+                    accessibilityLabel: section.title,
+                    text: Binding(get: { field.value }, set: onTextChange),
+                    keyboard: field.keyboard == .phone ? .phonePad : .default,
+                    growsWithContent: !field.isDate,
+                    onFocusChange: { isFocused in
+                        if !isFocused { onTextCommit?() }
+                    }
+                )
+            }
         case .date(let field):
             ProfileV3DateInput(
                 placeholder: field.placeholder,

@@ -70,7 +70,8 @@ protocol — see "Deliberately out of scope" below.
 
    `countries` is optional. Left unset, the package uses ATUIKit's country list. `placesAPIKey` is
    optional too: with it, the city profile's hotels card searches hotels in the city with Google
-   Places. Without it, people type hotel names by hand. Profile events are
+   Places, and an agent field the board marks for a city search (Personal Info's home city) searches
+   cities. Without it, people type hotel names and the home city by hand. Profile events are
    delivered to the host's `ProfileV3AnalyticsReporting`; the package does not send them itself.
    `appVersion` (sent as `x-app-version`, defaulting to the bundle's short version) and extra Moya
    `plugins` are optional arguments of `registerConfigurationProvider`.
@@ -128,7 +129,7 @@ dependency; the host only supplies the current token.
 | `globe` | `ProfileV3GlobeRendering` | Preparing and drawing the globe's land |
 | `validation` | `ProfileV3FieldValidating` | Email and passport-number checks |
 | `countries` | `[ProfileV3Country]?` | The country list for pickers, currency and lookups. Unset uses ATUIKit's directory |
-| `placesAPIKey` | `String?` | The Google Places key for the city profile's hotel search, the same key KYC uses. The package passes it to `GMSPlacesClient.provideAPIKey` once. Unset leaves typed names only |
+| `placesAPIKey` | `String?` | The Google Places key for the city profile's hotel search and the home city search, the same key KYC uses. The package passes it to `GMSPlacesClient.provideAPIKey` once. Unset leaves typed names only |
 
 - Two images in the host's asset catalog, `WhatsApp` and `reserve_logo_clear`. Every other image
   ships in the package bundle, and remote art loads with Nuke from

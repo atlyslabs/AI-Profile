@@ -162,7 +162,7 @@ struct ProfileV3AgentFormView: View {
                     onTextChange: { viewModel.setText($0, in: section.id) },
                     onTextCommit: { viewModel.commitText(in: section.id) },
                     onDateChange: { viewModel.setDate($0, in: section.id) },
-                    onAdd: { viewModel.openPicker(for: section.id) },
+                    onAdd: viewModel.canOpenPicker(for: section.id) ? { viewModel.openPicker(for: section.id) } : nil,
                     onOpenSources: { viewModel.openSources(for: section.id) },
                     onUploadPassport: { viewModel.startPassportUpdate() },
                     onViewPreviousPassports: viewModel.tapViewPreviousPassports,

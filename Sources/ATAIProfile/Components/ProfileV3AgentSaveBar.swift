@@ -59,21 +59,38 @@ struct ProfileV3AgentOptionPicker: View {
     @ObservedObject var viewModel: ProfileV3AgentFormViewModel
 
     var body: some View {
-        if let section = viewModel.pickerSection, case .chips(let field) = section.control, let picker = field.picker {
-            ProfileV3OptionPickerView(
-                title: picker.title,
-                options: viewModel.pickerOptions,
-                selection: field.selection,
-                listLabel: viewModel.pickerListLabel ?? picker.listLabel,
-                isSearching: viewModel.isSearchingPlaces,
-                onQueryChange: viewModel.searchesPlaces(in: section.id) ? { viewModel.searchPlaces($0) } : nil,
-                onReachEnd: viewModel.searchesPlaces(in: section.id) ? { viewModel.loadMorePopularPlaces() } : nil,
-                onBack: viewModel.closePicker,
-                onToggle: { viewModel.togglePickerOption($0, in: section.id) },
-                onAdd: picker.typedEntry.map { entry in
-                    field.selection.count < entry.maxItems ? { viewModel.addTypedOption($0, in: section.id) } : nil
-                } ?? nil
-            )
+        if let section = viewModel.pickerSection {
+            switch section.control {
+            case .chips(let field):
+                if let picker = field.picker {
+                    ProfileV3OptionPickerView(
+                        title: picker.title,
+                        options: viewModel.pickerOptions,
+                        selection: field.selection,
+                        listLabel: viewModel.pickerListLabel ?? picker.listLabel,
+                        isSearching: viewModel.isSearchingPlaces,
+                        onQueryChange: viewModel.searchesPlaces(in: section.id) ? { viewModel.searchPlaces($0) } : nil,
+                        onReachEnd: viewModel.searchesPlaces(in: section.id) ? { viewModel.loadMorePopularPlaces() } : nil,
+                        onBack: viewModel.closePicker,
+                        onToggle: { viewModel.togglePickerOption($0, in: section.id) },
+                        onAdd: picker.typedEntry.map { entry in
+                            field.selection.count < entry.maxItems ? { viewModel.addTypedOption($0, in: section.id) } : nil
+                        } ?? nil
+                    )
+                }
+            case .text:
+                ProfileV3OptionPickerView(
+                    title: section.title,
+                    options: viewModel.pickerOptions,
+                    selection: viewModel.pickerSelection,
+                    isSearching: viewModel.isSearchingPlaces,
+                    onQueryChange: { viewModel.searchPlaces($0) },
+                    onBack: viewModel.closePicker,
+                    onToggle: { viewModel.togglePickerOption($0, in: section.id) }
+                )
+            default:
+                EmptyView()
+            }
         }
     }
 }

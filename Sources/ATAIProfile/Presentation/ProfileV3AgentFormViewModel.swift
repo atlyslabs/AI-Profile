@@ -432,8 +432,24 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         )
     }
 
+    var pickerSelection: Set<String> {
+        switch pickerSection?.control {
+        case .chips(let field)?: return field.selection
+        case .text(let field)?: return Self.cityID(field.value).map { [$0] } ?? []
+        default: return []
+        }
+    }
+
+    func canOpenPicker(for sectionID: String) -> Bool {
+        switch form.sections.first(where: { $0.id == sectionID })?.control {
+        case .chips?: return true
+        case .text?: return placeTarget(in: sectionID) == .cities
+        default: return false
+        }
+    }
+
     func openPicker(for sectionID: String) {
-        guard case .chips = form.sections.first(where: { $0.id == sectionID })?.control else { return }
+        guard canOpenPicker(for: sectionID) else { return }
         resetPlaceSearch()
         pickerSectionID = sectionID
         refreshPickerOptions()
@@ -480,6 +496,10 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
     }
 
     func togglePickerOption(_ optionID: String, in sectionID: String) {
+        if placeTarget(in: sectionID) == .cities {
+            pickCity(optionID, in: sectionID)
+            return
+        }
         guard case .chips(let field)? = form.sections.first(where: { $0.id == sectionID })?.control else { return }
         if field.allOptions.contains(where: { $0.id == optionID }) {
             toggleOption(optionID, in: sectionID)
@@ -510,12 +530,20 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         trackChange(in: sectionID)
     }
 
+    private func pickCity(_ optionID: String, in sectionID: String) {
+        if let city = pickerOptions.first(where: { $0.id == optionID }) {
+            setText(city.title, in: sectionID)
+            commitText(in: sectionID)
+        }
+        closePicker()
+    }
+
     func searchesPlaces(in sectionID: String) -> Bool {
-        placeScope(in: sectionID) != nil
+        placeTarget(in: sectionID) != nil
     }
 
     func searchPlaces(_ text: String) {
-        guard let sectionID = pickerSectionID, let scope = placeScope(in: sectionID), let placeSearch else { return }
+        guard let sectionID = pickerSectionID, let target = placeTarget(in: sectionID), let placeSearch else { return }
         placeTask?.cancel()
         placeQuery = text
         let query = Self.typedName(text, maxChars: .max)
@@ -527,10 +555,15 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         }
         isSearchingPlaces = true
         refreshPickerOptions()
+        let regionCode = residenceCode()
         placeTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(ProfileV3Theme.Motion.placeSearchDebounceMilliseconds))
             guard !Task.isCancelled else { return }
-            let found = await placeSearch.lodging(matching: query, in: scope)
+            let found: [ProfileV3PlaceSuggestion]
+            switch target {
+            case .lodging(let scope): found = await placeSearch.lodging(matching: query, in: scope)
+            case .cities: found = await placeSearch.cities(matching: query, near: regionCode)
+            }
             guard let self, !Task.isCancelled, placeQuery == text else { return }
             placeSuggestions = found
             isSearchingPlaces = false
@@ -538,17 +571,37 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         }
     }
 
+    private enum PlaceTarget: Equatable {
+        case lodging(ProfileV3PlaceSearchScope)
+        case cities
+    }
+
+    private func placeTarget(in sectionID: String) -> PlaceTarget? {
+        guard placeSearch != nil else { return nil }
+        switch form.sections.first(where: { $0.id == sectionID })?.control {
+        case .chips(let field)?:
+            return field.picker?.typedEntry?.search.map(PlaceTarget.lodging)
+        case .text(let field)?:
+            return field.search == .cities ? .cities : nil
+        default:
+            return nil
+        }
+    }
+
     private func placeScope(in sectionID: String) -> ProfileV3PlaceSearchScope? {
-        guard placeSearch != nil,
-              case .chips(let field)? = form.sections.first(where: { $0.id == sectionID })?.control else { return nil }
-        return field.picker?.typedEntry?.search
+        guard case .lodging(let scope)? = placeTarget(in: sectionID) else { return nil }
+        return scope
     }
 
     private func refreshPickerOptions() {
-        guard let sectionID = pickerSectionID,
-              case .chips(let field)? = form.sections.first(where: { $0.id == sectionID })?.control else { return }
-        let query = Self.typedName(placeQuery, maxChars: .max)
+        guard let sectionID = pickerSectionID else { return }
         pickerListLabel = nil
+        if case .text(let field)? = pickerSection?.control, placeTarget(in: sectionID) == .cities {
+            pickerOptions = cityOptions(for: field)
+            return
+        }
+        guard case .chips(let field)? = form.sections.first(where: { $0.id == sectionID })?.control else { return }
+        let query = Self.typedName(placeQuery, maxChars: .max)
         guard let entry = field.picker?.typedEntry, placeScope(in: sectionID) != nil else {
             pickerOptions = field.allOptions
             return
@@ -566,6 +619,22 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
             $0.title.localizedCaseInsensitiveContains(query) && !listed.contains(Self.folded($0.title))
         }
         pickerOptions = saved + found
+    }
+
+    private func cityOptions(for field: ProfileV3TextFieldValue) -> [ProfileV3ChipOption] {
+        let current = Self.cityID(field.value)
+        let saved = current.map { [ProfileV3ChipOption(id: $0, title: $0, place: .location)] } ?? []
+        let query = Self.typedName(placeQuery, maxChars: .max)
+        guard !query.isEmpty else { return saved }
+        var listed = Set<String>()
+        let found = placeSuggestions.compactMap { place -> ProfileV3ChipOption? in
+            let name = Self.typedName(place.name, maxChars: .max)
+            guard !name.isEmpty, listed.insert(Self.folded(name)).inserted else { return nil }
+            let id = current.flatMap { Self.folded($0) == Self.folded(name) ? $0 : nil } ?? name
+            return ProfileV3ChipOption(id: id, title: name, subtitle: place.detail, place: .location)
+        }
+        let matching = saved.filter { $0.title.localizedCaseInsensitiveContains(query) && !listed.contains(Self.folded($0.title)) }
+        return matching + found
     }
 
     private func placeOptions(
@@ -597,6 +666,10 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
 
     private static func folded(_ text: String) -> String {
         typedName(text, maxChars: .max).lowercased()
+    }
+
+    private static func cityID(_ value: String) -> String? {
+        typedName(value, maxChars: .max).nonEmpty
     }
 
     func openSources(for sectionID: String) {

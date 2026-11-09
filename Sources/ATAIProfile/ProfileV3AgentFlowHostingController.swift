@@ -15,6 +15,7 @@ final class ProfileV3AgentFlowHostingController: UIHostingController<ProfileV3Ag
         kyc: (any ProfileV3KYCHost)? = nil,
         isCoTraveller: Bool = false,
         residenceCode: @escaping @MainActor () -> String? = { nil },
+        placeSearch: (any ProfileV3PlaceSearching)? = nil,
         onSaved: @escaping () -> Void = {}
     ) {
         let viewModel = ProfileV3AgentFlowViewModel(
@@ -24,6 +25,7 @@ final class ProfileV3AgentFlowHostingController: UIHostingController<ProfileV3Ag
             kyc: kyc,
             isCoTraveller: isCoTraveller,
             residenceCode: residenceCode,
+            placeSearch: placeSearch,
             onSaved: onSaved
         )
         self.viewModel = viewModel
