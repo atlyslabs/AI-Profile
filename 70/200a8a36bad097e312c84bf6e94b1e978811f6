@@ -1,0 +1,24 @@
+CHANGELOG.md
+  s_23224d965db0a7::t_4b51440d7eecdf 210-211
+CLAUDE.md
+  s_23224d965db0a7::t_b143fe9c94dd25 152,158
+  s_23224d965db0a7::t_ac6aaa7ef710a2 323
+  s_23224d965db0a7::t_db99c7d01a45eb 374-375
+  s_23224d965db0a7::t_1c8d805a98df64 272
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "70200a8a36bad097e312c84bf6e94b1e978811f6",
+  "prompts": {},
+  "sessions": {
+    "s_23224d965db0a7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cdacd9de-e2e5-440b-bfd4-a60813439445",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
