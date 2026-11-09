@@ -206,6 +206,7 @@ extension ProfileV3Theme.Opacity {
     static let cityPlaceSubtitle: Double = 0.5
     static let cityDeckMiddle: Double = 0.8
     static let cityDeckBack: Double = 0.4
+    static let cityOrbIdle: Double = 0.3
 }
 
 extension ProfileV3Theme.Motion {

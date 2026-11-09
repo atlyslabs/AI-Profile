@@ -319,10 +319,15 @@ struct ProfileV3TextFieldValue: Equatable {
         case text
     }
 
+    enum Search: Equatable {
+        case cities
+    }
+
     var value: String
     let placeholder: String
     var keyboard: Keyboard = .text
     var isDate = false
+    var search: Search?
 }
 
 struct ProfileV3DateField: Equatable {

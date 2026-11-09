@@ -34,6 +34,7 @@ struct ProfileV3PlaceSearchScope: Equatable, Sendable {
 protocol ProfileV3PlaceSearching: AnyObject {
     func lodging(matching text: String, in scope: ProfileV3PlaceSearchScope) async -> [ProfileV3PlaceSuggestion]
     func popularLodging(in scope: ProfileV3PlaceSearchScope, pageToken: String?) async -> ProfileV3PlacePage
+    func cities(matching text: String, near regionCode: String?) async -> [ProfileV3PlaceSuggestion]
 }
 
 @MainActor
@@ -114,6 +115,21 @@ final class ProfileV3GooglePlaceSearch: ProfileV3PlaceSearching {
         if let countryCode = scope.countryCode?.nonEmpty {
             filter.countries = [countryCode]
         }
+        return await predictions(for: query, filter: filter)
+    }
+
+    func cities(matching text: String, near regionCode: String?) async -> [ProfileV3PlaceSuggestion] {
+        let query = text.split(whereSeparator: \.isWhitespace).joined(separator: " ")
+        guard !query.isEmpty else { return [] }
+        let filter = GMSAutocompleteFilter()
+        filter.types = [kGMSPlaceTypeCollectionCity]
+        if let regionCode = regionCode?.nonEmpty {
+            filter.regionCode = regionCode
+        }
+        return await predictions(for: query, filter: filter)
+    }
+
+    private func predictions(for query: String, filter: GMSAutocompleteFilter) async -> [ProfileV3PlaceSuggestion] {
         let limit = Self.limit
         let client = client
         return await withCheckedContinuation { continuation in

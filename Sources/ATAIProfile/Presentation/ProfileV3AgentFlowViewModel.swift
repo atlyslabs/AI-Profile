@@ -26,6 +26,7 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
     private let kyc: (any ProfileV3KYCHost)?
     private let isCoTraveller: Bool
     private let residenceCode: @MainActor () -> String?
+    private let placeSearch: (any ProfileV3PlaceSearching)?
     private let onSaved: () -> Void
     private var retryTask: Task<Void, Never>?
 
@@ -36,6 +37,7 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
         kyc: (any ProfileV3KYCHost)? = nil,
         isCoTraveller: Bool = false,
         residenceCode: @escaping @MainActor () -> String? = { nil },
+        placeSearch: (any ProfileV3PlaceSearching)? = nil,
         onSaved: @escaping () -> Void = {}
     ) {
         self.agent = agent
@@ -44,6 +46,7 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
         self.kyc = kyc
         self.isCoTraveller = isCoTraveller
         self.residenceCode = residenceCode
+        self.placeSearch = placeSearch
         self.onSaved = onSaved
     }
 
@@ -72,6 +75,7 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
                         avatarURL: avatarURL,
                         profileID: profileID,
                         repository: repository,
+                        placeSearch: placeSearch,
                         residenceCode: residenceCode,
                         presentPassportScan: { [weak self] in self?.router?.presentPassportScan($0) },
                         onPassportUploaded: { [weak self] in self?.trackPassportUpload($0, profileID: $1) },

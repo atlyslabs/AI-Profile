@@ -295,6 +295,7 @@ struct ProfileV3CityOrb: View {
         ProfileV3RemoteImage(url: imageURL, placeholder: ProfileV3Theme.Palette.cityOptionBorder)
             .clipShape(Circle())
             .overlay(Circle().strokeBorder(ProfileV3Theme.Palette.cityOptionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
+            .opacity(isSelected ? 1 : ProfileV3Theme.Opacity.cityOrbIdle)
             .overlay {
                 if isSelected {
                     ATIcon.SwiftUIImage.check

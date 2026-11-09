@@ -235,6 +235,7 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
     let unit: String?
     let display: String?
     let format: String?
+    let search: String?
     let ratherNotSay: Bool?
     let value: ProfileV3AgentValueDTO?
     let note: String?
@@ -271,6 +272,7 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
         case unit
         case display
         case format
+        case search
         case ratherNotSay = "rather_not_say"
         case value
         case note

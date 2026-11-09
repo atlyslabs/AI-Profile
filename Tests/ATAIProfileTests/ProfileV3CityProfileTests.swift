@@ -703,4 +703,8 @@ private final class ProfileV3StubPlaceSearch: ProfileV3PlaceSearching {
         popularRequests.append(pageToken)
         return popularPages[pageToken] ?? ProfileV3PlacePage(places: [])
     }
+
+    func cities(matching text: String, near regionCode: String?) async -> [ProfileV3PlaceSuggestion] {
+        []
+    }
 }
