@@ -207,8 +207,8 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
     design's width (QA-2120).
   - Timing orbs follow Figma `6739:7548` again: full colour with the tick when picked, 30% when
     not (QA-2121). The dull colours QA saw come from the server's art, not the app: the
-    `timing-*.png` files on the CDN have the faded look baked in over white, and
-    `timing-noon.png` is missing. Full-colour replacements have to be uploaded.
+    `timing-*.png` files on the CDN have the faded look baked in over white. Full-colour
+    replacements have to be uploaded under new URLs, since the CDN caches these images for a year.
   - The sample deck's purpose tag has the design's glass: Liquid Glass on iOS 26 (a material and
     hairline before), a 10% white fill and a soft shadow (QA-2113). The glass is UIKit's
     `UIGlassEffect`: SwiftUI's `glassEffect` swells on a tilted view, so the tag grew and shrank as
