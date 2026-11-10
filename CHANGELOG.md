@@ -205,10 +205,21 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   - Option chips wrap a long label onto two lines instead of truncating it on narrower phones, and
     their trailing padding matches the orb side (12pt), so "Early morning" fits on one line at the
     design's width (QA-2120).
-  - Timing orbs follow Figma `6739:7548` again: full colour with the tick when picked, 30% when
-    not (QA-2121). The dull colours QA saw come from the server's art, not the app: the
-    `timing-*.png` files on the CDN have the faded look baked in over white, and
-    `timing-noon.png` is missing. Full-colour replacements have to be uploaded.
+  - Timing orbs follow Figma `6739:7548`: full colour with the tick when picked, faded when not
+    (QA-2121). The server now sends each timing two images: `image_url` (`timing-*-off.png`, the
+    orb at about 20% alpha) and `selected_image_url` (`timing-*-on.png`, full colour). A picked
+    chip draws the selected image, an unpicked one draws `image_url` as sent, and the two are
+    stacked so a tap swaps them without reloading. The app used to draw `image_url` for both and
+    dim unpicked orbs to 30% on top, so picked orbs looked grey and unpicked ones nearly vanished.
+    A timing sent with only `image_url` still dims to 30% when unpicked.
+  - Class tiles draw the server's art across the whole tile, as Figma `7242:9526`. The server
+    sends each class one image of the full 140×157 tile at 3x, with the seat already in its
+    corner, as both `image_url` and `selected_image_url`. The app used to treat it as a seat
+    cutout: it drew the image in the 106×130 corner slot made for the bundled seats, so a white
+    box with its own edge sat in the corner, and dimmed it to 50% when unpicked, which turned the
+    seats grey. With both images sent, the tile now shows them as sent with no dimming; with only
+    one, it still dims to 50% when unpicked. The bundled seats are the fallback when the server
+    sends no art.
   - The sample deck's purpose tag has the design's glass: Liquid Glass on iOS 26 (a material and
     hairline before), a 10% white fill and a soft shadow (QA-2113). The glass is UIKit's
     `UIGlassEffect`: SwiftUI's `glassEffect` swells on a tilted view, so the tag grew and shrank as

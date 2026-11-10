@@ -208,6 +208,7 @@ struct ProfileV3ChipOption: Identifiable, Hashable {
     let id: String
     let title: String
     var logoURL: URL?
+    var selectedLogoURL: URL?
     var subtitle: String?
     var place: Place?
 }

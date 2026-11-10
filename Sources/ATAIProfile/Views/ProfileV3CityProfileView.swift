@@ -495,6 +495,7 @@ struct ProfileV3CitySectionView: View {
                     title: option.title,
                     isSelected: field.selection.contains(option.id),
                     orbURL: option.logoURL,
+                    selectedOrbURL: option.selectedLogoURL,
                     orbID: option.id
                 ) {
                     form.toggleOption(option.id, in: section.id)
