@@ -35,7 +35,8 @@ struct ProfileV3BenefitDetailView: View {
             isDepleted: benefit.isDepleted,
             footer: footer,
             learnMore: learnMore,
-            onClose: onClose
+            onClose: onClose,
+            tracksScrollDepth: true
         ) {
             ProfileV3BenefitMeter(status: benefit.status)
         }

@@ -46,6 +46,7 @@ struct ProfileV3ProgrammesView: View {
         .sensoryFeedback(.error, trigger: viewModel.actionFailures)
         .task { await viewModel.load(reducesMotion: reduceMotion) }
         .task(id: viewModel.showsReorderHint) { await playReorderDemo() }
+        .analyticsScreenPlaceholder()
     }
 
     private var content: some View {

@@ -12,7 +12,6 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
     private var settingsPresenter: ProfileV3SettingsSheetPresenter?
     private var addProgrammePresenter: ProfileV3AddProgrammeSheetPresenter?
     private let programmeSelections = ProfileV3ProgrammeSelectionMemory()
-    private let entrySource: ProfileV3Analytics.EntrySource
     private let onboarding: ProfileV3OnboardingPresentation
 
     init(
@@ -25,7 +24,6 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
         onBack: (() -> Void)? = nil
     ) {
         self.navCon = navCon
-        self.entrySource = entrySource
         self.onboarding = onboarding
         self.onBack = onBack
         self.repository = repository
@@ -50,11 +48,6 @@ final class ProfileV3HubHostingController: UIHostingController<ProfileV3HubRoot>
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(Color(at: .pureWhite))
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        ProfileV3Analytics.screen(.hub, entrySource: entrySource)
     }
 }
 
@@ -351,5 +344,6 @@ struct ProfileV3HubRoot: View {
             .environment(\.profileV3Globe, globe)
             .environment(\.profileV3FloatingBarClearance, floatingBarClearance)
             .environment(\.profileV3PausesAnimations, ProfileV3ScreenCover.shared.isCovered)
+            .analyticsScreenContext(.profile)
     }
 }

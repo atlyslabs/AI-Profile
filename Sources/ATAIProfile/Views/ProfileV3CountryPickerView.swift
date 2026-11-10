@@ -47,6 +47,7 @@ struct ProfileV3CountryPickerView: View {
                 pinned: selected,
                 trailing: trailing,
                 searchText: searchText,
+                tracksScrollDepth: true,
                 onSelect: choose
             )
         }

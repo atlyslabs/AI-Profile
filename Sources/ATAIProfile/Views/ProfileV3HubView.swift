@@ -105,9 +105,11 @@ struct ProfileV3HubView: View {
                 onRedeem: viewModel.redeem,
                 redeemError: viewModel.redeemError,
                 onClearRedeemError: viewModel.clearRedeemError,
-                onLearnMore: viewModel.learnMoreAction
+                onLearnMore: viewModel.learnMoreAction,
+                travellerID: viewModel.selectedPassID
             )
             ProfileV3CouponHeroOverlay(presenter: couponPresenter, loadDetail: viewModel.couponDetail)
+                .analyticsScreenPlaceholder(active: couponPresenter.isPresenting)
             ProfileV3HubSheets(viewModel: viewModel, isRevealed: cover.isMounted)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -168,6 +170,7 @@ struct ProfileV3HubView: View {
             .contentMargins(.bottom, floatingBarClearance, for: .scrollContent)
             .profileV3ScrollOffset(scrollOffset)
             .scrollDisabled(locksScrolling || viewModel.isHouseholdSelected)
+            .trackScrollDepth()
             .onChange(of: viewModel.isHouseholdSelected) { _, isSelected in
                 guard isSelected, scroll.offset > 0 else { return }
                 withAnimation(reduceMotion ? nil : ProfileV3Theme.Motion.contentSwitch) {
@@ -349,7 +352,6 @@ struct ProfileV3HubView: View {
     }
 
     private func presentBenefit(_ benefit: ProfileV3Benefit) {
-        viewModel.trackBenefitScreen(benefit)
         cover.present { benefitPresenter.present(benefit) }
     }
 }
@@ -385,6 +387,7 @@ private struct ProfileV3HubSheets: View {
         }
         if isRevealed, let pastTrips = viewModel.pastTrips {
             ProfileV3PastTripsView(viewModel: pastTrips)
+                .analyticsScreenPlaceholder()
                 .zIndex(1)
                 .transition(ProfileV3Theme.Motion.pastTripsPageTransition)
         }
@@ -408,6 +411,7 @@ private struct ProfileV3HubSheets: View {
                 onBenefitLearnMore: viewModel.learnMoreAction,
                 travellerID: viewModel.selectedPassID
             )
+            .analyticsScreen(.profileBenefitList)
             .transition(ProfileV3Theme.Motion.fullScreenTransition)
         }
     }

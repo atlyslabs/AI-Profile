@@ -40,6 +40,7 @@ struct ProfileV3AgentFormView: View {
         }
         .sheet(item: $viewModel.airportPickup) { pickup in
             ProfileV3AirportPickupView(viewModel: pickup)
+                .analyticsScreenPlaceholder()
                 .profileV3Sheet(.large, cornerRadius: ProfileV3Theme.Sizes.largeSheetCornerRadius)
         }
         .sheet(item: householdSheet) { _ in
@@ -133,6 +134,7 @@ struct ProfileV3AgentFormView: View {
             .profileV3ScrollOffsetAnchor(headerPin.offsetBinding)
         }
         .profileV3ScrollOffset(headerPin.offsetBinding)
+        .trackScrollDepth()
         .overlay(alignment: .top) {
             ProfileV3AgentStickyHeader(tag: form.agentTag, pin: headerPin, onBack: viewModel.tapBack)
         }

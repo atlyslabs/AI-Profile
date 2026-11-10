@@ -9,14 +9,10 @@ public enum ProfileV3EntrySource: String, Sendable {
 enum ProfileV3Analytics {
 
     enum Screen: String {
-        case hub = "aiProfile"
-        case settings = "aiSettings"
         case agentPickup = "aiProfileAgentPickup"
         case programmes = "aiProfileProgrammes"
         case addProgramme = "aiProfileAddProgramme"
-        case benefit = "aiProfileBenefit"
         case coupons = "aiProfileCoupons"
-        case connectors = "aiProfileConnectors"
         case travellers = "aiProfileTravellers"
         case permissions = "aiProfilePermissions"
         case programmeSources = "aiProfileProgrammeSources"
@@ -171,7 +167,6 @@ enum ProfileV3Analytics {
     private enum ParamKey {
         static let screenName = "screenName"
         static let actionSource = "actionSource"
-        static let entrySource = "entrySource"
         static let agentKey = "agentKey"
         static let agentId = "agentId"
         static let agentIndex = "agentIndex"
@@ -264,27 +259,13 @@ enum ProfileV3Analytics {
 
     static func screen(
         _ screen: Screen,
-        entrySource: EntrySource? = nil,
         travellerId: String? = nil,
         agentKey: String? = nil
     ) {
         screenView(screen.rawValue, [
-            ParamKey.entrySource: entrySource?.rawValue,
             ParamKey.travellerId: travellerId,
             ParamKey.agentKey: agentKey
         ])
-    }
-
-    static func agentScreen(agentID: String, travellerId: String?) {
-        screenView(agentName(agentID), [ParamKey.travellerId: travellerId, ParamKey.agentKey: agentKey(agentID)])
-    }
-
-    static func travelPersonaScreen(travellerId: String?) {
-        screenView(travelPersonaAgentName, [ParamKey.travellerId: travellerId])
-    }
-
-    static func benefitScreen(benefitId: String, travellerId: String?) {
-        screenView(benefitScreenName(benefitId), [ParamKey.travellerId: travellerId, ParamKey.benefitId: benefitId])
     }
 
     private static func screenView(_ name: String, _ params: [String: Any?]) {
@@ -863,28 +844,6 @@ enum ProfileV3Analytics {
             return key == "travel_persona" ? travelPersonaAgentName : key + "_agent"
         }
     }
-
-    static func benefitScreenName(_ benefitID: String) -> String {
-        let words = Set(benefitID.lowercased().split { !$0.isLetter && !$0.isNumber }.map(String.init))
-        let match = benefitScreens.first { screen in screen.words.contains { words.isSuperset(of: $0) } }
-        return match?.name ?? Screen.benefit.rawValue
-    }
-
-    private static let benefitScreens: [(name: String, words: [Set<String>])] = [
-        ("aiSlotPriorityBenefit", [["slot", "priority"]]),
-        ("aiFTIBenefit", [["fti"], ["fast", "track"], ["immigration"]]),
-        ("aiAirportHotlineBenefit", [["hotline"]]),
-        ("aiForexBenefit", [["forex"]]),
-        ("aiTransfersBenefit", [["transfer"], ["transfers"]]),
-        ("aiEsimBenefit", [["esim"]]),
-        ("aiActivityBenefit", [["activity"], ["activities"]]),
-        ("aiAylCashBenefit", [["ayl", "cash"], ["aylcash"]]),
-        ("aiSuperCarBenefit", [["supercar"], ["super", "car"], ["super", "card"], ["car"], ["cars"]]),
-        ("aiHotelCreditBenefit", [["hotel", "credit"], ["hotel", "credits"], ["hotels", "credit"], ["hotels", "credits"]]),
-        ("aiHotelBenefit", [["hotel"], ["hotels"], ["stay"], ["stays"]]),
-        ("aiInsuranceBenefit", [["insurance"], ["baggage"], ["medical"], ["delay"], ["protection"]]),
-        ("aiFlightBenefit", [["flight"], ["flights"]])
-    ]
 
     static func errorKind(_ error: Error) -> String {
         switch error {

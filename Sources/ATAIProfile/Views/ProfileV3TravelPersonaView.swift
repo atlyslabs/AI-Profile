@@ -17,6 +17,7 @@ struct ProfileV3TravelPersonaView: View {
         }
         .interactiveDismissDisabled(viewModel.isDragging)
         .onDisappear(perform: viewModel.cancel)
+        .analyticsScreen(.travelPersonaAgent)
     }
 
     private var showsTrait: Binding<Bool> {
@@ -50,6 +51,7 @@ struct ProfileV3TravelPersonaView: View {
                 }
                 .profileV3ScrollOffset(headerPin.offsetBinding)
                 .scrollDisabled(viewModel.isDragging)
+                .trackScrollDepth()
                 .transition(.opacity)
             } else {
                 ProfileV3LoadStateView(phase: viewModel.phase, retry: viewModel.load)

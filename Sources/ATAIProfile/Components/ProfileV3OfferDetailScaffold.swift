@@ -10,6 +10,7 @@ struct ProfileV3OfferDetailScaffold<Meter: View>: View {
     let footer: (title: String, action: () -> Void)?
     var learnMore: (title: String, action: () -> Void)?
     let onClose: () -> Void
+    var tracksScrollDepth = false
     @ViewBuilder let meter: () -> Meter
 
     @State private var isRevealed = false
@@ -52,6 +53,7 @@ struct ProfileV3OfferDetailScaffold<Meter: View>: View {
                 .padding(.bottom, ProfileV3Theme.Space.s32)
             }
             .scrollBounceBehavior(.basedOnSize)
+            .profileV3TrackScrollDepth(tracksScrollDepth)
             ProfileV3CloseBar(action: onClose)
                 .modifier(entry(0))
         }
