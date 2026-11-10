@@ -152,7 +152,10 @@ struct ProfileV3CityProfileTests {
         #expect(sections["seat"]?.source?.fieldKey == "seat")
         #expect(sections["seat"]?.source?.agentType == "city")
         #expect(sections["class"]?.source == nil)
-        #expect(timings.options.first?.logoURL?.lastPathComponent == "timing-early-morning.png")
+        #expect(timings.options.map(\.logoURL?.lastPathComponent) == ["timing-early-morning-off.png", "timing-morning.png"])
+        #expect(timings.options.map(\.selectedLogoURL?.lastPathComponent) == ["timing-early-morning-on.png", nil])
+        #expect(timings.options.first?.selectedLogoURL?.query == "v=20261110b")
+        #expect(seat.options.compactMap(\.selectedLogoURL).isEmpty)
         #expect(hotels.options.map(\.title) == ["Taj Lands End"])
         #expect(hotels.selection == ["Taj Lands End"])
         #expect(hotels.optOut?.isOn == true)
@@ -659,7 +662,9 @@ struct ProfileV3CityProfileTests {
         "source":{"count":1,"icons":["https://media.atlys.com/b2c/ai-native/icons/kyc/you.png?v=1"],
                   "next":{"go":"city_preference_sources","city_id":"c1","field_key":"seat"}}},
        {"key":"timings","tab":{"label":"Timings","icon_url":"\(icons)/timings-off.png"},"label":"Preferred flight timings","input":"multi_select","assist":"",
-        "options":[{"value":"Early morning","label":"Early morning","selected":false,"image_url":"\(icons)/timing-early-morning.png"}],
+        "options":[{"value":"Early morning","label":"Early morning","selected":false,"image_url":"\(icons)/timing-early-morning-off.png?v=20261110b",
+                    "selected_image_url":"\(icons)/timing-early-morning-on.png?v=20261110b"},
+                   {"value":"Morning","label":"Morning","selected":false,"image_url":"\(icons)/timing-morning.png"}],
         "layout":"chips_with_icon","source":{"count":0,"icons":[]}},
        {"key":"pickup","tab":{"label":"Pick-up","icon_url":"\(icons)/pickup-off.png"},"label":"Airport pick-up","input":"multi_select","assist":"",
         "options":[{"value":"private","label":"Private","selected":false},{"value":"public","label":"Public","selected":false}],

@@ -91,8 +91,9 @@ enum ProfileV3CityProfileFixtures {
                     title: "Class",
                     status: values.cabin.isEmpty ? .pending : .complete,
                     control: .cards(ProfileV3CardField(
-                        options: ["Economy", "Premium economy", "Business", "First class"].map {
-                            ProfileV3CardOption(id: $0, code: $0, detail: "")
+                        options: ["Economy", "Premium economy", "Business", "First class"].map { title in
+                            let art = URL(string: "\(iconBase)/class-\(title.lowercased().replacingOccurrences(of: " ", with: "-")).png?v=20261110b")
+                            return ProfileV3CardOption(id: title, code: title, detail: "", imageURL: art, selectedImageURL: art)
                         },
                         selection: Set(values.cabin),
                         allowsMultiple: true
@@ -109,7 +110,12 @@ enum ProfileV3CityProfileFixtures {
                     "timings", "Preferred flight timings",
                     options: ["Early morning", "Morning", "Afternoon", "Evening", "Night", "Late night"].map { title in
                         let slug = title.lowercased().replacingOccurrences(of: " ", with: "-")
-                        return ProfileV3ChipOption(id: title, title: title, logoURL: URL(string: "\(iconBase)/timing-\(slug).png"))
+                        return ProfileV3ChipOption(
+                            id: title,
+                            title: title,
+                            logoURL: URL(string: "\(iconBase)/timing-\(slug)-off.png?v=20261110b"),
+                            selectedLogoURL: URL(string: "\(iconBase)/timing-\(slug)-on.png?v=20261110b")
+                        )
                     },
                     selected: values.timings
                 ),

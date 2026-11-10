@@ -203,6 +203,12 @@ enum ProfileV3CityProfileMapper: ProfileV3DTOReading {
                 control = .cards(tiles(card))
             } else {
                 var chips = ProfileV3AgentMapper.chips(from: field)
+                let art = optionArt(card)
+                chips.options = chips.options.map { option in
+                    var option = option
+                    option.selectedLogoURL = remoteURL(art[option.id]?.selectedImageURL)
+                    return option
+                }
                 chips.optOut = optOut(card)
                 control = .chips(chips)
             }
@@ -240,11 +246,15 @@ enum ProfileV3CityProfileMapper: ProfileV3DTOReading {
         }
     }
 
-    private static func tiles(_ card: ProfileV3CityCardDTO) -> ProfileV3CardField {
-        let art = Dictionary(
+    private static func optionArt(_ card: ProfileV3CityCardDTO) -> [String: ProfileV3CityOptionArtDTO] {
+        Dictionary(
             card.optionArt.compactMap { art in art.value?.stringValue.map { ($0, art) } },
             uniquingKeysWith: { first, _ in first }
         )
+    }
+
+    private static func tiles(_ card: ProfileV3CityCardDTO) -> ProfileV3CardField {
+        let art = optionArt(card)
         let field = card.field
         return ProfileV3CardField(
             options: field.options.compactMap { option in
