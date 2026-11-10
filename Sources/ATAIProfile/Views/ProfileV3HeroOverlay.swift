@@ -94,6 +94,7 @@ struct ProfileV3BenefitHeroOverlay: View {
     var redeemError: String?
     var onClearRedeemError: (() -> Void)?
     var onLearnMore: ((ProfileV3Benefit) -> Void)?
+    var travellerID: String?
 
     var body: some View {
         ProfileV3HeroOverlay(presenter: presenter, loadDetail: loadDetail) { benefit, detail in
@@ -114,6 +115,7 @@ struct ProfileV3BenefitHeroOverlay: View {
                 isPresented: redeemError != nil,
                 onDismiss: { onClearRedeemError?() }
             )
+            .analyticsScreen(.profileBenefit(benefitID: benefit.id, travellerID: travellerID))
         }
     }
 }

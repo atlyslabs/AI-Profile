@@ -27,6 +27,7 @@ struct ProfileV3CityProfileView: View {
         }
         .profileV3TapToDismissKeyboard()
         .task { viewModel.loadIfNeeded() }
+        .analyticsScreen(.cityProfileAgent)
     }
 }
 
@@ -75,6 +76,7 @@ private struct ProfileV3CityProfileScreen: View {
             }
             .profileV3ScrollOffset(headerPin.offsetBinding)
             .scrollDismissesKeyboard(.interactively)
+            .trackScrollDepth()
             .onChange(of: viewModel.scrollRequest) { _, request in
                 guard let request else { return }
                 withAnimation(ProfileV3Theme.Motion.citySectionScroll) {

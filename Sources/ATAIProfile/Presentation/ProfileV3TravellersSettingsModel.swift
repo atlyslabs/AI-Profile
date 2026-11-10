@@ -96,7 +96,6 @@ final class ProfileV3TravellersSettingsModel: ObservableObject {
     }
 
     func open() {
-        ProfileV3Analytics.screen(.travellers)
         toastTask?.cancel()
         toast = nil
         navigator?.push(.editTravellers)

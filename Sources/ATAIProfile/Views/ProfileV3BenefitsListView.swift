@@ -28,7 +28,8 @@ struct ProfileV3BenefitsListView: View {
             isLoadingMore: isLoadingMore,
             isScrollDisabled: presenter.isPresenting,
             onRetry: onRetry,
-            onClose: onClose
+            onClose: onClose,
+            tracksScrollDepth: true
         ) {
             if !title.isEmpty {
                 Text(title)
@@ -67,7 +68,8 @@ struct ProfileV3BenefitsListView: View {
                 onRedeem: onRedeem,
                 redeemError: redeemError,
                 onClearRedeemError: onClearRedeemError,
-                onLearnMore: onBenefitLearnMore
+                onLearnMore: onBenefitLearnMore,
+                travellerID: travellerID
             )
         }
         .onChange(of: redemption) { _, redemption in
@@ -77,9 +79,6 @@ struct ProfileV3BenefitsListView: View {
 
     private func open(_ benefit: ProfileV3Benefit) {
         ProfileV3Analytics.benefitClicked(benefit, travellerId: travellerID, origin: .list, routedToGate: benefit.requiresKYC)
-        if !benefit.requiresKYC {
-            ProfileV3Analytics.benefitScreen(benefitId: benefit.id, travellerId: travellerID)
-        }
         presenter.open(benefit, onLocked: onActivateLocked)
     }
 

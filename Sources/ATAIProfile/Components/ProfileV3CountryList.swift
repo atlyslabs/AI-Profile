@@ -12,6 +12,7 @@ struct ProfileV3CountryList: View {
     var searchText: ((ProfileV3Country) -> String?)?
     var focusesSearch = true
     var listBottomInset = ProfileV3Theme.Space.s16
+    var tracksScrollDepth = false
     let onSelect: (ProfileV3Country) -> Void
 
     @FocusState private var isSearchFocused: Bool
@@ -64,6 +65,7 @@ struct ProfileV3CountryList: View {
             .padding(.bottom, listBottomInset)
         }
         .scrollDismissesKeyboard(.interactively)
+        .profileV3TrackScrollDepth(tracksScrollDepth)
     }
 
     private var emptyState: some View {

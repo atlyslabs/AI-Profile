@@ -21,6 +21,7 @@ struct ProfileV3SettingsView: View {
             ProfileV3CitizenshipLockLayer(fields: viewModel.fields)
                 .ignoresSafeArea(edges: .bottom)
         }
+        .analyticsScreen(.settings)
     }
 
     private var root: some View {
@@ -46,6 +47,7 @@ struct ProfileV3SettingsView: View {
                 .profileV3ScrollOffsetAnchor(headerPin.offsetBinding)
             }
             .profileV3ScrollOffset(headerPin.offsetBinding)
+            .trackScrollDepth()
             ProfileV3SettingsPageHeader(title: viewModel.title, pin: headerPin, onBack: viewModel.tapBack)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -188,6 +190,7 @@ private struct ProfileV3SettingsPremeasure: View {
         .opacity(0)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+        .analyticsActive(false)
     }
 }
 

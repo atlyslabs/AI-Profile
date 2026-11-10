@@ -1,3 +1,4 @@
+import ATUIKit
 import Combine
 import SwiftUI
 
@@ -53,8 +54,8 @@ final class ProfileV3AgentFlowViewModel: ObservableObject {
     var avatarURL: URL? { agent.avatarURL ?? ProfileV3PlaceholderArt.agent(id: agent.id)?.url }
     var sheetTag: String { agent.sheetTag }
 
-    func trackScreen() {
-        ProfileV3Analytics.agentScreen(agentID: agent.id, travellerId: profileID)
+    var analyticsScreen: AnalyticsScreen {
+        .profileAgent(agentID: agent.id, travellerID: profileID)
     }
 
     func load() async {

@@ -39,8 +39,10 @@ struct ProfileV3SettingsDestinationView: View {
                 viewModel.permissions.close()
                 viewModel.tapClose()
             }
+            .analyticsScreenPlaceholder()
         case .inviteCode:
             ProfileV3InviteCodeView(model: viewModel.invites, onBack: viewModel.pop)
+                .analyticsScreenPlaceholder()
         }
     }
 }
@@ -68,15 +70,27 @@ private struct ProfileV3SettingsFieldScreen: View {
     let onBack: () -> Void
 
     var body: some View {
-        if let field = model.editField, model.editFieldPhase == .loaded {
-            loaded(field)
-        } else {
-            ProfileV3SettingsLoadState(
-                title: title,
-                phase: model.editFieldPhase,
-                onBack: onBack,
-                retry: model.retryEditField
-            )
+        Group {
+            if let field = model.editField, model.editFieldPhase == .loaded {
+                loaded(field)
+            } else {
+                ProfileV3SettingsLoadState(
+                    title: title,
+                    phase: model.editFieldPhase,
+                    onBack: onBack,
+                    retry: model.retryEditField
+                )
+            }
+        }
+        .analyticsScreen(analyticsScreen ?? .userResidenceList, active: analyticsScreen != nil)
+    }
+
+    private var analyticsScreen: AnalyticsScreen? {
+        switch destination {
+        case .residence: return .userResidenceList
+        case .citizenship: return .userCitizenshipList
+        case .currency: return .userCurrencyList
+        default: return nil
         }
     }
 
@@ -204,6 +218,7 @@ private struct ProfileV3SettingsTravellersScreen: View {
                 onSelect: model.select,
                 onAdd: model.tapAdd
             )
+            .analyticsScreen(.editTravellersList)
         case .editTraveller:
             ProfileV3EditTravellerFormView(
                 traveller: $model.editingTraveller,
@@ -255,6 +270,7 @@ private struct ProfileV3SettingsTravellersScreen: View {
                 onCitizenshipTap: model.tapAddCitizenship,
                 onConfirm: model.confirmAdd
             )
+            .analyticsScreenPlaceholder(active: model.isAddOnly)
         case .addTravellerCitizenship:
             ProfileV3CountryPickerView(
                 title: ProfileV3Strings.citizenship,
@@ -263,6 +279,7 @@ private struct ProfileV3SettingsTravellersScreen: View {
                 onBack: onBack,
                 onSelect: model.selectAddCitizenship
             )
+            .analyticsScreen(.userCitizenshipList)
         default:
             EmptyView()
         }

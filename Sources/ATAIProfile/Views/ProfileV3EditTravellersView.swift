@@ -26,7 +26,7 @@ struct ProfileV3EditTravellersView: View {
             .padding(.bottom, ProfileV3Theme.Sizes.Traveller.listHeaderGap)
             if phase == .loaded {
                 ScrollViewReader { proxy in
-                    ProfileV3FadingScroll(fadeGap: 0) {
+                    ProfileV3FadingScroll(fadeGap: 0, tracksScrollDepth: true) {
                         list
                             .id(Self.listID)
                             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: {

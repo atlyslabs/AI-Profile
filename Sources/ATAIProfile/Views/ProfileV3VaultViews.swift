@@ -108,6 +108,7 @@ struct ProfileV3CredentialStoreSheet: View {
                         measuredContent
                     }
                     .scrollBounceBehavior(.basedOnSize)
+                    .trackScrollDepth()
                 } else {
                     measuredContent
                 }
@@ -130,6 +131,7 @@ struct ProfileV3CredentialStoreSheet: View {
             }
         }
         .sensoryFeedback(.success, trigger: model.deleteCompletions)
+        .analyticsScreen(.credentialsWebsiteList)
     }
 
     private var fittedHeight: CGFloat? {

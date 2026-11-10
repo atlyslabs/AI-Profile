@@ -455,10 +455,6 @@ final class ProfileV3HubViewModel {
         ProfileV3Analytics.benefitClicked(benefit, travellerId: selectedPassID, origin: origin, routedToGate: routedToGate)
     }
 
-    func trackBenefitScreen(_ benefit: ProfileV3Benefit) {
-        ProfileV3Analytics.benefitScreen(benefitId: benefit.id, travellerId: selectedPassID)
-    }
-
     func trackKYCNudge(_ home: ProfileV3Home) {
         guard let passID = selectedPassID else { return }
         impressions.once("kyc:\(passID)") {

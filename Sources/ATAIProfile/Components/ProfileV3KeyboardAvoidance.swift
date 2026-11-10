@@ -159,6 +159,7 @@ struct ProfileV3FadingScroll<ID: Hashable, Content: View>: View {
     var fadeGap = ProfileV3Theme.Sizes.headerFadeGap
     var fadeColor = Color(at: .pureWhite)
     var bounceBehavior = ScrollBounceBehavior.basedOnSize
+    var tracksScrollDepth = false
     @ViewBuilder let content: () -> Content
 
     @State private var viewportHeight: CGFloat = 0
@@ -174,6 +175,7 @@ struct ProfileV3FadingScroll<ID: Hashable, Content: View>: View {
             .profileV3HeaderFade(headerPin, gap: fadeGap, color: fadeColor)
             .scrollBounceBehavior(bounceBehavior)
             .scrollDismissesKeyboard(.interactively)
+            .profileV3TrackScrollDepth(tracksScrollDepth)
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
             .onChange(of: focused) { _, id in reveal(id, with: proxy) }
             .onChange(of: viewportHeight) { _, _ in reveal(focused, with: proxy) }
@@ -194,6 +196,7 @@ extension ProfileV3FadingScroll where ID == Never {
         fadeGap: CGFloat = ProfileV3Theme.Sizes.headerFadeGap,
         fadeColor: Color = Color(at: .pureWhite),
         bounceBehavior: ScrollBounceBehavior = .basedOnSize,
+        tracksScrollDepth: Bool = false,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(
@@ -202,6 +205,7 @@ extension ProfileV3FadingScroll where ID == Never {
             fadeGap: fadeGap,
             fadeColor: fadeColor,
             bounceBehavior: bounceBehavior,
+            tracksScrollDepth: tracksScrollDepth,
             content: content
         )
     }

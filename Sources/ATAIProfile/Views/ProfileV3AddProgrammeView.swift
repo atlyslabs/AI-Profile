@@ -34,6 +34,7 @@ struct ProfileV3AddProgrammeView: View {
         }
         .sensoryFeedback(.error, trigger: viewModel.saveError) { _, error in error != nil }
         .profileV3TapToDismissKeyboard()
+        .analyticsScreenPlaceholder(active: !viewModel.isEditingProgramme)
     }
 
     private var scanFoundCount: Int {
