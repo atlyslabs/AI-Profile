@@ -1,0 +1,41 @@
+Sources/ATAIProfile/Domain/ProfileV3AgentForm.swift
+  s_8bd9718b5e3b54::t_0f1c31108708a5 211
+Sources/ATAIProfile/Data/Mappers/ProfileV3CityProfileMapper.swift
+  s_8bd9718b5e3b54::t_0f1c31108708a5 206-211,249-250,254-257
+CLAUDE.md
+  s_8bd9718b5e3b54::t_e1dd0cabb38156 64,148,313
+  s_8bd9718b5e3b54::t_070518912b02e0 152,159,195,273,325
+  s_8bd9718b5e3b54::t_138d136f623296 158,326
+  s_8bd9718b5e3b54::t_28a52b0e89ef7d 367
+Tests/ATAIProfileTests/ProfileV3CityProfileTests.swift
+  s_8bd9718b5e3b54::t_40f262c1eafa48 155-158,665-667
+Sources/ATAIProfile/Views/ProfileV3CityProfileView.swift
+  s_8bd9718b5e3b54::t_0f1c31108708a5 496
+CHANGELOG.md
+  s_8bd9718b5e3b54::t_5aac535eddd690 208-214
+  s_8bd9718b5e3b54::t_070518912b02e0 215-222
+Sources/ATAIProfile/Components/ProfileV3CityComponents.swift
+  s_8bd9718b5e3b54::t_0f1c31108708a5 289,295-303,306-314,316,340,354
+  s_8bd9718b5e3b54::t_38ee98d502bf8b 304-305,516-520,522,528-530
+Sources/ATAIProfile/Data/ProfileV3CityProfileFixtures.swift
+  s_8bd9718b5e3b54::t_38ee98d502bf8b 94-96
+  s_8bd9718b5e3b54::t_40f262c1eafa48 113-118
+Sources/ATAIProfile/Support/ProfileV3RemoteImage.swift
+  s_8bd9718b5e3b54::t_38ee98d502bf8b 90-109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e2687ee34c7e3f0b192a45a2992dec92bdcc6dff",
+  "prompts": {},
+  "sessions": {
+    "s_8bd9718b5e3b54": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ea453c3-0ff0-4171-899c-238f1be76cd6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
