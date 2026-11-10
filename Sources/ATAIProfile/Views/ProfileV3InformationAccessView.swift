@@ -28,11 +28,13 @@ struct ProfileV3InformationAccessView: View {
             .profileV3AccessPageGlow()
         }
         .scrollBounceBehavior(.basedOnSize)
+        .trackScrollDepth()
         .background(Color(at: .pureWhite))
         .sensoryFeedback(.success, trigger: model.disconnectCompletions)
         .sheet(item: $model.aiConnector) { connector in
             ProfileV3AIConnectorSheet(model: connector)
         }
+        .analyticsScreen(.connectors(travellerID: model.travellerID))
     }
 
     @ViewBuilder

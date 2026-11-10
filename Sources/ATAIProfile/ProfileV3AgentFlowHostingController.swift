@@ -42,7 +42,6 @@ final class ProfileV3AgentFlowHostingController: UIHostingController<ProfileV3Ag
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.trackScreen()
         view.backgroundColor = UIColor(Color(at: .pureWhite))
     }
 

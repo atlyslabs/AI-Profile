@@ -15,7 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/atlyslabs/ATCore.git", from: "1.0.16"),
-        .package(url: "https://github.com/atlyslabs/ATUIKit", from: "1.3.7"),
+        .package(url: "https://github.com/atlyslabs/ATUIKit", from: "1.4.0"),
         .package(url: "https://github.com/atlyslabs/ATMaterialIcons.git", from: "1.0.1"),
         .package(url: "https://github.com/atlyslabs/ATAuthKit.git", from: "1.0.44"),
         .package(url: "https://github.com/atlyslabs/ditto-migrate-toolkit.git", from: "0.0.1"),

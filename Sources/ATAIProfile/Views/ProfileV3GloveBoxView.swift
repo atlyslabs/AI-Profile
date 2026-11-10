@@ -56,6 +56,7 @@ struct ProfileV3GloveBoxView: View {
             .onDisappear {
                 sheetPresenter.dismiss()
             }
+            .analyticsScreen(.gloveBox)
     }
 
     private var resolving: some View {
@@ -209,6 +210,7 @@ struct ProfileV3GloveBoxHomeView: View {
                     .profileV3HeaderFadeAnchor(headerPin)
                 }
                 .profileV3HeaderFade(headerPin)
+                .trackScrollDepth()
             }
         }
     }

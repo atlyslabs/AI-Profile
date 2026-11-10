@@ -21,6 +21,7 @@ struct ProfileV3ProgrammeSourcesView: View {
             }
             backBar
         }
+        .analyticsScreenPlaceholder()
     }
 
     private var backBar: some View {

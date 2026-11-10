@@ -19,7 +19,7 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     weak var router: (any ProfileV3ConnectorsRouting & ProfileV3SettingsFeedbackRouting)?
 
     private let repository: any ProfileV3SettingsRepository
-    private let travellerID: String?
+    let travellerID: String?
     private let showsAIConnectors: Bool
     private let photoPlaces: ProfileV3PhotoPlacesSync?
     private var loadTask: Task<Void, Never>?
@@ -73,7 +73,6 @@ final class ProfileV3ConnectorsSettingsModel: ObservableObject {
     }
 
     func open() {
-        ProfileV3Analytics.screen(.connectors, travellerId: travellerID)
         navigator?.push(.connectors)
         load()
     }

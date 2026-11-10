@@ -105,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/atlyslabs/ATUIKit",
       "state" : {
-        "revision" : "a4d9b9720c36b371e2aba58200de0131359c4074",
-        "version" : "1.3.7"
+        "revision" : "f2d6ecb930bdda06edbb570414197b420b3ebb20",
+        "version" : "1.4.0"
       }
     },
     {

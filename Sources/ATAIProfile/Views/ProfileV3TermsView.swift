@@ -12,7 +12,7 @@ struct ProfileV3TermsView: View {
         VStack(spacing: 0) {
             header
             if let terms {
-                ProfileV3FadingScroll {
+                ProfileV3FadingScroll(tracksScrollDepth: true) {
                     sections(terms)
                         .padding(.horizontal, ProfileV3Theme.Sizes.Terms.horizontalMargin)
                         .padding(.top, ProfileV3Theme.Sizes.Terms.contentTop)
@@ -113,6 +113,7 @@ struct ProfileV3TermsHost: View {
             onBack: onBack
         )
         .onAppear(perform: viewModel.loadIfNeeded)
+        .analyticsScreen(.serviceTerms)
     }
 }
 

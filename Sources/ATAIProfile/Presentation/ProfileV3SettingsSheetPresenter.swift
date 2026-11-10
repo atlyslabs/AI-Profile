@@ -79,7 +79,6 @@ final class ProfileV3SettingsSheetPresenter {
 
     func present() {
         guard let top = Self.topPresented() else { return }
-        ProfileV3Analytics.screen(.settings)
         let host = ProfileV3PageHostingController(rootView: ProfileV3SettingsView(viewModel: viewModel))
         host.modalPresentationStyle = .overFullScreen
         host.transitioningDelegate = pageTransition

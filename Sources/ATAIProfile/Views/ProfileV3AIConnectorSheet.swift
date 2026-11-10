@@ -39,6 +39,7 @@ struct ProfileV3AIConnectorSheet: View {
         .sensoryFeedback(.success, trigger: model.copies)
         .task { model.start() }
         .onDisappear(perform: model.cancel)
+        .analyticsScreen(.connectorAgents(connector: model.id))
     }
 
     private var eyebrow: String {
@@ -81,7 +82,7 @@ private struct ProfileV3AIConnectorDetailContent: View {
 
     var body: some View {
         if let detail = model.detail, model.detailPhase == .loaded {
-            ProfileV3FadingScroll(fadeGap: 0) {
+            ProfileV3FadingScroll(fadeGap: 0, tracksScrollDepth: true) {
                 content(detail)
             }
             .safeAreaInset(edge: .bottom, spacing: 0) { cta(detail) }
@@ -219,7 +220,7 @@ private struct ProfileV3AIConnectorConnectContent: View {
     var body: some View {
         if let connect = model.connect, model.connectPhase == .loaded {
             ScrollViewReader { proxy in
-                ProfileV3FadingScroll(fadeGap: 0) {
+                ProfileV3FadingScroll(fadeGap: 0, tracksScrollDepth: true) {
                     content(connect)
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in

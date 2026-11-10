@@ -7,6 +7,7 @@ struct ProfileV3OfferListScaffold<Header: View, Rows: View, Overlay: View>: View
     let isScrollDisabled: Bool
     let onRetry: (() -> Void)?
     let onClose: () -> Void
+    var tracksScrollDepth = false
     @ViewBuilder let header: () -> Header
     @ViewBuilder let rows: () -> Rows
     @ViewBuilder let overlay: () -> Overlay
@@ -45,6 +46,7 @@ struct ProfileV3OfferListScaffold<Header: View, Rows: View, Overlay: View>: View
             }
             .opacity(phase == .loaded ? 1 : 0)
             .scrollDisabled(isScrollDisabled)
+            .profileV3TrackScrollDepth(tracksScrollDepth)
             ProfileV3CloseBar(action: onClose)
             overlay()
         }

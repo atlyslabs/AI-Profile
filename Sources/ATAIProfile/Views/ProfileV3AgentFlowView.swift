@@ -18,6 +18,7 @@ struct ProfileV3AgentFlowView: View {
         .background(Color(at: .pureWhite))
         .profileV3TapToDismissKeyboard()
         .task { await viewModel.load() }
+        .analyticsScreen(viewModel.analyticsScreen)
     }
 
     private var header: some View {

@@ -4,12 +4,10 @@ import UIKit
 
 final class ProfileV3TravelPersonaHostingController: UIHostingController<ProfileV3TravelPersonaView> {
     private let viewModel: ProfileV3TravelPersonaViewModel
-    private let profileID: String?
 
     init(profileID: String?, repository: any ProfileV3PersonaRepository, onSaved: @escaping () -> Void = {}) {
         let viewModel = ProfileV3TravelPersonaViewModel(profileID: profileID, repository: repository, onSaved: onSaved)
         self.viewModel = viewModel
-        self.profileID = profileID
         super.init(rootView: ProfileV3TravelPersonaView(viewModel: viewModel))
         viewModel.onClose = { [weak self] in self?.presentingViewController?.dismiss(animated: true) }
         profileV3UsePageSheet()
@@ -22,7 +20,6 @@ final class ProfileV3TravelPersonaHostingController: UIHostingController<Profile
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(Color(at: .pureWhite))
-        ProfileV3Analytics.travelPersonaScreen(travellerId: profileID)
         viewModel.load()
     }
 }

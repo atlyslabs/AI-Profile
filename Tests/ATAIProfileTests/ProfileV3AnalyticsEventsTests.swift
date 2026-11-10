@@ -1,3 +1,4 @@
+import ATUIKit
 import Foundation
 import SwiftUI
 import Testing
@@ -17,27 +18,77 @@ struct ProfileV3AnalyticsEventsTests {
     }
 
     @Test func benefitScreensAreNamedFromTheBenefitID() {
-        let names = [
-            "slot_priority": "aiSlotPriorityBenefit",
-            "slot-calendar": "aiProfileBenefit",
-            "fast_track_immigration": "aiFTIBenefit",
-            "airport_hotline": "aiAirportHotlineBenefit",
-            "zero_forex": "aiForexBenefit",
-            "transfers-discount": "aiTransfersBenefit",
-            "esim": "aiEsimBenefit",
-            "activities": "aiActivityBenefit",
-            "ayl_cash": "aiAylCashBenefit",
-            "super_car": "aiSuperCarBenefit",
-            "hotel_credit": "aiHotelCreditBenefit",
-            "hotels-cashback": "aiHotelBenefit",
-            "flight_delay_200": "aiInsuranceBenefit",
-            "baggage_protection_500": "aiInsuranceBenefit",
-            "flight_credit_50": "aiFlightBenefit",
-            "gift_card_200": "aiProfileBenefit",
-            "visas_approved_minutes": "aiProfileBenefit"
+        let names: [String: String?] = [
+            "slot_priority": "SlotPriorityBenefit",
+            "slot-calendar": nil,
+            "fast_track_immigration": "FTIBenefit",
+            "airport_hotline": "AirportHotlineBenefit",
+            "zero_forex": "ForexBenefit",
+            "transfers-discount": "TransfersBenefit",
+            "esim": "EsimBenefit",
+            "activities": "ActivityBenefit",
+            "ayl_cash": "AylCashBenefit",
+            "super_car": "SuperCarBenefit",
+            "hotel_credit": "HotelCreditBenefit",
+            "hotels-cashback": "HotelBenefit",
+            "flight_delay_200": "InsuranceBenefit",
+            "baggage_protection_500": "InsuranceBenefit",
+            "flight_credit_50": "FlightBenefit",
+            "gift_card_200": nil,
+            "visas_approved_minutes": nil
         ]
         for (id, name) in names {
             #expect(ProfileV3Analytics.benefitScreenName(id) == name, "\(id)")
+        }
+    }
+
+    @Test func aBenefitWithoutANameIsStillTheBenefitScreen() {
+        let named = AnalyticsScreen.profileBenefit(benefitID: "esim", travellerID: "main")
+        #expect(named.name == "ProfileBenefit")
+        #expect(named.properties["benefit_name"] == "EsimBenefit")
+        #expect(named.properties["travellerId"] == "main")
+        let unnamed = AnalyticsScreen.profileBenefit(benefitID: "gift_card_200", travellerID: nil)
+        #expect(unnamed.name == "ProfileBenefit")
+        #expect(unnamed.properties["benefit_name"] == nil)
+    }
+
+    @Test func agentSheetsAreNamedFromTheAgentID() {
+        let names: [String: String?] = [
+            "personal": "PersonalAgent",
+            "flight": "FlightAgent",
+            "stay": "StayAgent",
+            "airport-logistics": "AirportLogisticsAgent",
+            "airport_logistics": "AirportLogisticsAgent",
+            "food": "FoodAgent",
+            "medical": "MedicalAgent",
+            "itinerary": "ItineraryAgent",
+            "concierge": nil
+        ]
+        for (id, name) in names {
+            #expect(ProfileV3Analytics.agentScreenName(id) == name, "\(id)")
+        }
+        let flight = AnalyticsScreen.profileAgent(agentID: "flight", travellerID: "main")
+        #expect(flight.name == "ProfileAgent")
+        #expect(flight.container == .agentSheet)
+        #expect(flight.properties["agent_name"] == "FlightAgent")
+        #expect(AnalyticsScreen.travelPersonaAgent.properties["agent_name"] == "TravelPersonaAgent")
+        #expect(AnalyticsScreen.cityProfileAgent.properties["agent_name"] == "CityProfileAgent")
+    }
+
+    @Test func connectorSheetsAreNamedFromTheConnectorKey() {
+        let names = [
+            "claude": "Claude Connector",
+            "ChatGPT": "GPT Connector",
+            "gemini": "Gemini Connector",
+            "grok": "Grok Connector",
+            "muse": "Muse Connector",
+            "instinct": "Instinct Connector",
+            "ITR": "ITR Connector",
+            "perplexity": "Other Connector"
+        ]
+        for (key, name) in names {
+            #expect(ProfileV3Analytics.connectorScreenName(key) == name, "\(key)")
+            #expect(AnalyticsScreen.connectorAgents(connector: key).properties["connector_name"] == name)
         }
     }
 
@@ -220,14 +271,12 @@ struct ProfileV3AnalyticsEventsTests {
             "settings_terms_clicked",
             "settings_logout_clicked",
             "settings_connector_clicked",
-            "screen_view",
             "settings_connector_clicked",
             "settings_back_clicked"
         ])
         #expect(recorder.named("settings_account_center_tapped").map { $0.string("actionType") } == ["open", "close"])
         #expect(recorder.named("settings_connector_clicked").map { $0.string("connectorName") } == ["information", "app"])
-        let connectors = recorder.named("screen_view").first { $0.string("screenName") == "aiProfileConnectors" }
-        #expect(connectors?.string("travellerId") == "main")
+        #expect(recorder.named("screen_view").map { $0.string("screenName") } == ["aiProfilePermissions"])
         #expect(recorder.named("profile_settings_row_clicked").isEmpty)
     }
 
