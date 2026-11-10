@@ -286,16 +286,34 @@ struct ProfileV3CitySectionCard<Content: View>: View {
 
 struct ProfileV3CityOrb: View {
     let imageURL: URL
+    var selectedImageURL: URL?
     let optionID: String
     let isSelected: Bool
 
     private typealias Sizes = ProfileV3Theme.Sizes.City
 
+    private var idleOpacity: Double { isSelected ? 1 : ProfileV3Theme.Opacity.cityOrbIdle }
+
+    private var rim: some View {
+        Circle().strokeBorder(ProfileV3Theme.Palette.cityOptionBorder, lineWidth: ProfileV3Theme.Stroke.hairline)
+    }
+
+    @ViewBuilder
+    private var art: some View {
+        if let selectedImageURL {
+            ProfileV3SelectableRemoteImage(url: imageURL, selectedURL: selectedImageURL, isSelected: isSelected)
+                .clipShape(Circle())
+                .overlay(rim.opacity(idleOpacity))
+        } else {
+            ProfileV3RemoteImage(url: imageURL, placeholder: ProfileV3Theme.Palette.cityOptionBorder)
+                .clipShape(Circle())
+                .overlay(rim)
+                .opacity(idleOpacity)
+        }
+    }
+
     var body: some View {
-        ProfileV3RemoteImage(url: imageURL, placeholder: ProfileV3Theme.Palette.cityOptionBorder)
-            .clipShape(Circle())
-            .overlay(Circle().strokeBorder(ProfileV3Theme.Palette.cityOptionBorder, lineWidth: ProfileV3Theme.Stroke.hairline))
-            .opacity(isSelected ? 1 : ProfileV3Theme.Opacity.cityOrbIdle)
+        art
             .overlay {
                 if isSelected {
                     ATIcon.SwiftUIImage.check
@@ -319,6 +337,7 @@ struct ProfileV3CityOptionChip: View {
     var style = Style.outline
     var iconURL: URL?
     var orbURL: URL?
+    var selectedOrbURL: URL?
     var orbID = ""
     var isEnabled = true
     let action: () -> Void
@@ -332,7 +351,7 @@ struct ProfileV3CityOptionChip: View {
         Button(action: action) {
             HStack(spacing: Sizes.optionIconGap) {
                 if let orbURL {
-                    ProfileV3CityOrb(imageURL: orbURL, optionID: orbID, isSelected: isSelected)
+                    ProfileV3CityOrb(imageURL: orbURL, selectedImageURL: selectedOrbURL, optionID: orbID, isSelected: isSelected)
                 } else if let iconURL {
                     ProfileV3RemoteImage(
                         url: iconURL,
@@ -466,9 +485,6 @@ struct ProfileV3CityClassCard: View {
         Button(action: action) {
             ZStack(alignment: .topLeading) {
                 art
-                    .frame(width: Sizes.classArt.width, height: Sizes.classArt.height)
-                    .offset(x: Sizes.classArtOffset.width, y: Sizes.classArtOffset.height)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                 Text(option.code)
                     .tracking(Sizes.tightTracking)
                     .typoGraphy(.B1InterMedium14)
@@ -497,14 +513,21 @@ struct ProfileV3CityClassCard: View {
 
     @ViewBuilder
     private var art: some View {
-        if let url = isSelected ? option.selectedImageURL ?? option.imageURL : option.imageURL {
-            ProfileV3RemoteImage(url: url, contentMode: .fit, placeholder: .clear)
+        if let imageURL = option.imageURL, let selectedURL = option.selectedImageURL {
+            ProfileV3SelectableRemoteImage(url: imageURL, selectedURL: selectedURL, isSelected: isSelected)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if let url = option.imageURL ?? option.selectedImageURL {
+            ProfileV3RemoteImage(url: url, placeholder: .clear)
                 .opacity(isSelected ? 1 : ProfileV3Theme.Opacity.cityClassArt)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let seat = ProfileV3SeatArt(optionValue: option.id) {
             seat.image(isSelected: isSelected)
                 .resizable()
                 .scaledToFit()
                 .opacity(isSelected ? 1 : ProfileV3Theme.Opacity.cityClassArt)
+                .frame(width: Sizes.classArt.width, height: Sizes.classArt.height)
+                .offset(x: Sizes.classArtOffset.width, y: Sizes.classArtOffset.height)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
         }
     }
 }

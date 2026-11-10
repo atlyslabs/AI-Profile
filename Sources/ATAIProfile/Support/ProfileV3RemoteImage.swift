@@ -87,6 +87,26 @@ struct ProfileV3RemoteImage: View {
     }
 }
 
+struct ProfileV3SelectableRemoteImage: View {
+    let url: URL
+    let selectedURL: URL
+    let isSelected: Bool
+    var contentMode: ContentMode = .fill
+
+    var body: some View {
+        if url == selectedURL {
+            ProfileV3RemoteImage(url: url, contentMode: contentMode, placeholder: .clear)
+        } else {
+            ZStack {
+                ProfileV3RemoteImage(url: url, contentMode: contentMode, placeholder: .clear)
+                    .opacity(isSelected ? 0 : 1)
+                ProfileV3RemoteImage(url: selectedURL, contentMode: contentMode, placeholder: .clear)
+                    .opacity(isSelected ? 1 : 0)
+            }
+        }
+    }
+}
+
 private extension UIImage {
     func profileV3RotatedCounterClockwise() -> UIImage {
         let format = UIGraphicsImageRendererFormat()
