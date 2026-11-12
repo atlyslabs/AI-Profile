@@ -96,6 +96,20 @@ struct ProfileV3Connector: Identifiable, Equatable {
         guard case .aiConnector(let connector) = next?.route() else { return nil }
         return connector
     }
+
+    func withStatus(_ status: Status) -> ProfileV3Connector {
+        ProfileV3Connector(
+            id: id,
+            name: name,
+            icon: icon,
+            status: status,
+            accountEmail: accountEmail,
+            next: next,
+            connectLabel: connectLabel,
+            statusLabel: statusLabel,
+            syncedAt: syncedAt
+        )
+    }
 }
 
 struct ProfileV3ProgrammeOverview: Equatable {
