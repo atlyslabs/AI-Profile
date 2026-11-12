@@ -36,8 +36,7 @@ struct ProfileV3LoyaltyTierTests {
         viewModel.membershipNumber = "739154"
         viewModel.tier = "Gold"
         let month = try Self.month(offsetBy: 12)
-        viewModel.tierValidUntil = month.replacingOccurrences(of: "/", with: "")
-        #expect(viewModel.tierValidUntil == month)
+        viewModel.tierValidUntil = month.replacingOccurrences(of: "/", with: "") + "9"
         #expect(viewModel.canSubmit)
 
         viewModel.submit()

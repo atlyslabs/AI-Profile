@@ -465,7 +465,8 @@ struct ProfileV3AddProgrammeView: View {
                 text: $viewModel.tierValidUntil,
                 keyboard: .numberPad,
                 placeholder: entry.placeholder,
-                error: viewModel.tierValidUntilError
+                error: viewModel.tierValidUntilError,
+                format: ProfileV3MonthYear.formatted
             )
         default:
             field(label: entry.label, text: $viewModel.membershipNumber, keyboard: .asciiCapable)
@@ -497,7 +498,8 @@ struct ProfileV3AddProgrammeView: View {
         text: Binding<String>,
         keyboard: UIKeyboardType,
         placeholder: String? = nil,
-        error: String? = nil
+        error: String? = nil,
+        format: ((String) -> String)? = nil
     ) -> some View {
         labelled(label) {
             ProfileV3UnderlinedField(
@@ -506,7 +508,8 @@ struct ProfileV3AddProgrammeView: View {
                 text: text,
                 keyboard: keyboard,
                 width: nil,
-                isError: error != nil
+                isError: error != nil,
+                format: format
             )
             if let error {
                 ProfileV3ErrorText(text: error)

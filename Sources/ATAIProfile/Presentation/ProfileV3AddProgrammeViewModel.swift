@@ -56,12 +56,7 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     @Published var membershipNumber = ""
     @Published var points = ""
     @Published var tier = ""
-    @Published var tierValidUntil = "" {
-        didSet {
-            let formatted = ProfileV3MonthYear.formatted(tierValidUntil)
-            if formatted != tierValidUntil { tierValidUntil = formatted }
-        }
-    }
+    @Published var tierValidUntil = ""
     @Published private(set) var isSaving = false
     @Published private(set) var didSave = false
     @Published private(set) var entryForm: ProfileV3LoyaltyEntryForm?
@@ -194,7 +189,7 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
         switch key {
         case Field.pointsKey: raw = points
         case Field.tierKey: raw = tier
-        case Field.tierValidUntilKey: raw = tierValidUntil
+        case Field.tierValidUntilKey: raw = ProfileV3MonthYear.formatted(tierValidUntil)
         default: raw = membershipNumber
         }
         return raw.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -449,7 +444,7 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
                 membershipNumber = form.field(Field.membershipNumberKey)?.value ?? ""
                 points = form.field(Field.pointsKey)?.value ?? ""
                 tier = form.field(Field.tierKey)?.value ?? ""
-                tierValidUntil = form.field(Field.tierValidUntilKey)?.value ?? ""
+                tierValidUntil = ProfileV3MonthYear.formatted(form.field(Field.tierValidUntilKey)?.value ?? "")
                 entryForm = form
             } catch {
                 guard !Task.isCancelled else { return }

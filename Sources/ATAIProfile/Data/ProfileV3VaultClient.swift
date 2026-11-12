@@ -1,6 +1,7 @@
 import ATAuthKit
 import ATCore
 import Foundation
+import LocalAuthentication
 
 final class ProfileV3VaultClient: @unchecked Sendable {
     private let client: ProfileV3NetworkClient
@@ -60,12 +61,24 @@ final class ProfileV3VaultClient: @unchecked Sendable {
     }
 
     func revealPassword(id: String, deviceName: String) async throws -> String {
-        if ProfileV3VaultDevice.deviceID() == nil, !(await Self.signedInRecently()) {
+        let uid = try uid()
+        if ProfileV3VaultDevice.deviceID(uid: uid) == nil, !(await Self.signedInRecently()) {
             ATCoreLogger.error("[ProfileV3] vault_reveal stopped: this device isn't registered and the last sign-in is over 10 minutes old")
             throw ProfileV3Error.server(code: "reauth", message: ProfileV3VaultStrings.confirmItsYou)
         }
         let context = try await ProfileV3VaultDevice.authenticate()
-        let deviceID = try await enrolledDeviceID(name: deviceName)
+        do {
+            return try await reveal(id: id, uid: uid, deviceName: deviceName, context: context)
+        } catch {
+            guard Self.isDeviceNotEnrolled(error) else { throw error }
+            ATCoreLogger.info("[ProfileV3] vault_reveal: device not enrolled for this user, enrolling again")
+            ProfileV3VaultDevice.clearDeviceID(uid: uid)
+            return try await reveal(id: id, uid: uid, deviceName: deviceName, context: context)
+        }
+    }
+
+    private func reveal(id: String, uid: String, deviceName: String, context: LAContext) async throws -> String {
+        let deviceID = try await enrolledDeviceID(name: deviceName, uid: uid)
         let challenge: ChallengeDTO = try await client.request(
             .vaultRevealChallenge(id: id, body: try JSONEncoder().encode(DeviceBody(deviceID: deviceID))),
             action: "vault_reveal_challenge"
@@ -88,24 +101,23 @@ final class ProfileV3VaultClient: @unchecked Sendable {
                 action: "vault_reveal"
             )
         } catch {
-            if Self.shouldEnrollAgain(error) {
+            if Self.isSignatureRejected(error) {
                 ProfileV3VaultDevice.deleteKey()
             }
             throw error
         }
-        let uid = try uid()
         let plain = try ProfileV3VaultDevice.open(response.encrypted, uid: uid, context: context)
         let secret = try decoder.decode(SecretDTO.self, from: plain)
         return secret.password
     }
 
-    private func enrolledDeviceID(name: String) async throws -> String {
-        if let existing = ProfileV3VaultDevice.deviceID() { return existing }
+    private func enrolledDeviceID(name: String, uid: String) async throws -> String {
+        if let existing = ProfileV3VaultDevice.deviceID(uid: uid) { return existing }
         guard await Self.signedInRecently() else { throw ProfileV3Error.server(code: "reauth", message: ProfileV3VaultStrings.confirmItsYou) }
         let pem = try ProfileV3VaultDevice.publicKeyPEM()
         let body = try JSONEncoder().encode(RegisterDeviceBody(name: name, platform: "ios", publicKeyPEM: pem))
         let created: DeviceDTO = try await client.request(.vaultRegisterDevice(body: body), action: "vault_register_device")
-        ProfileV3VaultDevice.saveDeviceID(created.id)
+        ProfileV3VaultDevice.saveDeviceID(created.id, uid: uid)
         return created.id
     }
 
@@ -170,10 +182,17 @@ final class ProfileV3VaultClient: @unchecked Sendable {
         return message?.localizedCaseInsensitiveContains("could not be opened") == true
     }
 
-    private static func shouldEnrollAgain(_ error: Error) -> Bool {
-        guard case ProfileV3Error.server(_, let message) = error else { return false }
-        let text = message?.localizedLowercase ?? ""
-        return text.contains("not enrolled") || text.contains("signature rejected")
+    static func isDeviceNotEnrolled(_ error: Error) -> Bool {
+        serverMessage(of: error)?.contains("device not enrolled") == true
+    }
+
+    private static func isSignatureRejected(_ error: Error) -> Bool {
+        serverMessage(of: error)?.contains("signature rejected") == true
+    }
+
+    private static func serverMessage(of error: Error) -> String? {
+        guard case ProfileV3Error.server(_, let message) = error else { return nil }
+        return message?.localizedLowercase
     }
 }
 
