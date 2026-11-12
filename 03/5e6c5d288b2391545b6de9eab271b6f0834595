@@ -1,0 +1,109 @@
+Sources/ATAIProfile/Components/ProfileV3CityComponents.swift
+  s_8bd9718b5e3b54::t_3f2e3314d5aa6b 57,100,103,105-109
+  s_8bd9718b5e3b54::t_3d0eeab680e5c9 104
+  s_8bd9718b5e3b54::t_0251ac69337817 780,787
+Sources/ATAIProfile/Data/DTOs/ProfileV3CityProfileDTO.swift
+  s_8bd9718b5e3b54::t_0251ac69337817 216,220,226-228,237,244,419
+Sources/ATAIProfile/Views/ProfileV3CountryPickerView.swift
+  s_8bd9718b5e3b54::t_759124175cc82f 8-10,24-26,37-39,57-58,61
+Sources/ATAIProfile/Domain/ProfileV3Models.swift
+  s_8bd9718b5e3b54::t_3bda588bf8c51f 334,338-339,345-350
+Sources/ATAIProfile/Views/ProfileV3ConfirmationView.swift
+  s_8bd9718b5e3b54::t_0251ac69337817 25,68-69,98,106
+Tests/ATAIProfileTests/ProfileV3LoyaltyMarketTests.swift
+  s_8bd9718b5e3b54::t_56d429d69d4304 9,12-14,19-20,23-26,30-70,104,123,125-126,131
+Sources/ATAIProfile/Views/ProfileV3CityProfileView.swift
+  s_8bd9718b5e3b54::t_a640740c2cd9c6 127-128
+Sources/ATAIProfile/Data/Mappers/ProfileV3CityProfileMapper.swift
+  s_8bd9718b5e3b54::t_b9e48e3e10ef69 105,107
+  s_8bd9718b5e3b54::t_d3e830a7fdd8fa 53
+  s_8bd9718b5e3b54::t_1e2ed2fc30432d 19,22-23
+  s_8bd9718b5e3b54::t_d2adc069630819 41,45-49
+  s_8bd9718b5e3b54::t_15a8428d84b56e 76-77
+  s_8bd9718b5e3b54::t_0251ac69337817 95-98
+  s_8bd9718b5e3b54::t_f858629eec7609 50-51
+Sources/ATAIProfile/Components/ProfileV3MarketButton.swift
+  s_8bd9718b5e3b54::t_759124175cc82f 1-47
+Sources/ATAIProfile/Components/ProfileV3CentredCarousel.swift
+  s_8bd9718b5e3b54::t_a640740c2cd9c6 8,40-42
+  s_8bd9718b5e3b54::t_36a65f54482630 43
+CHANGELOG.md
+  s_8bd9718b5e3b54::t_42d43dddabadb6 117-121
+  s_8bd9718b5e3b54::t_3ef90fd132bf2e 202-206
+  s_8bd9718b5e3b54::t_7d9f66503f31b9 196-201,207-209
+  s_8bd9718b5e3b54::t_0bc868b01c585e 108-116
+Sources/ATAIProfile/Networking/ProfileV3API.swift
+  s_8bd9718b5e3b54::t_75203dea17af35 15,266-273
+Sources/ATAIProfile/Data/ProfileV3ProgrammeCatalogue.swift
+  s_8bd9718b5e3b54::t_3bda588bf8c51f 8-20
+CLAUDE.md
+  s_8bd9718b5e3b54::t_6ec11cc8f604c9 281,325
+  s_8bd9718b5e3b54::t_b89d0487431321 338
+  s_8bd9718b5e3b54::t_0bc868b01c585e 64,154,162,211,374
+  s_8bd9718b5e3b54::t_3ef90fd132bf2e 163,200,376
+  s_8bd9718b5e3b54::t_14cee2756cb06c 164
+  s_8bd9718b5e3b54::t_42d43dddabadb6 36,146,153,161,166,280,334,337,339
+  s_8bd9718b5e3b54::t_61701432c701c2 273
+  s_8bd9718b5e3b54::t_40fb5c14a89b51 149,198-199,204,335
+Sources/ATAIProfile/Presentation/ProfileV3CityProfileViewModel.swift
+  s_8bd9718b5e3b54::t_6f9ba6abd6ef64 252-255
+  s_8bd9718b5e3b54::t_75203dea17af35 501,505,507-508,515
+Tests/ATAIProfileTests/ProfileV3CityProfileTests.swift
+  s_8bd9718b5e3b54::t_3f5f0bd65be791 295,300-301,325,358
+  s_8bd9718b5e3b54::t_214b824075a5cf 328-353
+  s_8bd9718b5e3b54::t_6f9ba6abd6ef64 504-523
+  s_8bd9718b5e3b54::t_a4ac97a067f7d9 326,697-701
+  s_8bd9718b5e3b54::t_a1a9eb65807401 165-166,741-742
+  s_8bd9718b5e3b54::t_196abc21f34cf3 90-149
+  s_8bd9718b5e3b54::t_68bc7ff1df6e18 327
+Sources/ATAIProfile/Data/Mappers/ProfileV3LoyaltyMapper.swift
+  s_8bd9718b5e3b54::t_3bda588bf8c51f 20,27-29
+Sources/ATAIProfile/Data/ProfileV3LiveRepository.swift
+  s_8bd9718b5e3b54::t_75203dea17af35 412,414-420
+Sources/ATAIProfile/Data/ProfileV3Repository.swift
+  s_8bd9718b5e3b54::t_75203dea17af35 162
+Sources/ATAIProfile/Support/ProfileV3Icon.swift
+  s_8bd9718b5e3b54::t_339f7d9a04d666 11-28
+Sources/ATAIProfile/Presentation/ProfileV3AddProgrammeViewModel.swift
+  s_8bd9718b5e3b54::t_c50d25489e4bec 638-639
+  s_8bd9718b5e3b54::t_191a702113afaa 23,27,134,344-354,356-359
+  s_8bd9718b5e3b54::t_0fc5b618512aa5 355
+  s_8bd9718b5e3b54::t_b7c9d9aa317102 360
+Sources/ATAIProfile/Domain/ProfileV3CityProfile.swift
+  s_8bd9718b5e3b54::t_8104d13a46b8f7 122-130
+  s_8bd9718b5e3b54::t_0251ac69337817 163,196
+Sources/ATAIProfile/Data/ProfileV3FailingRepository.swift
+  s_8bd9718b5e3b54::t_75203dea17af35 267
+Sources/ATAIProfile/Data/ProfileV3MockRepository.swift
+  s_8bd9718b5e3b54::t_75203dea17af35 123,125
+Sources/ATAIProfile/Views/ProfileV3CitySheets.swift
+  s_8bd9718b5e3b54::t_0251ac69337817 187,272
+Sources/ATAIProfile/Data/ProfileV3CityProfileFixtures.swift
+  s_8bd9718b5e3b54::t_af02c1a4f12cba 39-41,320,345-346,363,396,399,403,433-438,457-461,469-470,483,489,520,533-534
+  s_8bd9718b5e3b54::t_1cda789b294e88 21,425-430
+  s_8bd9718b5e3b54::t_6f9ba6abd6ef64 477-481,508-510
+Sources/ATAIProfile/Support/ProfileV3Theme+CityProfile.swift
+  s_8bd9718b5e3b54::t_696c1d6497d5c1 26
+Sources/ATAIProfile/Data/DTOs/ProfileV3LoyaltyDTO.swift
+  s_8bd9718b5e3b54::t_1fbd15c3e45829 66-67,76-77,85-86,95-101
+Sources/ATAIProfile/Views/ProfileV3AddProgrammeView.swift
+  s_8bd9718b5e3b54::t_759124175cc82f 48,108,110,126-127,301-317,321-322
+  s_8bd9718b5e3b54::t_8f3b3f591b3d55 98
+  s_8bd9718b5e3b54::t_c4bf1f6d24809b 563-566
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "035e6c5d288b2391545b6de9eab271b6f0834595",
+  "prompts": {},
+  "sessions": {
+    "s_8bd9718b5e3b54": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ea453c3-0ff0-4171-899c-238f1be76cd6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
