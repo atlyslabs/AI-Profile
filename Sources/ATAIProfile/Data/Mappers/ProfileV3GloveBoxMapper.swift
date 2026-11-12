@@ -15,6 +15,8 @@ enum ProfileV3GloveBoxCopy {
     static var active: String { ProfileV3L10n.moAiprofileGloveboxBadgeActive }
     static var paused: String { ProfileV3L10n.moAiprofileGloveboxBadgePaused }
     static var viewAll: String { ProfileV3L10n.moAiprofileGloveboxButtonViewAll }
+    static var showQuoted: String { ProfileV3L10n.moAiprofileGloveboxButtonShowQuotedText }
+    static var hideQuoted: String { ProfileV3L10n.moAiprofileGloveboxButtonHideQuotedText }
     static var listTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleEmailList }
     static var activateTitle: String { ProfileV3L10n.moAiprofileGloveboxTitleActivate }
     static var activateSubtitle: String { ProfileV3L10n.moAiprofileGloveboxDescriptionActivate }
@@ -161,6 +163,7 @@ enum ProfileV3GloveBoxMapper {
 
     static func detail(_ dto: ProfileV3GloveBoxMessageDTO, listItem: ProfileV3GloveBoxEmail) -> ProfileV3GloveBoxEmail {
         let status = listItem.delivery ?? delivery(dto.status)
+        let body = ProfileV3EmailBodyParser.body(html: dto.html, text: dto.text)
         return ProfileV3GloveBoxEmail(
             id: listItem.id,
             sender: text(dto.fromName) ?? listItem.sender,
@@ -174,7 +177,8 @@ enum ProfileV3GloveBoxMapper {
                 previousAddress: dto.toPreviousAddress == true,
                 received: dto.receivedAt.flatMap(ProfileV3ISODate.parse)
             ),
-            note: note(text: dto.text, html: dto.html),
+            note: body?.message.plain,
+            body: body,
             attachments: (dto.attachments ?? []).enumerated().compactMap { offset, attachment in
                 guard let filename = cleaned(attachment.filename) else { return nil }
                 return ProfileV3GloveBoxAttachment(
@@ -329,10 +333,6 @@ enum ProfileV3GloveBoxMapper {
         return url
     }
 
-    private static func note(text: String?, html: String?) -> String? {
-        cleaned(text) ?? html.flatMap { cleaned(plain($0)) }
-    }
-
     private static func attachmentIndex(_ url: String?, fallback: Int) -> Int {
         guard let last = url?.split(separator: "/").last, let index = Int(last) else { return fallback }
         return index
@@ -340,13 +340,6 @@ enum ProfileV3GloveBoxMapper {
 
     private static func cleaned(_ raw: String?) -> String? {
         raw?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty
-    }
-
-    private static func plain(_ html: String) -> String {
-        var text = html.replacingOccurrences(of: "(?i)<br\\s*/?>", with: "\n", options: .regularExpression)
-        text = text.replacingOccurrences(of: "(?i)</p>", with: "\n", options: .regularExpression)
-        text = text.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
-        return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private static func text(_ raw: String?) -> String? {

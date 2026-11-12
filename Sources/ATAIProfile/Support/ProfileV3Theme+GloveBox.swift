@@ -294,6 +294,8 @@ extension ProfileV3Theme {
             static let detailNoteWidth: CGFloat = 260
             static let detailNoteOrbGap = ProfileV3Theme.Space.s16
             static let detailAttachmentsTop: CGFloat = 41
+            static let detailQuoteToggleTop = ProfileV3Theme.Space.s8
+            static let emailItalicSlant: CGFloat = 0.2
             static let attachmentPadding = EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 16)
             static let attachmentRadius = ProfileV3Theme.Radius.lg
             static let attachmentIcon: CGFloat = 20
@@ -358,6 +360,7 @@ extension ProfileV3Theme {
             static let forwardingOpacity = 0.9
             static let forwardingLabelOpacity = 0.5
             static let summaryOpacity = 0.5
+            static let quotedOpacity = 0.5
             static let metaOpacity = 0.3
             static let metaIconOpacity = 0.6
             static let attentionOpacity = 0.7

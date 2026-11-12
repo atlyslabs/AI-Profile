@@ -42,10 +42,13 @@ extension ProfileV3Theme.Sizes {
         static let noteWidth: CGFloat = 296
         static let barTop: CGFloat = 33
         static let editFieldsTop: CGFloat = 134
+        static let compactEditFieldsTop = ProfileV3Theme.Sizes.Agent.backTop + ProfileV3Theme.Sizes.circleButton + ProfileV3Theme.Space.s24
         static let deleteDividerTop: CGFloat = 164
+        static let compactDeleteDividerTop = ProfileV3Theme.Space.s40
         static let deleteRowTop = ProfileV3Theme.Space.s20
         static let deleteIcon: CGFloat = 15
         static let editBottom: CGFloat = 49
+        static let compactEditBottom = ProfileV3Theme.Space.s24
     }
 
     enum CredentialStore {

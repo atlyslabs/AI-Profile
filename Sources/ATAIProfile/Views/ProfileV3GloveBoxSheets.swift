@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3GloveBoxSheetStack: View {
@@ -252,6 +253,8 @@ struct ProfileV3GloveBoxDetailSheet: View {
     let onFollowUp: () -> Void
     var onOpenAttachment: (ProfileV3GloveBoxAttachment) -> Void = { _ in }
 
+    @State private var showsQuoted = false
+
     private typealias Layout = ProfileV3Theme.GloveBox.Layout
     private typealias Palette = ProfileV3Theme.GloveBox.Palette
 
@@ -268,16 +271,24 @@ struct ProfileV3GloveBoxDetailSheet: View {
                 if let note, !note.isEmpty {
                     ProfileV3FlowingText(
                         text: note,
+                        attributed: emailBody.map {
+                            ProfileV3EmailBodyText.attributed($0, showsQuoted: showsQuoted, color: UIColor(Color(at: .pureBlack)))
+                        },
                         trailingExclusion: CGSize(
                             width: ProfileV3AtlysOrb.Metrics.insight.ringOuter + Layout.detailNoteOrbGap,
                             height: ProfileV3AtlysOrb.Metrics.insight.ringOuter
                         ),
                         besideWidth: Layout.detailNoteWidth
                     )
+                    .postHogMask()
                     .overlay(alignment: .topTrailing) {
                         ProfileV3AtlysOrb(ring: .still, metrics: .insight)
                     }
                     .padding(.top, Layout.detailNoteTop)
+                    if emailBody?.quoted != nil {
+                        quoteToggle
+                            .padding(.top, Layout.detailQuoteToggleTop)
+                    }
                 }
                 if case .email(let email) = entry, !email.attachments.isEmpty {
                     ProfileV3FlowLayout(horizontalSpacing: Layout.attachmentSpacing, verticalSpacing: Layout.attachmentRowSpacing) {
@@ -298,6 +309,30 @@ struct ProfileV3GloveBoxDetailSheet: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var emailBody: ProfileV3EmailBody? {
+        guard case .email(let email) = entry else { return nil }
+        return email.body
+    }
+
+    private var quoteToggle: some View {
+        Button { showsQuoted.toggle() } label: {
+            HStack(spacing: Layout.viewAllSpacing) {
+                Text(showsQuoted ? ProfileV3GloveBoxCopy.hideQuoted : ProfileV3GloveBoxCopy.showQuoted)
+                    .typoGraphy(.B1InterMedium14)
+                    .foregroundStyle(Color(at: .pureBlack).opacity(Palette.summaryOpacity))
+                ATIcon.SwiftUIImage.expandMore
+                    .profileV3Icon(Layout.viewAllIcon)
+                    .rotationEffect(.degrees(showsQuoted ? 180 : 0))
+                    .foregroundStyle(Palette.control)
+            }
+            .frame(minHeight: ProfileV3Theme.Control.tapTarget)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.profileV3Pressable(.selection))
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
     }
 
     private func attachmentChip(_ attachment: ProfileV3GloveBoxAttachment, isOpening: Bool) -> some View {
@@ -343,6 +378,7 @@ struct ProfileV3GloveBoxDetailSheet: View {
                             .foregroundStyle(Color(at: .pureBlack).opacity(Palette.summaryOpacity))
                             .frame(maxWidth: Layout.rowTextWidth, alignment: .leading)
                             .fixedSize(horizontal: false, vertical: true)
+                            .postHogMask()
                     }
                 }
                 status

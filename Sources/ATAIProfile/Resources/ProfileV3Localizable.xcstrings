@@ -3049,6 +3049,18 @@
         }
       }
     },
+    "mo-aiprofile-glovebox-button-hide-quoted-text": {
+      "comment": "Hides the earlier messages quoted under a glove box email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide quoted text"
+          }
+        }
+      }
+    },
     "mo-aiprofile-glovebox-button-pause": {
       "comment": "Button that pauses email forwarding.",
       "extractionState": "manual",
@@ -3081,6 +3093,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Send link"
+          }
+        }
+      }
+    },
+    "mo-aiprofile-glovebox-button-show-quoted-text": {
+      "comment": "Shows the earlier messages quoted under a glove box email.",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show quoted text"
           }
         }
       }

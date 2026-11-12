@@ -56,8 +56,16 @@ struct ProfileV3AppCredentialsSheet: View {
     var onBarHeight: (CGFloat) -> Void = { _ in }
 
     @Environment(\.openURL) private var openURL
+    @State private var measured = Measured()
 
     private typealias Layout = ProfileV3Theme.Sizes.AppCredentials
+
+    private struct Measured: Equatable {
+        var sheet: CGFloat = 0
+        var bar: CGFloat = 0
+        var fields: CGFloat = 0
+        var delete: CGFloat = 0
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -77,10 +85,21 @@ struct ProfileV3AppCredentialsSheet: View {
             }
             .overlay(alignment: .top) { header }
             bar
-                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { onBarHeight($0) }
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                    measured.bar = height
+                    onBarHeight(height)
+                }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background {
+            Color.clear
+                .ignoresSafeArea(.keyboard)
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.sheet = $0 }
+        }
         .background(Color(at: .pureWhite).ignoresSafeArea())
+        .onChange(of: savedLoginHeight, initial: true) { _, height in
+            if !viewModel.showsHeader, height > 0 { onContentHeight(height) }
+        }
         .sensoryFeedback(.success, trigger: viewModel.phase == .saved)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
             viewModel.hidePassword()
@@ -92,7 +111,19 @@ struct ProfileV3AppCredentialsSheet: View {
 
     private var measuredContent: some View {
         content
-            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { onContentHeight($0) }
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                if viewModel.showsHeader { onContentHeight(height) }
+            }
+    }
+
+    private var savedLoginHeight: CGFloat {
+        guard measured.fields > 0, measured.delete > 0 else { return 0 }
+        return ProfileV3SavedLoginSpacing.full.total + measured.fields + measured.delete
+    }
+
+    private var savedLoginSpacing: ProfileV3SavedLoginSpacing {
+        guard savedLoginHeight > 0, measured.sheet > 0, measured.bar > 0 else { return .full }
+        return ProfileV3SavedLoginSpacing(shortfall: savedLoginHeight - (measured.sheet - measured.bar))
     }
 
     private var header: some View {
@@ -119,24 +150,29 @@ struct ProfileV3AppCredentialsSheet: View {
             .frame(maxWidth: .infinity)
             .padding(.top, ProfileV3Theme.Sizes.Agent.backTop + Layout.shieldTop)
         } else {
+            let spacing = savedLoginSpacing
             VStack(spacing: 0) {
                 fields
-                ProfileV3DashedDivider()
-                    .padding(.top, Layout.deleteDividerTop)
-                ProfileV3SettingsRow(
-                    icon: ATIcon.SwiftUIImage.deleteOutline,
-                    title: ProfileV3Strings.credentialDelete,
-                    iconSize: Layout.deleteIcon,
-                    iconSlot: ProfileV3Theme.Sizes.settingsRowIcon,
-                    tint: ProfileV3Theme.Palette.destructive,
-                    action: viewModel.askToDelete
-                )
-                .disabled(viewModel.phase != .idle)
-                .padding(.top, Layout.deleteRowTop)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.fields = $0 }
+                VStack(spacing: 0) {
+                    ProfileV3DashedDivider()
+                    ProfileV3SettingsRow(
+                        icon: ATIcon.SwiftUIImage.deleteOutline,
+                        title: ProfileV3Strings.credentialDelete,
+                        iconSize: Layout.deleteIcon,
+                        iconSlot: ProfileV3Theme.Sizes.settingsRowIcon,
+                        tint: ProfileV3Theme.Palette.destructive,
+                        action: viewModel.askToDelete
+                    )
+                    .disabled(viewModel.phase != .idle)
+                    .padding(.top, Layout.deleteRowTop)
+                }
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured.delete = $0 }
+                .padding(.top, spacing.dividerTop)
             }
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
-            .padding(.top, Layout.editFieldsTop)
-            .padding(.bottom, Layout.editBottom)
+            .padding(.top, spacing.fieldsTop)
+            .padding(.bottom, spacing.bottom)
         }
     }
 
@@ -255,6 +291,28 @@ struct ProfileV3AppCredentialsSheet: View {
 
     private var saveOpacity: Double {
         viewModel.canSubmit || viewModel.phase != .idle ? 1 : ProfileV3Theme.Opacity.disabled
+    }
+}
+
+struct ProfileV3SavedLoginSpacing: Equatable {
+    let fieldsTop: CGFloat
+    let dividerTop: CGFloat
+    let bottom: CGFloat
+
+    static let full = ProfileV3SavedLoginSpacing(shortfall: 0)
+
+    var total: CGFloat { fieldsTop + dividerTop + bottom }
+
+    init(shortfall: CGFloat) {
+        typealias Layout = ProfileV3Theme.Sizes.AppCredentials
+        let fieldsRoom = Layout.editFieldsTop - Layout.compactEditFieldsTop
+        let dividerRoom = Layout.deleteDividerTop - Layout.compactDeleteDividerTop
+        let bottomRoom = Layout.editBottom - Layout.compactEditBottom
+        let room = fieldsRoom + dividerRoom + bottomRoom
+        let squeeze = room > 0 ? min(max(shortfall, 0) / room, 1) : 0
+        fieldsTop = (Layout.editFieldsTop - fieldsRoom * squeeze).rounded(.down)
+        dividerTop = (Layout.deleteDividerTop - dividerRoom * squeeze).rounded(.down)
+        bottom = (Layout.editBottom - bottomRoom * squeeze).rounded(.down)
     }
 }
 

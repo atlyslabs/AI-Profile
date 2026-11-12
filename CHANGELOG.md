@@ -207,6 +207,23 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   enrolled" (another user's id, a revoked device, a migration), the app forgets that user's id,
   enrolls the same key again and retries the reveal once, without showing the error. The key is
   no longer deleted for "not enrolled", only for "signature rejected".
+- Glove box emails are drawn from jaqen's `html` when it sends one, else from `text`. Before, the
+  detail showed `text` first, so every reply listed its quoted history with a `>` before each line
+  (Vijay's report, 2026-11-12). `ProfileV3EmailBodyParser` reads the html into paragraphs, line
+  breaks, bullet and numbered lists, bold, italics and http(s)/mailto/tel links. It skips the
+  head, styles, scripts and hidden preheaders. The body keeps the design's font and still flows
+  around the orb. Quoted history at the end of an email (a trailing `blockquote`, with Gmail's
+  `gmail_attr` line or a line ending in "wrote:") folds behind "Show quoted text" and shows in
+  grey when opened. A Gmail forward isn't a quote and shows in full, and a quote inside the
+  reply stays in place in grey. Plain-text emails fold their trailing `>` lines the same way,
+  without the arrows. Links are tappable. The body and subject are masked in session replay.
+- A saved vault login keeps "Delete account" in view on phones shorter than a Pro Max. The sheet
+  needs 798pt (820pt with an error under the password), more than a full-height sheet has on a
+  6.1" phone (758pt), so its content scrolled and the row was cut by the space kept for "save
+  changes", which stays blank until something changes. When the sheet can't fit, the gaps above
+  the fields (134pt), above the divider (164pt) and at the bottom (49pt) now give back the
+  shortfall, down to 102, 40 and 24pt (`ProfileV3SavedLoginSpacing`). The sheet's height and a Pro
+  Max's layout are unchanged.
 - Towns with no airport now show in the city picker and can be added (QA-2114, `vdc-k8s#24180`).
   The server sends them with `code: ""` plus `name` and `country_code`, and the client dropped
   every row, porthole, purpose sheet and city screen without a code. Cities are now keyed as the

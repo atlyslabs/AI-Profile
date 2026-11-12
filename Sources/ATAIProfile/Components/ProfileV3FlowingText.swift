@@ -4,6 +4,7 @@ import UIKit
 
 struct ProfileV3FlowingText: UIViewRepresentable {
     let text: String
+    var attributed: NSAttributedString?
     var style: TypographyStyle = .H7InterMedium16
     var color: Color = Color(at: .pureBlack)
     var trailingExclusion: CGSize = .zero
@@ -14,7 +15,14 @@ struct ProfileV3FlowingText: UIViewRepresentable {
     }
 
     func updateUIView(_ view: ProfileV3FlowingTextView, context: Context) {
-        view.configure(text: text, style: style, color: UIColor(color), exclusion: trailingExclusion, besideWidth: besideWidth)
+        view.configure(
+            text: text,
+            attributed: attributed,
+            style: style,
+            color: UIColor(color),
+            exclusion: trailingExclusion,
+            besideWidth: besideWidth
+        )
     }
 
     func sizeThatFits(_ proposal: ProposedViewSize, uiView view: ProfileV3FlowingTextView, context: Context) -> CGSize? {
@@ -34,6 +42,7 @@ final class ProfileV3FlowingTextView: UITextView {
         isSelectable = false
         isScrollEnabled = false
         backgroundColor = .clear
+        linkTextAttributes = [:]
         textContainerInset = .zero
         textContainer.lineFragmentPadding = 0
         setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -45,19 +54,37 @@ final class ProfileV3FlowingTextView: UITextView {
         nil
     }
 
-    func configure(text: String, style: TypographyStyle, color: UIColor, exclusion: CGSize, besideWidth: CGFloat? = nil) {
+    static func attributes(style: TypographyStyle, color: UIColor) -> [NSAttributedString.Key: Any] {
         let paragraph = NSMutableParagraphStyle()
         paragraph.lineSpacing = style.lineSpacingAdjustment
-        let attributed = NSAttributedString(
-            string: text,
-            attributes: [
-                .font: style.uiFont,
-                .tracking: style.trackingPoints,
-                .paragraphStyle: paragraph,
-                .foregroundColor: color,
-            ]
-        )
-        if attributedText != attributed { attributedText = attributed }
+        return [
+            .font: style.uiFont,
+            .tracking: style.trackingPoints,
+            .paragraphStyle: paragraph,
+            .foregroundColor: color,
+        ]
+    }
+
+    func configure(
+        text: String,
+        attributed: NSAttributedString? = nil,
+        style: TypographyStyle,
+        color: UIColor,
+        exclusion: CGSize,
+        besideWidth: CGFloat? = nil
+    ) {
+        let attributed = attributed ?? NSAttributedString(string: text, attributes: Self.attributes(style: style, color: color))
+        if attributedText != attributed {
+            attributedText = attributed
+            var hasLinks = false
+            attributed.enumerateAttribute(.link, in: NSRange(location: 0, length: attributed.length)) { value, _, stop in
+                if value != nil {
+                    hasLinks = true
+                    stop.pointee = true
+                }
+            }
+            isSelectable = hasLinks
+        }
         guard self.exclusion != exclusion || self.besideWidth != besideWidth else { return }
         self.exclusion = exclusion
         self.besideWidth = besideWidth
