@@ -87,6 +87,66 @@ struct ProfileV3CityProfileTests {
         #expect(picker.results.first?.title == "Bangkok (BKK)")
     }
 
+    @Test func townsWithNoAirportShowInThePickerByName() throws {
+        let dto = try JSONDecoder().decode(ProfileV3CityPickerDTO.self, from: Data(#"""
+        {"type":"city_picker","title":"+ City profile","search_placeholder":"Search","heading":"",
+         "q":"Guru","offset":0,"next_offset":null,
+         "results":[
+           {"code":"","name":"Gurugram","country":"India","country_code":"IN",
+            "next":{"go":"city_purpose","code":"","name":"Gurugram","country_code":"IN","profile_id":"p1"}},
+           {"code":"","name":"Guru Har Sahai","country":"India","country_code":"IN",
+            "next":{"go":"city_purpose","code":"","name":"Guru Har Sahai","country_code":"IN","profile_id":"p1"}},
+           {"code":"","name":"Hyderabad","country":"Pakistan","country_code":"PK"},
+           {"code":"HYD","name":"Hyderabad","country":"India","country_code":"IN"},
+           {"code":"","name":"No country"}
+         ]}
+        """#.utf8))
+        let results = ProfileV3CityProfileMapper.picker(dto).results
+        #expect(results.map(\.title) == ["Gurugram", "Guru Har Sahai", "Hyderabad", "Hyderabad (HYD)"])
+        #expect(results.map(\.id) == ["gurugram|IN", "guru har sahai|IN", "hyderabad|PK", "HYD"])
+    }
+
+    @Test func aTownsPurposeCallNamesItByNameAndCountry() {
+        let town = ProfileV3API.cityPurpose(code: "", name: "Gurugram", countryCode: "IN", cityID: nil, profileID: "p1")
+        #expect(Self.query(town) == ["code": "", "name": "Gurugram", "country_code": "IN", "profile_id": "p1"])
+        let airport = ProfileV3API.cityPurpose(code: "BOM", name: "Mumbai", countryCode: "IN", cityID: nil, profileID: "p1")
+        #expect(Self.query(airport) == ["code": "BOM", "profile_id": "p1"])
+    }
+
+    @Test func aTownMapsWithoutACodeAndItsAddCarriesItsName() throws {
+        let sheetDTO = try JSONDecoder().decode(ProfileV3CityPurposeSheetDTO.self, from: Data(#"""
+        {"type":"city_purpose","title":"GURUGRAM",
+         "city":{"code":"","name":"Gurugram","country_code":"IN","image_url":"https://media.atlys.com/IN.avif?q=60"},
+         "options":[{"key":"home","label":"Home","disabled":false}],"used_labels":[],"label_taken":"",
+         "submit":{"label":"Continue","action":"create_city_profile","code":"","name":"Gurugram","country_code":"IN","profile_id":"p1"}}
+        """#.utf8))
+        let sheet = try #require(ProfileV3CityProfileMapper.purposeSheet(sheetDTO))
+        #expect(sheet.city.code.isEmpty)
+        #expect(sheet.city.name == "Gurugram")
+        let body = try JSONEncoder().encode(ProfileV3CitySubmitRequest(action: sheet.submit, purpose: "work", label: nil))
+        let json = try #require(JSONSerialization.jsonObject(with: body) as? [String: Any])
+        #expect(json["code"] as? String == "")
+        #expect(json["name"] as? String == "Gurugram")
+        #expect(json["country_code"] as? String == "IN")
+
+        let portholeDTO = try JSONDecoder().decode(ProfileV3CityPortholeDTO.self, from: Data(#"""
+        {"id":"c9","code":"","name":"Gurugram","country":"India","country_code":"IN",
+         "purpose":{"key":"work","label":"Work"},"next":{"go":"city_profile","city_id":"c9"}}
+        """#.utf8))
+        let porthole = try #require(ProfileV3CityProfileMapper.porthole(portholeDTO))
+        #expect(porthole.code.isEmpty)
+        #expect(porthole.name == "Gurugram")
+
+        let townJSON = Self.cityJSON.replacingOccurrences(
+            of: #""city":{"code":"BOM","name":"Mumbai""#,
+            with: #""city":{"code":"","name":"Gurugram""#
+        )
+        let cityDTO = try JSONDecoder().decode(ProfileV3CityScreenDTO.self, from: Data(townJSON.utf8))
+        let city = try #require(ProfileV3CityProfileMapper.city(cityDTO, cityID: "c1"))
+        #expect(city.code.isEmpty)
+        #expect(city.name == "Gurugram")
+    }
+
     @Test func thePencilSheetKeepsTheCitysPurposeAndOffersDelete() throws {
         let dto = try JSONDecoder().decode(ProfileV3CityPurposeSheetDTO.self, from: Data(Self.pencilJSON.utf8))
         let sheet = try #require(ProfileV3CityProfileMapper.purposeSheet(dto))
@@ -102,6 +162,8 @@ struct ProfileV3CityProfileTests {
         #expect(sheet.submit.name == "update_city_purpose")
         #expect(sheet.delete?.confirm.message == "Your preferences for this city will be removed.")
         #expect(sheet.delete?.action.name == "delete_city_profile")
+        #expect(sheet.delete?.iconURL?.absoluteString == "\(Self.icons)/delete.png?v=20261112b")
+        #expect(sheet.delete?.confirm.iconURL == sheet.delete?.iconURL)
 
         let body = try JSONEncoder().encode(ProfileV3CitySubmitRequest(action: sheet.submit, purpose: "other", label: "Mom & dad"))
         let json = try #require(JSONSerialization.jsonObject(with: body) as? [String: Any])
@@ -230,11 +292,13 @@ struct ProfileV3CityProfileTests {
         let editor = try #require(viewModel.editor)
         try await Self.waitUntil { editor.sheet != nil }
         let sheet = try #require(editor.sheet)
-        #expect(sheet.options.filter(\.isDisabled).map(\.key) == ["home", "leisure"])
+        #expect(sheet.options.filter(\.isDisabled).map(\.key) == ["home"])
         let home = try #require(sheet.option(key: "home"))
         editor.select(home)
         #expect(editor.purposeKey == nil)
         #expect(!editor.canContinue)
+        editor.select(try #require(sheet.option(key: "leisure")))
+        #expect(editor.canContinue)
     }
 
     @Test func addingACityOpensItOnceSaved() async throws {
@@ -258,12 +322,40 @@ struct ProfileV3CityProfileTests {
 
         #expect(viewModel.selectedCity?.purpose.label == "Work")
         #expect(viewModel.content?.cities.first?.code == "DXB")
-        #expect(store.snapshot().map(\.code) == ["DXB", "BOM", "BKK"])
+        #expect(store.snapshot().map(\.key) == ["DXB", "BOM", "BKK"])
+    }
+
+    @Test func aTownWithNoAirportCanBeAddedWithAPurposeAnotherCityHas() async throws {
+        let store = ProfileV3CityProfileStore()
+        let viewModel = Self.viewModel(store: store)
+        viewModel.load()
+        try await Self.waitUntil { viewModel.phase == .loaded }
+
+        viewModel.startAdding()
+        let search = try #require(viewModel.search)
+        search.setQuery("oot")
+        try await Self.waitUntil { search.results.map(\.name) == ["Ooty"] }
+        viewModel.choose(try #require(search.results.first))
+        viewModel.searchDidDismiss()
+        let editor = try #require(viewModel.editor)
+        try await Self.waitUntil { editor.sheet != nil }
+        let sheet = try #require(editor.sheet)
+        #expect(sheet.city.name == "Ooty")
+        #expect(sheet.submit.fields["name"] == .string("Ooty"))
+        #expect(sheet.options.filter(\.isDisabled).isEmpty)
+
+        editor.select(try #require(sheet.option(key: "home")))
+        #expect(editor.canContinue)
+        editor.commit()
+        try await Self.waitUntil { viewModel.selectedCity?.name == "Ooty" }
+        #expect(viewModel.selectedCity?.code == "")
+        #expect(viewModel.content?.cities.first?.name == "Ooty")
+        #expect(store.snapshot().map(\.key) == ["ooty|IN", "BOM", "BKK"])
     }
 
     @Test func otherAsksForANameThatNoOtherCityUses() async throws {
         let store = ProfileV3CityProfileStore(entries: [
-            .init(id: "c1", code: "DEL", purpose: "other", label: "Dad", form: ProfileV3CityProfileFixtures.form())
+            .init(id: "c1", key: "DEL", purpose: "other", label: "Dad", form: ProfileV3CityProfileFixtures.form())
         ])
         let editor = Self.editor(.add(ProfileV3CityProfileFixtures.catalogue[0]), store: store)
         editor.load()
@@ -407,6 +499,26 @@ struct ProfileV3CityProfileTests {
         }
         #expect(field.optOut?.isOn == true)
         #expect(field.selection == ["Taj Lands End", "Trident Nariman Point"])
+    }
+
+    @Test func savingACityMovesItToTheFrontAndKeepsItSelected() async throws {
+        let store = ProfileV3CityProfileStore()
+        let viewModel = Self.viewModel(store: store)
+        viewModel.load()
+        try await Self.waitUntil { viewModel.form != nil }
+        #expect(viewModel.content?.cities.map(\.id) == ["c1", "c2"])
+
+        viewModel.select("c2")
+        try await Self.waitUntil { viewModel.form != nil && viewModel.selectedCity?.id == "c2" }
+        let form = try #require(viewModel.form)
+        form.setOptOut(true, in: "hotels")
+        form.save()
+        try await Self.waitUntil { form.saveState == .saved }
+        try await Self.waitUntil { viewModel.content?.cities.first?.id == "c2" }
+
+        #expect(viewModel.content?.cities.map(\.id) == ["c2", "c1"])
+        #expect(viewModel.selection == "c2")
+        #expect(viewModel.form === form)
     }
 
     @Test func aTypedHotelJoinsTheListOnce() async throws {
@@ -582,6 +694,11 @@ struct ProfileV3CityProfileTests {
         )
     }
 
+    private static func query(_ endpoint: ProfileV3API) -> [String: String] {
+        guard case .requestParameters(let parameters, _) = endpoint.task else { return [:] }
+        return parameters.compactMapValues { $0 as? String }
+    }
+
     private static func waitUntil(_ condition: () -> Bool) async throws {
         for _ in 0 ..< 400 where !condition() {
             try await Swift.Task.sleep(for: .milliseconds(10))
@@ -621,8 +738,8 @@ struct ProfileV3CityProfileTests {
      ],
      "used_labels":["Mom"],"label_taken":"You already use this for another city.",
      "submit":{"label":"Save","action":"update_city_purpose","city_id":"c2"},
-     "delete":{"label":"Delete city profile","action":"delete_city_profile","city_id":"c2",
-               "confirm":{"title":"Delete Delhi?","body":"Your preferences for this city will be removed.",
+     "delete":{"label":"Delete city profile","icon_url":"\(icons)/delete.png?v=20261112b","action":"delete_city_profile","city_id":"c2",
+               "confirm":{"icon_url":"\(icons)/delete.png?v=20261112b","title":"Delete Delhi?","body":"Your preferences for this city will be removed.",
                           "confirm_label":"Delete","cancel_label":"Cancel"}}}
     """
 

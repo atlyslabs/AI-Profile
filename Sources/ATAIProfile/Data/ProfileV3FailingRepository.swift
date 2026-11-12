@@ -268,7 +268,7 @@ struct ProfileV3FailingRepository: ProfileV3Repository {
         throw ProfileV3RepositoryError.unavailable
     }
 
-    func loadCityPurpose(code _: String, cityID _: String?, profileID _: String?) async throws -> ProfileV3CityPurposeSheet {
+    func loadCityPurpose(_: ProfileV3CitySearchResult, cityID _: String?, profileID _: String?) async throws -> ProfileV3CityPurposeSheet {
         throw ProfileV3RepositoryError.unavailable
     }
 

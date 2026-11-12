@@ -23,6 +23,7 @@ extension ProfileV3Theme.Sizes {
         static let windowRing: CGFloat = 0.45
         static let windowCodeSize: CGFloat = 24
         static let windowCodeTracking: CGFloat = -0.96
+        static let windowNameMinimumScale: CGFloat = 0.5
         static let windowTextGap = ProfileV3Theme.Space.s8
         static let addRingPulseWidth: CGFloat = 1.6
         static let addRingSettleWidth: CGFloat = 0.65

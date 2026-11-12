@@ -5,6 +5,9 @@ struct ProfileV3CountryPickerView: View {
     let title: String
     let icon: Image
     let selected: ProfileV3Country?
+    let countries: [ProfileV3Country]?
+    let searchPlaceholder: String
+    let tracksScrollDepth: Bool
     let trailing: ((ProfileV3Country) -> String?)?
     let searchText: ((ProfileV3Country) -> String?)?
     let confirmTitle: String?
@@ -18,6 +21,9 @@ struct ProfileV3CountryPickerView: View {
         title: String,
         icon: Image,
         selected: ProfileV3Country?,
+        countries: [ProfileV3Country]? = nil,
+        searchPlaceholder: String = ProfileV3Strings.search,
+        tracksScrollDepth: Bool = true,
         trailing: ((ProfileV3Country) -> String?)? = nil,
         searchText: ((ProfileV3Country) -> String?)? = nil,
         confirmTitle: String? = nil,
@@ -28,6 +34,9 @@ struct ProfileV3CountryPickerView: View {
         self.title = title
         self.icon = icon
         self.selected = selected
+        self.countries = countries
+        self.searchPlaceholder = searchPlaceholder
+        self.tracksScrollDepth = tracksScrollDepth
         self.trailing = trailing
         self.searchText = searchText
         self.confirmTitle = confirmTitle
@@ -45,9 +54,11 @@ struct ProfileV3CountryPickerView: View {
                 query: $query,
                 selection: current,
                 pinned: selected,
+                countries: countries,
+                searchPlaceholder: searchPlaceholder,
                 trailing: trailing,
                 searchText: searchText,
-                tracksScrollDepth: true,
+                tracksScrollDepth: tracksScrollDepth,
                 onSelect: choose
             )
         }

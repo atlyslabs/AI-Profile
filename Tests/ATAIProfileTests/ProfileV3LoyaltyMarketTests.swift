@@ -6,24 +6,68 @@ import Testing
 @MainActor
 @Suite("Loyalty market")
 struct ProfileV3LoyaltyMarketTests {
-    @Test func theCatalogueCarriesItsMarketToggle() throws {
+    @Test func theCatalogueCarriesItsCountryList() throws {
         let picker = try Self.picker(#"""
         {"type":"loyalty_pick","filters":["All","Credit cards","Hotels"],"programs":[],
-         "market":{"options":[{"value":"in","label":"IN"},{"value":"world","label":"World"}],
-                   "selected":"world","chips":["All","Credit cards"]}}
+         "market":{"options":[{"value":"in","label":"India"},{"value":"hk","label":"Hong Kong","short_label":"HKG"},
+                              {"value":"world","label":"World"}],
+                   "selected":"in","chips":["All","Credit cards"],"title":"Select country","search_placeholder":"Search"}}
         """#)
         let market = try #require(picker.market)
         #expect(market == ProfileV3ProgrammeMarket(
             options: [
-                ProfileV3ProgrammeMarket.Option(value: "in", label: "IN"),
+                ProfileV3ProgrammeMarket.Option(value: "in", label: "India"),
+                ProfileV3ProgrammeMarket.Option(value: "hk", label: "Hong Kong", shortLabel: "HKG"),
                 ProfileV3ProgrammeMarket.Option(value: "world", label: "World")
             ],
-            selected: "world",
-            chips: ["All", "Credit cards"]
+            selected: "in",
+            chips: ["All", "Credit cards"],
+            title: "Select country",
+            searchPlaceholder: "Search"
         ))
         #expect(market.appliesTo(chip: "credit cards"))
         #expect(!market.appliesTo(chip: "Hotels"))
-        #expect(market.options.map(\.countryCode) == ["IN", nil])
+        #expect(market.options.map(\.countryCode) == ["IN", "HK", nil])
+        #expect(market.options.map(\.pillLabel) == ["India", "HKG", "World"])
+        #expect(market.option(country: ProfileV3Country(code: "HK", name: "Hong Kong"))?.value == "hk")
+        #expect(market.option(country: market.options[2].country)?.value == "world")
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func thePillOpensTheCountryListAndAPickReloadsTheCards() async throws {
+        let repository = MarketStub()
+        let viewModel = ProfileV3AddProgrammeViewModel(requiresKYC: false, repository: repository)
+        await viewModel.start()
+        try await Self.waitUntil { !viewModel.isLoadingCatalogue }
+        #expect(viewModel.stage == .pick)
+        #expect(viewModel.selectedMarketOption?.pillLabel == "IND")
+
+        viewModel.openMarketPicker()
+        #expect(viewModel.stage == .market)
+        #expect(viewModel.market?.title == "Select country")
+        viewModel.closeMarketPicker()
+        #expect(viewModel.stage == .pick)
+        #expect(await repository.markets == [nil])
+
+        viewModel.openMarketPicker()
+        let singapore = try #require(viewModel.market?.options.first { $0.value == "sg" })
+        viewModel.chooseMarket(singapore.country)
+        #expect(viewModel.stage == .pick)
+        try await Self.waitUntil { !viewModel.isLoadingCatalogue }
+        #expect(await repository.markets == [nil, "sg"])
+        #expect(viewModel.selectedMarketOption?.label == "Singapore")
+        #expect(viewModel.market?.options.first?.value == "sg")
+
+        viewModel.openMarketPicker()
+        viewModel.chooseMarket(singapore.country)
+        #expect(viewModel.stage == .pick)
+        #expect(await repository.markets == [nil, "sg"])
+
+        let hotels = try #require(viewModel.filters.first { $0.category == .hotels })
+        viewModel.selectFilter(hotels)
+        try await Self.waitUntil { !viewModel.isLoadingCatalogue }
+        viewModel.openMarketPicker()
+        #expect(viewModel.stage == .pick)
     }
 
     @Test func anIncompleteMarketIsDroppedOrFallsBackToTheFirstOption() throws {
@@ -57,7 +101,7 @@ struct ProfileV3LoyaltyMarketTests {
         try await Self.waitUntil { !viewModel.isLoadingCatalogue }
         #expect(await repository.markets == [nil])
         #expect(viewModel.selectedMarket == "in")
-        #expect(viewModel.selectedMarketOption?.label == "IN")
+        #expect(viewModel.selectedMarketOption?.label == "India")
         #expect(viewModel.showsMarketToggle)
 
         let cards = try #require(viewModel.filters.first { $0.category == .creditCards })
@@ -76,15 +120,15 @@ struct ProfileV3LoyaltyMarketTests {
         let all = try #require(allFilter)
         viewModel.selectFilter(all)
         try await Self.waitUntil { !viewModel.isLoadingCatalogue }
-        viewModel.selectMarket("world")
+        viewModel.selectMarket("us")
         try await Self.waitUntil { !viewModel.isLoadingCatalogue }
-        #expect(await repository.markets == [nil, "in", "in", "in", "world"])
-        #expect(viewModel.selectedMarketOption?.label == "World")
+        #expect(await repository.markets == [nil, "in", "in", "in", "us"])
+        #expect(viewModel.selectedMarketOption?.label == "United States")
 
         viewModel.selectMarket("mars")
         viewModel.query = "air"
         try await Self.waitUntil { await repository.markets.count == 6 }
-        #expect(await repository.markets.last == "world")
+        #expect(await repository.markets.last == "us")
         #expect(await repository.queries.last == "air")
     }
 

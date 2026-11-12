@@ -16,11 +16,11 @@ enum ProfileV3CityProfileMapper: ProfileV3DTOReading {
     }
 
     static func porthole(_ dto: ProfileV3CityPortholeDTO) -> ProfileV3CityPorthole? {
-        guard let id = text(dto.id) ?? text(dto.next?.cityID), let code = text(dto.code) else { return nil }
+        guard let id = text(dto.id) ?? text(dto.next?.cityID), let name = text(dto.name) ?? text(dto.code) else { return nil }
         return ProfileV3CityPorthole(
             id: id,
-            code: code,
-            name: text(dto.name) ?? code,
+            code: text(dto.code) ?? "",
+            name: name,
             country: text(dto.country),
             countryCode: text(dto.countryCode),
             imageURL: remoteURL(dto.imageURL),
@@ -38,20 +38,19 @@ enum ProfileV3CityProfileMapper: ProfileV3DTOReading {
             query: dto.query ?? "",
             offset: max(dto.offset ?? 0, 0),
             nextOffset: dto.nextOffset,
-            results: dto.results.compactMap { row in
-                guard let code = text(row.code) else { return nil }
-                return ProfileV3CitySearchResult(
-                    code: code,
-                    name: text(row.name) ?? code,
-                    country: text(row.country),
-                    countryCode: text(row.countryCode)
-                )
-            }
+            results: dto.results.compactMap(searchResult)
         )
     }
 
+    private static func searchResult(_ row: ProfileV3CityPickerRowDTO) -> ProfileV3CitySearchResult? {
+        let code = text(row.code) ?? ""
+        let countryCode = text(row.countryCode)
+        guard let name = text(row.name) ?? code.nonEmpty, !code.isEmpty || countryCode != nil else { return nil }
+        return ProfileV3CitySearchResult(code: code, name: name, country: text(row.country), countryCode: countryCode)
+    }
+
     static func purposeSheet(_ dto: ProfileV3CityPurposeSheetDTO) -> ProfileV3CityPurposeSheet? {
-        guard let code = text(dto.city?.code), let submit = dto.submit else { return nil }
+        guard let name = text(dto.city?.name) ?? text(dto.city?.code), let submit = dto.submit else { return nil }
         let options = dto.options.compactMap { option -> ProfileV3CityPurposeSheet.Option? in
             guard let key = text(option.key), let label = text(option.label) else { return nil }
             return ProfileV3CityPurposeSheet.Option(
@@ -74,8 +73,8 @@ enum ProfileV3CityProfileMapper: ProfileV3DTOReading {
         return ProfileV3CityPurposeSheet(
             title: text(dto.title) ?? "",
             city: ProfileV3CityPurposeSheet.City(
-                code: code,
-                name: text(dto.city?.name) ?? code,
+                code: text(dto.city?.code) ?? "",
+                name: name,
                 countryCode: text(dto.city?.countryCode),
                 imageURL: remoteURL(dto.city?.imageURL)
             ),
@@ -93,17 +92,19 @@ enum ProfileV3CityProfileMapper: ProfileV3DTOReading {
                         title: text(confirm.title) ?? label,
                         message: text(confirm.body),
                         confirmLabel: text(confirm.confirmLabel) ?? label,
-                        cancelLabel: text(confirm.cancelLabel) ?? ""
-                    )
+                        cancelLabel: text(confirm.cancelLabel) ?? "",
+                        iconURL: remoteURL(confirm.iconURL) ?? remoteURL(delete.iconURL)
+                    ),
+                    iconURL: remoteURL(delete.iconURL)
                 )
             }
         )
     }
 
     static func city(_ dto: ProfileV3CityScreenDTO, cityID: String) -> ProfileV3City? {
-        guard let code = text(dto.city?.code) else { return nil }
+        guard let name = text(dto.city?.name) ?? text(dto.city?.code) else { return nil }
         let id = text(dto.cityID) ?? cityID
-        let name = text(dto.city?.name) ?? code
+        let code = text(dto.city?.code) ?? ""
         let scope = ProfileV3PlaceSearchScope(city: name, countryCode: text(dto.city?.countryCode))
         var sections: [ProfileV3FormSection] = []
         var styles: [String: ProfileV3CitySectionStyle] = [:]

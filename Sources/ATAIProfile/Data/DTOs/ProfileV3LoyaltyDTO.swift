@@ -63,6 +63,8 @@ struct ProfileV3LoyaltyPickScreenDTO: Decodable, Equatable {
 
 struct ProfileV3LoyaltyMarketDTO: Decodable, Equatable {
     let selected: String?
+    let title: String?
+    let searchPlaceholder: String?
     private let rawOptions: [ProfileV3LossyDTO<ProfileV3LoyaltyOptionDTO>]?
     private let rawChips: [ProfileV3LossyDTO<String>]?
 
@@ -71,6 +73,8 @@ struct ProfileV3LoyaltyMarketDTO: Decodable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case selected
+        case title
+        case searchPlaceholder = "search_placeholder"
         case rawOptions = "options"
         case rawChips = "chips"
     }
@@ -78,6 +82,8 @@ struct ProfileV3LoyaltyMarketDTO: Decodable, Equatable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         selected = container.lenientString(forKey: .selected)
+        title = try? container.decodeIfPresent(String.self, forKey: .title)
+        searchPlaceholder = try? container.decodeIfPresent(String.self, forKey: .searchPlaceholder)
         rawOptions = try? container.decodeIfPresent([ProfileV3LossyDTO<ProfileV3LoyaltyOptionDTO>].self, forKey: .rawOptions)
         rawChips = try? container.decodeIfPresent([ProfileV3LossyDTO<String>].self, forKey: .rawChips)
     }
@@ -86,6 +92,13 @@ struct ProfileV3LoyaltyMarketDTO: Decodable, Equatable {
 struct ProfileV3LoyaltyOptionDTO: Decodable, Equatable {
     let value: String?
     let label: String?
+    let shortLabel: String?
+
+    enum CodingKeys: String, CodingKey {
+        case value
+        case label
+        case shortLabel = "short_label"
+    }
 }
 
 struct ProfileV3LoyaltyFieldDTO: Decodable, Equatable {

@@ -249,7 +249,10 @@ final class ProfileV3CityProfileViewModel: ObservableObject {
             profileID: profileID,
             repository: ProfileV3CityAgentRepository(cityID: cityID, save: city.save, base: repository),
             placeSearch: placeSearch,
-            onSaved: { [weak self] in self?.loadCity(cityID) },
+            onSaved: { [weak self] in
+                self?.loadCity(cityID)
+                self?.reloadIntro()
+            },
             onFinish: { [weak self] in self?.close() }
         )
         forms[cityID] = model
@@ -495,21 +498,21 @@ final class ProfileV3CityEditorModel: ObservableObject, Identifiable {
     func load() {
         let repository = repository
         let profileID = profileID
-        let code: String
+        let city: ProfileV3CitySearchResult
         let cityID: String?
         switch mode {
         case .add(let result):
-            code = result.code
+            city = result
             cityID = nil
-        case .edit(let id, let cityCode, _, _):
-            code = cityCode
+        case .edit(let id, let code, let name, _):
+            city = ProfileV3CitySearchResult(code: code, name: name)
             cityID = id
         }
         phase = .loading
         loadTask?.cancel()
         loadTask = Task { [weak self] in
             do {
-                let sheet = try await repository.loadCityPurpose(code: code, cityID: cityID, profileID: profileID)
+                let sheet = try await repository.loadCityPurpose(city, cityID: cityID, profileID: profileID)
                 guard let self, !Task.isCancelled else { return }
                 apply(sheet)
             } catch is CancellationError {

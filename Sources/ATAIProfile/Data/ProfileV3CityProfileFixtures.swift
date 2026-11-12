@@ -18,6 +18,7 @@ enum ProfileV3CityProfileFixtures {
     )
 
     static let iconBase = "https://media.atlys.com/b2c/ai-native/icons/city"
+    static let deleteIcon = URL(string: "\(iconBase)/delete.png?v=20261112b")
     static let youIcon = URL(string: "https://media.atlys.com/b2c/ai-native/icons/kyc/you.png?v=1")
 
     static let catalogue = [
@@ -35,7 +36,9 @@ enum ProfileV3CityProfileFixtures {
         city("IST", "Istanbul", "Türkiye", country: "TR"),
         city("DPS", "Bali", "Indonesia", country: "ID"),
         city("KUL", "Kuala Lumpur", "Malaysia", country: "MY"),
-        city("MLE", "Mal\u{E9}", "Maldives", country: "MV")
+        city("MLE", "Mal\u{E9}", "Maldives", country: "MV"),
+        city("", "Gurugram", "India", country: "IN"),
+        city("", "Ooty", "India", country: "IN")
     ]
 
     static let purposeKeys = ["home", "work", "leisure", "other"]
@@ -314,7 +317,7 @@ enum ProfileV3CityProfileFixtures {
 final class ProfileV3CityProfileStore: @unchecked Sendable {
     struct Entry: Equatable {
         let id: String
-        let code: String
+        let key: String
         var purpose: String
         var label: String?
         var form: ProfileV3AgentForm
@@ -339,8 +342,8 @@ final class ProfileV3CityProfileStore: @unchecked Sendable {
     }
 
     static let sampleEntries = [
-        Entry(id: "c1", code: "BOM", purpose: "home", form: ProfileV3CityProfileFixtures.form(ProfileV3CityProfileFixtures.filled)),
-        Entry(id: "c2", code: "BKK", purpose: "leisure", form: ProfileV3CityProfileFixtures.form())
+        Entry(id: "c1", key: "BOM", purpose: "home", form: ProfileV3CityProfileFixtures.form(ProfileV3CityProfileFixtures.filled)),
+        Entry(id: "c2", key: "BKK", purpose: "leisure", form: ProfileV3CityProfileFixtures.form())
     ]
 
     func profile() -> ProfileV3CityProfile {
@@ -357,7 +360,7 @@ final class ProfileV3CityProfileStore: @unchecked Sendable {
 
     func city(_ cityID: String) throws -> ProfileV3City {
         try lock.withLock {
-            guard let entry = entries.first(where: { $0.id == cityID }), let result = result(entry.code) else {
+            guard let entry = entries.first(where: { $0.id == cityID }), let result = result(key: entry.key) else {
                 throw ProfileV3Error.server(code: "unknown_city", message: "This city profile isn\u{2019}t there anymore.")
             }
             return ProfileV3CityProfileFixtures.screen(
@@ -390,14 +393,14 @@ final class ProfileV3CityProfileStore: @unchecked Sendable {
         )
     }
 
-    func purposeSheet(code: String, cityID: String?) throws -> ProfileV3CityPurposeSheet {
+    func purposeSheet(for city: ProfileV3CitySearchResult, cityID: String?) throws -> ProfileV3CityPurposeSheet {
         try lock.withLock {
             let editing = cityID.flatMap { id in entries.first { $0.id == id } }
-            guard let result = result(editing?.code ?? code) else {
+            guard let result = result(key: editing?.key ?? city.id) else {
                 throw ProfileV3Error.server(code: "unknown_city_code", message: "Pick a city from the list.")
             }
             let others = entries.filter { $0.id != editing?.id }
-            let taken = Set(others.map(\.purpose).filter { $0 != "other" })
+            let taken = Set(others.filter { $0.key == result.id && $0.purpose != "other" }.map(\.purpose))
             let options = ProfileV3CityProfileFixtures.purposeKeys.map { key -> ProfileV3CityPurposeSheet.Option in
                 let purpose = ProfileV3CityProfileFixtures.purpose(key)
                 return ProfileV3CityPurposeSheet.Option(
@@ -419,14 +422,20 @@ final class ProfileV3CityProfileStore: @unchecked Sendable {
                     label: "Delete city profile",
                     action: ProfileV3BoardAction(fields: ["action": .string("delete_city_profile"), "city_id": .string(editing.id)]),
                     confirm: ProfileV3CityDeleteConfirm(
-                        title: "Delete \(result.name)?",
-                        message: "Your preferences for this city will be removed.",
-                        confirmLabel: "Delete",
-                        cancelLabel: "Cancel"
-                    )
+                        title: "Are you sure you want to delete city profile",
+                        confirmLabel: "Delete city profile",
+                        cancelLabel: "Keep city profile",
+                        iconURL: ProfileV3CityProfileFixtures.deleteIcon
+                    ),
+                    iconURL: ProfileV3CityProfileFixtures.deleteIcon
                 )
             } else {
-                submit = ProfileV3BoardAction(fields: ["action": .string("create_city_profile"), "code": .string(result.code)])
+                var fields: [String: ProfileV3ScalarDTO] = ["action": .string("create_city_profile"), "code": .string(result.code)]
+                if result.code.isEmpty {
+                    fields["name"] = .string(result.name)
+                    fields["country_code"] = result.countryCode.map(ProfileV3ScalarDTO.string)
+                }
+                submit = ProfileV3BoardAction(fields: fields)
             }
             return ProfileV3CityPurposeSheet(
                 title: result.name.uppercased(),
@@ -445,6 +454,11 @@ final class ProfileV3CityProfileStore: @unchecked Sendable {
         try lock.withLock {
             let cityID = action.fields["city_id"]?.stringValue
             let others = entries.filter { $0.id != cityID }
+            let key = entries.first { $0.id == cityID }?.key ?? ProfileV3CitySearchResult.key(
+                code: action.fields["code"]?.stringValue ?? "",
+                name: action.fields["name"]?.stringValue ?? "",
+                countryCode: action.fields["country_code"]?.stringValue
+            )
             let trimmed = label?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty
             if purpose == "other" {
                 guard let trimmed else { throw ProfileV3Error.invalidRequest(message: "Type a purpose.") }
@@ -452,25 +466,27 @@ final class ProfileV3CityProfileStore: @unchecked Sendable {
                 if others.contains(where: { $0.purpose == "other" && $0.label.map(ProfileV3CityPurposeSheet.folded) == folded }) {
                     throw ProfileV3Error.conflict(code: "label_taken", message: "You already use \u{201C}\(trimmed)\u{201D} for another city.")
                 }
-            } else if others.contains(where: { $0.purpose == purpose }) {
-                throw ProfileV3Error.conflict(code: "purpose_taken", message: "You already have a \(purpose) city. Pick another purpose.")
+            } else if others.contains(where: { $0.key == key && $0.purpose == purpose }) {
+                throw ProfileV3Error.conflict(code: "purpose_taken", message: "This city already has \(purpose) as its purpose.")
             }
             switch action.name {
             case "update_city_purpose":
                 guard let index = entries.firstIndex(where: { $0.id == cityID }) else {
                     throw ProfileV3Error.server(code: "unknown_city", message: "This city profile isn\u{2019}t there anymore.")
                 }
-                entries[index].purpose = purpose
-                entries[index].label = purpose == "other" ? trimmed : nil
-                return entries[index].id
+                var entry = entries.remove(at: index)
+                entry.purpose = purpose
+                entry.label = purpose == "other" ? trimmed : nil
+                entries.insert(entry, at: 0)
+                return entry.id
             default:
-                guard let code = action.fields["code"]?.stringValue, result(code) != nil else {
+                guard result(key: key) != nil else {
                     throw ProfileV3Error.invalidRequest(message: "Pick a city from the list.")
                 }
                 let id = "c\(nextID)"
                 nextID += 1
                 entries.insert(
-                    Entry(id: id, code: code, purpose: purpose, label: purpose == "other" ? trimmed : nil, form: ProfileV3CityProfileFixtures.form()),
+                    Entry(id: id, key: key, purpose: purpose, label: purpose == "other" ? trimmed : nil, form: ProfileV3CityProfileFixtures.form()),
                     at: 0
                 )
                 return id
@@ -489,7 +505,9 @@ final class ProfileV3CityProfileStore: @unchecked Sendable {
             guard let index = entries.firstIndex(where: { $0.id == cityID }) else {
                 throw ProfileV3Error.server(code: "unknown_city", message: "This city profile isn\u{2019}t there anymore.")
             }
-            entries[index].form = form
+            var entry = entries.remove(at: index)
+            entry.form = form
+            entries.insert(entry, at: 0)
         }
     }
 
@@ -499,7 +517,7 @@ final class ProfileV3CityProfileStore: @unchecked Sendable {
 
     private func portholes() -> [ProfileV3CityPorthole] {
         entries.compactMap { entry in
-            guard let result = result(entry.code) else { return nil }
+            guard let result = result(key: entry.key) else { return nil }
             return ProfileV3CityPorthole(
                 id: entry.id,
                 code: result.code,
@@ -512,8 +530,8 @@ final class ProfileV3CityProfileStore: @unchecked Sendable {
         }
     }
 
-    private func result(_ code: String) -> ProfileV3CitySearchResult? {
-        catalogue.first { $0.code == code }
+    private func result(key: String) -> ProfileV3CitySearchResult? {
+        catalogue.first { $0.id == key }
     }
 }
 #endif

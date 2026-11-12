@@ -124,7 +124,8 @@ private struct ProfileV3CityProfileScreen: View {
             itemWidth: Sizes.window.width,
             height: Sizes.window.height,
             spacing: Sizes.windowSpacing,
-            selection: $viewModel.selection
+            selection: $viewModel.selection,
+            itemIDs: viewModel.slotIDs
         ) {
             ForEach(content.cities) { city in
                 window(.city(code: city.code, name: city.name, imageURL: city.imageURL), id: city.id)

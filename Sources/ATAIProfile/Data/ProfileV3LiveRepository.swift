@@ -413,9 +413,15 @@ final class ProfileV3LiveRepository: ProfileV3Repository, @unchecked Sendable {
         return ProfileV3CityProfileMapper.picker(dto)
     }
 
-    func loadCityPurpose(code: String, cityID: String?, profileID: String?) async throws -> ProfileV3CityPurposeSheet {
+    func loadCityPurpose(_ city: ProfileV3CitySearchResult, cityID: String?, profileID: String?) async throws -> ProfileV3CityPurposeSheet {
         let dto: ProfileV3CityPurposeSheetDTO = try await client.request(
-            ProfileV3API.cityPurpose(code: code, cityID: cityID, profileID: profileID),
+            ProfileV3API.cityPurpose(
+                code: city.code,
+                name: city.name,
+                countryCode: city.countryCode,
+                cityID: cityID,
+                profileID: profileID
+            ),
             action: "city_purpose"
         )
         guard let sheet = ProfileV3CityProfileMapper.purposeSheet(dto) else {

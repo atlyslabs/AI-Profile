@@ -105,6 +105,20 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
+- The loyalty picker's country toggle follows Figma "Add program/card · With country drop down
+  and name" (`7478:4073`: `5606:12507`, `7387:7616`). The pill (`ProfileV3MarketButton`, was
+  `ProfileV3MarketMenu`'s native menu) shows a 24pt flag, the option's `short_label` (else its
+  name) and a 24pt chevron, and opens a "Select country" step in the same sheet (stage `.market`):
+  `ProfileV3CountryPickerView` with the server's countries, `market.title` and
+  `market.search_placeholder`, flush under the status bar, back to the picker. A pick reloads the
+  cards for that country. `ProfileV3CountryPickerView` takes `countries`, `searchPlaceholder` and
+  `tracksScrollDepth`.
+
+- City profiles keep the server's order, most recently edited first (`vdc-k8s#24340`: an add, a
+  purpose change or a card save moves a city to the front). A card save now refetches the city
+  list as well as the city, so the saved city moves to the front while the sheet stays open, and
+  the carousel stays on it: `ProfileV3CentredCarousel` takes `itemIDs` and re-centres the selection
+  when they change, since its scroll offset otherwise stayed put and centred a neighbour.
 - While Instagram waits for its first DM, a pen next to the handle edits it (Figma `6595:16405`,
   node `7196:11333`: a 20pt grey chip with Material's `pen_size_4`). It opens the same username
   sheet as the Connected panel's Edit, from App access itself, and a save re-links the new handle,
@@ -178,6 +192,20 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   `icon` draw by `kind` as before.
 
 ### Fixed
+
+- Towns with no airport now show in the city picker and can be added (QA-2114, `vdc-k8s#24180`).
+  The server sends them with `code: ""` plus `name` and `country_code`, and the client dropped
+  every row, porthole, purpose sheet and city screen without a code. Cities are now keyed as the
+  server keys them (the code, else the folded name and the country, so Hyderabad IN and PK stay
+  apart), and the purpose call sends `name` and `country_code` for a town; its `submit` already
+  echoes them. A town's window shows its name where the code goes, on up to two lines.
+- The city delete button and its confirmation draw the server's bin (`icon_url` on `delete` and
+  `confirm`, QA-2122), the design's slotted glyph in #323232, as sent; the Material bin stays as
+  the fallback (`ProfileV3ServedIcon`). The delete request still sends only `action` and
+  `city_id`: `ProfileV3CitySubmitRequest` doesn't echo `icon_url`. The mock uses the server's
+  delete copy.
+- The mock city store follows the server's new purpose rule: each fixed purpose once per city, so
+  several cities can be Home or Work.
 
 - Device-size QA (QA-1973):
   - The world pass detail's globe has room on short phones (QA-2037). The expanded card sits in a

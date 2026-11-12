@@ -345,14 +345,23 @@ struct ProfileV3ProgrammeMarket: Equatable {
     struct Option: Identifiable, Equatable {
         let value: String
         let label: String
+        var shortLabel: String?
 
         var id: String { value }
         var countryCode: String? { value.count == 2 ? value.uppercased() : nil }
+        var pillLabel: String { shortLabel ?? label }
+        var country: ProfileV3Country { ProfileV3Country(code: value.uppercased(), name: label) }
     }
 
     let options: [Option]
     let selected: String
     let chips: [String]
+    var title = ""
+    var searchPlaceholder = ""
+
+    func option(country: ProfileV3Country) -> Option? {
+        option(country.code.lowercased())
+    }
 
     func option(_ value: String?) -> Option? {
         options.first { $0.value == value }

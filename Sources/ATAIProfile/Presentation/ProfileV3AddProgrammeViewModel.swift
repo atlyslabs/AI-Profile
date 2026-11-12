@@ -20,10 +20,11 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
         case scanning(activity: String, foundCount: Int)
         case found(count: Int)
         case pick
+        case market
         case details
         case failed
 
-        var isSheet: Bool { self == .pick || self == .details }
+        var isSheet: Bool { self == .pick || self == .market || self == .details }
         var isOverlay: Bool { self == .kycRequired }
     }
 
@@ -130,7 +131,7 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
     var showsCloseButton: Bool {
         switch stage {
         case .kycRequired, .failed: return true
-        case .scanning, .found, .pick, .details: return false
+        case .scanning, .found, .pick, .market, .details: return false
         }
     }
 
@@ -338,6 +339,23 @@ final class ProfileV3AddProgrammeViewModel: ObservableObject {
         ProfileV3Analytics.cardTypeSelected(travellerId: profileID, connectorType: connectorType)
         reconcileSelection()
         scheduleCatalogueRefresh(debounced: false)
+    }
+
+    func openMarketPicker() {
+        guard stage == .pick, showsMarketToggle else { return }
+        setStage(.market)
+    }
+
+    func closeMarketPicker() {
+        guard stage == .market else { return }
+        setStage(.pick)
+    }
+
+    func chooseMarket(_ country: ProfileV3Country) {
+        closeMarketPicker()
+        if let option = market?.option(country: country) {
+            selectMarket(option.value)
+        }
     }
 
     func selectMarket(_ value: String) {
@@ -617,6 +635,8 @@ extension ProfileV3AddProgrammeViewModel {
             ProfileV3ProgrammeFilter(label: $0.title, category: $0)
         }
         viewModel.catalogue = ProfileV3ProgrammeCatalogue.all
+        viewModel.market = ProfileV3ProgrammeCatalogue.mockMarket(selected: nil)
+        viewModel.selectedMarket = viewModel.market?.selected
         viewModel.query = query
         viewModel.reconcileSelection()
         if stage == .details, let item = viewModel.selectedItem {

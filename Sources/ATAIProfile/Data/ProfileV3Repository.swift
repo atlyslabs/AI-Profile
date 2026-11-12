@@ -160,7 +160,7 @@ protocol ProfileV3CityProfileRepository: Sendable {
     func loadCityProfile(profileID: String?) async throws -> ProfileV3CityProfile
     func loadCity(_ cityID: String, profileID: String?) async throws -> ProfileV3City
     func searchCities(_ query: String, offset: Int, profileID: String?) async throws -> ProfileV3CityPicker
-    func loadCityPurpose(code: String, cityID: String?, profileID: String?) async throws -> ProfileV3CityPurposeSheet
+    func loadCityPurpose(_ city: ProfileV3CitySearchResult, cityID: String?, profileID: String?) async throws -> ProfileV3CityPurposeSheet
     func submitCityPurpose(_ action: ProfileV3BoardAction, purpose: String, label: String?) async throws -> String?
     func deleteCity(_ action: ProfileV3BoardAction) async throws
     func saveCityPreferences(_ form: ProfileV3AgentForm, cityID: String, action: ProfileV3BoardAction?) async throws

@@ -54,7 +54,7 @@ struct ProfileV3CityWindow: View {
 
     private var accessibilityLabel: String {
         switch content {
-        case .city(let code, let name, _): return "\(name), \(code)"
+        case .city(let code, let name, _): return code.isEmpty ? name : "\(name), \(code)"
         case .add(let label, let detail): return "\(label), \(detail)"
         }
     }
@@ -97,12 +97,16 @@ struct ProfileV3CityWindow: View {
                     .opacity(isPhotoSharp ? ProfileV3Theme.Opacity.cityWindowPhotoSharp : ProfileV3Theme.Opacity.cityWindowPhoto)
                 glare
                 VStack(spacing: Sizes.windowTextGap) {
-                    Text(code)
+                    Text(code.nonEmpty ?? name)
                         .font(.Inter.get(size: Sizes.windowCodeSize, weight: .medium))
                         .tracking(Sizes.windowCodeTracking)
-                    Text(name)
-                        .typoGraphy(.B2InterSemibold12)
-                        .opacity(ProfileV3Theme.Opacity.cityWindowName)
+                        .lineLimit(code.isEmpty ? 2 : 1)
+                        .minimumScaleFactor(code.isEmpty ? ProfileV3Theme.Sizes.City.windowNameMinimumScale : 0.7)
+                    if !code.isEmpty {
+                        Text(name)
+                            .typoGraphy(.B2InterSemibold12)
+                            .opacity(ProfileV3Theme.Opacity.cityWindowName)
+                    }
                 }
                 .foregroundStyle(Color(at: .pureWhite))
                 .multilineTextAlignment(.center)
@@ -773,15 +777,14 @@ struct ProfileV3CityAddButton: View {
 
 struct ProfileV3CityHeaderButton: View {
     let icon: Image
+    var iconURL: URL?
     let accessibilityLabel: String
     var isLime = false
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            icon
-                .profileV3Icon(ProfileV3Theme.Icon.xl)
-                .foregroundStyle(ProfileV3Theme.Palette.floatingControlInk)
+            ProfileV3ServedIcon(url: iconURL, fallback: icon, size: ProfileV3Theme.Icon.xl, tint: ProfileV3Theme.Palette.floatingControlInk)
                 .frame(width: ProfileV3Theme.Sizes.circleButton, height: ProfileV3Theme.Sizes.circleButton)
                 .background {
                     if isLime {
