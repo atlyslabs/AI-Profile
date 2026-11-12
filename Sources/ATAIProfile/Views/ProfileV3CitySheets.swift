@@ -184,6 +184,7 @@ struct ProfileV3CityPurposeSheetView: View {
                     Spacer()
                     ProfileV3CityHeaderButton(
                         icon: ATIcon.SwiftUIImage.delete,
+                        iconURL: delete.iconURL,
                         accessibilityLabel: delete.label,
                         action: model.requestDelete
                     )
@@ -268,6 +269,7 @@ extension ProfileV3ConfirmationView {
     ) -> ProfileV3ConfirmationView {
         ProfileV3ConfirmationView(
             icon: ATIcon.SwiftUIImage.delete,
+            iconURL: confirm.iconURL,
             style: .neutral,
             title: confirm.title,
             message: confirm.message,

@@ -17,14 +17,16 @@ enum ProfileV3LoyaltyMapper: ProfileV3DTOReading {
         let options = dto.options.compactMap { option -> ProfileV3ProgrammeMarket.Option? in
             guard let value = text(option.value)?.lowercased(), let label = text(option.label),
                   seen.insert(value).inserted else { return nil }
-            return ProfileV3ProgrammeMarket.Option(value: value, label: label)
+            return ProfileV3ProgrammeMarket.Option(value: value, label: label, shortLabel: text(option.shortLabel))
         }
         guard options.count > 1 else { return nil }
         let selected = text(dto.selected)?.lowercased()
         return ProfileV3ProgrammeMarket(
             options: options,
             selected: options.first { $0.value == selected }?.value ?? options[0].value,
-            chips: dto.chips.compactMap(text)
+            chips: dto.chips.compactMap(text),
+            title: text(dto.title) ?? "",
+            searchPlaceholder: text(dto.searchPlaceholder) ?? ""
         )
     }
 

@@ -1,35 +1,22 @@
 import ATUIKit
 import SwiftUI
 
-struct ProfileV3MarketMenu: View {
-    let market: ProfileV3ProgrammeMarket
+struct ProfileV3MarketButton: View {
     let selected: ProfileV3ProgrammeMarket.Option
-    let onSelect: (String) -> Void
+    let action: () -> Void
 
     private typealias Sizes = ProfileV3Theme.Sizes.AddProgramme
 
     var body: some View {
-        Menu {
-            ForEach(market.options) { option in
-                Button {
-                    onSelect(option.value)
-                } label: {
-                    if option == selected {
-                        Label(option.label, systemImage: "checkmark")
-                    } else {
-                        Text(option.label)
-                    }
-                }
-            }
-        } label: {
+        Button(action: action) {
             HStack(spacing: Sizes.marketSpacing) {
-                mark(for: selected)
-                Text(selected.label)
+                ProfileV3CountryFlag(isoCode: selected.countryCode, size: ProfileV3Theme.Icon.xl, placeholder: .globe)
+                Text(selected.pillLabel)
                     .typoGraphy(.B1InterSemibold14)
                     .foregroundStyle(Color(at: .pureBlack))
                     .lineLimit(1)
                 ATIcon.SwiftUIImage.expandMore
-                    .profileV3Icon(ProfileV3Theme.Icon.lg)
+                    .profileV3Icon(ProfileV3Theme.Icon.xl)
                     .foregroundStyle(Color(at: .pureBlack))
             }
             .padding(.horizontal, Sizes.marketPadding)
@@ -41,21 +28,19 @@ struct ProfileV3MarketMenu: View {
                 shadowRadius: 0,
                 shadowY: 0
             )
+            .contentShape(Capsule())
         }
+        .buttonStyle(.profileV3Pressable(.selection))
         .accessibilityLabel(selected.label)
-    }
-
-    private func mark(for option: ProfileV3ProgrammeMarket.Option) -> some View {
-        ProfileV3CountryFlag(isoCode: option.countryCode, size: ProfileV3Theme.Icon.lg, placeholder: .globe)
     }
 }
 
 #if DEBUG
-#Preview("Market menu") {
+#Preview("Market button") {
     let market = ProfileV3ProgrammeCatalogue.mockMarket(selected: nil)
     return HStack {
-        ProfileV3MarketMenu(market: market, selected: market.options[0], onSelect: { _ in })
-        ProfileV3MarketMenu(market: market, selected: market.options[1], onSelect: { _ in })
+        ProfileV3MarketButton(selected: market.options[0], action: {})
+        ProfileV3MarketButton(selected: ProfileV3ProgrammeMarket.Option(value: "ae", label: "United Arab Emirates"), action: {})
     }
     .padding()
 }

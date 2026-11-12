@@ -120,9 +120,9 @@ struct ProfileV3MockRepository: ProfileV3Repository {
         return cities.picker(query, offset: offset)
     }
 
-    func loadCityPurpose(code: String, cityID: String?, profileID _: String?) async throws -> ProfileV3CityPurposeSheet {
+    func loadCityPurpose(_ city: ProfileV3CitySearchResult, cityID: String?, profileID _: String?) async throws -> ProfileV3CityPurposeSheet {
         try await Task.sleep(for: delay)
-        return try cities.purposeSheet(code: code, cityID: cityID)
+        return try cities.purposeSheet(for: city, cityID: cityID)
     }
 
     func submitCityPurpose(_ action: ProfileV3BoardAction, purpose: String, label: String?) async throws -> String? {

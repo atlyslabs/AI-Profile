@@ -5,13 +5,19 @@ enum ProfileV3ProgrammeCatalogue {
     static let mockFoundCount = 6
 
     static func mockMarket(selected: String?) -> ProfileV3ProgrammeMarket {
-        ProfileV3ProgrammeMarket(
-            options: [
-                ProfileV3ProgrammeMarket.Option(value: "in", label: "IN"),
-                ProfileV3ProgrammeMarket.Option(value: "world", label: "World")
-            ],
-            selected: selected ?? "in",
-            chips: ["All", "Credit cards"]
+        let options = [
+            ProfileV3ProgrammeMarket.Option(value: "in", label: "India", shortLabel: "IND"),
+            ProfileV3ProgrammeMarket.Option(value: "hk", label: "Hong Kong", shortLabel: "HKG"),
+            ProfileV3ProgrammeMarket.Option(value: "sg", label: "Singapore", shortLabel: "SGP"),
+            ProfileV3ProgrammeMarket.Option(value: "us", label: "United States", shortLabel: "USA")
+        ]
+        let chosen = options.first { $0.value == selected } ?? options[0]
+        return ProfileV3ProgrammeMarket(
+            options: [chosen] + options.filter { $0 != chosen },
+            selected: chosen.value,
+            chips: ["All", "Credit cards"],
+            title: "Select country",
+            searchPlaceholder: "Search"
         )
     }
     #endif

@@ -45,6 +45,7 @@ struct ProfileV3AddProgrammeView: View {
     private var drawsSheet: Bool { presentation == .fullScreen && viewModel.stage.isSheet }
 
     private var sheetContentFrameHeight: CGFloat? {
+        guard viewModel.stage != .market else { return max(0, maxHeight - bottomInset) }
         guard sheetContentHeight > 0 else { return nil }
         return min(sheetContentHeight, max(0, maxHeight - bottomInset))
     }
@@ -94,6 +95,7 @@ struct ProfileV3AddProgrammeView: View {
 
     private func panelTop(insets: EdgeInsets, size: CGSize) -> CGFloat {
         guard drawsSheet else { return -insets.top }
+        guard viewModel.stage != .market else { return 0 }
         guard sheetContentHeight > 0 else { return size.height }
         return max(ProfileV3Theme.Space.s28, size.height - sheetContentHeight)
     }
@@ -103,9 +105,9 @@ struct ProfileV3AddProgrammeView: View {
         switch viewModel.stage {
         case .kycRequired:
             ProfileV3FrostedBackdrop()
-        case .pick where drawsSheet, .details where drawsSheet:
+        case .pick where drawsSheet, .market where drawsSheet, .details where drawsSheet:
             ProfileV3FrostedBackdrop(tint: ProfileV3Theme.Palette.sheetDim)
-        case .scanning, .found, .failed, .pick, .details:
+        case .scanning, .found, .failed, .pick, .market, .details:
             Color.clear
         }
     }
@@ -121,6 +123,8 @@ struct ProfileV3AddProgrammeView: View {
             failed
         case .pick:
             sheet(title: ProfileV3Strings.pickLoyaltyProgramme, onBack: nil) { pickContent }
+        case .market:
+            marketPicker
         case .details:
             sheet(title: detailsTitle, onBack: detailsBack) { detailsContent }
         case .kycRequired:
@@ -294,12 +298,28 @@ struct ProfileV3AddProgrammeView: View {
         }
     }
 
+    @ViewBuilder
+    private var marketPicker: some View {
+        if let market = viewModel.market {
+            ProfileV3CountryPickerView(
+                title: market.title,
+                icon: ATIcon.SwiftUIImage.flag,
+                selected: viewModel.selectedMarketOption?.country,
+                countries: market.options.map(\.country),
+                searchPlaceholder: market.searchPlaceholder.nonEmpty ?? ProfileV3Strings.search,
+                tracksScrollDepth: false,
+                onBack: viewModel.closeMarketPicker,
+                onSelect: viewModel.chooseMarket
+            )
+            .transition(.opacity)
+        }
+    }
+
     private var categoryChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: ProfileV3Theme.Sizes.AddProgramme.marketGap) {
-                if viewModel.showsMarketToggle, let market = viewModel.market,
-                   let selected = viewModel.selectedMarketOption {
-                    ProfileV3MarketMenu(market: market, selected: selected, onSelect: viewModel.selectMarket)
+                if viewModel.showsMarketToggle, let selected = viewModel.selectedMarketOption {
+                    ProfileV3MarketButton(selected: selected, action: viewModel.openMarketPicker)
                     Rectangle()
                         .fill(ProfileV3Theme.Palette.filterChipBorder)
                         .frame(width: ProfileV3Theme.Stroke.hairline, height: ProfileV3Theme.Sizes.AddProgramme.marketDividerHeight)
@@ -538,6 +558,10 @@ struct ProfileV3AddProgrammeView: View {
 
 #Preview("Add programme · picker sheet") {
     ProfileV3AddProgrammeView(viewModel: .preview(.pick), presentation: .sheet)
+}
+
+#Preview("Add programme · select country") {
+    ProfileV3AddProgrammeView(viewModel: .preview(.market))
 }
 
 #Preview("Add programme · catalogue loading") {

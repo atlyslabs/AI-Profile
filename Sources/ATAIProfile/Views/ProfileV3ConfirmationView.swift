@@ -22,6 +22,7 @@ struct ProfileV3ConfirmationView: View {
     }
 
     let icon: Image?
+    var iconURL: URL?
     let style: Style
     let title: String
     var message: String?
@@ -64,8 +65,8 @@ struct ProfileV3ConfirmationView: View {
             ProfileV3SheetGrabber()
             ZStack(alignment: .top) {
                 VStack(spacing: metrics.iconSpacing) {
-                    if let icon {
-                        iconCircle(icon)
+                    if icon != nil || iconURL != nil {
+                        iconCircle
                     }
                     ProfileV3ConfirmationCopy(
                         title: title,
@@ -94,7 +95,7 @@ struct ProfileV3ConfirmationView: View {
         .background(Color(at: .pureWhite))
     }
 
-    private func iconCircle(_ icon: Image) -> some View {
+    private var iconCircle: some View {
         ZStack {
             Circle()
                 .fill(style.circle)
@@ -102,9 +103,7 @@ struct ProfileV3ConfirmationView: View {
                     width: ProfileV3Theme.Sizes.Confirmation.iconCircle,
                     height: ProfileV3Theme.Sizes.Confirmation.iconCircle
                 )
-            icon
-                .profileV3Icon(metrics.iconSize)
-                .foregroundStyle(style.glyph)
+            ProfileV3ServedIcon(url: iconURL, fallback: icon, size: metrics.iconSize, tint: style.glyph)
         }
         .accessibilityHidden(true)
     }

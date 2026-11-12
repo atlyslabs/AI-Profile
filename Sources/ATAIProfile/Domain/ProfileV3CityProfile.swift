@@ -119,8 +119,15 @@ struct ProfileV3CitySearchResult: Identifiable, Equatable {
     var country: String?
     var countryCode: String?
 
-    var id: String { code }
-    var title: String { "\(name) (\(code))" }
+    var id: String { Self.key(code: code, name: name, countryCode: countryCode) }
+    var title: String { code.isEmpty ? name : "\(name) (\(code))" }
+
+    static func key(code: String, name: String, countryCode: String?) -> String {
+        guard code.isEmpty else { return code }
+        let folded = name.split(whereSeparator: \.isWhitespace).joined(separator: " ")
+            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+        return "\(folded)|\((countryCode ?? "").uppercased())"
+    }
 }
 
 struct ProfileV3CityPurposeSheet: Equatable {
@@ -153,6 +160,7 @@ struct ProfileV3CityPurposeSheet: Equatable {
         let label: String
         let action: ProfileV3BoardAction
         let confirm: ProfileV3CityDeleteConfirm
+        var iconURL: URL?
     }
 
     let title: String
@@ -185,4 +193,5 @@ struct ProfileV3CityDeleteConfirm: Equatable {
     var message: String?
     let confirmLabel: String
     let cancelLabel: String
+    var iconURL: URL?
 }

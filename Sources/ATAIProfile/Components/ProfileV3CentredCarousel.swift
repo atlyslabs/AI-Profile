@@ -5,6 +5,7 @@ struct ProfileV3CentredCarousel<SelectionID: Hashable, Content: View>: View {
     let height: CGFloat
     let spacing: CGFloat
     @Binding var selection: SelectionID?
+    var itemIDs: [SelectionID] = []
     var isScrollDisabled = false
     var revealOffset: CGFloat = 0
     @ViewBuilder var content: () -> Content
@@ -35,6 +36,10 @@ struct ProfileV3CentredCarousel<SelectionID: Hashable, Content: View>: View {
                     proxy.scrollTo(selection, anchor: .center)
                 }
                 reveal()
+            }
+            .onChange(of: itemIDs) {
+                guard isPositioned, let selection else { return }
+                proxy.scrollTo(selection, anchor: .center)
             }
         }
     }

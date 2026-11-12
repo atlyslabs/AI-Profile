@@ -213,16 +213,19 @@ struct ProfileV3CityPurposeInputDTO: Decodable, Equatable {
 
 struct ProfileV3CityDeleteDTO: Decodable, Equatable {
     let action: ProfileV3PersonaActionDTO
+    let iconURL: String?
     let confirm: ProfileV3CityDeleteConfirmDTO?
 
     enum CodingKeys: String, CodingKey {
+        case iconURL = "icon_url"
         case confirm
     }
 
     init(from decoder: Decoder) throws {
         action = try ProfileV3PersonaActionDTO(from: decoder)
-        confirm = try? decoder.container(keyedBy: CodingKeys.self)
-            .decodeIfPresent(ProfileV3CityDeleteConfirmDTO.self, forKey: .confirm)
+        let container = try? decoder.container(keyedBy: CodingKeys.self)
+        iconURL = try? container?.decodeIfPresent(String.self, forKey: .iconURL)
+        confirm = try? container?.decodeIfPresent(ProfileV3CityDeleteConfirmDTO.self, forKey: .confirm)
     }
 }
 
@@ -231,12 +234,14 @@ struct ProfileV3CityDeleteConfirmDTO: Decodable, Equatable {
     let body: String?
     let confirmLabel: String?
     let cancelLabel: String?
+    let iconURL: String?
 
     enum CodingKeys: String, CodingKey {
         case title
         case body
         case confirmLabel = "confirm_label"
         case cancelLabel = "cancel_label"
+        case iconURL = "icon_url"
     }
 }
 
@@ -411,7 +416,7 @@ struct ProfileV3CitySubmitRequest: Encodable, Equatable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: ProfileV3AnyCodingKey.self)
-        let own: Set<String> = ["purpose", "label", "values"]
+        let own: Set<String> = ["purpose", "label", "values", "icon_url"]
         for (key, value) in action.fields where !own.contains(key) {
             try container.encode(value, forKey: ProfileV3AnyCodingKey(key))
         }

@@ -12,7 +12,7 @@ enum ProfileV3API {
     case personaTrait(trait: String, profileID: String?, page: Int)
     case cityProfiles(profileID: String?)
     case citySearch(query: String, offset: Int, profileID: String?)
-    case cityPurpose(code: String, cityID: String?, profileID: String?)
+    case cityPurpose(code: String, name: String?, countryCode: String?, cityID: String?, profileID: String?)
     case city(id: String, profileID: String?)
     case citySources(cityID: String, fieldKey: String)
     case pastTrips(profileID: String)
@@ -263,8 +263,14 @@ extension ProfileV3API: ATCoreTargetType {
             return Self.query(("profile_id", profileID))
         case .citySearch(let query, let offset, let profileID):
             return Self.query(("profile_id", profileID), ("q", query), ("offset", String(offset)))
-        case .cityPurpose(let code, let cityID, let profileID):
-            return Self.query(("code", code), ("city_id", cityID), ("profile_id", cityID == nil ? profileID : nil))
+        case .cityPurpose(let code, let name, let countryCode, let cityID, let profileID):
+            return Self.query(
+                ("code", code),
+                ("name", code.isEmpty ? name : nil),
+                ("country_code", code.isEmpty ? countryCode : nil),
+                ("city_id", cityID),
+                ("profile_id", cityID == nil ? profileID : nil)
+            )
         case .personaTrait(_, let profileID, let page):
             return Self.query(("profile_id", profileID), ("page", String(page)))
         case .pastTrips(let profileID), .addTrip(let profileID):
