@@ -10,6 +10,7 @@ struct ProfileV3LabelledField: View {
     var width: CGFloat?
     var error: String?
     var onFocusChange: ((Bool) -> Void)?
+    var format: ((String) -> String)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s12) {
@@ -22,7 +23,8 @@ struct ProfileV3LabelledField: View {
                 autocapitalization: autocapitalization,
                 width: nil,
                 isError: error != nil,
-                onFocusChange: onFocusChange
+                onFocusChange: onFocusChange,
+                format: format
             )
             if let error {
                 ProfileV3ErrorText(text: error)

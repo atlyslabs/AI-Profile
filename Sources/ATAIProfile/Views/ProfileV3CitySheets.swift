@@ -237,7 +237,8 @@ struct ProfileV3CityPurposeSheetView: View {
                     label: ProfileV3Strings.requiredLabel(input.label),
                     placeholder: input.placeholder,
                     text: $model.label,
-                    error: model.isLabelTaken ? sheet.labelTaken.nonEmpty : model.errorMessage
+                    error: model.isLabelTaken ? sheet.labelTaken.nonEmpty : model.errorMessage,
+                    format: model.limitedLabel
                 )
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.top, Sizes.purposeTop)

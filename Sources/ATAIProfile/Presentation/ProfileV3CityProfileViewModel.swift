@@ -423,12 +423,8 @@ final class ProfileV3CityEditorModel: ObservableObject, Identifiable {
     @Published private(set) var purposeKey: String?
     @Published var label = "" {
         didSet {
-            guard label != oldValue else { return }
-            if let maxChars = labelInput?.maxChars, label.count > maxChars {
-                label = String(label.prefix(maxChars))
-                return
-            }
-            if errorMessage != nil { errorMessage = nil }
+            guard label != oldValue, errorMessage != nil else { return }
+            errorMessage = nil
         }
     }
     @Published private(set) var savePhase = ProfileV3SavePhase.idle
@@ -485,7 +481,12 @@ final class ProfileV3CityEditorModel: ObservableObject, Identifiable {
 
     var labelInput: ProfileV3CityPurposeSheet.Option.Input? { sheet?.option(key: purposeKey)?.input }
 
-    var trimmedLabel: String { label.trimmingCharacters(in: .whitespacesAndNewlines) }
+    var trimmedLabel: String { limitedLabel(label).trimmingCharacters(in: .whitespacesAndNewlines) }
+
+    func limitedLabel(_ text: String) -> String {
+        guard let maxChars = labelInput?.maxChars, text.count > maxChars else { return text }
+        return String(text.prefix(maxChars))
+    }
 
     var isLabelTaken: Bool { labelInput != nil && sheet?.isLabelUsed(trimmedLabel) == true }
 

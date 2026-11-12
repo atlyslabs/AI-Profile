@@ -6,6 +6,7 @@ import Security
 enum ProfileV3VaultDevice {
     private static let keyTag = Data("com.atlys.profile.vault.reveal".utf8)
     private static let deviceService = "com.atlys.profile.vault.device"
+    private static let deviceAccountPrefix = "fortknox.device_id."
     private static let unlockedContext = OSAllocatedUnfairLock<LAContext?>(uncheckedState: nil)
 
     static func publicKeyPEM() throws -> String {
@@ -46,16 +47,13 @@ enum ProfileV3VaultDevice {
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
         ]
         SecItemDelete(query as CFDictionary)
-        clearDeviceID()
+        clearDeviceIDs()
     }
 
-    static func deviceID() -> String? {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: deviceService,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne,
-        ]
+    static func deviceID(uid: String) -> String? {
+        var query = deviceQuery(uid: uid)
+        query[kSecReturnData as String] = true
+        query[kSecMatchLimit as String] = kSecMatchLimitOne
         var item: CFTypeRef?
         guard SecItemCopyMatching(query as CFDictionary, &item) == errSecSuccess,
               let data = item as? Data,
@@ -65,15 +63,16 @@ enum ProfileV3VaultDevice {
         return id
     }
 
-    static func saveDeviceID(_ id: String) {
-        clearDeviceID()
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: deviceService,
-            kSecValueData as String: Data(id.utf8),
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
-        ]
+    static func saveDeviceID(_ id: String, uid: String) {
+        clearDeviceID(uid: uid)
+        var query = deviceQuery(uid: uid)
+        query[kSecValueData as String] = Data(id.utf8)
+        query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         SecItemAdd(query as CFDictionary, nil)
+    }
+
+    static func clearDeviceID(uid: String) {
+        SecItemDelete(deviceQuery(uid: uid) as CFDictionary)
     }
 
     static func authenticate() async throws -> LAContext {
@@ -137,12 +136,20 @@ enum ProfileV3VaultDevice {
         }
     }
 
-    private static func clearDeviceID() {
+    private static func clearDeviceIDs() {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: deviceService,
         ]
         SecItemDelete(query as CFDictionary)
+    }
+
+    private static func deviceQuery(uid: String) -> [String: Any] {
+        [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: deviceService,
+            kSecAttrAccount as String: deviceAccountPrefix + uid,
+        ]
     }
 
     private static func ensurePrivateKey() throws -> SecKey {

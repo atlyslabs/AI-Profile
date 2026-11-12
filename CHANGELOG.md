@@ -193,6 +193,20 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Fixed
 
+- The loyalty "Tier valid until" field shows `MM/YY` as you type and stops at four digits.
+  Before, it showed any number typed ("123456"), because SwiftUI's `TextField` ignores a value its
+  own binding setter changes, so the view model's `didSet` formatting never reached the screen
+  (reproduced on iOS 26.5 and 27.2). `ProfileV3UnderlinedField` and `ProfileV3LabelledField` now
+  take a `format` they apply in `onChange`, after the edit lands. The view model formats what it
+  reads and sends. The city's "Other" purpose name had the same bug with its `max_chars` cap and
+  now uses the same `format`.
+- The vault's device id is stored per signed-in user (Keychain account
+  `fortknox.device_id.<uid>`), not once per phone, so signing in with another account no longer
+  sends the first account's device. The Secure Enclave key is still shared; enrolling an existing
+  key is idempotent per user. When the reveal challenge or the reveal returns 403 "device not
+  enrolled" (another user's id, a revoked device, a migration), the app forgets that user's id,
+  enrolls the same key again and retries the reveal once, without showing the error. The key is
+  no longer deleted for "not enrolled", only for "signature rejected".
 - Towns with no airport now show in the city picker and can be added (QA-2114, `vdc-k8s#24180`).
   The server sends them with `code: ""` plus `name` and `country_code`, and the client dropped
   every row, porthole, purpose sheet and city screen without a code. Cities are now keyed as the

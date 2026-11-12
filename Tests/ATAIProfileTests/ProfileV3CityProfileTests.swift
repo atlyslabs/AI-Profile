@@ -371,7 +371,8 @@ struct ProfileV3CityProfileTests {
         editor.label = "Parents"
         #expect(editor.canContinue)
         editor.label = String(repeating: "x", count: 40)
-        #expect(editor.label.count == 30)
+        #expect(editor.trimmedLabel.count == 30)
+        #expect(editor.limitedLabel(editor.label).count == 30)
 
         editor.label = ""
         editor.back()

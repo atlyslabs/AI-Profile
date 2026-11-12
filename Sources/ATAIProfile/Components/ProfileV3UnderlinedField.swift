@@ -11,6 +11,7 @@ struct ProfileV3UnderlinedField: View {
     var growsWithContent = false
     var isError = false
     var onFocusChange: ((Bool) -> Void)?
+    var format: ((String) -> String)?
 
     @FocusState private var isFocused: Bool
 
@@ -33,8 +34,14 @@ struct ProfileV3UnderlinedField: View {
             .autocorrectionDisabled()
             .focused($isFocused)
             .onChange(of: isFocused) { _, focused in onFocusChange?(focused) }
+            .onChange(of: text) { _, typed in reformat(typed) }
             .profileV3UnderlinedFieldStyle(isFocused: isFocused, width: width, isError: isError)
             .accessibilityLabel(accessibilityLabel ?? placeholder)
+    }
+
+    private func reformat(_ typed: String) {
+        guard let formatted = format?(typed), formatted != typed else { return }
+        text = formatted
     }
 }
 
