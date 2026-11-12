@@ -1,0 +1,47 @@
+Sources/ATAIProfile/Components/ProfileV3LabelledField.swift
+  s_8bd9718b5e3b54::t_81b72374619fe7 13,26-27
+Sources/ATAIProfile/Views/ProfileV3CitySheets.swift
+  s_8bd9718b5e3b54::t_81b72374619fe7 240-241
+Tests/ATAIProfileTests/ProfileV3VaultDeviceTests.swift
+  s_8bd9718b5e3b54::t_14d2a84edff53d 1-4,6-15
+  s_8bd9718b5e3b54::t_504312a4d36af2 5
+Sources/ATAIProfile/Data/ProfileV3VaultDevice.swift
+  s_8bd9718b5e3b54::t_d9411e25b203fe 9,50,53-56,66-70,74-77,139,147-152
+  s_8bd9718b5e3b54::t_193d7a4b471dc6 153-154
+CHANGELOG.md
+  s_8bd9718b5e3b54::t_96877be7558424 196-209
+Sources/ATAIProfile/Components/ProfileV3UnderlinedField.swift
+  s_8bd9718b5e3b54::t_81b72374619fe7 14,37,41-44
+  s_8bd9718b5e3b54::t_bcfc345c81f787 45
+Tests/ATAIProfileTests/ProfileV3LoyaltyTierTests.swift
+  s_8bd9718b5e3b54::t_81b72374619fe7 39
+Sources/ATAIProfile/Views/ProfileV3AddProgrammeView.swift
+  s_8bd9718b5e3b54::t_81b72374619fe7 468-469,501-502,511-512
+Tests/ATAIProfileTests/ProfileV3CityProfileTests.swift
+  s_8bd9718b5e3b54::t_81b72374619fe7 374-375
+Sources/ATAIProfile/Presentation/ProfileV3AddProgrammeViewModel.swift
+  s_8bd9718b5e3b54::t_81b72374619fe7 59,192,447
+CLAUDE.md
+  s_8bd9718b5e3b54::t_a111b570a3338d 64,163,236-237,277,317-318,409-410
+  s_8bd9718b5e3b54::t_eae8a24ed585f4 154,162
+Sources/ATAIProfile/Presentation/ProfileV3CityProfileViewModel.swift
+  s_8bd9718b5e3b54::t_81b72374619fe7 426-427,484-489
+Sources/ATAIProfile/Data/ProfileV3VaultClient.swift
+  s_8bd9718b5e3b54::t_145a70a475dd21 4,64-65,70-81,104,114-115,120,185-195
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "39dbd68c201ea66b2bbc386884d77ca77a7098cd",
+  "prompts": {},
+  "sessions": {
+    "s_8bd9718b5e3b54": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ea453c3-0ff0-4171-899c-238f1be76cd6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
