@@ -69,7 +69,7 @@ struct ProfileV3AnalyticsEventsTests {
         }
         let flight = AnalyticsScreen.profileAgent(agentID: "flight", travellerID: "main")
         #expect(flight.name == "ProfileAgent")
-        #expect(flight.container == .agentSheet)
+        #expect(flight.container == .list)
         #expect(flight.properties["agent_name"] == "FlightAgent")
         #expect(AnalyticsScreen.travelPersonaAgent.properties["agent_name"] == "TravelPersonaAgent")
         #expect(AnalyticsScreen.cityProfileAgent.properties["agent_name"] == "CityProfileAgent")

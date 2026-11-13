@@ -2,25 +2,25 @@ import ATUIKit
 import SwiftUI
 
 extension AnalyticsScreen {
-    static let profile = AnalyticsScreen("Profile", .tab)
-    static let profileBenefitList = AnalyticsScreen("ProfileBenefitList")
+    static let profile = AnalyticsScreen("Profile")
+    static let profileBenefitList = AnalyticsScreen("ProfileBenefitList", .list)
     static let settings = AnalyticsScreen("Settings")
         .with(ProfileV3AnalyticsScreenKey.actionSource, ProfileV3Analytics.profileSource)
     static func connectors(travellerID: String?) -> AnalyticsScreen {
-        AnalyticsScreen("Connectors")
+        AnalyticsScreen("Connectors", .component)
             .with(ProfileV3AnalyticsScreenKey.actionSource, ProfileV3Analytics.profileSource)
             .with(ProfileV3AnalyticsScreenKey.travellerId, travellerID)
     }
-    static let gloveBox = AnalyticsScreen("GloveBox", .modal)
-    static let credentialsWebsiteList = AnalyticsScreen("CredentialsWebsiteList", .bottomSheet)
-    static let serviceTerms = AnalyticsScreen("ServiceTerms")
+    static let gloveBox = AnalyticsScreen("GloveBox", .component)
+    static let credentialsWebsiteList = AnalyticsScreen("CredentialsWebsiteList", .list)
+    static let serviceTerms = AnalyticsScreen("ServiceTerms", .bottomSheet)
     static let userResidenceList = AnalyticsScreen("UserResidenceList", .bottomSheet)
     static let userCitizenshipList = AnalyticsScreen("UserCitizenshipList", .bottomSheet)
     static let userCurrencyList = AnalyticsScreen("UserCurrencyList", .bottomSheet)
     static let editTravellersList = AnalyticsScreen("EditTravellersList", .bottomSheet)
         .with(ProfileV3AnalyticsScreenKey.actionSource, ProfileV3Analytics.profileSource)
 
-    private static let profileAgentBase = AnalyticsScreen("ProfileAgent", .agentSheet)
+    private static let profileAgentBase = AnalyticsScreen("ProfileAgent", .list)
     static let travelPersonaAgent = profileAgentBase
         .with(ProfileV3AnalyticsScreenKey.agentName, "TravelPersonaAgent")
         .with(ProfileV3AnalyticsScreenKey.actionSource, ProfileV3Analytics.profileSource)
@@ -35,7 +35,7 @@ extension AnalyticsScreen {
     }
 
     static func profileBenefit(benefitID: String, travellerID: String?) -> AnalyticsScreen {
-        AnalyticsScreen("ProfileBenefit")
+        AnalyticsScreen("ProfileBenefit", .list)
             .with(ProfileV3AnalyticsScreenKey.benefitName, ProfileV3Analytics.benefitScreenName(benefitID))
             .with(ProfileV3AnalyticsScreenKey.actionSource, ProfileV3Analytics.profileSource)
             .with(ProfileV3AnalyticsScreenKey.benefitId, benefitID)
@@ -43,7 +43,7 @@ extension AnalyticsScreen {
     }
 
     static func connectorAgents(connector: String) -> AnalyticsScreen {
-        AnalyticsScreen("ConnectorAgents", .modal)
+        AnalyticsScreen("ConnectorAgents", .component)
             .with(ProfileV3AnalyticsScreenKey.connectorName, ProfileV3Analytics.connectorScreenName(connector))
     }
 }
