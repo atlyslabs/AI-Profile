@@ -9,6 +9,7 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         didSet { syncCustomRules() }
     }
     @Published private(set) var saveState: ProfileV3SavePhase = .idle
+    @Published private(set) var fieldErrors: [String: String] = [:]
     @Published var pickerSectionID: String?
     @Published private(set) var sources: ProfileV3SourcesViewModel?
     private(set) var sourcesSection: ProfileV3FormSection?
@@ -389,6 +390,9 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
             guard case .text(var field) = section.control else { return }
             field.value = text
             section.control = .text(field)
+        }
+        if fieldErrors[sectionID] != nil {
+            fieldErrors[sectionID] = nil
         }
     }
 
@@ -834,15 +838,29 @@ final class ProfileV3AgentFormViewModel: ObservableObject {
         } catch {
             changes.trackFailure(error, for: travellerIDs)
             try Task.checkCancellation()
+            let fieldError = Self.fieldError(for: error, in: snapshot)
+            if let fieldError {
+                fieldErrors[fieldError.sectionID] = fieldError.message
+            }
             if householdApply != nil {
                 recordHouseholdFailure(error)
                 saveState = .idle
             } else {
-                saveState = .failed
+                saveState = fieldError == nil ? .failed : .idle
             }
             throw error
         }
     }
+
+    static func fieldError(for error: Error, in form: ProfileV3AgentForm) -> (sectionID: String, message: String)? {
+        guard case ProfileV3Error.invalidRequest(let code?, let message?) = error,
+              code.hasPrefix(fieldErrorCodePrefix) else { return nil }
+        let key = String(code.dropFirst(fieldErrorCodePrefix.count))
+        guard case .text? = form.sections.first(where: { $0.id == key })?.control else { return nil }
+        return (key, message)
+    }
+
+    private static let fieldErrorCodePrefix = "invalid_"
 
     private func recordHouseholdFailure(_ error: Error) {
         guard var session = householdApply else { return }

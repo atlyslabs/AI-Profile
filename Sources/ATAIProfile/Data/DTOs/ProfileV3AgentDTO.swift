@@ -251,12 +251,14 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
     private let rawEditor: ProfileV3LossyDTO<ProfileV3CustomRulesEditorDTO>?
     private let rawDeleteConfirm: ProfileV3LossyDTO<ProfileV3CustomRulesDeleteDTO>?
     private let rawCurrency: ProfileV3LossyDTO<ProfileV3AgentCurrencyDTO>?
+    private let rawPlaceholder: ProfileV3LossyDTO<String>?
 
     enum CodingKeys: String, CodingKey {
         case key
         case label
         case input
         case assist
+        case rawPlaceholder = "placeholder"
         case rawAssistLink = "assist_link"
         case select
         case rawOptions = "options"
@@ -288,6 +290,8 @@ struct ProfileV3AgentFieldDTO: Decodable, Equatable {
     var options: [ProfileV3AgentOptionDTO] { rawOptions?.compactMap(\.value) ?? [] }
 
     var currency: ProfileV3AgentCurrencyDTO? { rawCurrency?.value }
+
+    var placeholder: String? { rawPlaceholder?.value }
 
     var editor: ProfileV3CustomRulesEditorDTO? { rawEditor?.value }
 

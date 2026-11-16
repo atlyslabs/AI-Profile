@@ -36,7 +36,10 @@ enum ProfileV3EmailBodyParser {
             messageEnd = attributionStart(lines, endingAt: index) ?? quoteStart
         }
         let message = clean([Piece(text: lines[..<messageEnd].joined(separator: "\n"))])
-        let quoted = clean([Piece(text: lines[messageEnd...].map(unquoted).joined(separator: "\n"))])
+        let quoted = clean(lines[messageEnd...].enumerated().map { offset, line in
+            let (depth, content) = unquoted(line)
+            return Piece(text: (offset == 0 ? "" : "\n") + content, quoteDepth: depth)
+        })
         return body(message: message, quoted: quoted)
     }
 
@@ -57,13 +60,15 @@ enum ProfileV3EmailBodyParser {
         line.trimmingCharacters(in: .whitespaces).lowercased().hasSuffix("wrote:")
     }
 
-    private static func unquoted(_ line: String) -> String {
+    private static func unquoted(_ line: String) -> (depth: Int, text: String) {
         var rest = Substring(line)
+        var depth = 0
         while let first = rest.first(where: { $0 != " " && $0 != "\t" }), first == ">" {
             rest = rest.drop(while: { $0 == " " || $0 == "\t" }).dropFirst()
             if rest.first == " " { rest = rest.dropFirst() }
+            depth += 1
         }
-        return String(rest)
+        return (depth, String(rest))
     }
 
     // MARK: Splitting
@@ -72,32 +77,28 @@ enum ProfileV3EmailBodyParser {
         var text: String
         var isBold = false
         var isItalic = false
-        var isQuoted = false
+        var quoteDepth = 0
         var isAttribution = false
         var link: URL?
 
         var isBlank: Bool { text.allSatisfy(\.isWhitespace) }
 
         func sameStyle(as other: Piece) -> Bool {
-            isBold == other.isBold && isItalic == other.isItalic && isQuoted == other.isQuoted && link == other.link
+            isBold == other.isBold && isItalic == other.isItalic && quoteDepth == other.quoteDepth && link == other.link
         }
     }
 
     private static func split(_ pieces: [Piece]) -> ProfileV3EmailBody? {
         var quoteStart = pieces.count
         for index in pieces.indices.reversed() {
-            if pieces[index].isQuoted {
+            if pieces[index].quoteDepth > 0 {
                 quoteStart = index
             } else if !pieces[index].isBlank {
                 break
             }
         }
         var message = Array(pieces[..<quoteStart])
-        var quoted = pieces[quoteStart...].map { piece in
-            var piece = piece
-            piece.isQuoted = false
-            return piece
-        }
+        var quoted = Array(pieces[quoteStart...])
         if !quoted.isEmpty {
             let moved = trailingAttribution(of: message)
             quoted.insert(contentsOf: message[moved...], at: 0)
@@ -136,7 +137,13 @@ enum ProfileV3EmailBodyParser {
         let quoted = text(quoted)
         switch (message, quoted) {
         case (nil, nil): return nil
-        case (nil, let quoted?): return ProfileV3EmailBody(message: quoted, quoted: nil)
+        case (nil, let quoted?):
+            let unnested = quoted.runs.map { run in
+                var run = run
+                run.quoteDepth = 0
+                return run
+            }
+            return ProfileV3EmailBody(message: ProfileV3EmailText(runs: unnested), quoted: nil)
         case (let message?, let quoted): return ProfileV3EmailBody(message: message, quoted: quoted)
         }
     }
@@ -144,7 +151,7 @@ enum ProfileV3EmailBodyParser {
     private static func text(_ pieces: [Piece]) -> ProfileV3EmailText? {
         guard !pieces.isEmpty else { return nil }
         return ProfileV3EmailText(runs: pieces.map {
-            ProfileV3EmailText.Run(text: $0.text, isBold: $0.isBold, isItalic: $0.isItalic, isQuoted: $0.isQuoted, link: $0.link)
+            ProfileV3EmailText.Run(text: $0.text, isBold: $0.isBold, isItalic: $0.isItalic, quoteDepth: $0.quoteDepth, link: $0.link)
         })
     }
 
@@ -252,7 +259,7 @@ private struct ProfileV3HTMLOutput {
             text: text,
             isBold: style.isBold,
             isItalic: style.isItalic,
-            isQuoted: style.isQuoted,
+            quoteDepth: style.quoteDepth,
             isAttribution: style.isAttribution,
             link: style.link
         ))
@@ -266,7 +273,7 @@ private struct ProfileV3HTMLStyle {
     var isBold = false
     var isItalic = false
     var isHidden = false
-    var isQuoted = false
+    var quoteDepth = 0
     var isAttribution = false
     var link: URL?
 }
@@ -467,7 +474,7 @@ private struct ProfileV3HTMLReader {
         if name == "ol" { frame.listCounter = Int(attributes["start"] ?? "") ?? 1 }
         if name == "ul" { frame.listCounter = 0 }
         stack.append(frame)
-        if name == "li" { output.text(listMarker(), style: ProfileV3HTMLStyle(isHidden: own.isHidden, isQuoted: own.isQuoted)) }
+        if name == "li" { output.text(listMarker(), style: ProfileV3HTMLStyle(isHidden: own.isHidden, quoteDepth: own.quoteDepth)) }
     }
 
     private mutating func listMarker() -> String {
@@ -494,7 +501,7 @@ private struct ProfileV3HTMLReader {
             style.isHidden = true
         }
         if name == "blockquote" || classes.contains("yahoo_quoted") {
-            style.isQuoted = true
+            style.quoteDepth += 1
         }
         if classes.contains("gmail_attr") || classes.contains("moz-cite-prefix") {
             style.isAttribution = true

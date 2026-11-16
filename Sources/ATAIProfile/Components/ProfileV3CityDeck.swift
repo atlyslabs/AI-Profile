@@ -23,6 +23,8 @@ struct ProfileV3CityDeck: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: Sizes.introDeckHeight, alignment: .top)
+        .scaleEffect(Sizes.introDeckScale, anchor: .top)
+        .frame(height: Sizes.introDeckHeight * Sizes.introDeckScale, alignment: .top)
         .accessibilityHidden(true)
     }
 

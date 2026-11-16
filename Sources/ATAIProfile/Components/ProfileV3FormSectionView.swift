@@ -20,6 +20,7 @@ struct ProfileV3FormSectionView: View {
     var onToggleBaggage: ((String) -> Void)?
     var onStepBaggage: ((String, Int) -> Void)?
     var onOpenNoteLink: ((ProfileV3Directive) -> Void)?
+    var fieldError: String?
     var showsPassportBackPage = ProfileV3FeatureFlags.isPassportBackPageEnabled
 
     @State private var sliderPreview: Double?
@@ -139,24 +140,32 @@ struct ProfileV3FormSectionView: View {
             }
             .frame(maxWidth: .infinity)
         case .text(let field):
-            if field.search != nil, let onAdd {
-                ProfileV3UnderlinedSearchField(
-                    placeholder: field.placeholder,
-                    accessibilityLabel: section.title,
-                    value: field.value,
-                    action: onAdd
-                )
-            } else {
-                ProfileV3UnderlinedField(
-                    placeholder: field.placeholder,
-                    accessibilityLabel: section.title,
-                    text: Binding(get: { field.value }, set: onTextChange),
-                    keyboard: field.keyboard == .phone ? .phonePad : .default,
-                    growsWithContent: !field.isDate,
-                    onFocusChange: { isFocused in
-                        if !isFocused { onTextCommit?() }
-                    }
-                )
+            VStack(alignment: .leading, spacing: ProfileV3Theme.Space.s12) {
+                if field.search != nil, let onAdd {
+                    ProfileV3UnderlinedSearchField(
+                        placeholder: field.placeholder,
+                        lowercasesPlaceholder: false,
+                        accessibilityLabel: section.title,
+                        value: field.value,
+                        action: onAdd
+                    )
+                } else {
+                    ProfileV3UnderlinedField(
+                        placeholder: field.placeholder,
+                        lowercasesPlaceholder: false,
+                        accessibilityLabel: section.title,
+                        text: Binding(get: { field.value }, set: onTextChange),
+                        keyboard: field.keyboard == .phone ? .phonePad : .default,
+                        growsWithContent: !field.isDate,
+                        isError: fieldError != nil,
+                        onFocusChange: { isFocused in
+                            if !isFocused { onTextCommit?() }
+                        }
+                    )
+                }
+                if let fieldError {
+                    ProfileV3ErrorText(text: fieldError)
+                }
             }
         case .date(let field):
             ProfileV3DateInput(
@@ -215,6 +224,7 @@ extension ProfileV3FormSectionView: Equatable {
         lhs.section == rhs.section
             && lhs.agentAvatarURL == rhs.agentAvatarURL
             && lhs.selectedTabID == rhs.selectedTabID
+            && lhs.fieldError == rhs.fieldError
             && (lhs.onTextCommit == nil) == (rhs.onTextCommit == nil)
             && (lhs.onDateChange == nil) == (rhs.onDateChange == nil)
             && (lhs.onAdd == nil) == (rhs.onAdd == nil)

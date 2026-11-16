@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Testing
 import UIKit
 @testable import ATAIProfile
@@ -47,7 +48,55 @@ struct ProfileV3EmailBodyParserTests {
         """
         let body = try #require(ProfileV3EmailBodyParser.fromHTML(html))
         #expect(body.message.plain == "Sounds good.")
-        #expect(body.quoted?.plain == "On 12 Nov 2026, at 14:04, Sam <sam@example.com> wrote:\n\nHello,\nCan you book the visa?")
+        let quoted = try #require(body.quoted)
+        #expect(quoted.plain == "On 12 Nov 2026, at 14:04, Sam <sam@example.com> wrote:\n\nHello,\nCan you book the visa?")
+        #expect(Self.outline(ProfileV3EmailQuoteNode.nodes(quoted, maxDepth: 4))
+            == "[On 12 Nov 2026, at 14:04, Sam <sam@example.com> wrote:\n\nHello,\nCan you book the visa?]")
+    }
+
+    @Test func eachEarlierMessageInAGmailThreadSitsOneLevelDeeper() throws {
+        let html = """
+        <div dir="ltr">Confirmed, see you then.</div><br>\
+        <div class="gmail_quote gmail_quote_container"><div dir="ltr" class="gmail_attr">On Wed, Nov 11, 2026 at 6:10 PM \
+        Park View Inn &lt;stay@example.com&gt; wrote:<br></div>\
+        <blockquote class="gmail_quote" style="margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">\
+        <div dir="ltr">The rate is ₹4,200 for the night.</div><br>\
+        <div class="gmail_quote"><div dir="ltr" class="gmail_attr">On Tue, Nov 10, 2026 at 11:02 AM Ayl &lt;trips@example.com&gt; wrote:<br></div>\
+        <blockquote class="gmail_quote" style="margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">\
+        <div dir="ltr">Could you share a quote for one night?</div></blockquote></div></blockquote></div>
+        """
+        let body = try #require(ProfileV3EmailBodyParser.fromHTML(html))
+        #expect(body.message.plain == "Confirmed, see you then.")
+        let quoted = try #require(body.quoted)
+        let depths = quoted.runs.filter { !$0.text.allSatisfy(\.isWhitespace) }.map(\.quoteDepth)
+        #expect(depths == [0, 1, 2])
+        #expect(Self.outline(ProfileV3EmailQuoteNode.nodes(quoted, maxDepth: 4)) == """
+        On Wed, Nov 11, 2026 at 6:10 PM Park View Inn <stay@example.com> wrote: / [The rate is ₹4,200 for the night.
+
+        On Tue, Nov 10, 2026 at 11:02 AM Ayl <trips@example.com> wrote: / [Could you share a quote for one night?]]
+        """)
+    }
+
+    @Test func aPlainTextThreadNestsByItsArrows() throws {
+        let text = "Confirmed.\n\nOn Wed, Park View Inn wrote:\n> The rate is 4,200.\n>\n> On Tue, Ayl wrote:\n"
+            + "> > Could you share a quote?\n> >\n> > Thanks\n"
+        let body = try #require(ProfileV3EmailBodyParser.fromText(text))
+        #expect(body.message.plain == "Confirmed.")
+        let quoted = try #require(body.quoted)
+        #expect(Self.outline(ProfileV3EmailQuoteNode.nodes(quoted, maxDepth: 4))
+            == "On Wed, Park View Inn wrote: / [The rate is 4,200.\n\nOn Tue, Ayl wrote: / [Could you share a quote?\n\nThanks]]")
+    }
+
+    @Test func deepThreadsStopIndentingAtTheCap() {
+        let quoted = ProfileV3EmailText(runs: [
+            .init(text: "On Mon, Sam wrote:\n\n"),
+            .init(text: "Level one\n\n", quoteDepth: 1),
+            .init(text: "  \n", quoteDepth: 3),
+            .init(text: "Deep", quoteDepth: 6),
+            .init(text: "\n\nBack out", quoteDepth: 1)
+        ])
+        #expect(Self.outline(ProfileV3EmailQuoteNode.nodes(quoted, maxDepth: 4))
+            == "On Mon, Sam wrote: / [Level one / [[[Deep]]] / Back out]")
     }
 
     @Test func anAttributionOutsideTheQuoteMovesWithIt() throws {
@@ -132,23 +181,75 @@ struct ProfileV3EmailBodyParserTests {
         #expect(email.body?.quoted?.plain == "On Thu, Sam wrote:\n\nHello")
     }
 
-    @Test @MainActor func theQuotedPartShowsOnlyWhenAskedAndLinksStayTappable() throws {
+    @Test @MainActor func theMessageKeepsItsLinksAndTheQuoteDrawsGrey() throws {
         let body = try #require(ProfileV3EmailBodyParser.fromHTML(
             "<p>See <a href=\"https://example.com\">this</a></p><div class=\"gmail_quote\"><blockquote class=\"gmail_quote\">Old</blockquote></div>"
         ))
-        let folded = ProfileV3EmailBodyText.attributed(body, showsQuoted: false, color: .black)
-        let open = ProfileV3EmailBodyText.attributed(body, showsQuoted: true, color: .black)
-        #expect(folded.string == "See this")
-        #expect(open.string == "See this\n\nOld")
-        let linkRange = (folded.string as NSString).range(of: "this")
-        #expect(folded.attribute(.link, at: linkRange.location, effectiveRange: nil) as? URL == URL(string: "https://example.com"))
-        let oldColor = open.attribute(.foregroundColor, at: (open.string as NSString).range(of: "Old").location, effectiveRange: nil) as? UIColor
+        let quotedText = try #require(body.quoted)
+        let message = ProfileV3EmailBodyText.attributed(body.message, color: .black)
+        let quoted = ProfileV3EmailBodyText.attributed(quotedText, quoted: true, color: .black)
+        #expect(message.string == "See this")
+        #expect(quoted.string == "Old")
+        let linkRange = (message.string as NSString).range(of: "this")
+        #expect(message.attribute(.link, at: linkRange.location, effectiveRange: nil) as? URL == URL(string: "https://example.com"))
+        let messageColor = message.attribute(.foregroundColor, at: 0, effectiveRange: nil) as? UIColor
+        let oldColor = quoted.attribute(.foregroundColor, at: 0, effectiveRange: nil) as? UIColor
+        #expect(messageColor?.cgColor.alpha == 1)
         #expect(oldColor?.cgColor.alpha == CGFloat(ProfileV3Theme.GloveBox.Palette.quotedOpacity))
 
         let view = ProfileV3FlowingTextView()
-        view.configure(text: "See this", attributed: folded, style: .H7InterMedium16, color: .black, exclusion: .zero)
+        view.configure(text: "See this", attributed: message, style: .H7InterMedium16, color: .black, exclusion: .zero)
         #expect(view.isSelectable)
         view.configure(text: "Plain", style: .H7InterMedium16, color: .black, exclusion: .zero)
         #expect(!view.isSelectable)
+    }
+
+    @Test @MainActor func eachQuoteLevelIsIndentedPastItsLine() throws {
+        let quoted = ProfileV3EmailText(runs: [
+            .init(text: "On Wed, Park View Inn wrote:"),
+            .init(text: "\nThe rate is 4,200.\n\nOn Tue, Ayl wrote:", quoteDepth: 1),
+            .init(text: "\nCould you share a quote?", quoteDepth: 2),
+            .init(text: "\nThanks, Park View Inn", quoteDepth: 1)
+        ])
+        let host = UIHostingController(rootView: ProfileV3EmailQuoteView(quoted).frame(width: 345))
+        host.safeAreaRegions = []
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 345, height: 800))
+        window.rootViewController = host
+        window.makeKeyAndVisible()
+        host.view.layoutIfNeeded()
+
+        let blocks = Self.textViews(in: window)
+            .map { (text: $0.text ?? "", frame: $0.convert($0.bounds, to: window)) }
+            .sorted { $0.frame.minY < $1.frame.minY }
+        let step = ProfileV3Theme.GloveBox.Layout.emailQuoteBar + ProfileV3Theme.GloveBox.Layout.emailQuoteBarGap
+        let texts = blocks.map(\.text)
+        #expect(texts == [
+            "On Wed, Park View Inn wrote:",
+            "The rate is 4,200.\n\nOn Tue, Ayl wrote:",
+            "Could you share a quote?",
+            "Thanks, Park View Inn"
+        ])
+        let left = blocks.first?.frame.minX ?? 0
+        let indents = blocks.map { $0.frame.minX - left }
+        #expect(indents == [0, step, step * 2, step])
+        let allDrawn = blocks.allSatisfy { $0.frame.height > 0 }
+        #expect(allDrawn)
+        let inOrder = zip(blocks, blocks.dropFirst()).allSatisfy { $1.frame.minY >= $0.frame.maxY }
+        #expect(inOrder)
+        window.isHidden = true
+    }
+
+    private static func outline(_ nodes: [ProfileV3EmailQuoteNode]) -> String {
+        nodes.map { node in
+            switch node {
+            case .text(let text): text.plain
+            case .quote(let children): "[" + outline(children) + "]"
+            }
+        }
+        .joined(separator: " / ")
+    }
+
+    @MainActor private static func textViews(in view: UIView) -> [UITextView] {
+        ((view as? UITextView).map { [$0] } ?? []) + view.subviews.flatMap { textViews(in: $0) }
     }
 }

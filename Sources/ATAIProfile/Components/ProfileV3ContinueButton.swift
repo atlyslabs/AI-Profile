@@ -46,7 +46,7 @@ struct ProfileV3ContinueButton: View {
             .profileV3CapsuleChrome(fill: fill)
             .animation(ProfileV3Theme.Motion.saveState, value: isLoading)
         }
-        .buttonStyle(.profileV3Pressable(.impact(weight: .medium)))
+        .buttonStyle(.profileV3Pressable(.impact(weight: .medium), dimsWhenDisabled: false))
         .disabled(!isEnabled || isLoading)
         .accessibilityLabel(title)
         .accessibilityValue(isLoading ? ProfileV3Strings.loading : "")

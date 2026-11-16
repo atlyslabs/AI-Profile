@@ -178,7 +178,7 @@ final class ProfileV3VaultClient: @unchecked Sendable {
     }
 
     private static func envelopeRejected(_ error: Error) -> Bool {
-        guard case ProfileV3Error.invalidRequest(let message) = error else { return false }
+        guard case ProfileV3Error.invalidRequest(_, let message) = error else { return false }
         return message?.localizedCaseInsensitiveContains("could not be opened") == true
     }
 

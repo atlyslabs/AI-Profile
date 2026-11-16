@@ -72,7 +72,7 @@ struct ProfileV3SettingsView: View {
             if let repository = viewModel.gloveBoxRepository {
                 ProfileV3GloveBoxLiveFlow(
                     repository: repository,
-                    isKYCComplete: viewModel.isMainTravellerKYCComplete,
+                    isKYCComplete: viewModel.isGloveBoxKYCComplete,
                     mainTravellerName: viewModel.mainTravellerName,
                     onCompleteKYC: viewModel.connectEmailFromGloveBox
                 ) { viewModel.isGloveBoxPresented = false }

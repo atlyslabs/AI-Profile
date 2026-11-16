@@ -272,7 +272,7 @@ struct ProfileV3GloveBoxDetailSheet: View {
                     ProfileV3FlowingText(
                         text: note,
                         attributed: emailBody.map {
-                            ProfileV3EmailBodyText.attributed($0, showsQuoted: showsQuoted, color: UIColor(Color(at: .pureBlack)))
+                            ProfileV3EmailBodyText.attributed($0.message, color: UIColor(Color(at: .pureBlack)))
                         },
                         trailingExclusion: CGSize(
                             width: ProfileV3AtlysOrb.Metrics.insight.ringOuter + Layout.detailNoteOrbGap,
@@ -285,9 +285,14 @@ struct ProfileV3GloveBoxDetailSheet: View {
                         ProfileV3AtlysOrb(ring: .still, metrics: .insight)
                     }
                     .padding(.top, Layout.detailNoteTop)
-                    if emailBody?.quoted != nil {
+                    if let quoted = emailBody?.quoted {
                         quoteToggle
                             .padding(.top, Layout.detailQuoteToggleTop)
+                        if showsQuoted {
+                            ProfileV3EmailQuoteView(quoted)
+                                .postHogMask()
+                                .padding(.top, Layout.detailQuoteTop)
+                        }
                     }
                 }
                 if case .email(let email) = entry, !email.attachments.isEmpty {

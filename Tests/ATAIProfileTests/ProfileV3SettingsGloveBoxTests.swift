@@ -45,7 +45,7 @@ struct ProfileV3SettingsGloveBoxTests {
     }
 
     @Test(.timeLimit(.minutes(1)))
-    func anActiveGloveBoxShowsActivateWhileKYCIsNotDone() async throws {
+    func anActiveGloveBoxShowsActivateWhileKYCIsNotDoneOnlyWhenTheCheckIsOn() async throws {
         let store = ProfileV3GloveBoxStore(account: ProfileV3GloveBoxAccount(address: "a@trips.atlys.com", eligible: true))
         let viewModel = ProfileV3SettingsViewModel(
             deps: .preview(),
@@ -56,8 +56,11 @@ struct ProfileV3SettingsGloveBoxTests {
         viewModel.loadGloveBoxStatusIfNeeded()
         while viewModel.gloveBoxHasAddress == nil { try await Task.sleep(for: .milliseconds(10)) }
 
+        let checksKYC = ProfileV3FeatureFlags.isGloveBoxKYCCheckEnabled
         #expect(viewModel.gloveBoxHasAddress == true)
-        #expect(viewModel.showsGloveBoxActivate)
+        #expect(viewModel.showsGloveBoxActivate == checksKYC)
+        #expect(await viewModel.isGloveBoxKYCComplete() == !checksKYC)
+        #expect(await viewModel.isMainTravellerKYCComplete() == false)
     }
 
     @Test func theKYCCheckTrustsARecentBoardAndRefetchesAnOlderOne() async {

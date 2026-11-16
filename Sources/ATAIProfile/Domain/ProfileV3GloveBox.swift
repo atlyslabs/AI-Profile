@@ -96,8 +96,10 @@ struct ProfileV3EmailText: Equatable {
         var text: String
         var isBold = false
         var isItalic = false
-        var isQuoted = false
+        var quoteDepth = 0
         var link: URL?
+
+        var isQuoted: Bool { quoteDepth > 0 }
     }
 
     var runs: [Run]

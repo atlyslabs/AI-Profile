@@ -173,7 +173,8 @@ struct ProfileV3AgentFormView: View {
                     onSelectCar: { viewModel.selectCar($0, in: section.id) },
                     onToggleBaggage: { viewModel.toggleBaggage($0, in: section.id) },
                     onStepBaggage: { viewModel.stepBaggage($0, by: $1, in: section.id) },
-                    onOpenNoteLink: viewModel.openNoteLink
+                    onOpenNoteLink: viewModel.openNoteLink,
+                    fieldError: viewModel.fieldErrors[section.id]
                 )
                 .equatable()
             }

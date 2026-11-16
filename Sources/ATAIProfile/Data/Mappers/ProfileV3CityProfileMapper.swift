@@ -11,6 +11,7 @@ enum ProfileV3CityProfileMapper: ProfileV3DTOReading {
             cities: dto.cities.compactMap(porthole),
             add: ProfileV3CityAddSlot(label: text(dto.add?.label) ?? "", detail: text(dto.add?.subtitle) ?? ""),
             headline: text(dto.headline) ?? "",
+            body: text(dto.body),
             samples: dto.samples.compactMap(sample)
         )
     }

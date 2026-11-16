@@ -352,7 +352,8 @@ final class ProfileV3CityProfileStore: @unchecked Sendable {
                 title: "City profile",
                 cities: portholes(),
                 add: ProfileV3CityAddSlot(label: "ADD", detail: "Frequent destination"),
-                headline: "Your travel style, tailored to the city you\u{2019}re in.",
+                headline: "Build a travel profile for every city",
+                body: "Help your agent understand your taste in every city, so recommendations feel less generic and more you.",
                 samples: ProfileV3CityProfileFixtures.samples
             )
         }

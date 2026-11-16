@@ -61,13 +61,23 @@ struct ProfileV3CityProfileTests {
         let dto = try JSONDecoder().decode(ProfileV3CityProfilesDTO.self, from: Data(Self.introJSON.utf8))
         let intro = ProfileV3CityProfileMapper.profile(dto)
         #expect(intro.title == "City profile")
-        #expect(intro.headline == "Your travel style, tailored to the city you\u{2019}re in.")
+        #expect(intro.headline == "Build a travel profile for every city")
+        #expect(intro.body == "Help your agent understand your taste in every city, so recommendations feel less generic and more you.")
         #expect(intro.cities.map(\.id) == ["c1", "c2"])
         #expect(intro.cities[1].purpose.label == "Dad")
         #expect(intro.cities[0].purpose.iconURL?.lastPathComponent == "purpose-home.png")
         #expect(intro.add == ProfileV3CityAddSlot(label: "ADD", detail: "Frequent destination"))
         #expect(intro.samples.map(\.code) == ["BOM"])
         #expect(intro.samples.first?.lines.count == 2)
+    }
+
+    @Test func anIntroWithoutABodyLineShowsNone() throws {
+        for json in [#"{"headline":"Build"}"#, #"{"headline":"Build","body":"  "}"#, #"{"headline":"Build","body":{"text":"x"}}"#] {
+            let dto = try JSONDecoder().decode(ProfileV3CityProfilesDTO.self, from: Data(json.utf8))
+            let intro = ProfileV3CityProfileMapper.profile(dto)
+            #expect(intro.headline == "Build")
+            #expect(intro.body == nil, "\(json)")
+        }
     }
 
     @Test func thePickerKeepsItsPageAndQuery() throws {
@@ -721,7 +731,8 @@ struct ProfileV3CityProfileTests {
        {"name":"No id"}
      ],
      "add":{"label":"ADD","subtitle":"Frequent destination","next":{"go":"city_picker","profile_id":"p1"}},
-     "headline":"Your travel style, tailored to the city you’re in.",
+     "headline":"Build a travel profile for every city",
+     "body":"Help your agent understand your taste in every city, so recommendations feel less generic and more you.",
      "samples":[{"code":"BOM","name":"Mumbai","purpose":{"key":"home","label":"Home","icon_url":"\(icons)/purpose-home.png"},
                  "image_url":"https://media.atlys.com/IN.avif?q=60",
                  "lines":["Always book late night flights","No airport pick-up needed"]}]}
