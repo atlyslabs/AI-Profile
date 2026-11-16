@@ -1,0 +1,150 @@
+Sources/ATAIProfile/Domain/ProfileV3AppAccess.swift
+  s_8bd9718b5e3b54::t_e398401b6a0e0b 86
+Tests/ATAIProfileTests/ProfileV3SettingsGloveBoxTests.swift
+  s_8bd9718b5e3b54::t_a61e0dcf73783e 48,59,61-63
+Sources/ATAIProfile/Domain/ProfileV3CityProfile.swift
+  s_8bd9718b5e3b54::t_ed085a6632f80b 8
+Sources/ATAIProfile/Views/ProfileV3GloveBoxSheets.swift
+  s_8bd9718b5e3b54::t_0bb9b876b12f6d 275
+  s_8bd9718b5e3b54::t_1470bef2b988d4 288,291-295
+Sources/ATAIProfile/Data/ProfileV3VaultClient.swift
+  s_8bd9718b5e3b54::t_e398401b6a0e0b 181
+Sources/ATAIProfile/Domain/ProfileV3Error.swift
+  s_8bd9718b5e3b54::t_7f4b04a957c38f 6
+  s_8bd9718b5e3b54::t_09784bb9f57e7f 29
+CHANGELOG.md
+  s_8bd9718b5e3b54::t_a28deb2a22e046 10-20
+  s_8bd9718b5e3b54::t_0fd0992b1eb0e2 212-219
+  s_8bd9718b5e3b54::t_1886e387adae44 240-247
+  s_8bd9718b5e3b54::t_59ea564c7bc68c 119-123
+Sources/ATAIProfile/ProfileV3PassportScanLauncher.swift
+  s_8bd9718b5e3b54::t_e398401b6a0e0b 33
+Tests/ATAIProfileTests/ProfileV3AgentFieldErrorTests.swift
+  s_8bd9718b5e3b54::t_8c55ea1dbb89a3 1-166
+Sources/ATAIProfile/Views/ProfileV3SettingsView.swift
+  s_8bd9718b5e3b54::t_64c779026dad27 75
+Sources/ATAIProfile/Data/DTOs/ProfileV3CityProfileDTO.swift
+  s_8bd9718b5e3b54::t_2a79e4d6b3bac7 6
+  s_8bd9718b5e3b54::t_3f7685e8fd3570 11,19
+CLAUDE.md
+  s_8bd9718b5e3b54::t_6d9a4821afcd73 437
+  s_8bd9718b5e3b54::t_3ac4e556266ebc 197
+  s_8bd9718b5e3b54::t_bcdc9a6a8a3815 275
+  s_8bd9718b5e3b54::t_4144bc606f72da 165
+  s_8bd9718b5e3b54::t_fbef004fd9299f 167
+  s_8bd9718b5e3b54::t_0e1beb9f1d4399 168
+  s_8bd9718b5e3b54::t_a2f46aa92c9f85 153
+  s_8bd9718b5e3b54::t_3a2d11225cda45 205
+  s_8bd9718b5e3b54::t_c6de3ed716fd9d 301
+  s_8bd9718b5e3b54::t_74233226f2140f 309
+  s_8bd9718b5e3b54::t_a93f9803548e1a 341
+  s_8bd9718b5e3b54::t_1a88618052a187 161
+  s_8bd9718b5e3b54::t_c0d0e3d89fc84a 164
+  s_8bd9718b5e3b54::t_460ca23a0c925f 154
+  s_8bd9718b5e3b54::t_4a76b8f220542d 149
+  s_8bd9718b5e3b54::t_93d3689c85b127 169
+  s_8bd9718b5e3b54::t_60d760279050bb 64
+  s_8bd9718b5e3b54::t_6ffeff4cbf5ac5 166
+  s_8bd9718b5e3b54::t_77cb810e47b6ca 241-242
+  s_8bd9718b5e3b54::t_4386771fa16510 330
+  s_8bd9718b5e3b54::t_a6c5ec270ae44b 281
+  s_8bd9718b5e3b54::t_81cfb985446022 353
+Sources/ATAIProfile/Views/ProfileV3CityProfileView.swift
+  s_8bd9718b5e3b54::t_81487011e05faa 168-175,178
+Sources/ATAIProfile/Data/Mappers/ProfileV3AgentMapper.swift
+  s_8bd9718b5e3b54::t_1169857000f263 663
+Sources/ATAIProfile/Components/ProfileV3UnderlinedField.swift
+  s_8bd9718b5e3b54::t_2ff3910cf5873d 30
+  s_8bd9718b5e3b54::t_8df51b84d2ac2f 6
+  s_8bd9718b5e3b54::t_71896d48dd9994 51,61
+Sources/ATAIProfile/Data/ProfileV3CityProfileFixtures.swift
+  s_8bd9718b5e3b54::t_c28c534e768a30 355-356
+Sources/ATAIProfile/Support/ProfileV3Theme+GloveBox.swift
+  s_8bd9718b5e3b54::t_2b9aab77f3442c 369
+  s_8bd9718b5e3b54::t_066cc19c9cba4c 298,300-303
+Sources/ATAIProfile/Support/ProfileV3Theme+CityProfile.swift
+  s_8bd9718b5e3b54::t_2e6a1eb7eced05 122
+  s_8bd9718b5e3b54::t_ee3e35f0e36df3 126-127,129,133
+Sources/ATAIProfile/Components/ProfileV3CityDeck.swift
+  s_8bd9718b5e3b54::t_6bf9d1017fd609 26-27
+Sources/ATAIProfile/Views/ProfileV3AgentFormView.swift
+  s_8bd9718b5e3b54::t_d8193171631d62 176-177
+Sources/ATAIProfile/Presentation/ProfileV3SettingsViewModel.swift
+  s_8bd9718b5e3b54::t_40db2430308101 175-179
+  s_8bd9718b5e3b54::t_60156cd989b762 192
+Sources/ATAIProfile/Domain/ProfileV3GloveBox.swift
+  s_8bd9718b5e3b54::t_068e1bda1beadc 99,101-102
+Sources/ATAIProfile/Presentation/ProfileV3KYCCaptureViewModel.swift
+  s_8bd9718b5e3b54::t_e398401b6a0e0b 539
+Tests/ATAIProfileTests/ProfileV3ContinueButtonTests.swift
+  s_8bd9718b5e3b54::t_9675dd55865003 52-72
+  s_8bd9718b5e3b54::t_0a03cdd0d4ce6f 1-26,28-51,73-109
+  s_8bd9718b5e3b54::t_0ac8e8591d7b19 27
+Sources/ATAIProfile/Components/ProfileV3FormSectionView.swift
+  s_8bd9718b5e3b54::t_6b499abe10c2ce 143-168
+  s_8bd9718b5e3b54::t_9579ef388aaf71 227
+  s_8bd9718b5e3b54::t_224b2eba32838b 23
+Sources/ATAIProfile/Components/ProfileV3EmailBodyText.swift
+  s_8bd9718b5e3b54::t_39ff9d809c462c 7-8,15-23,25
+Sources/ATAIProfile/Components/ProfileV3ContinueButton.swift
+  s_8bd9718b5e3b54::t_d91ddcdb6ccf40 49
+Sources/ATAIProfile/Data/DTOs/ProfileV3AgentDTO.swift
+  s_8bd9718b5e3b54::t_1c1d95daa60f40 294-295
+  s_8bd9718b5e3b54::t_6044f59d5cc10a 254,261
+Tests/ATAIProfileTests/ProfileV3CityProfileTests.swift
+  s_8bd9718b5e3b54::t_bc54d88deef818 64-65
+  s_8bd9718b5e3b54::t_a1c042c134ff3d 74-82
+  s_8bd9718b5e3b54::t_8665f2d32793f6 734-735
+Sources/ATAIProfile/Data/Mappers/ProfileV3EmailBodyParser.swift
+  s_8bd9718b5e3b54::t_62c34518e1b40d 140-146
+  s_8bd9718b5e3b54::t_6848b1aeaf110f 39-42
+  s_8bd9718b5e3b54::t_22dde9f88359a8 94,101
+  s_8bd9718b5e3b54::t_7efec39f2a63f5 262
+  s_8bd9718b5e3b54::t_18b082c7e81694 504
+  s_8bd9718b5e3b54::t_a50afffa329eae 276
+  s_8bd9718b5e3b54::t_3ea739c235cb65 63,65,69,71
+  s_8bd9718b5e3b54::t_e4355f6970813b 80,87
+  s_8bd9718b5e3b54::t_eeaa1cd6124799 477
+  s_8bd9718b5e3b54::t_0b1efee060487c 154
+Sources/ATAIProfile/Presentation/ProfileV3AgentFormViewModel.swift
+  s_8bd9718b5e3b54::t_8a0d80a9e2a0ea 12
+  s_8bd9718b5e3b54::t_500e30750d0389 394-396
+  s_8bd9718b5e3b54::t_77873d3800954a 841-844,849,855-863
+  s_8bd9718b5e3b54::t_fd62e82f9484c3 864
+Sources/ATAIProfile/Components/ProfileV3EmailQuoteView.swift
+  s_8bd9718b5e3b54::t_84d24ee0d6e084 1-127
+Sources/ATAIProfile/Data/ProfileV3APIErrorMapper.swift
+  s_8bd9718b5e3b54::t_e398401b6a0e0b 30
+Sources/ATAIProfile/Data/Mappers/ProfileV3CityProfileMapper.swift
+  s_8bd9718b5e3b54::t_710c5993e8bbdf 14
+Tests/ATAIProfileTests/ProfileV3EmailBodyParserTests.swift
+  s_8bd9718b5e3b54::t_2d1d209bd8fc15 188,190
+  s_8bd9718b5e3b54::t_1cf89ef660dd4a 72
+  s_8bd9718b5e3b54::t_7f15e72d39a966 225-226,233-238
+  s_8bd9718b5e3b54::t_b7f76571aa0a98 2
+  s_8bd9718b5e3b54::t_ce7a1447cae2ad 51-71,73-99
+  s_8bd9718b5e3b54::t_d213419a6a11ae 184,189,191-197,201,206-224,227-232,239-254
+Sources/ATAIProfile/Support/ProfileV3FeatureFlags.swift
+  h_9a6ffeb90cdcd3 25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dab044aebe239b5461f7a6e2280d165bae9d54b2",
+  "prompts": {},
+  "humans": {
+    "h_9a6ffeb90cdcd3": {
+      "author": "Aravindh S <aravindh@atlys.com>"
+    }
+  },
+  "sessions": {
+    "s_8bd9718b5e3b54": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ea453c3-0ff0-4171-899c-238f1be76cd6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
