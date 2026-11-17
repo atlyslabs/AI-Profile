@@ -11,30 +11,103 @@ extension ProfileV3Theme.Sizes {
         static let avatar: CGFloat = 80
         static let avatarTop: CGFloat = 38
         static let avatarLetterOffsetY: CGFloat = -3
+        static let uploadTop: CGFloat = 22
+        static let uploadHeight: CGFloat = 28
+        static let uploadPadding: CGFloat = 15
+        static let uploadSpacing: CGFloat = 5
+        static let uploadIcon: CGFloat = 18
+        static let uploadTitleSize: CGFloat = 12
         static let cardsTop = ProfileV3Theme.Space.s40
-        static let cardSpacing: CGFloat = 25
+        static let cardSpacing = ProfileV3Theme.Space.s24
         static let cardRadius = ProfileV3Theme.Radius.xxxl
+        static let surfaceRadius = ProfileV3Theme.Radius.card
+        static let cardPadding = ProfileV3Theme.Space.s24
+        static let cardIconSpacing = ProfileV3Theme.Space.s16
+        static let cardTitleSpacing = ProfileV3Theme.Space.s6
         static let cardHeaderTop = ProfileV3Theme.Space.s24
         static let cardHeaderBottom = ProfileV3Theme.Space.s20
         static let cardHeaderTrailing = ProfileV3Theme.Space.s24
-        static let rowsTop = ProfileV3Theme.Space.s30
-        static let rowSpacing = ProfileV3Theme.Space.s14
+        static let accountsSubtitleWidth: CGFloat = 206
+        static let sectionGap = ProfileV3Theme.Space.s32
+        static let switchGap = ProfileV3Theme.Space.s24
+        static let switchTextSpacing: CGFloat = 5
+        static let switchSubtitleWidth: CGFloat = 263
+        static let switchToggle: CGFloat = 36
+        static let rowsTop = ProfileV3Theme.Space.s20
+        static let rowSpacing = ProfileV3Theme.Space.s16
         static let dangerIcon: CGFloat = 18
         static let bottom = ProfileV3Theme.Space.s40
         static let loadStateHeight: CGFloat = 240
-        static let accessCardInset = ProfileV3Theme.Space.s30
-        static let accessCardSpacing = ProfileV3Theme.Space.s12
-        static let accessCardHeight: CGFloat = 122
+        static let connectorsHeaderBottom: CGFloat = 15
+        static let accessCardInset = ProfileV3Theme.Space.s24
+        static let accessCardSpacing: CGFloat = 15
+        static let accessCardHeight: CGFloat = 92
         static let accessCardRadius: CGFloat = 25
-        static let accessCardTextLeading: CGFloat = 24.5
-        static let accessCardTitleTop: CGFloat = 26
-        static let accessCardSubtitleTop: CGFloat = 11
-        static let accessCardTextWidth: CGFloat = 122
-        static let accessArtTop: CGFloat = 19
-        static let informationArtSize = CGSize(width: 84, height: 81)
-        static let informationArtTrailing: CGFloat = 38
-        static let appArtSize = CGSize(width: 87, height: 81)
-        static let appArtTrailing: CGFloat = 35
+        static let accessCardTextLeading: CGFloat = 25
+        static let accessCardTitleTop: CGFloat = 20
+        static let accessCardSubtitleTop = ProfileV3Theme.Space.s6
+        static let accessCardTextWidth: CGFloat = 126
+        static let informationArtTop: CGFloat = 17
+        static let informationArtSize = CGSize(width: 80, height: 30)
+        static let informationArtTrailing: CGFloat = 24
+        static let appArtTop: CGFloat = 18
+        static let appArtSize = CGSize(width: 74.67, height: 28)
+        static let appArtTrailing: CGFloat = 24.3
+        static let partnersCardHeight: CGFloat = 116
+        static let partnersSubtitleWidth: CGFloat = 159
+        static let partnersLogosTop: CGFloat = 21
+        static let partnersLogosTrailing: CGFloat = 25
+        static let partnersLogos = CGSize(width: 86, height: 73)
+        static let partnersLogoSlots: [(origin: CGPoint, size: CGFloat)] = [
+            (CGPoint(x: 25, y: 0), 33),
+            (CGPoint(x: 55, y: 25), 31),
+            (CGPoint(x: 0, y: 28), 28),
+            (CGPoint(x: 28, y: 52), 21)
+        ]
+        static let credentialCardHeight: CGFloat = 107
+        static let credentialSubtitleWidth: CGFloat = 165
+        static let credentialShield = CGSize(width: 50, height: 63)
+        static let credentialShieldTop: CGFloat = 21.9
+        static let credentialShieldTrailing: CGFloat = 32
+        static let credentialLock = CGSize(width: 38.68, height: 30.95)
+        static let credentialLockOffset = CGSize(width: -0.3, height: -1.3)
+        static let credentialLockTilt: Double = -5.2
+        static let credentialLockOpacity = 0.8
+    }
+
+    enum Partners {
+        static let titleTop: CGFloat = 28
+        static let titleSpacing = ProfileV3Theme.Space.s12
+        static let subtitleWidth: CGFloat = 318
+        static let headerSolid: CGFloat = 208
+        static let headerFade: CGFloat = 98
+        static let focusY: CGFloat = 472
+        static let listLeading: CGFloat = 30
+        static let nameWidth: CGFloat = 186
+        static let headlineWidth: CGFloat = 151
+        static let focusTextSpacing = ProfileV3Theme.Space.s8
+        static let focusBodySpacing = ProfileV3Theme.Space.s16
+        static let logoCentreFromTrailing: CGFloat = 110
+        static let offsets: [CGFloat] = [0, 158, 274, 363, 440]
+        static let logoSizes: [CGFloat] = [132, 85, 57, 44, 32]
+        static let logoOpacities: [Double] = [1, 0.8, 0.6, 0.6, 0]
+        static let logoBlurs: [CGFloat] = [0, 0, 2, 3, 4]
+        static let nameOpacities: [Double] = [1, 0.5, 0.4, 0.3, 0]
+        static let rowHeights: [CGFloat] = [170, 91, 63, 50, 38]
+        static let dragFollow: CGFloat = 0.5
+        static let swipeDistance: CGFloat = 40
+        static let swipeStep: CGFloat = 120
+        static let maxSwipeSteps = 3
+        static let info: CGFloat = 38
+        static let infoIcon = ProfileV3Theme.Icon.xl
+        static let infoOffset = CGSize(width: 50, height: 48)
+        static let infoShadowRadius: CGFloat = 11.7
+        static let infoShadowY: CGFloat = 4.675
+        static let rippleScale: CGFloat = 1.52
+        static let rippleLineWidth: CGFloat = 2
+        static let rippleSecondLineWidth: CGFloat = 1.5
+        static let rippleEndLineWidth: CGFloat = 0.6
+        static let glowRadius: CGFloat = 22
     }
 
     enum Permissions {

@@ -52,16 +52,6 @@ extension ProfileV3Theme.Sizes {
     }
 
     enum CredentialStore {
-        static let cardTop: CGFloat = 5
-        static let cardHeight: CGFloat = 122
-        static let cardRadius = ProfileV3Theme.Radius.xxl
-        static let cardTextLeading: CGFloat = 26
-        static let cardTitleTop: CGFloat = 26
-        static let cardBlurbTop = ProfileV3Theme.Space.s18
-        static let cardBlurbWidth: CGFloat = 108.7222
-        static let cardInsetShadow: CGFloat = 2.368
-        static let cardArt = CGSize(width: 144, height: 119)
-        static let cardArtFade: CGFloat = 16
         static let lockBox = CGSize(width: 57.1677, height: 47.4789)
         static let lock = CGSize(width: 53.511, height: 42.809)
         static let lockOffset = CGSize(width: 9.6792, height: 25.0034)
@@ -105,15 +95,12 @@ extension ProfileV3Theme.Palette {
     static let appHintShadow = Color.black.opacity(0.12)
     static let deckEditPill = Color.black.opacity(0.4)
     static let credentialCardStart = Color(hex: "3A3937")
-    static let credentialCardEnd = Color(hex: "8D9295")
     static let credentialShieldEnd = Color(hex: "C8D0D5")
 }
 
 extension ProfileV3Theme.Opacity {
     static let appShieldStroke: Double = 0.1
     static let appCredentialsNote: Double = 0.4
-    static let credentialCardBlurb: Double = 0.7
-    static let credentialCardInsetShadow: Double = 0.8
     static let credentialSheetShield: Double = 0.3
     static let credentialDeleteSubject: Double = 0.5
 }
@@ -123,15 +110,6 @@ extension ProfileV3Theme {
         colors: [Palette.appHintStart, Palette.appHintEnd],
         startPoint: UnitPoint(x: 0.4276, y: 1.2387),
         endPoint: UnitPoint(x: 0.8103, y: -0.1216)
-    )
-
-    static let credentialCardGradient = LinearGradient(
-        stops: [
-            .init(color: Palette.credentialCardStart, location: 0.0083),
-            .init(color: Palette.credentialCardEnd, location: 1),
-        ],
-        startPoint: UnitPoint(x: 0.7829, y: -0.5615),
-        endPoint: UnitPoint(x: 0.2171, y: 1.5615)
     )
 
     static let credentialShieldGradient = LinearGradient(

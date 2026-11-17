@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import UIKit
 
 @MainActor
 @Observable
@@ -25,6 +26,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
     let permissions: ProfileV3PermissionsSettingsModel
     let invites: ProfileV3InviteSettingsModel
     private(set) var monogram: String?
+    private(set) var pickedPhoto: UIImage?
     var isGloveBoxPresented = false
     private(set) var gloveBoxHasAddress: Bool?
     private(set) var gloveBoxNeedsKYC = false
@@ -283,6 +285,30 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
 
     func tapConcierge(_ concierge: ProfileV3Concierge) {
         router?.openExternalURL(concierge.openURL)
+    }
+
+    var photoUploadLabel: String? {
+        menu?.photo?.uploadLabel?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty
+    }
+
+    func pickPhoto(_ data: Data) {
+        guard let image = UIImage(data: data) else { return }
+        pickedPhoto = image
+    }
+
+    func tapPartners() {
+        guard menu?.partners?.partners.isEmpty == false else { return }
+        push(.partners)
+    }
+
+    func openPartnerInfo(_ partner: ProfileV3Partner) {
+        guard let url = partner.infoURL else { return }
+        router?.openExternalURL(url)
+    }
+
+    func setNotifications(_ isOn: Bool) {
+        guard menu?.notifications != nil, menu?.notifications?.isOn != isOn else { return }
+        menu?.notifications?.isOn = isOn
     }
 
     #if DEBUG

@@ -93,19 +93,16 @@ extension ProfileV3Theme {
                 }
             }
 
-            static let settingsCardInset = ProfileV3Theme.Sizes.SettingsPage.accessCardInset
-            static let settingsTitleTop: CGFloat = 26
-            static let settingsTitleLine: CGFloat = 20
-            static let settingsSubtitleTop: CGFloat = 13
-            static let settingsSubtitleLine: CGFloat = 19
+            static let settingsCardInset = ProfileV3Theme.Sizes.SettingsPage.cardPadding
+            static let settingsSubtitleTop = ProfileV3Theme.Space.s8
             static let settingsBodyTop: CGFloat = 5
             static let settingsBodyLines: CGFloat = 32
             static let settingsBodyWidth: CGFloat = 282
             static let settingsPillTop: CGFloat = 19
             static let settingsDials: [(fromTrailing: CGFloat, centreY: CGFloat, diameter: CGFloat)] = [
-                (14.56, 33.64, 47.12),
-                (85.65, 25.35, 62.693),
-                (49.36, 91.64, 55.284)
+                (16.7, 20.9, 41.47),
+                (83.9, 13.1, 56.19),
+                (50.1, 67.3, 50.58)
             ]
 
             static let homeSheetTop: CGFloat = 409.31

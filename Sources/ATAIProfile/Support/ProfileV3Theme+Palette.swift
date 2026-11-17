@@ -25,6 +25,12 @@ extension ProfileV3Theme {
         static let background = Color(at: .backgroundLightTheme)
         static let cardBorder = Color(at: .borderLightLight100)
         static let settingsCardBorder = Color(hex: "E6E7E8")
+        static let settingsSurfaceShadow = ProfileV3Theme.GloveBox.Palette.sectionShadow
+        static let settingsUploadBorder = optionTileBorder
+        static let settingsToggle = graphite
+        static let credentialShield = errorStateSubtitle.opacity(0.2)
+        static let partnerInfoShadow = Color(at: .pureBlack).opacity(0.16)
+        static let partnerAccentFallback = Color(at: .neutralGrey400)
         static let floatingControlInk = Color(red: 0.09, green: 0.09, blue: 0.11)
         static let floatingControlWash = Color.black.opacity(0.05)
         static let floatingControlShadow = Color.black.opacity(0.06)

@@ -6,21 +6,21 @@ import Testing
 @MainActor
 @Suite("Credential store card")
 struct ProfileV3CredentialStoreCardTests {
-    private typealias Layout = ProfileV3Theme.Sizes.CredentialStore
+    private typealias Layout = ProfileV3Theme.Sizes.SettingsPage
 
     private static let designWidth: CGFloat = 380
-    private static let shieldCentreX: CGFloat = 322
-    private static let shieldTop: CGFloat = 27.75
+    private static let shieldCentreX: CGFloat = 323
+    private static let shieldTop: CGFloat = 21.9
 
     @Test func theShieldStartsWhereTheDesignPutsIt() throws {
         let scale = 4
         let renderer = ImageRenderer(content: ProfileV3CredentialStoreCard(action: {}).frame(width: Self.designWidth))
         renderer.scale = CGFloat(scale)
         let image = try #require(renderer.cgImage)
-        #expect(image.height == Int(Layout.cardHeight) * scale)
+        #expect(image.height == Int(Layout.credentialCardHeight) * scale)
 
         let column = Self.luma(of: image, column: Int(Self.shieldCentreX) * scale)
-        let edge = try #require(column.indices.dropFirst().first { column[$0] - column[$0 - 1] > 20 })
+        let edge = try #require(column.indices.dropFirst().first { column[$0 - 1] - column[$0] > 12 })
         #expect(abs(CGFloat(edge) / CGFloat(scale) - Self.shieldTop) < 1)
     }
 

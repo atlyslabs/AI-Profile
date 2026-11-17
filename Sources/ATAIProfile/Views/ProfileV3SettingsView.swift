@@ -1,4 +1,5 @@
 import ATUIKit
+import PostHog
 import SwiftUI
 
 struct ProfileV3SettingsView: View {
@@ -28,8 +29,16 @@ struct ProfileV3SettingsView: View {
         ZStack(alignment: .top) {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    ProfileV3SettingsAvatar(initial: viewModel.monogram)
-                        .padding(.top, Layout.headerTop + ProfileV3Theme.Sizes.circleButton + Layout.avatarTop)
+                    ProfileV3SettingsAvatar(
+                        initial: viewModel.monogram,
+                        imageURL: viewModel.menu?.photo?.imageURL,
+                        picked: viewModel.pickedPhoto
+                    )
+                    .padding(.top, Layout.headerTop + ProfileV3Theme.Sizes.circleButton + Layout.avatarTop)
+                    if let uploadLabel = viewModel.photoUploadLabel {
+                        ProfileV3SettingsUploadPill(title: uploadLabel, onPick: viewModel.pickPhoto)
+                            .padding(.top, Layout.uploadTop)
+                    }
                     if let menu = viewModel.menu, viewModel.menuPhase == .loaded {
                         panel(menu)
                             .padding(.top, Layout.cardsTop)
@@ -96,16 +105,33 @@ struct ProfileV3SettingsView: View {
                     onInformationAccess: viewModel.tapInformationAccess,
                     onAppAccess: viewModel.tapAppAccess
                 )
-                if viewModel.hasGloveBox {
-                    ProfileV3SettingsGloveBoxCard(
-                        showsActivate: viewModel.showsGloveBoxActivate,
-                        action: viewModel.tapGloveBox
-                    )
-                    .animation(ProfileV3Theme.Motion.contentSwitch, value: viewModel.showsGloveBoxActivate)
+                if let partners = menu.partners, !partners.partners.isEmpty {
+                    ProfileV3SettingsPartnersCard(partners: partners, action: viewModel.tapPartners)
                 }
-                if ProfileV3FeatureFlags.isCredentialStoreEnabled {
-                    ProfileV3CredentialStoreCard(action: viewModel.tapCredentialStore)
+            }
+            if ProfileV3FeatureFlags.isCredentialStoreEnabled || viewModel.hasGloveBox {
+                ProfileV3DashedDivider()
+                    .padding(.vertical, Layout.sectionGap)
+                VStack(alignment: .leading, spacing: Layout.cardSpacing) {
+                    if ProfileV3FeatureFlags.isCredentialStoreEnabled {
+                        ProfileV3CredentialStoreCard(action: viewModel.tapCredentialStore)
+                    }
+                    if viewModel.hasGloveBox {
+                        ProfileV3SettingsGloveBoxCard(
+                            showsActivate: viewModel.showsGloveBoxActivate,
+                            action: viewModel.tapGloveBox
+                        )
+                        .animation(ProfileV3Theme.Motion.contentSwitch, value: viewModel.showsGloveBoxActivate)
+                    }
                 }
+            }
+            ProfileV3DashedDivider()
+                .padding(.top, Layout.sectionGap)
+            if let notifications = menu.notifications {
+                ProfileV3SettingsSwitchRow(item: notifications, onToggle: viewModel.setNotifications)
+                    .padding(.top, Layout.switchGap)
+                ProfileV3DashedDivider()
+                    .padding(.top, Layout.switchGap)
             }
             ProfileV3SettingsRowList(rows: menu.rows, account: viewModel.account, onSelect: viewModel.tap)
                 .padding(.top, Layout.rowsTop)
@@ -148,6 +174,10 @@ struct ProfileV3SettingsView: View {
                 ProfileV3AppAccessView(model: viewModel.appAccess, onBack: viewModel.pop)
             } else {
                 ProfileV3AppAccessComingSoonView(onBack: viewModel.pop)
+            }
+        case .partners:
+            if let partners = viewModel.menu?.partners {
+                ProfileV3PartnersView(partners: partners, onBack: viewModel.pop, onOpenInfo: viewModel.openPartnerInfo)
             }
         default:
             EmptyView()
@@ -221,6 +251,8 @@ private struct ProfileV3SettingsPageHeader: View {
 
 private struct ProfileV3SettingsAvatar: View {
     let initial: String?
+    var imageURL: URL?
+    var picked: UIImage?
 
     private typealias Layout = ProfileV3Theme.Sizes.SettingsPage
 
@@ -228,16 +260,25 @@ private struct ProfileV3SettingsAvatar: View {
         ZStack {
             Circle()
                 .fill(ProfileV3Theme.Palette.nearBlack)
-            ProfileV3RemoteImage(url: ProfileV3SettingsArt.avatarGlobe.url, contentMode: .fit, placeholder: .clear)
-            if let initial {
-                Text(initial)
-                    .typoGraphy(.D2InterRegular40)
-                    .foregroundStyle(Color(at: .pureWhite))
-                    .offset(y: Layout.avatarLetterOffsetY)
+            if let picked {
+                Image(uiImage: picked)
+                    .resizable()
+                    .scaledToFill()
+            } else if let imageURL {
+                ProfileV3RemoteImage(url: imageURL, contentMode: .fill, placeholder: .clear)
+            } else {
+                ProfileV3RemoteImage(url: ProfileV3SettingsArt.avatarGlobe.url, contentMode: .fit, placeholder: .clear)
+                if let initial {
+                    Text(initial)
+                        .typoGraphy(.D2InterRegular40)
+                        .foregroundStyle(Color(at: .pureWhite))
+                        .offset(y: Layout.avatarLetterOffsetY)
+                }
             }
         }
         .frame(width: Layout.avatar, height: Layout.avatar)
         .clipShape(Circle())
+        .postHogMask(picked != nil || imageURL != nil)
         .accessibilityHidden(true)
     }
 }
@@ -254,6 +295,7 @@ private struct ProfileV3SettingsAccountsCard: View {
             title: menu.accountsLabel,
             subtitle: menu.accountsSubtitle,
             badgeURL: menu.accountsBadgeURL,
+            subtitleWidth: ProfileV3Theme.Sizes.SettingsPage.accountsSubtitleWidth,
             isExpanded: $isExpanded
         ) {
             ForEach(menu.accountRows) { row in
@@ -292,24 +334,26 @@ private struct ProfileV3SettingsConnectorsCard: View {
         VStack(alignment: .leading, spacing: 0) {
             ProfileV3SettingsCardHeader(
                 icon: ATIcon.SwiftUIImage.plugConnect,
-                iconSize: ProfileV3Theme.Icon.lg,
                 title: ProfileV3Strings.connectors,
-                subtitle: ProfileV3Strings.connectorsSubtitle
+                subtitle: ProfileV3Strings.connectorsSubtitle,
+                bottom: Layout.connectorsHeaderBottom
             )
             VStack(spacing: Layout.accessCardSpacing) {
                 ProfileV3SettingsAccessCard(
                     title: ProfileV3Strings.informationAccess,
                     blurb: ProfileV3Strings.informationAccessBlurb,
-                    art: ProfileV3ConnectorArt.informationAccess.url,
+                    art: ProfileV3ConnectorArt.informationAccessRow.url,
                     artSize: Layout.informationArtSize,
+                    artTop: Layout.informationArtTop,
                     artTrailing: Layout.informationArtTrailing,
                     action: onInformationAccess
                 )
                 ProfileV3SettingsAccessCard(
                     title: ProfileV3Strings.appAccess,
                     blurb: ProfileV3Strings.appAccessBlurb,
-                    art: ProfileV3ConnectorArt.appAccess.url,
+                    art: ProfileV3ConnectorArt.appAccessRow.url,
                     artSize: Layout.appArtSize,
+                    artTop: Layout.appArtTop,
                     artTrailing: Layout.appArtTrailing,
                     action: onAppAccess
                 )
@@ -317,7 +361,7 @@ private struct ProfileV3SettingsConnectorsCard: View {
             .padding(.horizontal, Layout.accessCardInset)
             .padding(.bottom, Layout.accessCardInset)
         }
-        .profileV3SettingsCard()
+        .profileV3SettingsSurface()
     }
 }
 
@@ -326,6 +370,7 @@ private struct ProfileV3SettingsAccessCard: View {
     let blurb: String
     let art: URL?
     let artSize: CGSize
+    let artTop: CGFloat
     let artTrailing: CGFloat
     let action: () -> Void
 
@@ -339,7 +384,7 @@ private struct ProfileV3SettingsAccessCard: View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: Layout.accessCardSubtitleTop) {
                 Text(title)
-                    .typoGraphy(.B1InterMedium14)
+                    .typoGraphy(.B2InterMedium12)
                     .foregroundStyle(Color(at: .pureBlack))
                 Text(blurb)
                     .typoGraphy(.B2InterMedium12)
@@ -354,7 +399,7 @@ private struct ProfileV3SettingsAccessCard: View {
             .overlay(alignment: .topTrailing) {
                 ProfileV3RemoteImage(url: art, contentMode: .fit, placeholder: .clear)
                     .frame(width: artSize.width, height: artSize.height)
-                    .padding(.top, Layout.accessArtTop)
+                    .padding(.top, artTop)
                     .padding(.trailing, artTrailing)
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
@@ -434,7 +479,7 @@ private struct ProfileV3SettingsConciergeCard: View {
             .padding(.horizontal, ProfileV3Theme.Sizes.cardContentPadding)
             .frame(height: ProfileV3Theme.Sizes.Accounts.conciergeHeight)
             .frame(maxWidth: .infinity)
-            .profileV3SettingsCard(cornerRadius: ProfileV3Theme.Radius.xl)
+            .profileV3SettingsSurface(cornerRadius: ProfileV3Theme.Radius.xl)
             .contentShape(Rectangle())
         }
         .buttonStyle(.profileV3Pressable)

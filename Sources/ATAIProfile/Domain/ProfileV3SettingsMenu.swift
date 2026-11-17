@@ -16,6 +16,41 @@ struct ProfileV3Concierge: Equatable {
     let openURL: URL
 }
 
+struct ProfileV3SettingsPhoto: Equatable {
+    var imageURL: URL?
+    var uploadLabel: String?
+}
+
+struct ProfileV3SettingsSwitch: Equatable {
+    let key: String
+    let title: String
+    let subtitle: String
+    var isOn: Bool
+}
+
+struct ProfileV3Partner: Identifiable, Equatable {
+    let id: String
+    let name: String
+    var logoURL: URL?
+    var headline: String?
+    var body: String?
+    var accentHex: String?
+    var infoURL: URL?
+}
+
+struct ProfileV3Partners: Equatable {
+    static let cardLogoLimit = 4
+
+    let title: String
+    let subtitle: String
+    let pageSubtitle: String
+    let partners: [ProfileV3Partner]
+
+    var cardLogos: [URL] {
+        Array(partners.compactMap(\.logoURL).prefix(Self.cardLogoLimit))
+    }
+}
+
 struct ProfileV3SettingsMenu: Equatable {
     let title: String
     let accountsLabel: String
@@ -25,6 +60,9 @@ struct ProfileV3SettingsMenu: Equatable {
     var accountsBadgeURL: URL?
     var concierge: ProfileV3Concierge?
     var citizenshipCode: String?
+    var photo: ProfileV3SettingsPhoto?
+    var partners: ProfileV3Partners?
+    var notifications: ProfileV3SettingsSwitch?
 
     var accountRows: [ProfileV3SettingsRowItem] {
         accountsRows.filter { $0.route != .connectors }

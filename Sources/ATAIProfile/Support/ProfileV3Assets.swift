@@ -89,6 +89,8 @@ enum ProfileV3ConnectorArt: String {
     case gmail = "profile_v3_connector_gmail"
     case informationAccess = "profile_v3_connectors_information_access"
     case appAccess = "profile_v3_connectors_app_access"
+    case informationAccessRow = "profile_v3_connectors_information_access_row"
+    case appAccessRow = "profile_v3_connectors_app_access_row"
 
     var url: URL? { ProfileV3RemoteArt.url(rawValue) }
 }
@@ -108,7 +110,6 @@ enum ProfileV3ConnectorGlyph: String {
     case editStroke = "profile_v3_edit_stroke"
     case editPen = "profile_v3_edit_pen"
     case vaultLock = "profile_v3_vault_lock"
-    case credentialCardArt = "profile_v3_credential_card_art"
     case reserveGlyph = "reserve_logo_clear"
 
     var image: Image {

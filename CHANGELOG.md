@@ -7,6 +7,26 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Added
 
+- Settings follows the redesign (Figma `7716:8315`). Cards are white with a hairline border and
+  32pt corners (`profileV3SettingsSurface`), and each card's icon now sits beside its title
+  (`ProfileV3SettingsCardHeader`). Information access and App access show a row of logos
+  instead of a cluster; that art is new on the CDN (`connectors_information_access_row.png`,
+  `connectors_app_access_row.png`) and shows blank until it is uploaded. The credential store
+  card turns light, with the grey shield and the padlock, and moves above the glove box, whose
+  dials shrink to the new card. Dashed rules now split the page into the connector cards, the
+  vault cards and the rows. The Support row uses Material `live_help` (outlined).
+- Settings pieces that wait for the backend (DTOs to come): a Partners card (logo cluster of the
+  first four partners) that opens a Partners page (Figma `7734:10138`), an Upload pill under the
+  avatar, and a Notifications switch row. Each shows only when `ProfileV3SettingsMenu` carries its
+  data (`partners`, `photo.uploadLabel`, `notifications`), which nothing fills yet, so the apps
+  show none of them; previews and tests use fixtures. The Partners page is a focus wheel: the
+  focused partner shows its headline, body, a 132pt logo and an info button, the others shrink,
+  fade and blur by distance, and a swipe or tap moves the focus. The focused logo lands as
+  Figma's motion does (flies in, unblurs, then two ripples and three glow pulses in the
+  partner's accent), only the ripples and pulses replay on later focus changes, and Reduce
+  Motion shows it still. A picked photo shows in the avatar on this device until an upload
+  endpoint exists; the switch keeps its state on the device until the write exists.
+
 - The Personal agent's GST number (backend note of 2026-11-14; served after `designation`, India
   accounts only). Agent text fields now show the server's `placeholder` as sent ("15 character GST
   number"); a field without one keeps its lowercased label. A 422 whose code is `invalid_<key>` for a

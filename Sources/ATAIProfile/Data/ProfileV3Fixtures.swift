@@ -550,6 +550,7 @@ enum ProfileV3Fixtures {
             settingsRow("connectors", ProfileV3Strings.connectors, go: "connectors")
         ],
         rows: [
+            settingsRow("support", "Support", go: "support"),
             settingsRow("permissions", ProfileV3Strings.permissions, go: "permissions"),
             settingsRow("edit_traveler", ProfileV3Strings.editTraveller, go: "edit_traveler"),
             settingsRow("coupons", ProfileV3Strings.coupons, go: "coupons"),
@@ -557,6 +558,36 @@ enum ProfileV3Fixtures {
             settingsRow("terms", ProfileV3Strings.termsOfService, go: "terms"),
             settingsRow("logout", ProfileV3Strings.logout, go: "logout_confirm"),
             settingsRow("delete_account", ProfileV3Strings.deleteAccount, go: "delete_account", isDestructive: true)
+        ],
+        photo: ProfileV3SettingsPhoto(uploadLabel: "Upload"),
+        partners: partners,
+        notifications: ProfileV3SettingsSwitch(
+            key: "notifications",
+            title: "Notifications",
+            subtitle: "Get timely updates, personalised recommendations. Never miss what matters",
+            isOn: true
+        )
+    )
+
+    static let partners = ProfileV3Partners(
+        title: "Partners",
+        subtitle: "Trusted names your agent books with",
+        pageSubtitle: "We've partnered with trusted names across travel, stays, experiences and more to bring you seamless experiences.",
+        partners: [
+            ProfileV3Partner(id: "klook", name: "Klook", accentHex: "FF5B00"),
+            ProfileV3Partner(id: "getyourguide", name: "Getyourguide", accentHex: "FF5533"),
+            ProfileV3Partner(
+                id: "headout",
+                name: "Headout",
+                headline: "Experiences picked for your trips",
+                body: "Skip-the-line tickets and tours, booked by your agent at partner prices.",
+                accentHex: "911FFA",
+                infoURL: URL(string: "https://www.headout.com")
+            ),
+            ProfileV3Partner(id: "uber", name: "Uber", accentHex: "000000"),
+            ProfileV3Partner(id: "singapore_airlines", name: "Singapore Airlines", accentHex: "1D3A6E"),
+            ProfileV3Partner(id: "priority_pass", name: "Priority Pass", accentHex: "6B5B3E"),
+            ProfileV3Partner(id: "bolt", name: "Bolt", accentHex: "34D186")
         ]
     )
 

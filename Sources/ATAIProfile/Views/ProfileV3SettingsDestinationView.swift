@@ -22,7 +22,7 @@ struct ProfileV3SettingsDestinationView: View {
             )
         case .connectedApps:
             ProfileV3SettingsConnectedAppsScreen(model: viewModel.appAccess, onBack: viewModel.pop)
-        case .connectors, .appAccess:
+        case .connectors, .appAccess, .partners:
             EmptyView()
         case .editTravellers, .editTraveller, .travellerRelationship, .deleteTravellerConfirm, .addTraveller,
              .addTravellerCitizenship:

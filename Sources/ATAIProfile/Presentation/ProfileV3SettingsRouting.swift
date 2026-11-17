@@ -7,6 +7,7 @@ enum ProfileV3SettingsDestination: Hashable {
     case contactInfo
     case connectors
     case appAccess
+    case partners
     case controlPanel
     case connectedApps
     case logout
@@ -23,14 +24,14 @@ enum ProfileV3SettingsDestination: Hashable {
 
     var isPage: Bool {
         switch self {
-        case .connectors, .appAccess: return true
+        case .connectors, .appAccess, .partners: return true
         default: return false
         }
     }
 
     var isFullHeight: Bool {
         switch self {
-        case .residence, .citizenship, .currency, .contactInfo, .connectors, .appAccess,
+        case .residence, .citizenship, .currency, .contactInfo, .connectors, .appAccess, .partners,
              .controlPanel, .connectedApps, .deleteAccount, .editTraveller, .travellerRelationship, .addTraveller,
              .addTravellerCitizenship:
             return true
