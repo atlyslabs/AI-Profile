@@ -5,6 +5,7 @@ struct ProfileV3CityProfile: Equatable {
     var cities: [ProfileV3CityPorthole]
     var add: ProfileV3CityAddSlot
     var headline: String
+    var body: String?
     var samples: [ProfileV3CitySample]
 
     func city(id: String?) -> ProfileV3CityPorthole? {

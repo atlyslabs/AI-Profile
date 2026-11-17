@@ -27,7 +27,7 @@ enum ProfileV3APIErrorMapper {
         case 404:
             return ProfileV3Error.server(code: parsed?.code, message: message)
         case 422:
-            return ProfileV3Error.invalidRequest(message: message)
+            return ProfileV3Error.invalidRequest(code: parsed?.code, message: message)
         case 501:
             return ProfileV3Error.notImplemented(action: action)
         case 502 where parsed?.code == "preferences_write_failed":

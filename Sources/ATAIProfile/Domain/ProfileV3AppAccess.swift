@@ -83,7 +83,7 @@ enum ProfileV3InstagramUsername {
     }
 
     static func errorMessage(for error: Error) -> String {
-        if case .invalidRequest(message: nil)? = error as? ProfileV3Error {
+        if case .invalidRequest(_, nil)? = error as? ProfileV3Error {
             return ProfileV3Strings.instagramUsernameInvalid
         }
         return ProfileV3Error.message(for: error, fallback: ProfileV3Strings.saveFailed)

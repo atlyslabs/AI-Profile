@@ -575,12 +575,16 @@ internal enum ProfileV3L10n {
   internal static var moAiprofileGloveboxButtonCopied: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-copied", fallback: "Copied") }
   /// Glove box button that copies the address or number.
   internal static var moAiprofileGloveboxButtonCopy: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-copy", fallback: "Copy") }
+  /// Hides the earlier messages quoted under a glove box email.
+  internal static var moAiprofileGloveboxButtonHideQuotedText: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-hide-quoted-text", fallback: "Hide quoted text") }
   /// Button that pauses email forwarding.
   internal static var moAiprofileGloveboxButtonPause: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-pause", fallback: "Pause") }
   /// Button that resumes email forwarding.
   internal static var moAiprofileGloveboxButtonResume: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-resume", fallback: "Resume") }
   /// Button that sends the forwarding confirmation link.
   internal static var moAiprofileGloveboxButtonSendLink: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-send-link", fallback: "Send link") }
+  /// Shows the earlier messages quoted under a glove box email.
+  internal static var moAiprofileGloveboxButtonShowQuotedText: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-show-quoted-text", fallback: "Show quoted text") }
   /// Opens the full list of a glove box section.
   internal static var moAiprofileGloveboxButtonViewAll: String { return ProfileV3L10n.tr("ProfileV3Localizable", "mo-aiprofile-glovebox-button-view-all", fallback: "View all") }
   /// Glove box intro subtitle.

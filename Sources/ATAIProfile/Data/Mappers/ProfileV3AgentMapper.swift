@@ -660,7 +660,7 @@ enum ProfileV3AgentMapper: ProfileV3DTOReading {
     }
 
     private static func placeholder(for field: ProfileV3AgentFieldDTO) -> String {
-        (text(field.label) ?? "").lowercased()
+        text(field.placeholder) ?? (text(field.label) ?? "").lowercased()
     }
 
     private static func pickerTitle(for field: ProfileV3AgentFieldDTO) -> String {

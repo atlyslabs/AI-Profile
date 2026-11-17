@@ -30,7 +30,7 @@ final class ProfileV3PassportScanVerifier {
             if let field = result.field { latestField = field }
             if side == .front, !result.needsBack { onBackNotNeeded?() }
             return .verified
-        } catch ProfileV3Error.invalidRequest(let message) {
+        } catch ProfileV3Error.invalidRequest(_, let message) {
             return .rejected(reason: message ?? ProfileV3Strings.passportUnreadable)
         } catch {
             return .failed(message: ProfileV3Error.message(for: error, fallback: ProfileV3Strings.passportUploadFailed))

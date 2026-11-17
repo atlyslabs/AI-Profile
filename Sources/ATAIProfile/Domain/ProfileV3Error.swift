@@ -3,7 +3,7 @@ import Foundation
 enum ProfileV3Error: LocalizedError, Equatable {
     case unauthorized
     case notImplemented(action: String)
-    case invalidRequest(message: String?)
+    case invalidRequest(code: String? = nil, message: String?)
     case server(code: String?, message: String?)
     case conflict(code: String?, message: String?)
     case transient(message: String?)
@@ -26,7 +26,7 @@ enum ProfileV3Error: LocalizedError, Equatable {
             return ProfileV3Strings.somethingWentWrong
         case .notImplemented:
             return ProfileV3Strings.actionUnavailable
-        case .invalidRequest(let message):
+        case .invalidRequest(_, let message):
             return message ?? ProfileV3Strings.somethingWentWrong
         case .server(_, let message):
             return message ?? ProfileV3Strings.somethingWentWrong

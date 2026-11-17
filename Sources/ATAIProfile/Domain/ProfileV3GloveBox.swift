@@ -91,6 +91,27 @@ struct ProfileV3GloveBoxAttachment: Identifiable, Equatable {
     var isImage: Bool { contentType.lowercased().hasPrefix("image/") }
 }
 
+struct ProfileV3EmailText: Equatable {
+    struct Run: Equatable {
+        var text: String
+        var isBold = false
+        var isItalic = false
+        var quoteDepth = 0
+        var link: URL?
+
+        var isQuoted: Bool { quoteDepth > 0 }
+    }
+
+    var runs: [Run]
+
+    var plain: String { runs.map(\.text).joined() }
+}
+
+struct ProfileV3EmailBody: Equatable {
+    var message: ProfileV3EmailText
+    var quoted: ProfileV3EmailText?
+}
+
 struct ProfileV3GloveBoxEmail: Identifiable, Equatable {
     enum Delivery: Equatable {
         case forwarded
@@ -113,6 +134,7 @@ struct ProfileV3GloveBoxEmail: Identifiable, Equatable {
     var meta: ProfileV3GloveBoxMeta?
     var badge: String?
     var note: String?
+    var body: ProfileV3EmailBody?
     var attachments: [ProfileV3GloveBoxAttachment] = []
     var followUpTitle: String?
 

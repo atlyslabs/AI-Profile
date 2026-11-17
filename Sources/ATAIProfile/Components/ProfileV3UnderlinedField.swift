@@ -3,6 +3,7 @@ import SwiftUI
 
 struct ProfileV3UnderlinedField: View {
     let placeholder: String
+    var lowercasesPlaceholder = true
     var accessibilityLabel: String?
     @Binding var text: String
     var keyboard: UIKeyboardType = .default
@@ -26,7 +27,7 @@ struct ProfileV3UnderlinedField: View {
     }
 
     private func field(width: CGFloat?) -> some View {
-        TextField(placeholder.lowercased(), text: $text)
+        TextField(lowercasesPlaceholder ? placeholder.lowercased() : placeholder, text: $text)
             .typoGraphy(.B1InterMedium14)
             .foregroundStyle(Color(at: .pureBlack))
             .keyboardType(keyboard)
@@ -47,6 +48,7 @@ struct ProfileV3UnderlinedField: View {
 
 struct ProfileV3UnderlinedSearchField: View {
     let placeholder: String
+    var lowercasesPlaceholder = true
     var accessibilityLabel: String?
     let value: String
     let action: () -> Void
@@ -56,7 +58,7 @@ struct ProfileV3UnderlinedSearchField: View {
     var body: some View {
         Button(action: action) {
             ProfileV3ContentWidthLayout(minWidth: ProfileV3Theme.Sizes.underlinedFieldWidth) {
-                Text(shown ?? placeholder.lowercased())
+                Text(shown ?? (lowercasesPlaceholder ? placeholder.lowercased() : placeholder))
                     .typoGraphy(.B1InterMedium14)
                     .foregroundStyle(shown == nil ? ProfileV3Theme.Palette.placeholderText : Color(at: .pureBlack))
                     .lineLimit(1)

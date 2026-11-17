@@ -406,6 +406,67 @@ struct ProfileV3VaultLoginTests {
         }
     }
 
+    @Test func savedLoginKeepsDeleteInViewOnShorterSheets() async throws {
+        let sheets: [CGSize] = [
+            CGSize(width: 375, height: 647),
+            CGSize(width: 393, height: 758),
+            CGSize(width: 402, height: 778),
+            CGSize(width: 440, height: 860)
+        ]
+        for size in sheets {
+            let vault = VaultStub(entries: [Self.saved], refusesDelete: true)
+            let editor = ProfileV3AppCredentialsViewModel(mode: .vaultEdit(Self.saved), origin: .page, repository: vault)
+            editor.askToDelete()
+            editor.confirmDelete()
+            try await waitUntil { editor.inlineError != nil }
+            let reported = HeightBox()
+            let sheet = ProfileV3AppCredentialsSheet(
+                viewModel: editor,
+                onClose: {},
+                onContentHeight: { reported.content = $0 },
+                onBarHeight: { reported.bar = $0 }
+            )
+            let host = UIHostingController(rootView: sheet)
+            host.safeAreaRegions = []
+            let window = UIWindow(frame: CGRect(origin: .zero, size: size))
+            window.rootViewController = host
+            window.makeKeyAndVisible()
+            host.view.layoutIfNeeded()
+            try await Task.sleep(for: .milliseconds(200))
+            host.view.layoutIfNeeded()
+
+            let scroll = try #require(Self.scrollViews(in: window).first)
+            let fitsUnsqueezed = reported.content + reported.bar <= size.height
+            #expect(reported.content > 0)
+            if fitsUnsqueezed {
+                #expect(abs(scroll.contentSize.height - reported.content) < 1, "\(size)")
+            } else {
+                #expect(scroll.contentSize.height <= scroll.frame.height + 1, "\(size)")
+            }
+            window.isHidden = true
+        }
+    }
+
+    @Test func savedLoginSpacingGivesBackOnlyTheShortfall() {
+        typealias Layout = ProfileV3Theme.Sizes.AppCredentials
+        let full = ProfileV3SavedLoginSpacing.full
+        #expect(full == ProfileV3SavedLoginSpacing(shortfall: -40))
+        #expect([full.fieldsTop, full.dividerTop, full.bottom] == [Layout.editFieldsTop, Layout.deleteDividerTop, Layout.editBottom])
+
+        let compact = ProfileV3SavedLoginSpacing(shortfall: 1000)
+        #expect([compact.fieldsTop, compact.dividerTop, compact.bottom]
+            == [Layout.compactEditFieldsTop, Layout.compactDeleteDividerTop, Layout.compactEditBottom])
+
+        for shortfall: CGFloat in [20, 42, 62, 150] {
+            let given = full.total - ProfileV3SavedLoginSpacing(shortfall: shortfall).total
+            #expect(given >= shortfall && given < shortfall + 3, "\(shortfall)")
+        }
+    }
+
+    private static func scrollViews(in view: UIView) -> [UIScrollView] {
+        ((view as? UIScrollView).map { [$0] } ?? []) + view.subviews.flatMap { scrollViews(in: $0) }
+    }
+
     private static func textFields(in view: UIView) -> [UITextField] {
         ((view as? UITextField).map { [$0] } ?? []) + view.subviews.flatMap { textFields(in: $0) }
     }
@@ -549,4 +610,10 @@ private actor VaultStub: ProfileV3AppAccessRepository {
     func resumeVaultCredential(id: String) async throws -> ProfileV3VaultWriteResult {
         ProfileV3VaultWriteResult(id: id, status: .added)
     }
+}
+
+@MainActor
+private final class HeightBox {
+    var content: CGFloat = 0
+    var bar: CGFloat = 0
 }

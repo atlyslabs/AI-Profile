@@ -536,7 +536,7 @@ final class ProfileV3CapturePassportUploader {
                 try await send(image, jpeg, residenceCountryCode)
             }
             return .accepted
-        } catch ProfileV3Error.invalidRequest(let message) {
+        } catch ProfileV3Error.invalidRequest(_, let message) {
             return .rejected(message: message ?? ProfileV3Strings.passportUploadFailed)
         } catch {
             let message = ProfileV3Error.message(for: error, fallback: ProfileV3Strings.passportUploadFailed)

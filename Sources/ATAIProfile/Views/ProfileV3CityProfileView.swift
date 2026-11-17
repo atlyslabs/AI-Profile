@@ -165,9 +165,17 @@ private struct ProfileV3CityProfileScreen: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: Sizes.introTitleWidth)
                 .padding(.top, Sizes.introTitleTop)
+            if let body = content.body {
+                Text(body)
+                    .typoGraphy(.B1InterMedium14)
+                    .foregroundStyle(ProfileV3Theme.tagGradient)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: Sizes.introBodyWidth)
+                    .padding(.top, Sizes.introBodyTop)
+            }
             if !content.samples.isEmpty {
                 ProfileV3CityDeck(samples: content.samples)
-                    .padding(.top, Sizes.introDeckTop)
+                    .padding(.top, content.body == nil ? Sizes.introDeckTop : Sizes.introDeckTopAfterBody)
             }
         }
         .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)

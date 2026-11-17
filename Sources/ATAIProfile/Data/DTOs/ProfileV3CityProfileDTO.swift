@@ -3,10 +3,12 @@ import Foundation
 struct ProfileV3CityProfilesDTO: Decodable, Equatable {
     let title: String?
     let headline: String?
+    private let rawBody: ProfileV3LossyDTO<String>?
     private let rawCities: [ProfileV3LossyDTO<ProfileV3CityPortholeDTO>]?
     private let rawAdd: ProfileV3LossyDTO<ProfileV3CityAddDTO>?
     private let rawSamples: [ProfileV3LossyDTO<ProfileV3CitySampleDTO>]?
 
+    var body: String? { rawBody?.value }
     var cities: [ProfileV3CityPortholeDTO] { rawCities?.compactMap(\.value) ?? [] }
     var add: ProfileV3CityAddDTO? { rawAdd?.value }
     var samples: [ProfileV3CitySampleDTO] { rawSamples?.compactMap(\.value) ?? [] }
@@ -14,6 +16,7 @@ struct ProfileV3CityProfilesDTO: Decodable, Equatable {
     enum CodingKeys: String, CodingKey {
         case title
         case headline
+        case rawBody = "body"
         case rawCities = "cities"
         case rawAdd = "add"
         case rawSamples = "samples"

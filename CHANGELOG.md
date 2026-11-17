@@ -7,6 +7,17 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Added
 
+- The Personal agent's GST number (backend note of 2026-11-14; served after `designation`, India
+  accounts only). Agent text fields now show the server's `placeholder` as sent ("15 character GST
+  number"); a field without one keeps its lowercased label. A 422 whose code is `invalid_<key>` for a
+  text field on the form (`invalid_gst_number`) shows the server's message under that field with a
+  red underline, and the save bar stays ready instead of failing; typing in the field clears it.
+  `ProfileV3Error.invalidRequest` now keeps the envelope's `code`.
+- The city profile intro shows the server's `body` under the headline (Figma `6739:8232`): Inter
+  Medium 14 in the grey `tagGradient`, centred, 280pt wide, 16pt under the headline, with the deck
+  51pt below it. The frame also moved the headline up (20pt under the window, was 44) and scaled
+  the sample deck by 0.9416 (`introDeckScale`), and the client follows both. An older server that
+  sends no `body` keeps the deck 70pt under the headline.
 - City profile (Figma `6739:7548` and the frames around it), wired to the backend from
   `vdc-k8s#24000`. The board tile (`agent_type: "city"`, `next: {go: "city_profiles"}`) opens it
   as a page sheet.
@@ -105,6 +116,11 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Changed
 
+- The glove box's KYC check sits behind `ProfileV3FeatureFlags.isGloveBoxKYCCheckEnabled` (true,
+  so nothing changes for users). Set to false, the glove box skips the locked "Complete KYC" intro
+  and the Settings card's ACTIVATE pill shows only while there's no address; both then go by
+  jaqen's `/me` alone, which doesn't check KYC. The views ask `isGloveBoxKYCComplete()`, which
+  calls `isMainTravellerKYCComplete()` only while the flag is on.
 - The loyalty picker's country toggle follows Figma "Add program/card · With country drop down
   and name" (`7478:4073`: `5606:12507`, `7387:7616`). The pill (`ProfileV3MarketButton`, was
   `ProfileV3MarketMenu`'s native menu) shows a 24pt flag, the option's `short_label` (else its
@@ -193,6 +209,14 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
 
 ### Fixed
 
+- A disabled continue button no longer shows the content behind it (harshil's report, 2026-11-16:
+  Add a traveler's "Add traveler" over the relationship chips). `ProfileV3ContinueButton` used
+  `.profileV3Pressable` with its default `dimsWhenDisabled: true`, which wraps it in SwiftUI's
+  `.plain` style, and `.plain` draws a disabled button's whole label at 50% opacity, white capsule
+  included. The 1.0.24 change (QA-1973) dimmed only the title but kept that style, so the capsule
+  stayed see-through. The button now passes `dimsWhenDisabled: false`, like the past trip sheet's,
+  so only the title dims; pressing it now scales it as that button does. This applies to every CTA
+  bar that uses it.
 - The loyalty "Tier valid until" field shows `MM/YY` as you type and stops at four digits.
   Before, it showed any number typed ("123456"), because SwiftUI's `TextField` ignores a value its
   own binding setter changes, so the view model's `didSet` formatting never reached the screen
@@ -207,6 +231,27 @@ All notable changes to ATAIProfile. Versions are git tags on `master`; hosts dep
   enrolled" (another user's id, a revoked device, a migration), the app forgets that user's id,
   enrolls the same key again and retries the reveal once, without showing the error. The key is
   no longer deleted for "not enrolled", only for "signature rejected".
+- Glove box emails are drawn from jaqen's `html` when it sends one, else from `text`. Before, the
+  detail showed `text` first, so every reply listed its quoted history with a `>` before each line
+  (Vijay's report, 2026-11-12). `ProfileV3EmailBodyParser` reads the html into paragraphs, line
+  breaks, bullet and numbered lists, bold, italics and http(s)/mailto/tel links. It skips the
+  head, styles, scripts and hidden preheaders. The body keeps the design's font and still flows
+  around the orb. Quoted history at the end of an email (a trailing `blockquote`, with Gmail's
+  `gmail_attr` line or a line ending in "wrote:") folds behind "Show quoted text". Opened, it shows
+  in grey under the toggle, and each earlier message in the thread sits one level further in,
+  behind a grey line per level, the way Gmail draws nested quotes (`ProfileV3EmailQuoteView`;
+  Sarvajit, 2026-11-13: "how do we differenciate each msg within thread?"). Each message's
+  "On …, X wrote:" line heads its level, and levels stop indenting after four. A Gmail forward
+  isn't a quote and shows in full, and a quote inside the reply stays in place in grey.
+  Plain-text emails fold their trailing `>` lines the same way, without the arrows, nesting by the
+  number of `>`. Links are tappable. The body and subject are masked in session replay.
+- A saved vault login keeps "Delete account" in view on phones shorter than a Pro Max. The sheet
+  needs 798pt (820pt with an error under the password), more than a full-height sheet has on a
+  6.1" phone (758pt), so its content scrolled and the row was cut by the space kept for "save
+  changes", which stays blank until something changes. When the sheet can't fit, the gaps above
+  the fields (134pt), above the divider (164pt) and at the bottom (49pt) now give back the
+  shortfall, down to 102, 40 and 24pt (`ProfileV3SavedLoginSpacing`). The sheet's height and a Pro
+  Max's layout are unchanged.
 - Towns with no airport now show in the city picker and can be added (QA-2114, `vdc-k8s#24180`).
   The server sends them with `code: ""` plus `name` and `country_code`, and the client dropped
   every row, porthole, purpose sheet and city screen without a code. Cities are now keyed as the

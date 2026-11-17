@@ -173,6 +173,11 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         return (latest ?? cached)?.home.kycStatus.isComplete ?? true
     }
 
+    func isGloveBoxKYCComplete() async -> Bool {
+        guard ProfileV3FeatureFlags.isGloveBoxKYCCheckEnabled else { return true }
+        return await isMainTravellerKYCComplete()
+    }
+
     func mainTravellerName() async -> String? {
         if let profileName, !profileName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return profileName }
         guard let board else { return nil }
@@ -185,7 +190,7 @@ final class ProfileV3SettingsViewModel: ProfileV3SettingsNavigating {
         gloveBoxTask?.cancel()
         gloveBoxTask = Task { [weak self] in
             async let card = try? gloveBoxRepository.loadGloveBoxCard()
-            let kycDone = await self?.isMainTravellerKYCComplete() ?? true
+            let kycDone = await self?.isGloveBoxKYCComplete() ?? true
             let account = await card
             guard let self, !Task.isCancelled else { return }
             gloveBoxTask = nil
