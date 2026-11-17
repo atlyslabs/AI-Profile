@@ -1,0 +1,94 @@
+Sources/ATAIProfile/Domain/ProfileV3SettingsMenu.swift
+  s_8bd9718b5e3b54::t_53e754fa305cdf 19-53,63-65
+CLAUDE.md
+  s_8bd9718b5e3b54::t_b4b61e529d6dd7 153
+  s_8bd9718b5e3b54::t_f56b68a553bbfc 362
+  s_8bd9718b5e3b54::t_cc70c1e1597ef5 167
+  s_8bd9718b5e3b54::t_10ee236f34e9c9 171
+  s_8bd9718b5e3b54::t_e5b0cebf619bf2 168-169
+  s_8bd9718b5e3b54::t_c08446838ba4f0 292-297
+  s_8bd9718b5e3b54::t_9564ea0d048a3b 170
+  s_8bd9718b5e3b54::t_dea732cb8495cd 154
+  s_8bd9718b5e3b54::t_3e772f2b93031e 64
+  s_8bd9718b5e3b54::t_cb4f3fef56e2bb 447
+  s_8bd9718b5e3b54::t_df57a7f225e516 349
+Tests/ATAIProfileTests/ProfileV3CredentialStoreCardTests.swift
+  s_8bd9718b5e3b54::t_cea68f2ac3cdc1 9,12-13,20,23
+Sources/ATAIProfile/Components/ProfileV3ExpandableCard.swift
+  s_8bd9718b5e3b54::t_8f9a48cdee7a2b 9
+  s_8bd9718b5e3b54::t_66c524d546428a 16-22
+  s_8bd9718b5e3b54::t_6de84f463f0a4d 45
+  s_8bd9718b5e3b54::t_a57c8b9cbca1b5 57,61-62,65-66,68-84,90-91,94-95,97,99-100,106-121,126-143
+Sources/ATAIProfile/Presentation/ProfileV3SettingsRouting.swift
+  s_8bd9718b5e3b54::t_2b1238d53effba 27
+  s_8bd9718b5e3b54::t_4f6e661fb890d9 34
+  s_8bd9718b5e3b54::t_827bda6d20e8f0 10
+Sources/ATAIProfile/Components/ProfileV3SettingsRow.swift
+  s_8bd9718b5e3b54::t_eafce59d65f858 68
+Sources/ATAIProfile/Data/ProfileV3Fixtures.swift
+  s_8bd9718b5e3b54::t_a9f321468b56a9 553,561-590
+Tests/ATAIProfileTests/ProfileV3SettingsRedesignTests.swift
+  s_8bd9718b5e3b54::t_371dda1834d882 1-36,40-41,43-145
+  s_8bd9718b5e3b54::t_a2c698d7c7583a 37-39,42
+Sources/ATAIProfile/Support/ProfileV3Theme+SettingsPage.swift
+  s_8bd9718b5e3b54::t_6fa4ea787f1846 103
+  s_8bd9718b5e3b54::t_36ef7fb1e07059 108
+  s_8bd9718b5e3b54::t_dd203b4be234f6 82,84
+  s_8bd9718b5e3b54::t_3bfe8b4d18f43a 96-97,99-100
+  s_8bd9718b5e3b54::t_84157f80a04c85 14-19,21,23-26,30-37,41-44,46-74,76-81,83,85-95,98,101-102,104-107,109-110
+  s_8bd9718b5e3b54::t_bc2f5ffd808203 75
+Sources/ATAIProfile/Support/ProfileV3Theme+Palette.swift
+  s_8bd9718b5e3b54::t_95a2d6774cecdb 28-30,32-33
+  s_8bd9718b5e3b54::t_0d86711e5cc723 31
+Sources/ATAIProfile/Views/ProfileV3SettingsDestinationView.swift
+  s_8bd9718b5e3b54::t_fee174aed251d6 25
+Sources/ATAIProfile/Views/ProfileV3SettingsSections.swift
+  s_8bd9718b5e3b54::t_6224271ce2fe16 91
+  s_8bd9718b5e3b54::t_0e38139bc7ec24 1-90,92-128
+Sources/ATAIProfile/Presentation/ProfileV3SettingsViewModel.swift
+  s_8bd9718b5e3b54::t_c0c37403d96644 3
+  s_8bd9718b5e3b54::t_bfea02e924092a 29
+  s_8bd9718b5e3b54::t_4ee3e08436b7a7 290-313
+Sources/ATAIProfile/Views/ProfileV3SettingsGloveBoxCard.swift
+  s_8bd9718b5e3b54::t_114816a6b83168 9,13-16,18-35,37-38,40,43
+CHANGELOG.md
+  s_8bd9718b5e3b54::t_2c60362677f4c1 10-29
+Sources/ATAIProfile/Views/ProfileV3SettingsView.swift
+  s_8bd9718b5e3b54::t_8e94b5a67413aa 2
+  s_8bd9718b5e3b54::t_1f70d12d3b94de 298
+  s_8bd9718b5e3b54::t_dae4922b140208 108-109,111-125,128-134
+  s_8bd9718b5e3b54::t_205f54f98e579f 338-339,345,347,354,356,364,373
+  s_8bd9718b5e3b54::t_3f21ad4a12188c 135,178-181
+  s_8bd9718b5e3b54::t_10e75c613669a6 387
+  s_8bd9718b5e3b54::t_15f29a5a2d6dad 402
+  s_8bd9718b5e3b54::t_6f993e747d834b 482
+  s_8bd9718b5e3b54::t_94ec4e16facd55 32-41
+  s_8bd9718b5e3b54::t_179f392b1b9e6c 254-255,263-276,281
+Sources/ATAIProfile/Views/ProfileV3VaultViews.swift
+  s_8bd9718b5e3b54::t_0aeb12fbdc2c32 7,11-19,27-41
+Sources/ATAIProfile/Support/ProfileV3Theme+GloveBox.swift
+  s_8bd9718b5e3b54::t_9dd8a82df893ad 96-97,103-105
+Sources/ATAIProfile/Support/ProfileV3Assets.swift
+  s_8bd9718b5e3b54::t_d76d6ab8e0796d 92-93
+Sources/ATAIProfile/Views/ProfileV3PartnersView.swift
+  s_8bd9718b5e3b54::t_7e444dbe95377a 17-28
+  s_8bd9718b5e3b54::t_7ba670da6e4536 1-16,29-109,111-340,342-343
+  s_8bd9718b5e3b54::t_a61bdfe5361107 341
+  s_8bd9718b5e3b54::t_f373aaa6f7fe73 110
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8e6d065368b2af468696b8151adae710b0590294",
+  "prompts": {},
+  "sessions": {
+    "s_8bd9718b5e3b54": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ea453c3-0ff0-4171-899c-238f1be76cd6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Aravindh S <aravindh@atlys.com>"
+    }
+  }
+}
