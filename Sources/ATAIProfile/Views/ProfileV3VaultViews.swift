@@ -4,33 +4,19 @@ import SwiftUI
 struct ProfileV3CredentialStoreCard: View {
     let action: () -> Void
 
-    private typealias Layout = ProfileV3Theme.Sizes.CredentialStore
-
-    private var shape: RoundedRectangle {
-        RoundedRectangle(cornerRadius: Layout.cardRadius, style: .continuous)
-    }
+    private typealias Layout = ProfileV3Theme.Sizes.SettingsPage
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: Layout.cardBlurbTop) {
-                Text(ProfileV3Strings.credentialStore)
-                    .typoGraphy(.B1InterMedium14)
-                    .foregroundStyle(Color(at: .pureWhite))
-                Text(ProfileV3Strings.credentialStoreBlurb)
-                    .typoGraphy(.B2InterMedium12)
-                    .foregroundStyle(Color(at: .pureWhite).opacity(ProfileV3Theme.Opacity.credentialCardBlurb))
-                    .frame(width: Layout.cardBlurbWidth, alignment: .leading)
-            }
-            .multilineTextAlignment(.leading)
-            .padding(.leading, Layout.cardTextLeading)
-            .padding(.top, Layout.cardTitleTop)
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-            .frame(height: Layout.cardHeight, alignment: .top)
-            .background { art }
-            .background(ProfileV3Theme.credentialCardGradient)
-            .overlay { bottomEdge }
-            .clipShape(shape)
-            .contentShape(shape)
+            ProfileV3SettingsCardHeader(
+                icon: ATIcon.SwiftUIImage.verifiedUser,
+                title: ProfileV3Strings.credentialStore,
+                subtitle: ProfileV3Strings.credentialStoreBlurb,
+                subtitleWidth: Layout.credentialSubtitleWidth
+            )
+            .frame(minHeight: Layout.credentialCardHeight, alignment: .top)
+            .overlay(alignment: .topTrailing) { art }
+            .profileV3SettingsSurface()
         }
         .buttonStyle(.profileV3Pressable)
         .accessibilityLabel(ProfileV3Strings.credentialStore)
@@ -38,38 +24,21 @@ struct ProfileV3CredentialStoreCard: View {
     }
 
     private var art: some View {
-        ProfileV3ConnectorGlyph.credentialCardArt.image
-            .resizable()
-            .frame(width: Layout.cardArt.width, height: Layout.cardArt.height)
-            .mask {
-                LinearGradient(
-                    stops: [
-                        .init(color: .clear, location: 0),
-                        .init(color: .black, location: Layout.cardArtFade / Layout.cardArt.width),
-                    ],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-            .mask { shape.offset(y: -Layout.cardInsetShadow) }
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
-    }
-
-    private var bottomEdge: some View {
-        shape
-            .fill(Color.black.opacity(ProfileV3Theme.Opacity.credentialCardInsetShadow))
-            .mask {
-                ZStack {
-                    shape
-                    shape
-                        .offset(y: -Layout.cardInsetShadow)
-                        .blendMode(.destinationOut)
-                }
-                .compositingGroup()
-            }
-            .allowsHitTesting(false)
+        ZStack {
+            ProfileV3ShieldShape()
+                .fill(ProfileV3Theme.Palette.credentialShield)
+            ProfileV3ConnectorGlyph.vaultLock.image
+                .resizable()
+                .frame(width: Layout.credentialLock.width, height: Layout.credentialLock.height)
+                .rotationEffect(.degrees(Layout.credentialLockTilt))
+                .opacity(Layout.credentialLockOpacity)
+                .offset(Layout.credentialLockOffset)
+        }
+        .frame(width: Layout.credentialShield.width, height: Layout.credentialShield.height)
+        .padding(.top, Layout.credentialShieldTop)
+        .padding(.trailing, Layout.credentialShieldTrailing)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
 
