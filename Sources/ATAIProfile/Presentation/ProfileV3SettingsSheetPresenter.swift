@@ -45,6 +45,7 @@ final class ProfileV3SettingsSheetPresenter {
         client: ProfileV3NetworkClient,
         profileID: String?,
         profileName: String?,
+        photoPlaces: ProfileV3PhotoPlacesSync? = nil,
         onConnectConnector: ((String) -> Void)?,
         onTravellersChanged: (() -> Void)?,
         onConnectorsDisconnected: ((Set<ProfileV3ConnectorKey>) -> Void)?,
@@ -70,7 +71,8 @@ final class ProfileV3SettingsSheetPresenter {
             board: board,
             profileID: profileID,
             profileName: profileName,
-            invites: invites
+            invites: invites,
+            photoPlaces: photoPlaces
         )
         viewModel.router = self
     }

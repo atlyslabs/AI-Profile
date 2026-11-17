@@ -25,4 +25,5 @@ enum ProfileV3FeatureFlags {
     static let isGloveBoxKYCCheckEnabled = true
     static let isAgentCustomRulesEnabled = true
     static let isPassportBackPageEnabled = true
+    static let isPhotoPlacesEnabled = false
 }

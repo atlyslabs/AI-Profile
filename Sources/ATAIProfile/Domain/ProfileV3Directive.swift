@@ -3,10 +3,11 @@ import Foundation
 enum ProfileV3ConnectorKey: String, Equatable {
     case gmail
     case itr
+    case photos
 
     var canDisconnect: Bool {
         switch self {
-        case .gmail: return true
+        case .gmail, .photos: return true
         case .itr: return ProfileV3FeatureFlags.isITRDisconnectEnabled
         }
     }

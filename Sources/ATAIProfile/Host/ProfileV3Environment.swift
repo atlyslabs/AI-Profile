@@ -17,6 +17,16 @@ final class ProfileV3Environment {
     let placeSearch: (any ProfileV3PlaceSearching)?
     let boardStore: ProfileV3BoardStore
 
+    lazy var photoPlaces: ProfileV3PhotoPlacesSync = {
+        let repository = makeRepository()
+        let session = session
+        return ProfileV3PhotoPlacesSync(
+            library: ProfileV3PhotoLibrary(),
+            store: ProfileV3PhotoPlacesStore(userID: { session.currentUserID }),
+            upload: { try await repository.syncPhotoPlaces($0) }
+        )
+    }()
+
     init(
         provider: any ProfileV3ConfigurationProviding,
         actions: ProfileV3HostActions,
