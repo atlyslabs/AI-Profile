@@ -48,6 +48,58 @@ extension AnalyticsScreen {
     }
 }
 
+/// The blocks a page's `scroll_depth` lists in `visibleComponents`. The type is `section` for a
+/// vertical block and `rail` for a horizontal one; the name says which block. The Profile hub's
+/// first four are Android's (`AiProfileScreen.kt`), so both apps report them alike.
+extension ScrollComponent {
+    // Profile hub
+    static let worldPasses = section("world_passes")
+    static let coupons = rail("coupons")
+    static let benefitsPreview = section("benefits_preview")
+    static let travelPreferences = section("travel_preferences")
+    static let giftCards = rail("gift_cards")
+    static let kycStatus = section("kyc_status")
+
+    // Settings
+    static let accounts = section("accounts")
+    static let concierge = section("concierge")
+    static let connectors = section("connectors")
+    static let partners = section("partners")
+    static let notifications = section("notifications")
+    static let gloveBox = section("glove_box")
+    static let credentialStore = section("credential_store")
+    static let moreSettings = section("more_settings")
+
+    // Glove box
+    static let gloveBoxEmail = section("email")
+    static let gloveBoxPhone = section("phone")
+    static let gloveBoxCard = section("virtual_card")
+
+    // Agent forms and the city profile. A form's own sections are named by their backend id.
+    static let medicalCard = section("medical_card")
+    static let customRules = section("custom_rules")
+    static let cities = rail("cities")
+    static func formSection(_ id: String) -> ScrollComponent { section(id) }
+
+    // Travel persona
+    static let personaSummary = section("persona_summary")
+    static let personaTraits = section("persona_traits")
+
+    // Connectors, named by the backend's connector id.
+    static func connector(_ id: String) -> ScrollComponent { section(id) }
+
+    // A benefit's or coupon's detail page
+    static let offerHero = section("hero")
+    static let offerTerms = section("terms")
+
+    // An AI connector's page
+    static let connectorBenefits = section("benefits")
+    static let connectorDisclaimers = section("disclaimers")
+
+    private static func section(_ name: String) -> ScrollComponent { ScrollComponent("section").named(name) }
+    private static func rail(_ name: String) -> ScrollComponent { ScrollComponent("rail").named(name) }
+}
+
 enum ProfileV3AnalyticsScreenKey {
     static let agentName = "agent_name"
     static let benefitName = "benefit_name"

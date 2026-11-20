@@ -276,6 +276,7 @@ struct ProfileV3GloveBoxHomeContent: View {
                 onToggleForwarding: viewModel.toggleForwarding,
                 onSendForwarding: viewModel.sendForwardingAddress
             )
+            .trackComponent(.gloveBoxEmail)
             if ProfileV3FeatureFlags.isGloveBoxPhoneNumberEnabled {
                 ProfileV3GloveBoxPhoneSectionView(
                     section: home.phone,
@@ -284,6 +285,7 @@ struct ProfileV3GloveBoxHomeContent: View {
                     onOpen: { viewModel.open(.call($0)) },
                     onViewAll: { viewModel.openList(.calls) }
                 )
+                .trackComponent(.gloveBoxPhone)
             }
             if ProfileV3FeatureFlags.isGloveBoxVirtualCardEnabled {
                 ProfileV3GloveBoxCardSectionView(
@@ -296,6 +298,7 @@ struct ProfileV3GloveBoxHomeContent: View {
                     onOpen: { viewModel.open(.transaction($0)) },
                     onViewAll: { viewModel.openList(.transactions) }
                 )
+                .trackComponent(.gloveBoxCard)
             }
         }
         .padding(Layout.sheetPadding)

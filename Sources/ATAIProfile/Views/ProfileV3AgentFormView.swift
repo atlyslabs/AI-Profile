@@ -153,6 +153,7 @@ struct ProfileV3AgentFormView: View {
                         set: viewModel.setShowsOnLockScreen
                     )
                 )
+                .trackComponent(.medicalCard)
             }
             ForEach(form.sections.filter { !$0.isCustomRules }) { section in
                 ProfileV3FormSectionView(
@@ -177,12 +178,14 @@ struct ProfileV3AgentFormView: View {
                     fieldError: viewModel.fieldErrors[section.id]
                 )
                 .equatable()
+                .trackComponent(.formSection(section.id))
             }
             if let customRules = viewModel.customRules {
                 ProfileV3CustomRulesSection(model: customRules) {
                     proxy.scrollTo(Self.customRulesID, anchor: .bottom)
                 }
                 .id(Self.customRulesID)
+                .trackComponent(.customRules)
             }
         }
     }

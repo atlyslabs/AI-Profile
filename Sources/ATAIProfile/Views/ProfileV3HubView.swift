@@ -158,6 +158,7 @@ struct ProfileV3HubView: View {
                         scroll: scroll,
                         onExpand: expand
                     )
+                    .trackComponent(.worldPasses)
                     .zIndex(1)
                     ProfileV3HubPodiumSlot(scroll: scroll, isRevealed: stage.showsChrome && viewModel.home != nil)
                     phaseContent
@@ -226,6 +227,7 @@ struct ProfileV3HubView: View {
             if let kycLine = home.kycStatusText(showsExpiryDate: true) {
                 kycSection(home, line: kycLine)
                     .profileV3EntryReveal(isRevealed(.kyc))
+                    .trackComponent(.kycStatus)
             }
             if !home.giftCards.isEmpty {
                 ProfileV3UsageRail(
@@ -236,6 +238,7 @@ struct ProfileV3HubView: View {
                     presentBenefit(benefit)
                 }
                     .profileV3EntryReveal(isRevealed(.giftCards))
+                    .trackComponent(.giftCards)
             }
             if home.featuredCoupon != nil {
                 ProfileV3UsageRail(
@@ -247,6 +250,7 @@ struct ProfileV3HubView: View {
                     cover.present { couponPresenter.present(coupon) }
                 }
                     .profileV3EntryReveal(isRevealed(.featuredBenefit))
+                    .trackComponent(.coupons)
             }
             if home.featuredBenefit != nil {
                 ProfileV3BenefitCardStack(
@@ -259,6 +263,7 @@ struct ProfileV3HubView: View {
                 )
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .profileV3EntryReveal(isRevealed(.featuredBenefit))
+                .trackComponent(.benefitsPreview)
             }
             VStack(spacing: ProfileV3Theme.Space.s20) {
                 ProfileV3DashedDivider()
@@ -279,6 +284,7 @@ struct ProfileV3HubView: View {
             )
             .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
             .profileV3EntryReveal(isRevealed(.agentGrid))
+            .trackComponent(.travelPreferences)
         }
     }
 

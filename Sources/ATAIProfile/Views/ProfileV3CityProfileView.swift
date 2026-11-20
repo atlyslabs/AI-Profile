@@ -48,6 +48,7 @@ private struct ProfileV3CityProfileScreen: View {
                 VStack(spacing: 0) {
                     carousel
                         .padding(.top, ProfileV3Theme.Sizes.Agent.backTop + ProfileV3Theme.Sizes.circleButton + Sizes.carouselTop)
+                        .trackComponent(.cities)
                     if viewModel.isOnAddSlot || viewModel.selection == nil {
                         intro
                             .transition(.opacity)
@@ -332,6 +333,7 @@ private struct ProfileV3CityPreferences: View {
                         } action: { isReached in
                             onSectionReached(section.id, isReached)
                         }
+                        .trackComponent(.formSection(section.id))
                     }
                     .padding(.top, -Sizes.sectionScrollInset)
                 }
@@ -342,6 +344,7 @@ private struct ProfileV3CityPreferences: View {
                 ProfileV3CustomRulesSection(model: customRules)
                     .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                     .padding(.top, ProfileV3Theme.Space.s32)
+                    .trackComponent(.customRules)
             }
         }
     }

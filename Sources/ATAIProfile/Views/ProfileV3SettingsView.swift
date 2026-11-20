@@ -98,15 +98,19 @@ struct ProfileV3SettingsView: View {
                     isExpanded: $viewModel.isAccountExpanded,
                     onSelect: viewModel.tap
                 )
+                .trackComponent(.accounts)
                 if let concierge = menu.concierge {
                     ProfileV3SettingsConciergeCard(concierge: concierge) { viewModel.tapConcierge(concierge) }
+                        .trackComponent(.concierge)
                 }
                 ProfileV3SettingsConnectorsCard(
                     onInformationAccess: viewModel.tapInformationAccess,
                     onAppAccess: viewModel.tapAppAccess
                 )
+                .trackComponent(.connectors)
                 if let partners = menu.partners, !partners.partners.isEmpty {
                     ProfileV3SettingsPartnersCard(partners: partners, action: viewModel.tapPartners)
+                        .trackComponent(.partners)
                 }
             }
             if ProfileV3FeatureFlags.isCredentialStoreEnabled || viewModel.hasGloveBox {
@@ -115,6 +119,7 @@ struct ProfileV3SettingsView: View {
                 VStack(alignment: .leading, spacing: Layout.cardSpacing) {
                     if ProfileV3FeatureFlags.isCredentialStoreEnabled {
                         ProfileV3CredentialStoreCard(action: viewModel.tapCredentialStore)
+                            .trackComponent(.credentialStore)
                     }
                     if viewModel.hasGloveBox {
                         ProfileV3SettingsGloveBoxCard(
@@ -122,6 +127,7 @@ struct ProfileV3SettingsView: View {
                             action: viewModel.tapGloveBox
                         )
                         .animation(ProfileV3Theme.Motion.contentSwitch, value: viewModel.showsGloveBoxActivate)
+                        .trackComponent(.gloveBox)
                     }
                 }
             }
@@ -130,11 +136,13 @@ struct ProfileV3SettingsView: View {
             if let notifications = menu.notifications {
                 ProfileV3SettingsSwitchRow(item: notifications, onToggle: viewModel.setNotifications)
                     .padding(.top, Layout.switchGap)
+                    .trackComponent(.notifications)
                 ProfileV3DashedDivider()
                     .padding(.top, Layout.switchGap)
             }
             ProfileV3SettingsRowList(rows: menu.rows, account: viewModel.account, onSelect: viewModel.tap)
                 .padding(.top, Layout.rowsTop)
+                .trackComponent(.moreSettings)
             #if DEBUG
             ProfileV3SettingsDebugSection(onOpenCityProfile: viewModel.tapCityProfile)
                 .padding(.top, Layout.rowsTop)

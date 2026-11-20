@@ -122,6 +122,7 @@ private struct ProfileV3AIConnectorDetailContent: View {
                 }
                 .frame(maxWidth: Layout.benefitsWidth, alignment: .leading)
                 .padding(.top, Layout.benefitsTop)
+                .trackComponent(.connectorBenefits)
             }
             if !detail.disclaimers.isEmpty {
                 ProfileV3DashedRule(color: ProfileV3Theme.Palette.dashedRule)
@@ -135,6 +136,7 @@ private struct ProfileV3AIConnectorDetailContent: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, Layout.disclaimerInset)
                 .padding(.top, Layout.disclaimersTop)
+                .trackComponent(.connectorDisclaimers)
             }
         }
         .multilineTextAlignment(.center)

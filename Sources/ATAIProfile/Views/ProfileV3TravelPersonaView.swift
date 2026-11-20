@@ -142,9 +142,11 @@ struct ProfileV3TravelPersonaContent: View {
     var body: some View {
         VStack(spacing: 0) {
             ProfileV3TravelPersonaHeader(persona: persona)
+                .trackComponent(.personaSummary)
             radarCard
                 .padding(.horizontal, ProfileV3Theme.Sizes.screenHorizontalMargin)
                 .padding(.top, Persona.cardTop)
+                .trackComponent(.personaTraits)
         }
         .padding(.bottom, viewModel.isEditable ? Persona.bottom + Persona.toastClearance : Persona.bottom)
         .task {

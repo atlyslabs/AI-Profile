@@ -48,8 +48,10 @@ struct ProfileV3InformationAccessView: View {
                             onAdd: addAction,
                             onConnect: { model.tapConnect(connector) }
                         )
+                        .trackComponent(.connector(connector.id))
                     } else {
                         ProfileV3ConnectorCardRow(connector: connector, onConnect: { model.tapConnect(connector) })
+                            .trackComponent(.connector(connector.id))
                     }
                 }
             }

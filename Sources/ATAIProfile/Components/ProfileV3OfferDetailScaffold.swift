@@ -27,6 +27,7 @@ struct ProfileV3OfferDetailScaffold<Meter: View>: View {
                 VStack(spacing: 0) {
                     hero
                         .modifier(entry(0))
+                        .trackComponent(.offerHero)
                     Text(title)
                         .typoGraphy(.H3InterMedium28)
                         .foregroundStyle(Color(at: .pureBlack))
@@ -47,6 +48,7 @@ struct ProfileV3OfferDetailScaffold<Meter: View>: View {
                             .frame(maxWidth: ProfileV3Theme.Sizes.BenefitDetail.bodyWidth)
                             .padding(.top, ProfileV3Theme.Space.s24)
                             .modifier(entry(3))
+                            .trackComponent(.offerTerms)
                     }
                 }
                 .frame(maxWidth: .infinity)
